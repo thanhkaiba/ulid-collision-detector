@@ -1,0 +1,37 @@
+{
+  "input": [
+    {
+      "type": "http",
+      "config": {
+        "url": "http://collision-service:8080/ulid",
+        "method": "GET",
+        "interval": "10s",
+        "timeout": "30s"
+      }
+    }
+  ],
+  "filter": [
+    {
+      "type": "add_field",
+      "config": {
+        "field": "timestamp",
+        "value": "%{@timestamp}"
+      }
+    }
+  ],
+  "output": [
+    {
+      "type": "rabbitmq",
+      "config": {
+        "host": "rabbitmq",
+        "port": 5672,
+        "user": "admin",
+        "password": "admin123",
+        "exchange": "gogstash",
+        "exchange_type": "direct",
+        "routing_key": "logs",
+        "durable": true
+      }
+    }
+  ]
+}

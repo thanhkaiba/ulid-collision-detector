@@ -1,0 +1,75 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ulid-network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.11.0
+    container_name: logstash
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - ./logstash/config:/usr/share/logstash/config
+    command: logstash -f /usr/share/logstash/pipeline/main.conf
+    depends_on:
+      - rabbitmq
+      - collision-service
+    restart: unless-stopped
+    networks:
+      - ulid-network
+    environment:
+      - "LS_JAVA_OPTS=-Xmx512m -Xms512m"
+
+  worker:
+      build: ./worker
+      depends_on:
+        rabbitmq:
+          condition: service_healthy
+      environment:
+        RABBITMQ_URL: amqp://admin:admin123@rabbitmq:5672/
+        WORKER_COUNT: 5
+        ULID_RATE: 1000
+      deploy:
+        replicas: 5
+      restart: unless-stopped
+      networks:
+        - ulid-network
+  collision-service:
+    build: ./collision-service
+    container_name: collision-service
+    ports:
+      - "8080:8080"
+    environment:
+      PORT: 8080
+      CLEANUP_INTERVAL: 60s
+      ULID_TTL: 900s
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - ulid-network
+
+volumes:
+  rabbitmq_data:
+
+networks:
+  ulid-network:
+    driver: bridge

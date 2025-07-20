@@ -1,0 +1,50 @@
+{
+    "users": [
+        {
+            "name": "admin",
+            "password": "admin123",
+            "tags": "administrator"
+        }
+    ],
+    "vhosts": [
+        {
+            "name": "/"
+        }
+    ],
+    "permissions": [
+        {
+            "user": "admin",
+            "vhost": "/",
+            "configure": ".*",
+            "write": ".*",
+            "read": ".*"
+        }
+    ],
+    "exchanges": [
+        {
+            "name": "ulid_exchange",
+            "vhost": "/",
+            "type": "direct",
+            "durable": true,
+            "auto_delete": false,
+            "internal": false
+        }
+    ],
+    "queues": [
+        {
+            "name": "ulid_queue",
+            "vhost": "/",
+            "durable": true,
+            "auto_delete": false
+        }
+    ],
+    "bindings": [
+        {
+            "source": "ulid_exchange",
+            "vhost": "/",
+            "destination": "ulid_queue",
+            "destination_type": "queue",
+            "routing_key": "ulid"
+        }
+    ]
+}

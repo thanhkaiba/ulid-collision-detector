@@ -1,0 +1,17 @@
+http.host: "0.0.0.0"
+http.port: 9600
+
+path.data: /usr/share/logstash/data
+path.logs: /usr/share/logstash/logs
+
+pipeline.workers: 1
+pipeline.batch.size: 125
+pipeline.batch.delay: 50
+
+config.reload.automatic: true
+config.reload.interval: 3s
+
+log.level: info
+log.format: plain
+
+xpack.monitoring.enabled: false
