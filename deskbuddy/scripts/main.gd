@@ -9,7 +9,7 @@ const GREET_DELAY := 1.0
 ## Pack dùng lần đầu mở app, nếu có.
 const DEFAULT_PACK_ID := "potato"
 
-enum MenuId { FEED, PET, FOCUS_START, FOCUS_CANCEL, OPEN_PACKS_DIR, RELOAD_PACKS, QUIT }
+enum MenuId { FEED, PET, FOCUS_START, FOCUS_CANCEL, OPEN_PACKS_DIR, RELOAD_PACKS, QUIT, HIDE_TO_TRAY, AUTOSTART }
 enum WsId { FROM_IMAGE = 2000, FROM_PARTS, IMPORT_ZIP, EXPORT_ZIP }
 const PACK_MENU_BASE := 1000
 
@@ -26,6 +26,9 @@ var pack_menu: PopupMenu
 var workshop_menu: PopupMenu
 var workshop: WorkshopDialog
 var _zip_dialog: FileDialog
+var tray: TrayIcon
+## Cửa sổ chính không ẩn được bằng visible, nên "ẩn vào khay" = thu nhỏ.
+var _hidden := false
 var activity: ActivityMonitor
 var focus: FocusSession
 
@@ -51,6 +54,7 @@ func _ready() -> void:
 
 	_build_nodes()
 	_build_menu()
+	_build_tray()
 
 	pack = PackLoader.find(packs, str(save.get("pack_id", "")))
 	if pack == null:
@@ -119,6 +123,60 @@ func _build_nodes() -> void:
 	layer.add_child(hud)
 
 
+func _build_tray() -> void:
+	tray = TrayIcon.new()
+	add_child(tray)
+	tray.action.connect(_on_tray_action)
+
+
+func _sync_tray() -> void:
+	if tray == null:
+		return
+	tray.set_state(not _hidden, Autostart.is_supported(), Autostart.is_supported() and Autostart.is_enabled())
+	if pack != null:
+		tray.set_tooltip("DeskBuddy · %s" % pack.name)
+
+
+func _on_tray_action(id: int) -> void:
+	match id:
+		TrayIcon.Id.TOGGLE_VISIBLE:
+			_toggle_window()
+		TrayIcon.Id.FEED:
+			_feed()
+		TrayIcon.Id.FOCUS:
+			if not focus.running:
+				focus.start(FOCUS_MINUTES)
+		TrayIcon.Id.AUTOSTART:
+			_toggle_autostart()
+		TrayIcon.Id.QUIT:
+			_save_and_quit()
+
+
+func _toggle_window() -> void:
+	_hidden = not _hidden
+	var w := get_window()
+	w.mode = Window.MODE_MINIMIZED if _hidden else Window.MODE_WINDOWED
+	if not _hidden:
+		w.always_on_top = true
+		w.grab_focus()
+	_sync_tray()
+
+
+func _toggle_autostart() -> void:
+	if not Autostart.is_supported():
+		buddy.say(Autostart.unsupported_reason(), 5.0)
+		return
+	var target := not Autostart.is_enabled()
+	var err := Autostart.set_enabled(target)
+	if err != OK:
+		buddy.say("Không đổi được tự khởi động: %s" % error_string(err), 6.0)
+	elif target:
+		buddy.say("Từ giờ mình sẽ tự lên mỗi khi bạn đăng nhập.", 5.0)
+	else:
+		buddy.say("Đã tắt tự khởi động.", 4.0)
+	_sync_tray()
+
+
 func _build_menu() -> void:
 	menu = PopupMenu.new()
 	add_child(menu)
@@ -156,6 +214,16 @@ func _refresh_menu() -> void:
 	menu.add_item("Mở thư mục packs", MenuId.OPEN_PACKS_DIR)
 	menu.add_item("Nạp lại packs", MenuId.RELOAD_PACKS)
 	menu.add_separator()
+	menu.add_check_item("Tự khởi động cùng máy", MenuId.AUTOSTART)
+	var as_idx := menu.get_item_index(MenuId.AUTOSTART)
+	var as_ok := Autostart.is_supported()
+	menu.set_item_checked(as_idx, as_ok and Autostart.is_enabled())
+	menu.set_item_disabled(as_idx, not as_ok)
+	if not as_ok:
+		menu.set_item_tooltip(as_idx, Autostart.unsupported_reason())
+	if tray != null and tray.supported:
+		menu.add_item("Ẩn vào khay hệ thống", MenuId.HIDE_TO_TRAY)
+	menu.add_separator()
 	menu.add_item("Thoát", MenuId.QUIT)
 
 	pack_menu.clear()
@@ -179,6 +247,7 @@ func _apply_pack(p: BuddyPack, greet := true) -> void:
 	_last_state = ""
 	_chatter_accum = 0.0
 	_refresh_menu()
+	_sync_tray()
 	if greet:
 		_say("greet")
 
@@ -276,6 +345,10 @@ func _on_menu_pressed(id: int) -> void:
 			_refresh_menu()
 		MenuId.QUIT:
 			_save_and_quit()
+		MenuId.HIDE_TO_TRAY:
+			_toggle_window()
+		MenuId.AUTOSTART:
+			_toggle_autostart()
 
 
 func _on_workshop_pressed(id: int) -> void:

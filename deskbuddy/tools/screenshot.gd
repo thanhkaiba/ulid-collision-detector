@@ -32,6 +32,8 @@ func _initialize() -> void:
 			_workshop_tab = 1
 		elif a == "create_from_image":
 			_workshop_tab = 2
+		elif a == "tray":
+			_workshop_tab = 3
 	_main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(_main)
 
@@ -55,6 +57,15 @@ func _process(_delta: float) -> bool:
 			_main.workshop._on_image_selected(ProjectSettings.globalize_path("res://art_src/kenney/platformer/female_jump.png"))
 			_main.workshop._on_create_image()
 			print("created pack: ", _main.pack.id, " kind=", _main.pack.kind, " name=", _main.pack.name)
+		elif _workshop_tab == 3:
+			# Mở menu khay (không cần tray thật) và thử bật/tắt tự khởi động.
+			print("tray supported: ", _main.tray.supported, " autostart supported: ", Autostart.is_supported())
+			_main.tray._on_clicked(1, Vector2i(100, 100))
+			print("tray menu items: ", _main.tray._menu.item_count)
+			_main._on_tray_action(TrayIcon.Id.AUTOSTART)
+			_main._on_tray_action(TrayIcon.Id.TOGGLE_VISIBLE)
+			_main._on_tray_action(TrayIcon.Id.TOGGLE_VISIBLE)
+			print("hidden flag after toggle x2: ", _main._hidden, " mode: ", root.mode)
 		elif _workshop_tab >= 0:
 			_main._on_workshop_pressed(2000 + _workshop_tab)
 	if _frames == _target:

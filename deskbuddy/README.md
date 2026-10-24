@@ -103,6 +103,18 @@ Godot, cửa sổ 3D trong suốt, retarget animation cho từng model và máy 
 tốn pin hơn nhiều. Định dạng pack đã chừa sẵn: `kind: "vrm"` sẽ là loại thứ
 tư, mọi thứ khác (nhu cầu, tính cách, câu nói, Workshop, zip) dùng lại nguyên.
 
+## Khay hệ thống và tự khởi động
+
+- Biểu tượng khay (Windows, macOS, Linux X11) với menu: ẩn/hiện nhân vật,
+  cho ăn, bắt đầu tập trung, bật tự khởi động, thoát. Ẩn nhân vật khi chia sẻ
+  màn hình mà không thoát app; nhu cầu vẫn chạy.
+- Tự khởi động cùng máy, bật từ menu chuột phải hoặc menu khay:
+  Windows ghi khoá `HKCU\...\Run` qua `reg.exe`, macOS tạo LaunchAgent
+  `~/Library/LaunchAgents/nl.deskbuddy.app.plist`, Linux tạo
+  `~/.config/autostart/deskbuddy.desktop`. Trạng thái đọc trực tiếp từ hệ
+  điều hành. Chỉ hoạt động với bản build (trong editor mục này bị mờ vì
+  executable khi đó là Godot).
+
 ## Giới hạn đã biết của MVP
 
 - Godot chỉ nhận bàn phím khi cửa sổ có focus, nên "gõ dồn dập" mới chỉ bắt
@@ -110,7 +122,8 @@ tư, mọi thứ khác (nhu cầu, tính cách, câu nói, Workshop, zip) dùng 
   thống cần một GDExtension nhỏ (Windows `GetLastInputInfo`, macOS `CGEventTap`
   với quyền Accessibility). Signal của `ActivityMonitor` giữ nguyên khi thay.
 - Chưa đọc tên app đang mở (cần cho tính năng "nhìn chằm chằm khi mở YouTube").
-- Chưa có khay hệ thống, chưa tự chạy khi đăng nhập.
+- Khay hệ thống trên Linux cần môi trường desktop có vùng tray (GNOME cần
+  extension AppIndicator).
 - Chưa có 3D (VRM). Xem mục Workshop ở trên.
 - Font Nunito và Baloo 2 không có emoji, nên icon trong pack để trống.
 
@@ -129,9 +142,8 @@ Thêm `*.json` vào Export → Resources → "Filters to export non-resource fil
 
 ## Hướng tiếp theo
 
-1. Khay hệ thống + tự khởi động.
-2. GDExtension bắt bàn phím và app đang focus.
-3. Steam Workshop: upload/download zip pack về `user://packs`.
-4. Hai nhân vật cùng lúc và tương tác theo archetype.
-5. Phiếu báo cáo cuối tuần.
-6. `kind: "vrm"`: model 3D.
+1. GDExtension bắt bàn phím và app đang focus.
+2. Steam Workshop: upload/download zip pack về `user://packs`.
+3. Hai nhân vật cùng lúc và tương tác theo archetype.
+4. Phiếu báo cáo cuối tuần.
+5. `kind: "vrm"`: model 3D.

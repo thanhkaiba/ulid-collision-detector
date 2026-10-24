@@ -23,6 +23,7 @@ func _init() -> void:
 	_test_slugify()
 	_test_shape_parts_exist()
 	_test_zip_roundtrip()
+	_test_autostart()
 	print("")
 	print("%d test, %d lỗi" % [_count, _failures])
 	quit(1 if _failures > 0 else 0)
@@ -311,3 +312,25 @@ func _test_zip_roundtrip() -> void:
 	DirAccess.remove_absolute(zip_path)
 	DirAccess.remove_absolute(bad_zip)
 	_check(not FileAccess.file_exists("user://packs/blob/pack.json"), "dọn dẹp pack test")
+
+
+func _test_autostart() -> void:
+	print("Autostart")
+	var plist := Autostart.plist("/Applications/Desk Buddy.app/Contents/MacOS/DeskBuddy")
+	_check(plist.contains("<string>nl.deskbuddy.app</string>") and plist.contains("<string>/Applications/Desk Buddy.app/Contents/MacOS/DeskBuddy</string>") and plist.contains("<key>RunAtLoad</key>"), "plist macOS có label, đường dẫn, RunAtLoad")
+	var esc := Autostart.plist("/a&b/x")
+	_check(esc.contains("/a&amp;b/x"), "plist escape ký tự XML")
+	var desk := Autostart.desktop_entry("/opt/desk buddy/DeskBuddy.x86_64")
+	_check(desk.begins_with("[Desktop Entry]") and desk.contains('Exec="/opt/desk buddy/DeskBuddy.x86_64"') and desk.contains("Type=Application"), ".desktop Linux có Exec trong ngoặc kép")
+	_check(not Autostart.is_supported() or not OS.has_feature("editor"), "trong editor/headless script coi như không hỗ trợ")
+	if OS.get_name() == "Linux":
+		Autostart.dir_override = ProjectSettings.globalize_path("user://test_autostart")
+		var err := Autostart.set_enabled(true)
+		_check(err == OK, "Linux: ghi file autostart (%s)" % error_string(err))
+		_check(Autostart.is_enabled(), "Linux: is_enabled sau khi bật")
+		var path := Autostart.dir_override.path_join("deskbuddy.desktop")
+		_check(FileAccess.get_file_as_string(path).contains(OS.get_executable_path()), "Linux: Exec trỏ đúng executable")
+		err = Autostart.set_enabled(false)
+		_check(err == OK and not Autostart.is_enabled(), "Linux: tắt xoá file")
+		DirAccess.remove_absolute(Autostart.dir_override)
+		Autostart.dir_override = ""
