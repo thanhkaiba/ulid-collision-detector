@@ -103,6 +103,43 @@ Godot, cửa sổ 3D trong suốt, retarget animation cho từng model và máy 
 tốn pin hơn nhiều. Định dạng pack đã chừa sẵn: `kind: "vrm"` sẽ là loại thứ
 tư, mọi thứ khác (nhu cầu, tính cách, câu nói, Workshop, zip) dùng lại nguyên.
 
+## Bắt bàn phím toàn hệ thống (GDExtension)
+
+`gdextension/activity_probe/` là một extension C nhỏ (một file, viết thẳng
+trên C API của Godot, không cần godot-cpp hay scons) cung cấp lớp
+`ActivityProbe` với ba câu hỏi: idle bao lâu, phím cuối bấm bao lâu rồi, bao
+nhiêu lần bấm phím từ lần hỏi trước. **Chỉ đếm, không bao giờ đọc mã phím
+hay ký tự**, không ghi file, không gửi đi đâu.
+
+| Hệ | Cách làm | Quyền cần |
+|---|---|---|
+| Linux X11 | XInput2 raw events (dlopen libX11/libXi) | Không |
+| Linux Wayland | Chưa có, tự lùi về theo dõi chuột | |
+| Windows | `GetLastInputInfo` + hook `WH_KEYBOARD_LL` chỉ đếm | Không |
+| macOS | `CGEventSourceSecondsSinceLastEventType` | Không (không cần Accessibility) |
+
+Build tại chỗ:
+
+```bash
+sh deskbuddy/gdextension/activity_probe/build.sh      # Linux, macOS
+deskbuddy\gdextension\activity_probe\build.bat       # Windows, x64 Native Tools prompt
+```
+
+GitHub Actions (`.github/workflows/build-activity-probe.yml`) build cả ba
+hệ và đưa ra artifact. Bản Linux đã build sẵn nằm trong `bin/`. Không có
+file nhị phân thì app vẫn chạy với backend chuột.
+
+Kiểm tra trên Linux không cần gõ tay:
+
+```bash
+gcc -O2 -o /tmp/xtest_keys deskbuddy/tools/xtest_keys.c -ldl
+cd deskbuddy
+godot --headless --path . -s tools/probe_check.gd -- 4 &   # in backend và số phím đếm được
+sleep 1.5; /tmp/xtest_keys 25; wait
+```
+
+Trên máy không màn hình bọc cả hai lệnh trong `xvfb-run`.
+
 ## Khay hệ thống và tự khởi động
 
 - Biểu tượng khay (Windows, macOS, Linux X11) với menu: ẩn/hiện nhân vật,
@@ -117,10 +154,8 @@ tư, mọi thứ khác (nhu cầu, tính cách, câu nói, Workshop, zip) dùng 
 
 ## Giới hạn đã biết của MVP
 
-- Godot chỉ nhận bàn phím khi cửa sổ có focus, nên "gõ dồn dập" mới chỉ bắt
-  được khi app đang focus. Chuột thì bắt toàn hệ thống. Để bắt bàn phím toàn hệ
-  thống cần một GDExtension nhỏ (Windows `GetLastInputInfo`, macOS `CGEventTap`
-  với quyền Accessibility). Signal của `ActivityMonitor` giữ nguyên khi thay.
+- Trên Wayland thuần chưa bắt được bàn phím toàn hệ thống (XWayland chỉ thấy
+  app X11). Khi đó app lùi về theo dõi chuột và bàn phím lúc có focus.
 - Chưa đọc tên app đang mở (cần cho tính năng "nhìn chằm chằm khi mở YouTube").
 - Khay hệ thống trên Linux cần môi trường desktop có vùng tray (GNOME cần
   extension AppIndicator).
@@ -142,7 +177,7 @@ Thêm `*.json` vào Export → Resources → "Filters to export non-resource fil
 
 ## Hướng tiếp theo
 
-1. GDExtension bắt bàn phím và app đang focus.
+1. Đọc tên app đang focus (mở rộng ActivityProbe).
 2. Steam Workshop: upload/download zip pack về `user://packs`.
 3. Hai nhân vật cùng lúc và tương tác theo archetype.
 4. Phiếu báo cáo cuối tuần.

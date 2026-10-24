@@ -1,0 +1,11 @@
+[configuration]
+
+entry_symbol = "activity_probe_init"
+compatibility_minimum = "4.3"
+reloadable = false
+
+[libraries]
+
+linux.x86_64 = "res://bin/libactivity_probe.linux.x86_64.so"
+windows.x86_64 = "res://bin/activity_probe.windows.x86_64.dll"
+macos = "res://bin/libactivity_probe.macos.dylib"

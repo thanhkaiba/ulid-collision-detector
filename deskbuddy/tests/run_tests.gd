@@ -24,6 +24,7 @@ func _init() -> void:
 	_test_shape_parts_exist()
 	_test_zip_roundtrip()
 	_test_autostart()
+	_test_activity_probe()
 	print("")
 	print("%d test, %d lỗi" % [_count, _failures])
 	quit(1 if _failures > 0 else 0)
@@ -334,3 +335,25 @@ func _test_autostart() -> void:
 		_check(err == OK and not Autostart.is_enabled(), "Linux: tắt xoá file")
 		DirAccess.remove_absolute(Autostart.dir_override)
 		Autostart.dir_override = ""
+
+
+func _test_activity_probe() -> void:
+	print("ActivityProbe (GDExtension)")
+	if not ClassDB.class_exists("ActivityProbe"):
+		_check(OS.get_name() != "Linux", "lớp ActivityProbe tồn tại (thiếu file nhị phân cho %s, bỏ qua)" % OS.get_name())
+		return
+	var p: Object = ClassDB.instantiate("ActivityProbe")
+	_check(p != null, "instantiate được")
+	var backend := str(p.backend_name())
+	_check(backend != "", "backend_name không rỗng: %s" % backend)
+	var supported: bool = p.is_supported()
+	_check(supported == (backend == "x11-xinput2" or backend.begins_with("windows") or backend.begins_with("macos")), "is_supported khớp backend (%s → %s)" % [backend, supported])
+	p.poll()
+	var keys: int = p.take_key_presses()
+	_check(keys >= 0, "take_key_presses trả int không âm (%d)" % keys)
+	var idle: float = p.get_idle_seconds()
+	_check(idle >= 0.0 and idle < 3600.0, "get_idle_seconds hợp lý (%.3f)" % idle)
+	var since: float = p.get_seconds_since_key()
+	_check(since == -1.0 or since >= 0.0, "get_seconds_since_key là -1 hoặc không âm (%.3f)" % since)
+	p = null
+	_check(true, "giải phóng instance không crash")

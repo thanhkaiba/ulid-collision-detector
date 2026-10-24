@@ -1,0 +1,46 @@
+name: Build ActivityProbe GDExtension
+
+on:
+  push:
+    paths:
+      - "deskbuddy/gdextension/**"
+      - ".github/workflows/build-activity-probe.yml"
+  pull_request:
+    paths:
+      - "deskbuddy/gdextension/**"
+  workflow_dispatch:
+
+jobs:
+  linux:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh deskbuddy/gdextension/activity_probe/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: activity_probe-linux
+          path: deskbuddy/bin/libactivity_probe.linux.x86_64.so
+
+  macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - run: sh deskbuddy/gdextension/activity_probe/build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: activity_probe-macos
+          path: deskbuddy/bin/libactivity_probe.macos.dylib
+
+  windows:
+    runs-on: windows-2022
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+      - shell: cmd
+        run: deskbuddy\gdextension\activity_probe\build.bat
+      - uses: actions/upload-artifact@v4
+        with:
+          name: activity_probe-windows
+          path: deskbuddy/bin/activity_probe.windows.x86_64.dll
