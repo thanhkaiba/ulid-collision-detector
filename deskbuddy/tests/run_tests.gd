@@ -448,9 +448,13 @@ func _test_workshop_service() -> void:
 	for f in PackLoader.list_files(WorkshopService.STAGE_DIR.path_join("potato")):
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(WorkshopService.STAGE_DIR.path_join("potato").path_join(f)))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(WorkshopService.STAGE_DIR.path_join("potato")))
+	for f in PackLoader.list_files(WorkshopService.STAGE_DIR.path_join("rex")):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(WorkshopService.STAGE_DIR.path_join("rex").path_join(f)))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(WorkshopService.STAGE_DIR.path_join("rex")))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(WorkshopService.STAGE_DIR))
 	DirAccess.remove_absolute(ProjectSettings.globalize_path(WorkshopService.MANIFEST))
 	fake.wipe()
 	root.remove_child(svc)
 	svc.free()
+	fake.free()
 	_check(not FileAccess.file_exists("user://packs/aki/pack.json"), "dọn dẹp xong")
