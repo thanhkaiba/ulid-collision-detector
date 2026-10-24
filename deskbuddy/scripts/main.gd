@@ -10,6 +10,7 @@ const GREET_DELAY := 1.0
 const DEFAULT_PACK_ID := "potato"
 
 enum MenuId { FEED, PET, FOCUS_START, FOCUS_CANCEL, OPEN_PACKS_DIR, RELOAD_PACKS, QUIT }
+enum WsId { FROM_IMAGE = 2000, FROM_PARTS, IMPORT_ZIP, EXPORT_ZIP }
 const PACK_MENU_BASE := 1000
 
 var packs: Array[BuddyPack] = []
@@ -22,6 +23,9 @@ var buddy: Buddy
 var hud: Hud
 var menu: PopupMenu
 var pack_menu: PopupMenu
+var workshop_menu: PopupMenu
+var workshop: WorkshopDialog
+var _zip_dialog: FileDialog
 var activity: ActivityMonitor
 var focus: FocusSession
 
@@ -121,8 +125,17 @@ func _build_menu() -> void:
 	pack_menu = PopupMenu.new()
 	pack_menu.name = "packs"
 	menu.add_child(pack_menu)
+	workshop_menu = PopupMenu.new()
+	workshop_menu.name = "workshop"
+	menu.add_child(workshop_menu)
+	workshop_menu.add_item("Tạo từ ảnh bất kỳ…", WsId.FROM_IMAGE)
+	workshop_menu.add_item("Ghép nhân vật từ bộ phận…", WsId.FROM_PARTS)
+	workshop_menu.add_separator()
+	workshop_menu.add_item("Nhập pack (.zip)…", WsId.IMPORT_ZIP)
+	workshop_menu.add_item("Xuất nhân vật hiện tại (.zip)…", WsId.EXPORT_ZIP)
 	menu.id_pressed.connect(_on_menu_pressed)
 	pack_menu.id_pressed.connect(_on_pack_menu_pressed)
+	workshop_menu.id_pressed.connect(_on_workshop_pressed)
 	_refresh_menu()
 
 
@@ -139,6 +152,7 @@ func _refresh_menu() -> void:
 		menu.add_item("Bắt đầu tập trung %d phút" % int(FOCUS_MINUTES), MenuId.FOCUS_START)
 	menu.add_separator()
 	menu.add_submenu_item("Đổi nhân vật", "packs")
+	menu.add_submenu_item("Workshop", "workshop")
 	menu.add_item("Mở thư mục packs", MenuId.OPEN_PACKS_DIR)
 	menu.add_item("Nạp lại packs", MenuId.RELOAD_PACKS)
 	menu.add_separator()
@@ -262,6 +276,65 @@ func _on_menu_pressed(id: int) -> void:
 			_refresh_menu()
 		MenuId.QUIT:
 			_save_and_quit()
+
+
+func _on_workshop_pressed(id: int) -> void:
+	match id:
+		WsId.FROM_IMAGE, WsId.FROM_PARTS:
+			if workshop == null:
+				workshop = WorkshopDialog.new()
+				add_child(workshop)
+				workshop.pack_created.connect(_on_pack_created)
+			workshop.open(WorkshopDialog.TAB_IMAGE if id == WsId.FROM_IMAGE else WorkshopDialog.TAB_SHAPE)
+		WsId.IMPORT_ZIP:
+			_zip_file_dialog(FileDialog.FILE_MODE_OPEN_FILE, "Chọn pack .zip", _on_import_zip_selected)
+		WsId.EXPORT_ZIP:
+			_zip_file_dialog(FileDialog.FILE_MODE_SAVE_FILE, "Lưu pack .zip", _on_export_zip_selected, pack.id + ".zip")
+
+
+func _zip_file_dialog(mode: int, title: String, cb: Callable, default_name := "") -> void:
+	if _zip_dialog != null:
+		_zip_dialog.queue_free()
+	_zip_dialog = FileDialog.new()
+	_zip_dialog.file_mode = mode as FileDialog.FileMode
+	_zip_dialog.access = FileDialog.ACCESS_FILESYSTEM
+	_zip_dialog.filters = PackedStringArray(["*.zip ; Pack DeskBuddy"])
+	_zip_dialog.use_native_dialog = true
+	_zip_dialog.title = title
+	if default_name != "":
+		_zip_dialog.current_file = default_name
+	_zip_dialog.file_selected.connect(cb)
+	add_child(_zip_dialog)
+	_zip_dialog.popup_centered(Vector2i(700, 500))
+
+
+func _on_import_zip_selected(path: String) -> void:
+	var r := PackLoader.import_zip(path)
+	if not r["ok"]:
+		buddy.say("Không nhập được: %s" % r["error"], 6.0)
+		return
+	_on_pack_created(r["id"])
+
+
+func _on_export_zip_selected(path: String) -> void:
+	if not path.ends_with(".zip"):
+		path += ".zip"
+	var err := PackLoader.export_zip(pack, path)
+	if err == OK:
+		buddy.say("Đã xuất %s. Gửi file này cho bạn bè là xong." % path.get_file(), 6.0)
+	else:
+		buddy.say("Không xuất được: %s" % error_string(err), 6.0)
+
+
+func _on_pack_created(id: String) -> void:
+	packs = PackLoader.scan()
+	var p := PackLoader.find(packs, id)
+	if p == null:
+		buddy.say("Pack '%s' vừa tạo bị lỗi, xem thư mục packs." % id, 6.0)
+		_refresh_menu()
+		return
+	_apply_pack(p)
+	_save()
 
 
 func _on_pack_menu_pressed(id: int) -> void:

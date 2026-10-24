@@ -66,7 +66,8 @@ nhận chuột.
   "Mở thư mục packs" dẫn tới đó). Pack lỗi vẫn hiện trong menu kèm lý do.
 - **Lưu trữ**: `user://save.json`, toàn bộ local.
 
-Ba pack mẫu: **Củ Khoai** (lười), **Aki** (tsundere), **Rex** (hỗn loạn).
+Năm pack mẫu: **Củ Khoai** (lười), **Aki** (tsundere), **Rex** (hỗn loạn),
+**Kẹo** (bám người, kind `shape`) và **Zom** (hỗ trợ, kind `image`).
 Sprite được ghép từ bộ phận của Kenney (CC0) bằng `tools/compose_packs.py`;
 các bộ phận đã dùng nằm trong `art_src/kenney/`. Thay art riêng chỉ cần đè
 file `sprites.png` của pack.
@@ -78,6 +79,30 @@ file `sprites.png` của pack.
 python3 tools/compose_packs.py --preview /tmp/preview.png
 ```
 
+## Workshop: người chơi tự tạo nhân vật
+
+Menu chuột phải → **Workshop**:
+
+| Mục | Làm gì |
+|---|---|
+| Tạo từ ảnh bất kỳ… | Chọn PNG/JPG (meme, ảnh thú cưng, củ khoai thật). Tuỳ chọn xoá nền đơn sắc lấy từ 4 góc ảnh. Đặt tên, tính cách, tên món ăn và nhãn 3 thanh. Engine tự tạo chuyển động và cảm xúc |
+| Ghép nhân vật từ bộ phận… | Chọn thân, màu, mặt, tay từ bộ Kenney, xem trước ngay. Không cần vẽ gì |
+| Nhập pack (.zip)… | Nhận pack bạn bè gửi |
+| Xuất nhân vật hiện tại (.zip)… | Đóng gói để chia sẻ |
+
+Pack tạo ra nằm ở `user://packs/<id>/`, cùng định dạng mở trong
+`docs/PACK_FORMAT.md`, nên họa sĩ có thể mở ra sửa tay.
+
+Steam Workshop sau này chỉ là lớp vận chuyển cho đúng những thư mục này
+(upload zip lên, tải về giải nén vào `user://packs`).
+
+### Vì sao chưa có model 3D
+
+Hỗ trợ VRM/glTF là việc đáng làm nhưng là một pha riêng: cần addon VRM cho
+Godot, cửa sổ 3D trong suốt, retarget animation cho từng model và máy yếu sẽ
+tốn pin hơn nhiều. Định dạng pack đã chừa sẵn: `kind: "vrm"` sẽ là loại thứ
+tư, mọi thứ khác (nhu cầu, tính cách, câu nói, Workshop, zip) dùng lại nguyên.
+
 ## Giới hạn đã biết của MVP
 
 - Godot chỉ nhận bàn phím khi cửa sổ có focus, nên "gõ dồn dập" mới chỉ bắt
@@ -86,7 +111,7 @@ python3 tools/compose_packs.py --preview /tmp/preview.png
   với quyền Accessibility). Signal của `ActivityMonitor` giữ nguyên khi thay.
 - Chưa đọc tên app đang mở (cần cho tính năng "nhìn chằm chằm khi mở YouTube").
 - Chưa có khay hệ thống, chưa tự chạy khi đăng nhập.
-- Chỉ hỗ trợ `kind: sprite2d`. VRM/3D để sau.
+- Chưa có 3D (VRM). Xem mục Workshop ở trên.
 - Font Nunito và Baloo 2 không có emoji, nên icon trong pack để trống.
 
 ## Ghi công
@@ -106,6 +131,7 @@ Thêm `*.json` vào Export → Resources → "Filters to export non-resource fil
 
 1. Khay hệ thống + tự khởi động.
 2. GDExtension bắt bàn phím và app đang focus.
-3. Steam Workshop: upload/download pack về `user://packs`.
+3. Steam Workshop: upload/download zip pack về `user://packs`.
 4. Hai nhân vật cùng lúc và tương tác theo archetype.
 5. Phiếu báo cáo cuối tuần.
+6. `kind: "vrm"`: model 3D.

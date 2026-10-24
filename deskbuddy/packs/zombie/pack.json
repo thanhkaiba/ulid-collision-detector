@@ -1,0 +1,22 @@
+{
+  "format": 1,
+  "id": "zombie",
+  "name": "Zom",
+  "author": "DeskBuddy Team",
+  "version": "1.0.0",
+  "description": "Ví dụ kind image: một ảnh tĩnh, engine tự tạo chuyển động và cảm xúc.",
+  "kind": "image",
+  "image": "zombie.png",
+  "display_height": 165,
+  "personality": "supportive",
+  "needs": {
+    "energy": { "label": "Não", "icon": "", "food": "Miếng não" },
+    "mood":   { "label": "Tinh thần", "icon": "" },
+    "bond":   { "label": "Đồng đội", "icon": "" }
+  },
+  "lines": {
+    "hungry": ["Nãooo... à không, chỉ cần bạn ổn là được.", "Mình hơi đói. Nhưng bạn uống nước chưa?"],
+    "fed": ["Mmm. Cảm ơn. Bạn cũng nhớ ăn nhé."]
+  },
+  "credits": "Art: Kenney Platformer Characters (www.kenney.nl), CC0 1.0"
+}

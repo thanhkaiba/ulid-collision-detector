@@ -1,12 +1,66 @@
 # Định dạng Pack (format 1)
 
-Một pack là một thư mục:
+Một pack là một thư mục có `pack.json` và (tuỳ loại) ảnh đi kèm:
 
 ```
 my_pack/
   pack.json
-  sprites.png
+  sprites.png      # kind sprite2d
+  image.png        # kind image
 ```
+
+## Ba loại pack (`kind`)
+
+| `kind` | Cần gì | Ai dùng |
+|---|---|---|
+| `image` | Một ảnh PNG/JPG bất kỳ | Người chơi: meme, ảnh thú cưng, bất cứ thứ gì. Engine tự tạo chuyển động (nhún, lắc, nhảy) và cảm xúc (zzz, nước mắt, mồ hôi, má hồng, miệng nhai, tim) |
+| `shape` | Không cần ảnh | Người chơi: ghép thân, màu, mặt, tay từ bộ Kenney ngay trong app. Mặt đổi theo tâm trạng, tay đổi theo hành động |
+| `sprite2d` | Sprite sheet vẽ sẵn | Họa sĩ: toàn quyền về từng frame |
+
+Cả ba tạo được từ menu chuột phải → **Workshop**, hoặc viết tay `pack.json`.
+Chia sẻ bằng **Workshop → Xuất (.zip)** và **Nhập (.zip)**.
+
+### kind `image`
+
+```json
+{
+  "format": 1,
+  "id": "meo-nha",
+  "name": "Mèo Nhà",
+  "kind": "image",
+  "image": "image.png",
+  "display_height": 150,
+  "personality": "lazy",
+  "needs": { "energy": { "label": "Pate", "food": "Hộp pate" } }
+}
+```
+
+| Trường | Ghi chú |
+|---|---|
+| `image` | Tên file ảnh trong thư mục pack, nền trong suốt càng tốt |
+| `display_height` | Chiều cao hiển thị (px), 40 đến 400, mặc định 150. Chiều rộng tự kẹp ở 230 |
+
+### kind `shape`
+
+```json
+{
+  "format": 1,
+  "id": "keo",
+  "name": "Kẹo",
+  "kind": "shape",
+  "shape": { "body": "squircle", "color": "pink", "face": "a", "hands": "open" },
+  "personality": "clingy"
+}
+```
+
+| Trường | Giá trị |
+|---|---|
+| `shape.body` | `circle`, `square`, `squircle`, `rhombus` |
+| `shape.color` | `blue`, `green`, `pink`, `purple`, `red`, `yellow` |
+| `shape.face` | `a` đến `l` (mặt thường ngày; vui, buồn, đói, ngủ... engine tự chọn) |
+| `shape.hands` | `open`, `closed`, `peace`, `point`, `rock`, `thumb` (kiểu tay lúc đứng yên) |
+
+### kind `sprite2d`
 
 Đặt vào `user://packs/` (menu chuột phải → "Mở thư mục packs") rồi chọn
 "Nạp lại packs". Pack trong `user://` trùng `id` sẽ ghi đè pack đi kèm app.

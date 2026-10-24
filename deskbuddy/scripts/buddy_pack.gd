@@ -1,16 +1,23 @@
 class_name BuddyPack
 extends RefCounted
 ## Dữ liệu một "pack" nhân vật, đọc từ pack.json. Xem docs/PACK_FORMAT.md.
+##
+## kind:
+##   sprite2d : sprite sheet vẽ sẵn (art.sheet + art.animations)
+##   image    : một ảnh tĩnh bất kỳ, engine tự tạo chuyển động và cảm xúc
+##   shape    : ghép từ bộ phận Kenney Shape Characters ngay trong app
 
 const FORMAT_VERSION := 1
+const KINDS := ["sprite2d", "image", "shape"]
 const REQUIRED_ANIMATIONS := ["idle"]
 const KNOWN_ANIMATIONS := ["idle", "happy", "sad", "hungry", "sleep", "eat", "excited"]
 const NEED_KEYS := ["energy", "mood", "bond"]
 const DEFAULT_NEED_LABELS := {
-	"energy": {"label": "Năng lượng", "icon": "⚡", "food": "Đồ ăn"},
-	"mood": {"label": "Tâm trạng", "icon": "☀", "food": ""},
-	"bond": {"label": "Gắn kết", "icon": "♥", "food": ""},
+	"energy": {"label": "Năng lượng", "icon": "", "food": "Đồ ăn"},
+	"mood": {"label": "Tâm trạng", "icon": "", "food": ""},
+	"bond": {"label": "Gắn kết", "icon": "", "food": ""},
 }
+const DEFAULT_SHAPE := {"body": "squircle", "color": "yellow", "face": "a", "hands": "open"}
 
 var id := ""
 var name := ""
@@ -21,7 +28,7 @@ var kind := "sprite2d"
 var personality := Personality.DEFAULT_ARCHETYPE
 ## Nhãn hiển thị cho 3 thanh: {energy: {label, icon, food}, ...}
 var needs := {}
-## Mỹ thuật
+## kind sprite2d
 var sheet_path := ""
 var frame_size := Vector2i(64, 64)
 var scale := 3.0
@@ -29,9 +36,14 @@ var scale := 3.0
 var filter := "linear"
 ## {anim_name: {frames: [int], fps: float, loop: bool}}
 var animations := {}
+## kind image
+var image_path := ""
+var display_height := 150.0
+## kind shape
+var shape := DEFAULT_SHAPE.duplicate()
 ## Câu nói override: {event: [String]}
 var lines := {}
-## Màu dự phòng khi thiếu sprite
+## Màu dự phòng khi thiếu ảnh
 var fallback_color := Color(0.78, 0.55, 0.29)
 
 var root_dir := ""
@@ -40,6 +52,10 @@ var errors: PackedStringArray = []
 
 func is_valid() -> bool:
 	return errors.is_empty()
+
+
+func is_procedural() -> bool:
+	return kind != "sprite2d"
 
 
 func need_label(key: String) -> String:
@@ -56,12 +72,22 @@ func food_name() -> String:
 
 
 func has_animation(anim: String) -> bool:
+	if is_procedural():
+		return KNOWN_ANIMATIONS.has(anim)
 	return animations.has(anim)
 
 
 ## Tên animation thực sự sẽ dùng, lùi về idle nếu pack không có.
 func resolve_animation(anim: String) -> String:
-	return anim if animations.has(anim) else "idle"
+	return anim if has_animation(anim) else "idle"
+
+
+func sheet_full_path() -> String:
+	return root_dir.path_join(sheet_path)
+
+
+func image_full_path() -> String:
+	return root_dir.path_join(image_path)
 
 
 static func from_json(text: String, root: String) -> BuddyPack:
@@ -79,6 +105,34 @@ static func from_json(text: String, root: String) -> BuddyPack:
 	return pack
 
 
+## Dictionary để ghi ra pack.json (Workshop dùng).
+func to_dict() -> Dictionary:
+	var d := {
+		"format": FORMAT_VERSION,
+		"id": id,
+		"name": name,
+		"author": author,
+		"version": version,
+		"description": description,
+		"kind": kind,
+		"personality": personality,
+		"needs": needs.duplicate(true),
+		"lines": lines.duplicate(true),
+	}
+	match kind:
+		"sprite2d":
+			d["art"] = {
+				"sheet": sheet_path, "frame_size": [frame_size.x, frame_size.y],
+				"scale": scale, "filter": filter, "animations": animations.duplicate(true),
+			}
+		"image":
+			d["image"] = image_path
+			d["display_height"] = display_height
+		"shape":
+			d["shape"] = shape.duplicate()
+	return d
+
+
 func _read(d: Dictionary) -> void:
 	var fmt := int(d.get("format", 0))
 	if fmt != FORMAT_VERSION:
@@ -92,8 +146,8 @@ func _read(d: Dictionary) -> void:
 	version = str(d.get("version", "0.0.0"))
 	description = str(d.get("description", ""))
 	kind = str(d.get("kind", "sprite2d"))
-	if kind != "sprite2d":
-		errors.append("kind '%s' chưa hỗ trợ (hiện chỉ có sprite2d)" % kind)
+	if not KINDS.has(kind):
+		errors.append("kind '%s' không hợp lệ. Hợp lệ: %s" % [kind, ", ".join(KINDS)])
 
 	personality = str(d.get("personality", Personality.DEFAULT_ARCHETYPE))
 	if not Personality.has(personality):
@@ -107,11 +161,17 @@ func _read(d: Dictionary) -> void:
 	else:
 		errors.append("needs phải là object")
 
-	var art = d.get("art", {})
-	if art is Dictionary:
-		_read_art(art)
-	else:
-		errors.append("art phải là object")
+	match kind:
+		"sprite2d":
+			var art = d.get("art", {})
+			if art is Dictionary:
+				_read_art(art)
+			else:
+				errors.append("art phải là object")
+		"image":
+			_read_image(d)
+		"shape":
+			_read_shape(d)
 
 	var l = d.get("lines", {})
 	if l is Dictionary:
@@ -174,8 +234,26 @@ func _read_art(art: Dictionary) -> void:
 			errors.append("Thiếu animation bắt buộc '%s'" % req)
 
 
-func sheet_full_path() -> String:
-	return root_dir.path_join(sheet_path)
+func _read_image(d: Dictionary) -> void:
+	image_path = str(d.get("image", "")).strip_edges()
+	if image_path == "":
+		errors.append("image bắt buộc với kind image (tên file ảnh trong thư mục pack)")
+	elif image_path.contains("..") or image_path.begins_with("/"):
+		errors.append("image phải là đường dẫn tương đối trong thư mục pack")
+	display_height = clampf(float(d.get("display_height", 150.0)), 40.0, 400.0)
+
+
+func _read_shape(d: Dictionary) -> void:
+	var s = d.get("shape", {})
+	if not (s is Dictionary):
+		errors.append("shape phải là object")
+		return
+	for key in DEFAULT_SHAPE.keys():
+		shape[key] = str(s.get(key, DEFAULT_SHAPE[key]))
+	if not ShapeParts.is_valid(shape["body"], shape["color"], shape["face"], shape["hands"]):
+		errors.append("shape không hợp lệ. body: %s; color: %s; face: %s; hands: %s" % [
+			", ".join(ShapeParts.SHAPES), ", ".join(ShapeParts.COLORS),
+			", ".join(ShapeParts.FACES), ", ".join(ShapeParts.HANDS)])
 
 
 static func _is_slug(s: String) -> bool:

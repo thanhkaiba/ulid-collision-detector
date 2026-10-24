@@ -18,6 +18,11 @@ func _init() -> void:
 	_test_pack_parse_errors()
 	_test_builtin_packs_load()
 	_test_focus_snacks()
+	_test_pack_kinds()
+	_test_image_tools()
+	_test_slugify()
+	_test_shape_parts_exist()
+	_test_zip_roundtrip()
 	print("")
 	print("%d test, %d lỗi" % [_count, _failures])
 	quit(1 if _failures > 0 else 0)
@@ -180,7 +185,7 @@ func _test_pack_parse_errors() -> void:
 func _test_builtin_packs_load() -> void:
 	print("Pack đi kèm trong res://packs")
 	var packs := PackLoader.scan()
-	_check(packs.size() >= 3, "tìm thấy >= 3 pack (được %d)" % packs.size())
+	_check(packs.size() >= 5, "tìm thấy >= 5 pack (được %d)" % packs.size())
 	var ids: Array[String] = []
 	for p in packs:
 		_check(p.is_valid(), "pack '%s' hợp lệ: %s" % [p.id, "ok" if p.is_valid() else str(p.errors)])
@@ -188,9 +193,12 @@ func _test_builtin_packs_load() -> void:
 		for anim in BuddyPack.KNOWN_ANIMATIONS:
 			if not p.has_animation(anim):
 				_check(false, "pack '%s' thiếu animation %s" % [p.id, anim])
-		var frames := PackLoader.build_sprite_frames(p)
-		_check(frames != null and frames.has_animation("idle") and frames.get_frame_count("idle") == 2, "pack '%s' dựng được SpriteFrames từ sheet" % p.id)
-	_check(ids.has("potato") and ids.has("aki") and ids.has("rex"), "có đủ potato, aki, rex")
+		if p.kind == "sprite2d":
+			var frames := PackLoader.build_sprite_frames(p)
+			_check(frames != null and frames.has_animation("idle") and frames.get_frame_count("idle") == 2, "pack '%s' dựng được SpriteFrames từ sheet" % p.id)
+		elif p.kind == "image":
+			_check(PackLoader.load_texture(p.image_full_path()) != null, "pack '%s' đọc được ảnh" % p.id)
+	_check(ids.has("potato") and ids.has("aki") and ids.has("rex") and ids.has("blob") and ids.has("zombie"), "có đủ potato, aki, rex, blob, zombie")
 	_check(PackLoader.find(packs, "aki") != null and PackLoader.find(packs, "khong_co") == null, "PackLoader.find")
 	var fallback := PlaceholderArt.build(Color.RED, 32)
 	_check(fallback.has_animation("sleep") and fallback.get_frame_count("idle") == 2, "PlaceholderArt dựng đủ animation")
@@ -201,3 +209,105 @@ func _test_focus_snacks() -> void:
 	_check(FocusSession.snacks_for(25.0) == 1, "25 phút = 1 snack")
 	_check(FocusSession.snacks_for(50.0) == 2, "50 phút = 2 snack")
 	_check(FocusSession.snacks_for(5.0) == 1, "phiên ngắn vẫn được tối thiểu 1")
+
+
+func _test_pack_kinds() -> void:
+	print("BuddyPack kind image / shape")
+	var img := BuddyPack.from_json('{"format": 1, "id": "pic", "kind": "image", "image": "me.png", "display_height": 900}', "user://packs/pic")
+	_check(img.is_valid() and img.is_procedural(), "image hợp lệ và là procedural: %s" % str(img.errors))
+	_check(is_equal_approx(img.display_height, 400.0), "display_height bị kẹp về 400")
+	_check(img.image_full_path() == "user://packs/pic/me.png", "image_full_path")
+	_check(img.has_animation("sleep") and img.resolve_animation("eat") == "eat", "kind image có mọi animation")
+	var no_img := BuddyPack.from_json('{"format": 1, "id": "pic", "kind": "image"}', "")
+	_check(not no_img.is_valid() and no_img.errors[0].contains("image"), "image thiếu file → lỗi")
+	var esc := BuddyPack.from_json('{"format": 1, "id": "pic", "kind": "image", "image": "../x.png"}', "")
+	_check(not esc.is_valid(), "image có '..' → lỗi")
+	var sh := BuddyPack.from_json('{"format": 1, "id": "s", "kind": "shape", "shape": {"body": "circle", "color": "red", "face": "d", "hands": "rock"}}', "")
+	_check(sh.is_valid() and sh.shape["color"] == "red" and sh.shape["hands"] == "rock", "shape hợp lệ: %s" % str(sh.errors))
+	var sh_default := BuddyPack.from_json('{"format": 1, "id": "s", "kind": "shape"}', "")
+	_check(sh_default.is_valid() and sh_default.shape["body"] == "squircle", "shape thiếu → mặc định")
+	var sh_bad := BuddyPack.from_json('{"format": 1, "id": "s", "kind": "shape", "shape": {"body": "tam-giac"}}', "")
+	_check(not sh_bad.is_valid() and sh_bad.errors[0].contains("shape"), "shape lạ → lỗi")
+	var bad_kind := BuddyPack.from_json('{"format": 1, "id": "s", "kind": "vrm"}', "")
+	_check(not bad_kind.is_valid() and bad_kind.errors[0].contains("kind"), "kind lạ → lỗi")
+	var d := sh.to_dict()
+	var again := BuddyPack.from_json(JSON.stringify(d), "")
+	_check(again.is_valid() and again.kind == "shape" and again.shape["face"] == "d", "to_dict → from_json giữ nguyên")
+
+
+func _test_image_tools() -> void:
+	print("ImageTools.remove_background")
+	var img := Image.create(24, 24, false, Image.FORMAT_RGBA8)
+	img.fill(Color.WHITE)
+	img.fill_rect(Rect2i(8, 8, 8, 8), Color.RED)
+	img.fill_rect(Rect2i(10, 10, 2, 2), Color.WHITE)  # "mắt" trắng bên trong, không nối với góc
+	var out := ImageTools.remove_background(img, 0.1)
+	_check(out.get_pixel(0, 0).a == 0.0 and out.get_pixel(23, 23).a == 0.0, "góc thành trong suốt")
+	_check(out.get_pixel(12, 12).a == 1.0, "vùng đỏ giữ nguyên")
+	_check(out.get_pixel(10, 10).a == 1.0, "vùng trắng kín bên trong không bị xoá")
+	var trimmed := ImageTools.trim(out)
+	_check(trimmed.get_width() == 8 and trimmed.get_height() == 8, "trim cắt về 8x8 (được %dx%d)" % [trimmed.get_width(), trimmed.get_height()])
+	var big := Image.create(1000, 500, false, Image.FORMAT_RGBA8)
+	var small := ImageTools.fit(big, 200)
+	_check(small.get_width() == 200 and small.get_height() == 100, "fit thu về 200x100")
+
+
+func _test_slugify() -> void:
+	print("PackLoader.slugify")
+	_check(PackLoader.slugify("Củ Khoai Tây") == "cu-khoai-tay", "bỏ dấu tiếng Việt: %s" % PackLoader.slugify("Củ Khoai Tây"))
+	_check(PackLoader.slugify("  Đậu   Đỏ!!") == "dau-do", "đ → d, gộp dấu cách: %s" % PackLoader.slugify("  Đậu   Đỏ!!"))
+	_check(PackLoader.slugify("日本") == "buddy", "không có chữ latin → buddy")
+	_check(PackLoader.slugify("Rex 2") == "rex-2", "số giữ nguyên")
+
+
+func _test_shape_parts_exist() -> void:
+	print("ShapeParts: mọi tổ hợp có file")
+	var missing: Array[String] = []
+	for shape in ShapeParts.SHAPES:
+		for color in ShapeParts.COLORS:
+			if not FileAccess.file_exists(ShapeParts.body_path(shape, color)):
+				missing.append(ShapeParts.body_path(shape, color))
+	for color in ShapeParts.COLORS:
+		for hand in ShapeParts.HANDS:
+			if not FileAccess.file_exists(ShapeParts.hand_path(color, hand)):
+				missing.append(ShapeParts.hand_path(color, hand))
+	for face in ShapeParts.FACES:
+		if not FileAccess.file_exists(ShapeParts.face_path(face)):
+			missing.append(ShapeParts.face_path(face))
+	_check(missing.is_empty(), "thiếu: %s" % str(missing) if not missing.is_empty() else "24 thân, 36 tay, 12 mặt đều có")
+	for anim in BuddyPack.KNOWN_ANIMATIONS:
+		_check(ShapeParts.STATE_HANDS.has(anim), "STATE_HANDS có %s" % anim)
+
+
+func _test_zip_roundtrip() -> void:
+	print("PackLoader export_zip / import_zip")
+	var packs := PackLoader.scan()
+	var src := PackLoader.find(packs, "blob")
+	_check(src != null, "có pack blob để xuất")
+	if src == null:
+		return
+	PackLoader.ensure_user_dir()
+	var zip_path := ProjectSettings.globalize_path("user://test_blob.zip")
+	var err := PackLoader.export_zip(src, zip_path)
+	_check(err == OK and FileAccess.file_exists(zip_path), "xuất zip OK")
+	var r := PackLoader.import_zip(zip_path)
+	_check(r["ok"] and r["id"] == "blob", "nhập zip OK: %s" % str(r))
+	var imported := FileAccess.file_exists("user://packs/blob/pack.json")
+	_check(imported, "pack.json được giải nén vào user://packs/blob")
+	var rescanned := PackLoader.find(PackLoader.scan(), "blob")
+	_check(rescanned != null and rescanned.root_dir.begins_with("user://"), "pack user:// ghi đè pack đi kèm")
+	# Nhập zip không có pack.json → lỗi rõ ràng
+	var bad_zip := ProjectSettings.globalize_path("user://test_bad.zip")
+	var packer := ZIPPacker.new()
+	packer.open(bad_zip)
+	packer.start_file("readme.txt")
+	packer.write_file("hi".to_utf8_buffer())
+	packer.close_file()
+	packer.close()
+	var rb := PackLoader.import_zip(bad_zip)
+	_check(not rb["ok"] and rb["error"].contains("pack.json"), "zip thiếu pack.json → báo lỗi")
+	# dọn dẹp
+	PackLoader.remove_user_pack("blob")
+	DirAccess.remove_absolute(zip_path)
+	DirAccess.remove_absolute(bad_zip)
+	_check(not FileAccess.file_exists("user://packs/blob/pack.json"), "dọn dẹp pack test")

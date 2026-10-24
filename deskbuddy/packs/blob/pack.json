@@ -1,0 +1,17 @@
+{
+  "format": 1,
+  "id": "blob",
+  "name": "Kẹo",
+  "author": "DeskBuddy Team",
+  "version": "1.0.0",
+  "description": "Viên kẹo hồng ghép từ bộ phận ngay trong app. Bám người và rất dễ cưng.",
+  "kind": "shape",
+  "personality": "clingy",
+  "shape": { "body": "squircle", "color": "pink", "face": "a", "hands": "open" },
+  "needs": {
+    "energy": { "label": "Đường", "icon": "", "food": "Viên đường" },
+    "mood":   { "label": "Vui",   "icon": "" },
+    "bond":   { "label": "Dính",  "icon": "" }
+  },
+  "credits": "Art: Kenney Shape Characters (www.kenney.nl), CC0 1.0"
+}
