@@ -1,3 +1,6 @@
 .godot/
 *.import
 export/
+
+# GodotSteam GDExtension (tự tải, xem addons/README.md)
+addons/godotsteam/

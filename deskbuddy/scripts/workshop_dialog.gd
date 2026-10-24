@@ -7,6 +7,7 @@ signal pack_created(id: String)
 
 const TAB_IMAGE := 0
 const TAB_SHAPE := 1
+const TAB_STEAM := 2
 
 var _tabs: TabContainer
 # tab ảnh
@@ -28,6 +29,18 @@ var _shape_face: TextureRect
 var _shape_hand_l: TextureRect
 var _shape_hand_r: TextureRect
 var _shape_meta := {}
+# tab Steam
+var _steam_service: WorkshopService
+var _get_pack: Callable
+var _capture_preview: Callable
+var _steam_status: Label
+var _steam_sync_result: Label
+var _steam_title: LineEdit
+var _steam_desc: TextEdit
+var _steam_note: LineEdit
+var _steam_upload_btn: Button
+var _steam_sync_btn: Button
+var _steam_progress: Label
 
 
 func _ready() -> void:
@@ -46,12 +59,29 @@ func _ready() -> void:
 	bg.add_child(_tabs)
 	_tabs.add_child(_build_image_tab())
 	_tabs.add_child(_build_shape_tab())
+	_tabs.add_child(_build_steam_tab())
 	_tabs.set_tab_title(0, "Từ ảnh")
 	_tabs.set_tab_title(1, "Ghép hình")
+	_tabs.set_tab_title(2, "Steam Workshop")
+
+
+## Nối với dịch vụ Workshop; get_pack trả BuddyPack hiện tại,
+## capture_preview(path) chụp nhân vật ra PNG.
+func setup_steam(service: WorkshopService, get_pack: Callable, capture_preview: Callable) -> void:
+	_steam_service = service
+	_get_pack = get_pack
+	_capture_preview = capture_preview
+	if service != null:
+		service.upload_finished.connect(_on_upload_finished)
+		service.upload_progress.connect(_on_upload_progress)
+		service.sync_finished.connect(_on_sync_finished)
+	_refresh_steam_tab()
 
 
 func open(tab: int) -> void:
 	_tabs.current_tab = tab
+	if tab == TAB_STEAM:
+		_refresh_steam_tab()
 	if not visible:
 		popup_centered()
 	else:
@@ -378,3 +408,100 @@ func _on_create_shape() -> void:
 	if dir != "":
 		pack_created.emit(data["id"])
 		hide()
+
+
+# ---------- Tab 3: Steam Workshop ----------
+
+func _build_steam_tab() -> Control:
+	var scroll := _make_scroll()
+	var v: VBoxContainer = scroll.get_child(0).get_child(0)
+	v.add_child(_heading("Steam Workshop"))
+	_steam_status = _label("", true)
+	v.add_child(_steam_status)
+
+	v.add_child(_heading("Tải về"))
+	v.add_child(_label("Subscribe nhân vật trên Steam, app tự tải về và thêm vào menu Đổi nhân vật. Bỏ subscribe thì tự gỡ.", true))
+	_steam_sync_btn = Button.new()
+	_steam_sync_btn.text = "Đồng bộ ngay"
+	_steam_sync_btn.pressed.connect(func() -> void:
+		if _steam_service != null:
+			_steam_service.sync())
+	v.add_child(_steam_sync_btn)
+	_steam_sync_result = _label("", true)
+	v.add_child(_steam_sync_result)
+
+	v.add_child(_heading("Tải lên nhân vật hiện tại"))
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 10)
+	grid.add_theme_constant_override("v_separation", 6)
+	v.add_child(grid)
+	grid.add_child(_label("Tiêu đề"))
+	_steam_title = LineEdit.new()
+	_steam_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_child(_steam_title)
+	grid.add_child(_label("Mô tả"))
+	_steam_desc = TextEdit.new()
+	_steam_desc.custom_minimum_size = Vector2(0, 70)
+	_steam_desc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_child(_steam_desc)
+	grid.add_child(_label("Ghi chú bản này"))
+	_steam_note = LineEdit.new()
+	_steam_note.placeholder_text = "Ví dụ: thêm animation ngủ"
+	_steam_note.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	grid.add_child(_steam_note)
+	_steam_upload_btn = Button.new()
+	_steam_upload_btn.text = "Tải lên Workshop"
+	_steam_upload_btn.pressed.connect(_on_steam_upload)
+	v.add_child(_steam_upload_btn)
+	_steam_progress = _label("", true)
+	v.add_child(_steam_progress)
+	v.add_child(_label("Ảnh xem trước được chụp tự động từ nhân vật đang hiển thị. Lần đầu tải lên, Steam có thể yêu cầu chấp nhận Điều khoản Workshop.", true))
+	return scroll
+
+
+func _refresh_steam_tab() -> void:
+	if _steam_status == null:
+		return
+	var available := _steam_service != null and _steam_service.is_available()
+	_steam_status.text = _steam_service.status_text() if _steam_service != null else "Chưa cài GodotSteam (addons/godotsteam). Xem addons/README.md."
+	_steam_sync_btn.disabled = not available
+	_steam_upload_btn.disabled = not available
+	if _get_pack.is_valid():
+		var pack: BuddyPack = _get_pack.call()
+		if pack != null:
+			if _steam_title.text.strip_edges() == "":
+				_steam_title.text = pack.name
+			if _steam_desc.text.strip_edges() == "":
+				_steam_desc.text = pack.description
+			var fid := _steam_service.known_file_id(pack.id) if _steam_service != null else 0
+			_steam_upload_btn.text = "Cập nhật item #%d" % fid if fid > 0 else "Tải lên Workshop"
+
+
+func _on_steam_upload() -> void:
+	if _steam_service == null or not _get_pack.is_valid():
+		return
+	var pack: BuddyPack = _get_pack.call()
+	if pack == null:
+		return
+	var preview := ""
+	if _capture_preview.is_valid():
+		preview = str(_capture_preview.call(ProjectSettings.globalize_path("user://workshop_preview_%s.png" % pack.id)))
+	_steam_upload_btn.disabled = true
+	_steam_progress.text = "Đang gửi lên Steam…"
+	_steam_service.upload(pack, _steam_title.text.strip_edges(), _steam_desc.text.strip_edges(), _steam_note.text.strip_edges(), preview)
+
+
+func _on_upload_progress(status: int, processed: int, total: int) -> void:
+	if total > 0:
+		_steam_progress.text = "Đang tải lên… %d%% (trạng thái %d)" % [int(100.0 * processed / total), status]
+
+
+func _on_upload_finished(ok: bool, file_id: int, message: String) -> void:
+	_steam_upload_btn.disabled = not (_steam_service != null and _steam_service.is_available())
+	_steam_progress.text = ("%s (item #%d)" % [message, file_id]) if ok else message
+	_refresh_steam_tab()
+
+
+func _on_sync_finished(installed: int, pending: int, removed: int) -> void:
+	_steam_sync_result.text = "Đã cài %d, đang tải %d, đã gỡ %d." % [installed, pending, removed]

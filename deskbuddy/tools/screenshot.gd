@@ -34,6 +34,8 @@ func _initialize() -> void:
 			_workshop_tab = 2
 		elif a == "tray":
 			_workshop_tab = 3
+		elif a == "workshop_steam":
+			_workshop_tab = 4
 	_main = load("res://scenes/main.tscn").instantiate()
 	root.add_child(_main)
 
@@ -66,11 +68,16 @@ func _process(_delta: float) -> bool:
 			_main._on_tray_action(TrayIcon.Id.TOGGLE_VISIBLE)
 			_main._on_tray_action(TrayIcon.Id.TOGGLE_VISIBLE)
 			print("hidden flag after toggle x2: ", _main._hidden, " mode: ", root.mode)
+		elif _workshop_tab == 4:
+			_main._on_workshop_pressed(2004)
+			print("steam available: ", _main.workshop_service.is_available(), " status: ", _main.workshop_service.status_text())
+			var prev: String = _main.capture_preview(ProjectSettings.globalize_path("user://preview_test.png"))
+			print("preview captured: ", prev != "", " exists: ", FileAccess.file_exists(prev))
 		elif _workshop_tab >= 0:
 			_main._on_workshop_pressed(2000 + _workshop_tab)
 	if _frames == _target:
 		var vp: Viewport = root
-		if _workshop_tab >= 0 and _workshop_tab < 2 and _main.workshop != null:
+		if (_workshop_tab < 2 or _workshop_tab == 4) and _workshop_tab >= 0 and _main.workshop != null:
 			vp = _main.workshop
 		if _workshop_tab == 2:
 			PackLoader.remove_user_pack(_main.pack.id)

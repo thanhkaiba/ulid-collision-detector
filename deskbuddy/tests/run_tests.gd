@@ -25,6 +25,7 @@ func _init() -> void:
 	_test_zip_roundtrip()
 	_test_autostart()
 	_test_activity_probe()
+	_test_workshop_service()
 	print("")
 	print("%d test, %d lỗi" % [_count, _failures])
 	quit(1 if _failures > 0 else 0)
@@ -357,3 +358,99 @@ func _test_activity_probe() -> void:
 	_check(since == -1.0 or since >= 0.0, "get_seconds_since_key là -1 hoặc không âm (%.3f)" % since)
 	p = null
 	_check(true, "giải phóng instance không crash")
+
+
+func _test_workshop_service() -> void:
+	print("WorkshopService với FakeSteamAdapter")
+	var fake := FakeSteamAdapter.new()
+	var svc := WorkshopService.new(fake)
+	root.add_child(svc)  # chạy _ready: nạp manifest, nối tín hiệu
+	svc.manifest = {"uploads": {}, "installed": {}}
+	_check(svc.is_available(), "dịch vụ sẵn sàng với adapter giả")
+
+	# --- upload lần đầu: createItem → update → file_id được nhớ ---
+	var packs := PackLoader.scan()
+	var potato := PackLoader.find(packs, "potato")
+	var got := {}
+	# Lambda bắt biến theo giá trị, nên ghi vào Dictionary tại chỗ.
+	svc.upload_finished.connect(func(ok: bool, fid: int, msg: String) -> void:
+		got["ok"] = ok
+		got["fid"] = fid
+		got["msg"] = msg)
+	svc.upload(potato, "Củ Khoai", "Khoai lười", "bản đầu", "")
+	_check(got.get("ok", false) and int(got.get("fid", 0)) >= 1000, "upload lần đầu OK: %s" % str(got))
+	var fid := int(got.get("fid", 0))
+	_check(svc.known_file_id("potato") == fid, "manifest nhớ file_id của potato")
+	_check(fake.items[fid]["title"] == "Củ Khoai", "tiêu đề tới Steam")
+	var content := str(fake.items[fid]["content"])
+	_check(FileAccess.file_exists(content.path_join("pack.json")) and FileAccess.file_exists(content.path_join("sprites.png")), "content có pack.json + sprites.png")
+	var staged := PackLoader.list_files(WorkshopService.STAGE_DIR.path_join("potato"))
+	_check(staged.size() == 2, "thư mục stage chỉ có 2 file (được %s)" % str(staged))
+
+	# --- upload lần hai: dùng lại file_id, không tạo item mới ---
+	var count_before := fake.items.size()
+	svc.upload(potato, "Củ Khoai v2", "", "bản hai", "")
+	_check(fake.items.size() == count_before and fake.items[fid]["title"] == "Củ Khoai v2", "lần hai cập nhật item cũ")
+
+	# --- tạo item thất bại ---
+	fake.fail_next_create = true
+	var rex := PackLoader.find(packs, "rex")
+	svc.upload(rex, "Rex", "", "", "")
+	_check(not got["ok"] and svc.known_file_id("rex") == 0, "createItem thất bại → báo lỗi, không nhớ id")
+
+	# --- sync: subscribe item của "người khác" → tải về user://packs ---
+	var seed_id := fake.seed_item("res://packs/blob", 1)
+	fake.subscribe(seed_id)
+	var r := svc.sync()
+	_check(r["pending"] == 1, "lần 1: item chưa cài → yêu cầu tải (%s)" % str(r))
+	r = svc.sync()
+	_check(r["installed"] == 1, "lần 2: đã tải → cài vào packs (%s)" % str(r))
+	var installed_json := "user://packs/blob/pack.json"
+	_check(FileAccess.file_exists(installed_json), "pack blob xuất hiện trong user://packs")
+	var d = JSON.parse_string(FileAccess.get_file_as_string(installed_json))
+	_check(d is Dictionary and int(d.get("workshop_file_id", 0)) == seed_id, "pack.json ghi workshop_file_id")
+	r = svc.sync()
+	_check(r["installed"] == 0 and r["pending"] == 0, "sync lại không làm gì khi đã mới nhất")
+
+	# --- tác giả đăng bản mới → cập nhật ---
+	fake.publish_new_version(seed_id, "res://packs/blob")
+	r = svc.sync()
+	_check(r["pending"] == 1, "bản mới → cần tải lại")
+	r = svc.sync()
+	_check(r["installed"] == 1 and int(svc.manifest["installed"][str(seed_id)]["timestamp"]) == 2, "cài bản mới, timestamp = 2")
+
+	# --- trùng id với pack người dùng tự tạo → đổi tên ---
+	PackLoader.write_pack("aki", {"format": 1, "id": "aki", "kind": "shape"})
+	var seed_aki := fake.seed_item("res://packs/aki", 1)
+	fake.subscribe(seed_aki)
+	svc.sync()
+	r = svc.sync()
+	var renamed: String = str(svc.manifest["installed"][str(seed_aki)]["pack_id"])
+	_check(r["installed"] == 1 and renamed.begins_with("aki-ws"), "trùng id → cài thành %s" % renamed)
+	_check(FileAccess.file_exists("user://packs/%s/pack.json" % renamed), "thư mục pack đổi tên tồn tại")
+
+	# --- bỏ subscribe → gỡ pack ---
+	fake.unsubscribe(seed_id)
+	r = svc.sync()
+	_check(r["removed"] == 1 and not FileAccess.file_exists(installed_json), "bỏ subscribe → gỡ pack blob")
+
+	# --- manifest lưu/đọc ---
+	svc.save_manifest()
+	var svc2 := WorkshopService.new(fake)
+	svc2.load_manifest()
+	_check(svc2.known_file_id("potato") == fid and svc2.manifest["installed"].has(str(seed_aki)), "manifest đọc lại đúng")
+
+	# dọn dẹp
+	fake.unsubscribe(seed_aki)
+	svc.sync()
+	PackLoader.remove_user_pack("aki")
+	PackLoader.remove_user_pack(renamed)
+	for f in PackLoader.list_files(WorkshopService.STAGE_DIR.path_join("potato")):
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(WorkshopService.STAGE_DIR.path_join("potato").path_join(f)))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(WorkshopService.STAGE_DIR.path_join("potato")))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(WorkshopService.STAGE_DIR))
+	DirAccess.remove_absolute(ProjectSettings.globalize_path(WorkshopService.MANIFEST))
+	fake.wipe()
+	root.remove_child(svc)
+	svc.free()
+	_check(not FileAccess.file_exists("user://packs/aki/pack.json"), "dọn dẹp xong")

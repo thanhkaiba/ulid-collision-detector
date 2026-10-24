@@ -10,7 +10,7 @@ const GREET_DELAY := 1.0
 const DEFAULT_PACK_ID := "potato"
 
 enum MenuId { FEED, PET, FOCUS_START, FOCUS_CANCEL, OPEN_PACKS_DIR, RELOAD_PACKS, QUIT, HIDE_TO_TRAY, AUTOSTART }
-enum WsId { FROM_IMAGE = 2000, FROM_PARTS, IMPORT_ZIP, EXPORT_ZIP }
+enum WsId { FROM_IMAGE = 2000, FROM_PARTS, IMPORT_ZIP, EXPORT_ZIP, STEAM }
 const PACK_MENU_BASE := 1000
 
 var packs: Array[BuddyPack] = []
@@ -27,6 +27,7 @@ var workshop_menu: PopupMenu
 var workshop: WorkshopDialog
 var _zip_dialog: FileDialog
 var tray: TrayIcon
+var workshop_service: WorkshopService
 ## Cửa sổ chính không ẩn được bằng visible, nên "ẩn vào khay" = thu nhỏ.
 var _hidden := false
 var activity: ActivityMonitor
@@ -55,6 +56,7 @@ func _ready() -> void:
 	_build_nodes()
 	_build_menu()
 	_build_tray()
+	_build_workshop_service()
 
 	pack = PackLoader.find(packs, str(save.get("pack_id", "")))
 	if pack == null:
@@ -121,6 +123,48 @@ func _build_nodes() -> void:
 	hud.position = Vector2(12, 10)
 	hud.visible = false
 	layer.add_child(hud)
+
+
+func _build_workshop_service() -> void:
+	# SteamAdapter tự phát hiện GodotSteam; không có thì dịch vụ báo không sẵn sàng.
+	workshop_service = WorkshopService.new(SteamAdapter.new())
+	add_child(workshop_service)
+	workshop_service.sync_finished.connect(_on_workshop_sync_finished)
+	workshop_service.upload_finished.connect(func(ok: bool, file_id: int, message: String) -> void:
+		buddy.say(("Đã lên Workshop, item #%d!" % file_id) if ok else message, 6.0))
+	if workshop_service.is_available():
+		workshop_service.sync()
+
+
+func _on_workshop_sync_finished(installed: int, _pending: int, removed: int) -> void:
+	if installed > 0 or removed > 0:
+		packs = PackLoader.scan()
+		var same := PackLoader.find(packs, pack.id)
+		if same == null:
+			same = PackLoader.find(packs, DEFAULT_PACK_ID)
+		if same != null:
+			_apply_pack(same, false)
+		_refresh_menu()
+		if installed > 0:
+			buddy.say("Workshop: có %d nhân vật mới trong menu Đổi nhân vật." % installed, 6.0)
+
+
+## Chụp nhân vật đang hiển thị ra PNG (ảnh xem trước cho Workshop).
+func capture_preview(abs_path: String) -> String:
+	var img := get_viewport().get_texture().get_image()
+	if img == null:
+		return ""
+	var r := buddy.get_global_rect().grow(16.0)
+	var ri := Rect2i(r.position.floor(), r.size.ceil())
+	ri = ri.intersection(Rect2i(Vector2i.ZERO, img.get_size()))
+	if ri.size.x <= 0 or ri.size.y <= 0:
+		return ""
+	var crop := img.get_region(ri)
+	# Steam muốn ảnh có nền; đặt nền sáng nhẹ.
+	var bg := Image.create(crop.get_width(), crop.get_height(), false, Image.FORMAT_RGBA8)
+	bg.fill(Color(0.93, 0.94, 0.97))
+	bg.blend_rect(crop, Rect2i(Vector2i.ZERO, crop.get_size()), Vector2i.ZERO)
+	return abs_path if bg.save_png(abs_path) == OK else ""
 
 
 func _build_tray() -> void:
@@ -191,6 +235,8 @@ func _build_menu() -> void:
 	workshop_menu.add_separator()
 	workshop_menu.add_item("Nhập pack (.zip)…", WsId.IMPORT_ZIP)
 	workshop_menu.add_item("Xuất nhân vật hiện tại (.zip)…", WsId.EXPORT_ZIP)
+	workshop_menu.add_separator()
+	workshop_menu.add_item("Steam Workshop…", WsId.STEAM)
 	menu.id_pressed.connect(_on_menu_pressed)
 	pack_menu.id_pressed.connect(_on_pack_menu_pressed)
 	workshop_menu.id_pressed.connect(_on_workshop_pressed)
@@ -353,12 +399,18 @@ func _on_menu_pressed(id: int) -> void:
 
 func _on_workshop_pressed(id: int) -> void:
 	match id:
-		WsId.FROM_IMAGE, WsId.FROM_PARTS:
+		WsId.FROM_IMAGE, WsId.FROM_PARTS, WsId.STEAM:
 			if workshop == null:
 				workshop = WorkshopDialog.new()
 				add_child(workshop)
 				workshop.pack_created.connect(_on_pack_created)
-			workshop.open(WorkshopDialog.TAB_IMAGE if id == WsId.FROM_IMAGE else WorkshopDialog.TAB_SHAPE)
+				workshop.setup_steam(workshop_service, func() -> BuddyPack: return pack, capture_preview)
+			var tab := WorkshopDialog.TAB_IMAGE
+			if id == WsId.FROM_PARTS:
+				tab = WorkshopDialog.TAB_SHAPE
+			elif id == WsId.STEAM:
+				tab = WorkshopDialog.TAB_STEAM
+			workshop.open(tab)
 		WsId.IMPORT_ZIP:
 			_zip_file_dialog(FileDialog.FILE_MODE_OPEN_FILE, "Chọn pack .zip", _on_import_zip_selected)
 		WsId.EXPORT_ZIP:

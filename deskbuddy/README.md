@@ -93,8 +93,21 @@ Menu chuột phải → **Workshop**:
 Pack tạo ra nằm ở `user://packs/<id>/`, cùng định dạng mở trong
 `docs/PACK_FORMAT.md`, nên họa sĩ có thể mở ra sửa tay.
 
-Steam Workshop sau này chỉ là lớp vận chuyển cho đúng những thư mục này
-(upload zip lên, tải về giải nén vào `user://packs`).
+### Steam Workshop
+
+Cùng tab Workshop có mục **Steam Workshop** (cần GodotSteam, xem
+`addons/README.md`):
+
+- **Tải về**: subscribe nhân vật trên Steam, app tự tải về và chép vào
+  `user://packs`, cập nhật khi tác giả đăng bản mới, gỡ khi bỏ subscribe.
+  Đồng bộ lúc mở app, khi Steam báo có item mới, và mỗi 10 phút.
+- **Tải lên**: đăng nhân vật đang hiển thị với tiêu đề, mô tả, ghi chú.
+  Ảnh xem trước chụp tự động. Lần đầu tạo item mới, các lần sau cập nhật
+  đúng item đó (file id nhớ trong `user://workshop.json`).
+
+Phần gọi Steam gói trong `scripts/workshop/steam_adapter.gd`; toàn bộ logic
+đồng bộ nằm ở `workshop_service.gd` và được test bằng
+`fake_steam_adapter.gd`, không cần Steam.
 
 ### Vì sao chưa có model 3D
 
