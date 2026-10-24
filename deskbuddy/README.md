@@ -6,6 +6,10 @@ làm việc, và được "cho ăn" bằng chính thời gian tập trung của 
 
 Đây là MVP viết bằng **Godot 4.3**, chạy trên Windows, macOS và Linux.
 
+| Củ Khoai (lười) | Aki (tsundere, đang đói) | Rex (hỗn loạn, đang buồn) |
+|---|---|---|
+| ![](docs/screenshots/potato.png) | ![](docs/screenshots/aki_hungry.png) | ![](docs/screenshots/rex_sad.png) |
+
 ## Chạy thử
 
 1. Cài [Godot 4.3](https://godotengine.org/download) (bản thường, không cần .NET).
@@ -18,6 +22,18 @@ Chạy test headless (không cần mở editor):
 cd deskbuddy
 godot --headless --path . -s tests/run_tests.gd
 ```
+
+Chụp màn hình tự động để kiểm tra hiển thị (cần màn hình hoặc Xvfb):
+
+```bash
+godot --path . -s tools/screenshot.gd -- out.png 120 potato hud hungry
+# trên máy không có màn hình:
+xvfb-run -a godot --path . --rendering-driver opengl3 --audio-driver Dummy \
+  -s tools/screenshot.gd -- out.png 120 rex hud sad
+```
+
+Cả hai đã được chạy với Godot 4.3 trên Linux: 56 test qua, ba pack dựng
+hình đúng.
 
 ## Điều khiển
 

@@ -6,6 +6,8 @@ const AUTOSAVE_SECONDS := 30.0
 const PET_COOLDOWN_SECONDS := 20.0
 const FOCUS_MINUTES := 25.0
 const GREET_DELAY := 1.0
+## Pack dùng lần đầu mở app, nếu có.
+const DEFAULT_PACK_ID := "potato"
 
 enum MenuId { FEED, PET, FOCUS_START, FOCUS_CANCEL, OPEN_PACKS_DIR, RELOAD_PACKS, QUIT }
 const PACK_MENU_BASE := 1000
@@ -29,6 +31,8 @@ var _last_pet_unix := 0.0
 var _last_state := ""
 var _user_idle := false
 var _last_passthrough := Rect2()
+## Chỉ cho công cụ chụp màn hình: ép hiện HUD.
+var debug_force_hud := false
 
 
 func _ready() -> void:
@@ -44,6 +48,8 @@ func _ready() -> void:
 	_build_menu()
 
 	pack = PackLoader.find(packs, str(save.get("pack_id", "")))
+	if pack == null:
+		pack = PackLoader.find(packs, DEFAULT_PACK_ID)
 	if pack == null:
 		for p in packs:
 			if p.is_valid():
@@ -181,7 +187,7 @@ func _process(delta: float) -> void:
 			_chatter_accum = 0.0
 			_say("happy" if state == "happy" else ("bored" if state == "idle" else state))
 
-	hud.visible = buddy.is_hovered() or focus.running or menu.visible
+	hud.visible = debug_force_hud or buddy.is_hovered() or focus.running or menu.visible
 	if hud.visible:
 		hud.update_needs(needs, snacks, pack.food_name())
 		hud.update_focus(focus)
@@ -348,6 +354,12 @@ func _save() -> void:
 func _save_and_quit() -> void:
 	_save()
 	get_tree().quit()
+
+
+func _exit_tree() -> void:
+	# Chạy ở mọi kiểu thoát (menu, đóng cửa sổ, --quit-after), nên luôn lưu.
+	if pack != null:
+		_save()
 
 
 func _notification(what: int) -> void:

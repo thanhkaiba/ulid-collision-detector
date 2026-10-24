@@ -2,6 +2,9 @@ class_name SpeechBubble
 extends PanelContainer
 ## Bong bóng lời nói nổi trên đầu nhân vật, tự ẩn sau vài giây.
 
+## Điểm neo (toạ độ cha): bong bóng canh giữa theo ngang và nằm trên điểm này.
+var anchor := Vector2.ZERO
+
 var _label: Label
 var _timer: Timer
 
@@ -39,5 +42,4 @@ func say(text: String, seconds := 4.0) -> void:
 	_timer.start(seconds)
 	# Đợi layout rồi canh giữa theo chiều ngang quanh điểm neo.
 	await get_tree().process_frame
-	position.x = -size.x / 2.0
-	position.y = -size.y
+	position = anchor + Vector2(-size.x / 2.0, -size.y)

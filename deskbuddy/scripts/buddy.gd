@@ -47,7 +47,7 @@ func setup(new_pack: BuddyPack) -> void:
 	sprite.scale = Vector2(pack.scale, pack.scale)
 	# Neo chân nhân vật vào gốc node.
 	sprite.position = Vector2(0, -pack.frame_size.y * pack.scale / 2.0)
-	bubble.position = Vector2(0, -pack.frame_size.y * pack.scale - 10)
+	bubble.anchor = Vector2(0, -pack.frame_size.y * pack.scale - 10)
 	_temp_anim = ""
 	_play(_base_state)
 

@@ -56,9 +56,11 @@ func _test_needs_floor_and_offline_cap() -> void:
 	_check(is_equal_approx(n.energy, BuddyNeeds.FLOOR), "không bao giờ dưới sàn %.0f" % BuddyNeeds.FLOOR)
 	var m := BuddyNeeds.new()
 	m.energy = 100.0
+	m.decay_multipliers = {"energy": 0.5, "mood": 1.0, "bond": 1.0}
 	var hours := m.apply_offline(7 * 24 * 3600.0)
 	_check(is_equal_approx(hours, BuddyNeeds.OFFLINE_CAP_HOURS), "đi 1 tuần chỉ áp %.0f giờ" % BuddyNeeds.OFFLINE_CAP_HOURS)
-	_check(is_equal_approx(m.energy, 100.0 - 8.0 * BuddyNeeds.OFFLINE_CAP_HOURS), "energy sau 1 tuần = %.1f" % m.energy)
+	var expected := 100.0 - 8.0 * 0.5 * BuddyNeeds.OFFLINE_CAP_HOURS
+	_check(is_equal_approx(m.energy, expected), "energy sau 1 tuần = %.1f (kỳ vọng %.1f)" % [m.energy, expected])
 
 
 func _test_needs_state_and_bond_neglect() -> void:
