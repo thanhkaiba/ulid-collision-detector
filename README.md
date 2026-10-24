@@ -65,3 +65,10 @@ The system provides several monitoring points:
 - Collision service `/stats` endpoint for collision metrics
 - Docker logs for all services
 - Health checks for service availability
+
+---
+
+## DeskBuddy (thư mục `deskbuddy/`)
+
+Dự án riêng, không liên quan tới dịch vụ ULID: app nhân vật đồng hành trên
+desktop viết bằng Godot 4.3. Xem `deskbuddy/README.md`.
