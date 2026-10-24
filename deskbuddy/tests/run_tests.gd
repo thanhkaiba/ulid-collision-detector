@@ -149,6 +149,11 @@ func _test_pack_parse_valid() -> void:
 	_check(p.resolve_animation("sleep") == "idle" and p.resolve_animation("eat") == "eat", "animation thiếu lùi về idle")
 	_check(p.sheet_full_path() == "user://packs/test_pack/s.png", "đường dẫn sheet nối với root")
 	_check(p.lines["fed"][0] == "Sạc đầy.", "đọc lines override")
+	_check(p.filter == "linear", "filter mặc định linear")
+	var px := BuddyPack.from_json('{"format": 1, "id": "x", "art": {"sheet": "a.png", "filter": "nearest", "animations": {"idle": {"frames": [0]}}}}', "")
+	_check(px.is_valid() and px.filter == "nearest", "filter nearest hợp lệ")
+	var bad_filter := BuddyPack.from_json('{"format": 1, "id": "x", "art": {"sheet": "a.png", "filter": "blurry", "animations": {"idle": {"frames": [0]}}}}', "")
+	_check(not bad_filter.is_valid() and bad_filter.errors[0].contains("filter"), "filter lạ → lỗi")
 
 
 func _test_pack_parse_errors() -> void:

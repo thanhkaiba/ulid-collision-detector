@@ -9,26 +9,95 @@
   "personality": "tsundere",
   "fallback_color": "#f08fb8",
   "needs": {
-    "energy": { "label": "Trà sữa", "icon": "", "food": "Trà sữa" },
-    "mood":   { "label": "Tâm trạng", "icon": "" },
-    "bond":   { "label": "Thân thiết", "icon": "" }
+    "energy": {
+      "label": "Trà sữa",
+      "icon": "",
+      "food": "Trà sữa"
+    },
+    "mood": {
+      "label": "Tâm trạng",
+      "icon": ""
+    },
+    "bond": {
+      "label": "Thân thiết",
+      "icon": ""
+    }
   },
   "art": {
     "sheet": "sprites.png",
-    "frame_size": [64, 64],
-    "scale": 3,
+    "frame_size": [
+      128,
+      128
+    ],
+    "scale": 1.5,
     "animations": {
-      "idle":    { "frames": [0, 1],   "fps": 2,   "loop": true },
-      "happy":   { "frames": [2, 3],   "fps": 3,   "loop": true },
-      "sad":     { "frames": [4, 5],   "fps": 1,   "loop": true },
-      "hungry":  { "frames": [6, 7],   "fps": 2,   "loop": true },
-      "sleep":   { "frames": [8, 9],   "fps": 0.8, "loop": true },
-      "eat":     { "frames": [10, 11], "fps": 4,   "loop": true },
-      "excited": { "frames": [12, 13], "fps": 6,   "loop": true }
+      "idle": {
+        "frames": [
+          0,
+          1
+        ],
+        "fps": 2,
+        "loop": true
+      },
+      "happy": {
+        "frames": [
+          2,
+          3
+        ],
+        "fps": 3,
+        "loop": true
+      },
+      "sad": {
+        "frames": [
+          4,
+          5
+        ],
+        "fps": 1,
+        "loop": true
+      },
+      "hungry": {
+        "frames": [
+          6,
+          7
+        ],
+        "fps": 2,
+        "loop": true
+      },
+      "sleep": {
+        "frames": [
+          8,
+          9
+        ],
+        "fps": 0.8,
+        "loop": true
+      },
+      "eat": {
+        "frames": [
+          10,
+          11
+        ],
+        "fps": 4,
+        "loop": true
+      },
+      "excited": {
+        "frames": [
+          12,
+          13
+        ],
+        "fps": 6,
+        "loop": true
+      }
     }
   },
   "lines": {
-    "hungry": ["Không phải mình thèm trà sữa đâu... nhưng mà có không?", "Ít đường, nhiều trân châu. Nhanh."],
-    "fed": ["...Cảm ơn. Đúng vị. Đừng tự mãn.", "Hừm, bạn nhớ mình thích gì à?"]
-  }
+    "hungry": [
+      "Không phải mình thèm trà sữa đâu... nhưng mà có không?",
+      "Ít đường, nhiều trân châu. Nhanh."
+    ],
+    "fed": [
+      "...Cảm ơn. Đúng vị. Đừng tự mãn.",
+      "Hừm, bạn nhớ mình thích gì à?"
+    ]
+  },
+  "credits": "Art ghép từ Kenney (www.kenney.nl), CC0 1.0"
 }

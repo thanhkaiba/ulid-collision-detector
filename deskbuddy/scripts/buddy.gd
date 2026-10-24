@@ -45,6 +45,8 @@ func setup(new_pack: BuddyPack) -> void:
 		frames = PlaceholderArt.build(pack.fallback_color, pack.frame_size.x)
 	sprite.sprite_frames = frames
 	sprite.scale = Vector2(pack.scale, pack.scale)
+	sprite.texture_filter = (CanvasItem.TEXTURE_FILTER_NEAREST if pack.filter == "nearest"
+		else CanvasItem.TEXTURE_FILTER_LINEAR)
 	# Neo chân nhân vật vào gốc node.
 	sprite.position = Vector2(0, -pack.frame_size.y * pack.scale / 2.0)
 	bubble.anchor = Vector2(0, -pack.frame_size.y * pack.scale - 10)

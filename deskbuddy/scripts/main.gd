@@ -37,6 +37,7 @@ var debug_force_hud := false
 
 func _ready() -> void:
 	_setup_window()
+	get_tree().root.theme = UiTheme.make_theme()
 	PackLoader.ensure_user_dir()
 	packs = PackLoader.scan()
 	save = SaveManager.load_data()
@@ -109,7 +110,7 @@ func _build_nodes() -> void:
 	var layer := CanvasLayer.new()
 	add_child(layer)
 	hud = Hud.new()
-	hud.position = Vector2(8, 8)
+	hud.position = Vector2(12, 10)
 	hud.visible = false
 	layer.add_child(hud)
 

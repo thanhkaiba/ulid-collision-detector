@@ -1,37 +1,40 @@
 class_name SpeechBubble
 extends PanelContainer
-## Bong bóng lời nói nổi trên đầu nhân vật, tự ẩn sau vài giây.
+## Bong bóng lời nói nổi trên đầu nhân vật, có đuôi, tự ẩn sau vài giây.
 
-## Điểm neo (toạ độ cha): bong bóng canh giữa theo ngang và nằm trên điểm này.
+## Điểm neo (toạ độ cha): bong bóng canh giữa theo ngang và đuôi chỉ vào điểm này.
 var anchor := Vector2.ZERO
+
+const TAIL_H := 10.0
+const TAIL_W := 18.0
 
 var _label: Label
 var _timer: Timer
+var _tail: Polygon2D
 
 
 func _ready() -> void:
 	visible = false
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	custom_minimum_size = Vector2(120, 0)
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(1, 1, 1, 0.95)
-	style.border_color = Color(0.15, 0.15, 0.15, 1)
-	style.set_border_width_all(2)
-	style.set_corner_radius_all(10)
-	style.set_content_margin_all(8)
-	add_theme_stylebox_override("panel", style)
+	add_theme_stylebox_override("panel", UiTheme.card(UiTheme.PAPER, 14, 10, Color.TRANSPARENT, 8))
+
+	_tail = Polygon2D.new()
+	_tail.color = UiTheme.PAPER
+	_tail.show_behind_parent = false
+	add_child(_tail)
 
 	_label = Label.new()
 	_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_label.custom_minimum_size = Vector2(180, 0)
-	_label.add_theme_color_override("font_color", Color(0.1, 0.1, 0.1))
-	_label.add_theme_font_size_override("font_size", 14)
+	_label.custom_minimum_size = Vector2(170, 0)
+	_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	UiTheme.apply_font(_label, UiTheme.body(600), 14, UiTheme.INK)
 	add_child(_label)
 
 	_timer = Timer.new()
 	_timer.one_shot = true
 	_timer.timeout.connect(func() -> void: visible = false)
 	add_child(_timer)
+	resized.connect(_update_tail)
 
 
 func say(text: String, seconds := 4.0) -> void:
@@ -40,6 +43,18 @@ func say(text: String, seconds := 4.0) -> void:
 	_label.text = text
 	visible = true
 	_timer.start(seconds)
-	# Đợi layout rồi canh giữa theo chiều ngang quanh điểm neo.
+	# Đợi layout rồi đặt bong bóng sao cho đuôi chỉ vào anchor.
 	await get_tree().process_frame
-	position = anchor + Vector2(-size.x / 2.0, -size.y)
+	position = anchor + Vector2(-size.x / 2.0, -size.y - TAIL_H)
+	_update_tail()
+
+
+func _update_tail() -> void:
+	if _tail == null:
+		return
+	var cx := size.x / 2.0
+	_tail.polygon = PackedVector2Array([
+		Vector2(cx - TAIL_W / 2.0, size.y - 1.0),
+		Vector2(cx + TAIL_W / 2.0, size.y - 1.0),
+		Vector2(cx, size.y + TAIL_H),
+	])

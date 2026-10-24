@@ -67,8 +67,16 @@ nhận chuột.
 - **Lưu trữ**: `user://save.json`, toàn bộ local.
 
 Ba pack mẫu: **Củ Khoai** (lười), **Aki** (tsundere), **Rex** (hỗn loạn).
-Sprite hiện tại là placeholder sinh bằng `tools/gen_placeholder_art.py`,
-thay bằng art thật chỉ cần đè file `sprites.png`.
+Sprite được ghép từ bộ phận của Kenney (CC0) bằng `tools/compose_packs.py`;
+các bộ phận đã dùng nằm trong `art_src/kenney/`. Thay art riêng chỉ cần đè
+file `sprites.png` của pack.
+
+![](docs/screenshots/sheets_preview.png)
+
+```bash
+# Dựng lại 3 sheet (chỉ cần Python 3, không cần thư viện ngoài)
+python3 tools/compose_packs.py --preview /tmp/preview.png
+```
 
 ## Giới hạn đã biết của MVP
 
@@ -79,7 +87,15 @@ thay bằng art thật chỉ cần đè file `sprites.png`.
 - Chưa đọc tên app đang mở (cần cho tính năng "nhìn chằm chằm khi mở YouTube").
 - Chưa có khay hệ thống, chưa tự chạy khi đăng nhập.
 - Chỉ hỗ trợ `kind: sprite2d`. VRM/3D để sau.
-- Font mặc định của Godot không có emoji, nên icon trong pack để trống.
+- Font Nunito và Baloo 2 không có emoji, nên icon trong pack để trống.
+
+## Ghi công
+
+- Art nhân vật: [Kenney](https://www.kenney.nl) · Shape Characters,
+  Platformer Characters, Monster Builder Pack · CC0 1.0
+  (`art_src/kenney/LICENSE-Kenney-CC0.txt`).
+- Font: Nunito (Vernon Adams và cộng sự) và Baloo 2 (Ek Type) · SIL Open
+  Font License 1.1 (`assets/fonts/OFL-*.txt`).
 
 ## Khi export
 

@@ -25,6 +25,8 @@ var needs := {}
 var sheet_path := ""
 var frame_size := Vector2i(64, 64)
 var scale := 3.0
+## "linear" cho art vector/mượt, "nearest" cho pixel art.
+var filter := "linear"
 ## {anim_name: {frames: [int], fps: float, loop: bool}}
 var animations := {}
 ## Câu nói override: {event: [String]}
@@ -140,6 +142,9 @@ func _read_art(art: Dictionary) -> void:
 	scale = float(art.get("scale", 3.0))
 	if scale <= 0.0:
 		errors.append("art.scale phải dương")
+	filter = str(art.get("filter", "linear"))
+	if filter != "linear" and filter != "nearest":
+		errors.append("art.filter phải là 'linear' hoặc 'nearest'")
 
 	var anims = art.get("animations", {})
 	if not (anims is Dictionary):

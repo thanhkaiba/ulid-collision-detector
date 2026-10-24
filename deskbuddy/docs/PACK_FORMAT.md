@@ -31,8 +31,9 @@ my_pack/
   },
   "art": {
     "sheet": "sprites.png",
-    "frame_size": [64, 64],
-    "scale": 3,
+    "frame_size": [128, 128],
+    "scale": 1.5,
+    "filter": "linear",
     "animations": {
       "idle":    { "frames": [0, 1],   "fps": 1.5, "loop": true },
       "happy":   { "frames": [2, 3],   "fps": 3 },
@@ -67,6 +68,7 @@ my_pack/
 | `art.sheet` | có | Đường dẫn ảnh, tương đối với thư mục pack |
 | `art.frame_size` | không | `[w, h]` mỗi frame, mặc định `[64, 64]` |
 | `art.scale` | không | Phóng to khi hiển thị, mặc định `3` |
+| `art.filter` | không | `linear` (mặc định, art mượt) hoặc `nearest` (pixel art) |
 | `art.animations` | có | Phải có ít nhất `idle` |
 | `lines` | không | Override câu nói theo sự kiện |
 
