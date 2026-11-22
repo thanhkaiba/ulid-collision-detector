@@ -238,7 +238,7 @@ function Trainer({
 }
 
 /** Tell the solver which side they play, what counts as solved, and how many moves they must find. */
-function puzzlePrompt(p: Puzzle): string {
+export function puzzlePrompt(p: Puzzle): string {
   const c = new Chess(p.fen);
   if (!p.playerFirst && p.moves[0]) playUci(c, p.moves[0]);
   const side = c.turn() === 'w' ? 'Trắng' : 'Đen';

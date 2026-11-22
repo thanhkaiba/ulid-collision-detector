@@ -535,7 +535,7 @@ Quân đứng giữa bị "dính" vì phía sau nó là quân giá trị hơn (h
         themes: ['fork', 'pin'],
         rating: [600, 1000],
         count: 6,
-        intro: 'Luyện 6 bài đòn đôi và ghim lấy từ ván thật.',
+        intro: 'Đòn đôi và ghim: 6 bài.',
       },
     ],
   },

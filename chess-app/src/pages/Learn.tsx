@@ -19,6 +19,7 @@ import { renderRich, type Preview } from '../lib/richtext';
 import { START_FEN } from '../lib/chess-utils';
 import { practiceById, loadPracticeDone } from '../data/practice';
 import { PracticeInline } from './Play';
+import { puzzlePrompt } from './Puzzles';
 import { Chess } from 'chess.js';
 import type { Key } from 'chessground/types';
 import type { DrawShape } from 'chessground/draw';
@@ -451,7 +452,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
             <SquareQuiz targets={b.targets} onDone={() => markDone(i)} />
           </Card>
         );
-      if (b.kind === 'puzzles') return <PuzzleSet key={i} block={b} n={taskNo.get(i)!} done={doneSet.has(i)} onDone={() => markDone(i)} />;
+      if (b.kind === 'puzzles') return <PuzzleSet key={i} block={b} n={taskNo.get(i)!} done={doneSet.has(i)} onDone={() => markDone(i)} storeKey={`pset:${lesson.id}:${i}`} />;
       if (b.kind === 'lichess') return <LichessTask key={i} block={b} n={taskNo.get(i)!} done={doneSet.has(i)} onDone={() => markDone(i)} />;
       if (b.kind === 'practice' && sl.id) {
         const p = practiceById(sl.id);
@@ -533,7 +534,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
   })();
 
   const state = passed(sl);
-  const nextLabel = at === slides.length - 2 ? 'Tổng kết' : state === false ? 'Làm sau' : 'Tiếp';
+  const nextLabel = state === false ? 'Bỏ qua, làm sau' : at === slides.length - 2 ? 'Tổng kết' : 'Tiếp';
   return (
     <div className="lesson-body slides">
       <div className="slide-head">
@@ -568,7 +569,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
           <Button kind="ghost" onClick={() => go(at - 1)} disabled={at === 0}>
             ‹ Trước
           </Button>
-          <Button kind={state === false ? 'default' : 'primary'} className="grow" onClick={() => go(at + 1)}>
+          <Button kind={state === false ? 'ghost' : 'primary'} className="grow" onClick={() => go(at + 1)}>
             {nextLabel} ›
           </Button>
         </div>
@@ -658,7 +659,6 @@ function LichessTask({ block, n, done, onDone }: { block: LichessBlock; n: numbe
         <h3 style={{ margin: 0 }}>
           Bài {n} {done && <Tag tone="good">✓ đã qua</Tag>}
         </h3>
-        <Tag tone="info">ván thật · Lichess</Tag>
       </div>
       <PuzzleBoard
         key={p.id}
@@ -678,8 +678,7 @@ function LichessTask({ block, n, done, onDone }: { block: LichessBlock; n: numbe
         <div className="task-box small">
           <b>Lời giải:</b> {info.line}
           {block.explain && <div className="mt">{block.explain}</div>}
-          <div className="tiny muted mt">
-            Bài lấy từ một ván đấu thật trong cơ sở dữ liệu bài tập của Lichess (rating bài {p.rating}).{' '}
+          <div className="tiny mt">
             <a href={p.url} target="_blank" rel="noreferrer">
               Xem trên Lichess
             </a>
@@ -690,15 +689,30 @@ function LichessTask({ block, n, done, onDone }: { block: LichessBlock; n: numbe
   );
 }
 
-function PuzzleSet({ block, n, done, onDone }: { block: PuzzleSetBlock; n: number; done: boolean; onDone: () => void }) {
+function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock; n: number; done: boolean; onDone: () => void; storeKey: string }) {
   const [all, setAll] = useState<Puzzle[] | null>(null);
-  const [round, setRound] = useState(0);
-  const [i, setI] = useState(0);
-  const [results, setResults] = useState<boolean[]>([]);
+  // progress survives leaving the slide (e.g. tapping the slide button by mistake)
+  const saved = useMemo(() => {
+    try {
+      return JSON.parse(localStorage.getItem(storeKey) ?? 'null') as { round: number; i: number; results: boolean[] } | null;
+    } catch {
+      return null;
+    }
+  }, [storeKey]);
+  const [round, setRound] = useState(saved?.round ?? 0);
+  const [i, setI] = useState(saved?.i ?? 0);
+  const [results, setResults] = useState<boolean[]>(saved?.results ?? []);
   const [cur, setCur] = useState<boolean | null>(null);
   useEffect(() => {
     loadPuzzles().then(setAll);
   }, []);
+  useEffect(() => {
+    try {
+      localStorage.setItem(storeKey, JSON.stringify({ round, i, results }));
+    } catch {
+      /* ignore */
+    }
+  }, [storeKey, round, i, results]);
   const set = useMemo(() => {
     if (!all) return [];
     const [lo, hi] = block.rating;
@@ -745,8 +759,7 @@ function PuzzleSet({ block, n, done, onDone }: { block: PuzzleSetBlock; n: numbe
       {!done && !finishedAll && <p className="tiny muted">Để qua: đúng ngay lần đầu ít nhất {need}/{set.length} bài.</p>}
       {!finishedAll && (
         <>
-          <p className="tiny muted">Rating bài: {p.rating}</p>
-          <PuzzleBoard key={`${round}-${p.id}`} fen={p.fen} moves={p.moves} playerFirst={p.playerFirst} onFinish={(ok) => setCur(ok)} />
+          <PuzzleBoard key={`${round}-${p.id}`} fen={p.fen} moves={p.moves} playerFirst={p.playerFirst} prompt={puzzlePrompt(p)} onFinish={(ok) => setCur(ok)} />
           {cur !== null && (
             <div className="row mt">
               <Button
@@ -759,7 +772,7 @@ function PuzzleSet({ block, n, done, onDone }: { block: PuzzleSetBlock; n: numbe
                   if (r.length >= set.length && r.filter(Boolean).length >= need) onDone();
                 }}
               >
-                {i + 1 >= set.length ? 'Hoàn thành' : 'Bài tiếp →'}
+                {i + 1 >= set.length ? 'Xem kết quả' : `Câu tiếp (${i + 2}/${set.length}) →`}
               </Button>
             </div>
           )}

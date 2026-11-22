@@ -324,7 +324,7 @@ Khi cần "mất một nhịp" để giành đối vua, vua đi tam giác (3 nư
         fen: '8/8/8/8/2k5/8/3P4/3K4 w - - 0 1',
         caption: 'Tốt d2 chưa đi: các ô then chốt là c4, d4, e4 (cách tốt hai hàng). Vua Đen đang chiếm c4 nên Trắng không thắng được dù đi trước.',
       },
-      { kind: 'puzzles', themes: ['pawnEndgame'], rating: [1100, 1500], count: 6, intro: 'Cờ tàn tốt từ ván thật: 6 bài.' },
+      { kind: 'puzzles', themes: ['pawnEndgame'], rating: [1100, 1500], count: 6, intro: 'Cờ tàn tốt: 6 bài.' },
       { kind: 'practice', ids: ['kp-draw-rook-pawn', 'kp-win-opposition'] },
     ],
   },
