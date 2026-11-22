@@ -37,7 +37,7 @@ export default function Learn({ route }: { route: Route }) {
   if (lessonId) {
     const lesson = lessonById(lessonId);
     if (!lesson) return <p>Không tìm thấy bài học.</p>;
-    return <LessonView lesson={lesson} progress={progress} setProgress={setProgress} />;
+    return <LessonView key={lesson.id} lesson={lesson} progress={progress} setProgress={setProgress} />;
   }
   return <Overview progress={progress} setProgress={setProgress} />;
 }
@@ -283,6 +283,48 @@ function Overview({ progress, setProgress }: { progress: LessonProgress; setProg
   );
 }
 
+/** One screen of a lesson. A lesson is cut into short slides: each text section, each exercise, a summary. */
+type Slide =
+  | { kind: 'text'; title: string; block: number; chunk: number; diagrams: number[] }
+  | { kind: 'diagram'; block: number }
+  | { kind: 'exercise'; block: number; id?: string }
+  | { kind: 'end' };
+
+/** Split a text block at its ### headings. */
+function chunksOf(md: string): { title: string; md: string }[] {
+  const out: { title: string; md: string }[] = [];
+  let cur: { title: string; lines: string[] } = { title: '', lines: [] };
+  for (const line of md.split('\n')) {
+    const h = /^#{1,4}\s+(.*)$/.exec(line.trim());
+    if (h) {
+      if (cur.lines.join('').trim() || cur.title) out.push({ title: cur.title, md: cur.lines.join('\n') });
+      cur = { title: h[1], lines: [] };
+    } else cur.lines.push(line);
+  }
+  if (cur.lines.join('').trim() || cur.title) out.push({ title: cur.title, md: cur.lines.join('\n') });
+  return out;
+}
+
+function buildSlides(lesson: Lesson): Slide[] {
+  const slides: Slide[] = [];
+  lesson.blocks.forEach((b, i) => {
+    if (b.kind === 'text') {
+      chunksOf(b.md).forEach((c, k) => slides.push({ kind: 'text', title: c.title, block: i, chunk: k, diagrams: [] }));
+    } else if (b.kind === 'diagram') {
+      // a diagram belongs with the text right before it
+      const last = slides[slides.length - 1];
+      if (last?.kind === 'text' && last.diagrams.length < 2) last.diagrams.push(i);
+      else slides.push({ kind: 'diagram', block: i });
+    } else if (b.kind === 'practice') {
+      for (const id of b.ids) slides.push({ kind: 'exercise', block: i, id });
+    } else slides.push({ kind: 'exercise', block: i });
+  });
+  slides.push({ kind: 'end' });
+  return slides;
+}
+
+const slideKey = (id: string) => `lesson-slide:${id}`;
+
 function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progress: LessonProgress; setProgress: (p: LessonProgress) => void }) {
   const idx = LESSONS.indexOf(lesson);
   const prev = LESSONS[idx - 1];
@@ -290,25 +332,38 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
   const doneSet = new Set(progress.done[lesson.id] ?? []);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [practiceDone, setPracticeDone] = useState<Record<string, 1>>(loadPracticeDone);
-  /** what must be passed before the lesson can be marked as learned (engine practice marked ★★★ is optional) */
-  const missing: string[] = [];
+  const slides = useMemo(() => buildSlides(lesson), [lesson]);
+  const [at, setAt] = useState(() => {
+    try {
+      return Math.min(Number(localStorage.getItem(slideKey(lesson.id)) ?? 0) || 0, slides.length - 1);
+    } catch {
+      return 0;
+    }
+  });
+
+  // exercise numbering and pass state, per block / practice id
+  const taskNo = new Map<number, number>();
   {
     let n = 0;
     lesson.blocks.forEach((b, i) => {
-      if (b.kind === 'task' || b.kind === 'squares' || b.kind === 'puzzles') {
-        n++;
-        if (!doneSet.has(i)) missing.push(b.kind === 'puzzles' ? `Bài ${n} (luyện tập)` : `Bài ${n}`);
-      }
-      if (b.kind === 'practice')
-        for (const id of b.ids) {
-          const p = practiceById(id);
-          if (p && p.level < 3 && !practiceDone[id]) missing.push(`Đánh với máy: ${p.title}`);
-        }
+      if (b.kind === 'task' || b.kind === 'squares' || b.kind === 'puzzles') taskNo.set(i, ++n);
     });
   }
+  const passed = (sl: Slide): boolean | null => {
+    if (sl.kind !== 'exercise') return null;
+    if (sl.id) return !!practiceDone[sl.id];
+    return doneSet.has(sl.block);
+  };
+  const required = (sl: Slide) => sl.kind === 'exercise' && (!sl.id || (practiceById(sl.id)?.level ?? 1) < 3);
+  const exerciseLabel = (sl: Slide) => {
+    if (sl.kind !== 'exercise') return '';
+    if (sl.id) return `Đánh với máy: ${practiceById(sl.id)?.title ?? sl.id}`;
+    const b = lesson.blocks[sl.block];
+    return b.kind === 'puzzles' ? `Bài ${taskNo.get(sl.block)} (luyện tập)` : `Bài ${taskNo.get(sl.block)}`;
+  };
+  const missing = slides.filter((sl) => required(sl) && !passed(sl)).map(exerciseLabel);
 
   useEffect(() => {
-    window.scrollTo({ top: 0 });
     setPreview(null);
     if (!progress.read[lesson.id]) {
       const p = { ...progress, read: { ...progress.read, [lesson.id]: 1 as const } };
@@ -318,6 +373,18 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lesson.id]);
 
+  const go = (i: number) => {
+    const n = Math.max(0, Math.min(slides.length - 1, i));
+    setAt(n);
+    setPreview(null);
+    try {
+      localStorage.setItem(slideKey(lesson.id), String(n));
+    } catch {
+      /* ignore */
+    }
+    window.scrollTo({ top: 0 });
+  };
+
   const markDone = async (blockIndex: number) => {
     if (doneSet.has(blockIndex)) return;
     const p: LessonProgress = { ...progress, done: { ...progress.done, [lesson.id]: [...doneSet, blockIndex] } };
@@ -325,99 +392,169 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
     await saveLessonProgress(p);
   };
 
-  let taskNo = 0;
-  return (
-    <div className="lesson-body">
-      <div className="topbar">
-        <button className="back" onClick={() => navigate('learn')} aria-label="Quay lại">
-          ‹
-        </button>
-        <div>
-          <div className="tiny muted">Giai đoạn {lesson.stage + 1} · {lesson.minutes} phút</div>
-          <h2 style={{ margin: 0 }}>{lesson.title}</h2>
+  const sl = slides[at];
+  const renderText = (block: number, chunk: number) => {
+    const b = lesson.blocks[block];
+    if (b.kind !== 'text') return null;
+    const chunks = chunksOf(b.md);
+    // move chips continue a line of play across the section: replay the earlier sections first
+    const seq = { line: [START_FEN] };
+    const fn = (t: string) => renderRich(t, { onShow: setPreview, seqStart: START_FEN, seq });
+    for (let k = 0; k < chunk; k++) renderMd(chunks[k].md, fn);
+    return renderMd(chunks[chunk].md, fn);
+  };
+
+  const body = (() => {
+    if (sl.kind === 'text')
+      return (
+        <div className="slide-text">
+          {sl.title && <h2 className="slide-title">{sl.title}</h2>}
+          {renderText(sl.block, sl.chunk)}
+          {sl.diagrams.map((d) => {
+            const b = lesson.blocks[d];
+            return b.kind === 'diagram' ? <Diagram key={d} block={b} onShow={setPreview} /> : null;
+          })}
+        </div>
+      );
+    if (sl.kind === 'diagram') {
+      const b = lesson.blocks[sl.block];
+      return b.kind === 'diagram' ? <Diagram block={b} onShow={setPreview} /> : null;
+    }
+    if (sl.kind === 'exercise') {
+      const i = sl.block;
+      const b = lesson.blocks[i];
+      if (b.kind === 'task') return <TaskView key={i} block={b} n={taskNo.get(i)!} done={doneSet.has(i)} onDone={() => markDone(i)} onShow={setPreview} />;
+      if (b.kind === 'squares')
+        return (
+          <Card key={i}>
+            <h3 style={{ margin: 0 }}>
+              Bài {taskNo.get(i)}: tìm ô {doneSet.has(i) && <Tag tone="good">✓ đã qua</Tag>}
+            </h3>
+            <p className="small muted">{b.intro}</p>
+            <SquareQuiz targets={b.targets} onDone={() => markDone(i)} />
+          </Card>
+        );
+      if (b.kind === 'puzzles') return <PuzzleSet key={i} block={b} n={taskNo.get(i)!} done={doneSet.has(i)} onDone={() => markDone(i)} />;
+      if (b.kind === 'practice' && sl.id) {
+        const p = practiceById(sl.id);
+        if (!p) return null;
+        return (
+          <div key={sl.id}>
+            <div className="tiny muted">TỰ TAY ĐÁNH VỚI MÁY · {p.goal === 'draw' ? 'THỦ HÒA' : p.goal === 'mate' ? 'CHIẾU HẾT' : 'PHONG HẬU HOẶC THẮNG QUÂN'}</div>
+            <h2 className="slide-title" style={{ marginTop: 2 }}>
+              {p.title} {practiceDone[p.id] && <Tag tone="good">✓ đã đạt</Tag>}
+            </h2>
+            <p className="small" style={{ marginTop: 0 }}>
+              {b.ids.length === 1 && b.intro ? b.intro : p.brief} Cứ đi quân là bắt đầu, máy chơi hết sức.
+            </p>
+            {p.level >= 3 && <p className="tiny muted">Bài khó, không bắt buộc để qua bài học.</p>}
+            <PracticeInline pos={p} onGoal={() => setPracticeDone(loadPracticeDone())} />
+          </div>
+        );
+      }
+      return null;
+    }
+    // summary
+    const exercises = slides.map((x, k) => ({ x, k })).filter(({ x }) => x.kind === 'exercise');
+    return (
+      <div>
+        <h2 className="slide-title">Tổng kết bài</h2>
+        {exercises.length > 0 && (
+          <Card>
+            <h3>Bài tập trong bài</h3>
+            {exercises.map(({ x, k }) => (
+              <div key={k} className="list-item" onClick={() => go(k)}>
+                <span>
+                  {passed(x) ? '✅' : required(x) ? '⬜' : '◻️'} {exerciseLabel(x)}
+                  {!required(x) && <span className="tiny muted"> · không bắt buộc</span>}
+                </span>
+                <span className="muted">{passed(x) ? 'xem lại' : 'làm'} ›</span>
+              </div>
+            ))}
+          </Card>
+        )}
+        <MarkBar
+          status={progress.status[lesson.id]}
+          missing={missing}
+          onMark={async (v) => {
+            setProgress(await setLessonStatus(lesson.id, v));
+            if (v === 'done') logActivity('lessons', 1, lesson.title);
+            if (v && next) navigate(`learn/lesson/${next.id}`);
+            else if (v) navigate('learn');
+          }}
+        />
+        {lesson.resources && (
+          <Card className="mt">
+            <h3>Nguồn học thêm</h3>
+            {lesson.resources.map((r) => (
+              <div key={r.url} className="small" style={{ marginBottom: 6 }}>
+                <a href={r.url} target="_blank" rel="noreferrer">
+                  {r.label}
+                </a>
+                {r.note && <div className="muted">{r.note}</div>}
+              </div>
+            ))}
+          </Card>
+        )}
+        <div className="row-between mt">
+          {prev ? (
+            <Button kind="ghost" onClick={() => navigate(`learn/lesson/${prev.id}`)}>
+              ‹ Bài trước
+            </Button>
+          ) : (
+            <span />
+          )}
+          {next && (
+            <Button kind="ghost" onClick={() => navigate(`learn/lesson/${next.id}`)}>
+              Bài sau ›
+            </Button>
+          )}
         </div>
       </div>
-      {lesson.blocks.map((b, i) => {
-        if (b.kind === 'text') {
-          const seq = { line: [START_FEN] };
-          return <div key={i}>{renderMd(b.md, (t) => renderRich(t, { onShow: setPreview, seqStart: START_FEN, seq }))}</div>;
-        }
-        if (b.kind === 'diagram') return <Diagram key={i} block={b} onShow={setPreview} />;
-        if (b.kind === 'task') {
-          taskNo++;
-          return <TaskView key={i} block={b} n={taskNo} done={doneSet.has(i)} onDone={() => markDone(i)} onShow={setPreview} />;
-        }
-        if (b.kind === 'squares') {
-          taskNo++;
-          return (
-            <Card key={i}>
-              <h3 style={{ margin: 0 }}>
-                Bài {taskNo}: tìm ô {doneSet.has(i) && <Tag tone="good">✓</Tag>}
-              </h3>
-              <p className="small muted">{b.intro}</p>
-              <SquareQuiz targets={b.targets} onDone={() => markDone(i)} />
-            </Card>
-          );
-        }
-        if (b.kind === 'puzzles') {
-          taskNo++;
-          return <PuzzleSet key={i} block={b} n={taskNo} done={doneSet.has(i)} onDone={() => markDone(i)} />;
-        }
-        if (b.kind === 'practice') {
-          return b.ids.map((id) => {
-            const p = practiceById(id);
-            if (!p) return null;
-            return (
-              <Card key={`${i}-${id}`}>
-                <div className="tiny muted">TỰ TAY ĐÁNH VỚI MÁY · {p.goal === 'draw' ? 'THỦ HÒA' : p.goal === 'mate' ? 'CHIẾU HẾT' : 'PHONG HẬU HOẶC THẮNG QUÂN'}</div>
-                <h3 style={{ margin: '2px 0 4px' }}>{p.title}</h3>
-                <p className="small" style={{ marginTop: 0 }}>{b.ids.length === 1 && b.intro ? b.intro : p.brief}</p>
-                {p.level >= 3 && <p className="tiny muted">Bài khó, không bắt buộc để qua bài học.</p>}
-                <PracticeInline pos={p} onGoal={() => setPracticeDone(loadPracticeDone())} />
-              </Card>
-            );
-          });
-        }
-        return null;
-      })}
-      {lesson.resources && (
-        <Card>
-          <h3>Nguồn học thêm</h3>
-          {lesson.resources.map((r) => (
-            <div key={r.url} className="small" style={{ marginBottom: 6 }}>
-              <a href={r.url} target="_blank" rel="noreferrer">
-                {r.label}
-              </a>
-              {r.note && <div className="muted">{r.note}</div>}
+    );
+  })();
+
+  const state = passed(sl);
+  const nextLabel = at === slides.length - 2 ? 'Tổng kết' : state === false ? 'Làm sau' : 'Tiếp';
+  return (
+    <div className="lesson-body slides">
+      <div className="slide-head">
+        <div className="topbar" style={{ marginBottom: 6 }}>
+          <button className="back" onClick={() => navigate('learn')} aria-label="Quay lại">
+            ‹
+          </button>
+          <div className="grow" style={{ minWidth: 0 }}>
+            <div className="tiny muted">
+              Giai đoạn {lesson.stage + 1} · {lesson.minutes} phút · {at + 1}/{slides.length}
             </div>
+            <div className="slide-lesson-title">{lesson.title}</div>
+          </div>
+        </div>
+        <div className="slide-dots">
+          {slides.map((x, k) => (
+            <button
+              key={k}
+              aria-label={`Trang ${k + 1}`}
+              className={`dot ${k === at ? 'cur' : ''} ${k < at ? 'seen' : ''} ${x.kind === 'exercise' ? 'ex' : ''} ${passed(x) ? 'ok' : ''}`}
+              onClick={() => go(k)}
+            />
           ))}
-        </Card>
-      )}
-      <PreviewSheet preview={preview} onClose={() => setPreview(null)} />
-      <MarkBar
-        status={progress.status[lesson.id]}
-        missing={missing}
-        onMark={async (v) => {
-          setProgress(await setLessonStatus(lesson.id, v));
-          if (v === 'done') logActivity('lessons', 1, lesson.title);
-          if (v && next) navigate(`learn/lesson/${next.id}`);
-          else if (v) navigate('learn');
-        }}
-      />
-      <div className="row-between mt">
-        {prev ? (
-          <Button kind="ghost" onClick={() => navigate(`learn/lesson/${prev.id}`)}>
-            ‹ {prev.title}
-          </Button>
-        ) : (
-          <span />
-        )}
-        {next && (
-          <Button kind="primary" onClick={() => navigate(`learn/lesson/${next.id}`)}>
-            {next.title} ›
-          </Button>
-        )}
+        </div>
       </div>
+      <div className="slide-body" key={at}>
+        {body}
+      </div>
+      <PreviewSheet preview={preview} onClose={() => setPreview(null)} />
+      {sl.kind !== 'end' && (
+        <div className="slide-nav">
+          <Button kind="ghost" onClick={() => go(at - 1)} disabled={at === 0}>
+            ‹ Trước
+          </Button>
+          <Button kind={state === false ? 'default' : 'primary'} className="grow" onClick={() => go(at + 1)}>
+            {nextLabel} ›
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

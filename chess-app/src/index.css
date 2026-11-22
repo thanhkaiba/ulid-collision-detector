@@ -312,3 +312,25 @@ label.field > span { display: block; font-size: 0.85rem; color: var(--fg-2); mar
 .mv-chip.inferred.active { background: var(--accent); outline: 0; }
 .chip-trim { max-width: 58%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1; }
 .row-between > span { min-width: 0; }
+
+/* lesson slides */
+.slides { padding-bottom: 72px; }
+.slide-head { position: sticky; top: 0; z-index: 6; background: var(--bg); padding-top: 4px; margin: 0 -12px 10px; padding-left: 12px; padding-right: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
+.slide-lesson-title { font-weight: 700; font-size: 1.02rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.slide-dots { display: flex; gap: 4px; }
+.slide-dots .dot { flex: 1; height: 5px; border: 0; padding: 0; border-radius: 999px; background: var(--bg-3); cursor: pointer; }
+.slide-dots .dot.seen { background: color-mix(in srgb, var(--accent) 45%, var(--bg-3)); }
+.slide-dots .dot.cur { background: var(--accent); }
+.slide-dots .dot.ex:not(.ok):not(.cur) { background: color-mix(in srgb, var(--warn) 45%, var(--bg-3)); }
+.slide-dots .dot.ex.ok:not(.cur) { background: var(--good); }
+.slide-title { font-size: 1.3rem; margin: 4px 0 10px; }
+.slide-text { font-size: 1.04rem; line-height: 1.65; }
+.slide-body { animation: slide-in 0.22s ease; min-height: 50vh; }
+@keyframes slide-in { from { opacity: 0; transform: translateX(14px); } to { opacity: 1; transform: none; } }
+.slide-nav {
+  position: fixed; left: 0; right: 0; bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom));
+  display: flex; gap: 8px; padding: 10px max(12px, calc((100vw - 720px) / 2 + 12px));
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line); z-index: 15;
+}

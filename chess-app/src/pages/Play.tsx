@@ -53,34 +53,9 @@ function PracticeRun({ pos, back }: { pos: PracticePosition; back: string }) {
   );
 }
 
-/**
- * A practice position played right inside a lesson. The board is static until the student presses start,
- * so several of these can sit on one page without the engine moving on all of them.
- */
+/** A practice position played right inside a lesson slide: the game starts as soon as the slide is shown. */
 export function PracticeInline({ pos, onGoal }: { pos: PracticePosition; onGoal?: () => void }) {
   const [attempt, setAttempt] = useState(0);
-  const [started, setStarted] = useState(false);
-  const [done, setDone] = useState(() => !!loadPracticeDone()[pos.id]);
-  if (!started) {
-    const c = new Chess(pos.fen);
-    return (
-      <div>
-        <Board
-          fen={pos.fen}
-          orientation={pos.me === 'w' ? 'white' : 'black'}
-          turnColor={c.turn() === 'w' ? 'white' : 'black'}
-          check={kingInCheckColor(c)}
-          viewOnly
-        />
-        <div className="row mt">
-          <Button kind="primary" onClick={() => setStarted(true)}>
-            {done ? 'Đánh lại với máy' : 'Bắt đầu đánh với máy'}
-          </Button>
-          {done && <span className="tag tag-good">✓ đã đạt</span>}
-        </div>
-      </div>
-    );
-  }
   return (
     <GameView
       key={attempt}
@@ -90,10 +65,7 @@ export function PracticeInline({ pos, onGoal }: { pos: PracticePosition; onGoal?
       practice={pos}
       embedded
       onGoal={onGoal}
-      onExit={() => {
-        setDone(!!loadPracticeDone()[pos.id]);
-        setStarted(false);
-      }}
+      onExit={() => setAttempt((a) => a + 1)}
       onRematch={() => setAttempt((a) => a + 1)}
     />
   );
@@ -541,7 +513,7 @@ function GameView({
                 <Button kind="primary" onClick={onRematch}>
                   {goalMet ? 'Đánh lại lần nữa' : 'Thử lại'}
                 </Button>
-                <Button onClick={onExit}>{embedded ? 'Đóng' : 'Quay lại'}</Button>
+                {!embedded && <Button onClick={onExit}>Quay lại</Button>}
                 {!embedded && (
                   <Button kind="ghost" onClick={() => navigate('play/practice')}>
                     Thế khác
