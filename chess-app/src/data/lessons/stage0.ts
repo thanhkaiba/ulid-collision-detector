@@ -506,14 +506,14 @@ Khó hơn, cần khoảng 15 đến 20 nước. Xe cắt vua đối phương tro
 Một quân tấn công **hai mục tiêu cùng lúc**; đối phương chỉ cứu được một. Mã là vua của đòn đôi vì tấn công theo cách không quân nào chặn được. Đòn đôi có chiếu là mạnh nhất vì đối phương bắt buộc phải lo cho vua.
 
 ### Ghim (pin)
-Quân đứng giữa bị "dính" vì phía sau nó là quân giá trị hơn (hoặc vua). Ghim vào vua là **ghim tuyệt đối**: quân bị ghim không được phép di chuyển. Cách khai thác: **tấn công thêm quân bị ghim** bằng tốt hoặc quân khác.`,
+Quân đứng giữa bị "dính" vì phía sau nó là quân giá trị hơn (hoặc vua). Ghim vào vua là **ghim tuyệt đối**: quân bị ghim không được phép rời khỏi đường ghim. Cách khai thác: **tấn công thêm quân bị ghim** bằng tốt hoặc quân khác.`,
       },
       {
         kind: 'task',
-        fen: 'r3k3/8/8/1N6/8/8/8/4K3 w - - 0 1',
+        fen: 'r3k3/8/8/1N6/8/8/7P/4K3 w - - 0 1',
         moves: ['b5c7', 'e8d8', 'c7a8'],
         prompt: 'Mã trắng tìm đòn đôi vua + xe.',
-        explain: 'Nc7+ chiếu vua và tấn công xe a8. Vua phải chạy, mã lấy xe.',
+        explain: 'Nc7+ chiếu vua và tấn công xe a8. Vua phải chạy, mã lấy xe. Trắng còn mã và tốt h, thắng dễ.',
         verify: 'best',
       },
       {
@@ -570,19 +570,18 @@ Sau khi nhập thành, ba tốt f-g-h che vua nhưng cũng nhốt nó. Nếu hà
       },
       {
         kind: 'task',
-        fen: '8/8/8/8/8/8/R6K/3kq3 w - - 0 1',
-        moves: ['a2a1', 'd1d2', 'a1e1'],
+        fen: '8/8/8/8/5K2/8/R7/3k3q w - - 0 1',
+        moves: ['a2a1', 'd1d2', 'a1h1'],
         prompt: 'Vua và hậu đen đứng cùng hàng. Xiên!',
-        explain: 'Ra1+! Vua d1 phải chạy, rồi Rxe1 lấy hậu.',
+        explain: 'Ra1+! Vua d1 phải rời hàng 1, rồi Rxh1 lấy hậu.',
         verify: 'best',
       },
       {
         kind: 'task',
-        fen: '3q1k2/8/8/8/8/8/3B4/3RK3 w - - 0 1',
-        moves: ['d2h6', 'f8e8', 'd1d8'],
-        alternatives: ['d2b4'],
+        fen: '3q3k/8/8/8/8/8/3B4/3RK3 w - - 0 1',
+        moves: ['d2c3', 'h8g8', 'd1d8'],
         prompt: 'Tượng d2 đang chắn xe d1 khỏi hậu d8. Tấn công mở có chiếu.',
-        explain: 'Bh6+! (hoặc Bb4+) Tượng chiếu vua f8, đồng thời mở cột d cho xe tấn công hậu. Đen lo chiếu xong thì mất hậu.',
+        explain: 'Bc3+! Tượng chiếu vua h8 theo đường chéo dài, đồng thời mở cột d cho xe tấn công hậu. Đen lo chiếu xong thì mất hậu; lấy hậu chặn cũng mất: {Bc3+ Qf6 Bxf6+}.',
         verify: 'best',
       },
       {
@@ -620,7 +619,7 @@ Hai vua đứng đối diện nhau, cách nhau **một ô** (thường gặp nh�
 
 ### Vua + tốt chống vua
 - Vua tấn công nên đứng **trước** tốt của mình, không phải cạnh hay sau: đó là cách thắng trong hầu hết các thế.
-- Vua đứng ở hàng 6 (trước tốt) thì **luôn thắng**, bất kể ai đi.
+- Vua đứng ở hàng 6 (trước tốt) thì **luôn thắng**, bất kể ai đi (trừ tốt biên).
 - Vua phòng thủ chặn ngay trước tốt và giữ đối vua thì **hòa**.
 - Tốt biên (a, h): hòa nếu vua phòng thủ tới được góc.`,
       },
@@ -647,7 +646,7 @@ Hai vua đứng đối diện nhau, cách nhau **một ô** (thường gặp nh�
         fen: '4k3/8/8/4K3/4P3/8/8/8 b - - 0 1',
         moves: ['e8e7'],
         prompt: 'Đen đi và hòa. Chỉ có một nước đúng.',
-        explain: 'Ke7! giữ đối vua (hai vua cách một ô, Trắng phải đi). Nếu Trắng Kd5 thì Kd7, nếu Kf5 thì Kf7, luôn đối diện. Kd7 hoặc Kf7?? thua vì Trắng chiếm đối vua.',
+        explain: 'Ke7! giữ đối vua (hai vua cách một ô, Trắng phải đi). Nếu Trắng Kd5 thì Kd7, nếu Kf5 thì Kf7, luôn đối diện. Kd7 hoặc Kf7?? thua vì vua trắng lên được hàng 6 ({^Kf7 Kd6} hoặc {^Kd7 Kf6}) và mở đường cho tốt.',
         verify: 'best',
       },
       { kind: 'practice', ids: ['kp-win-6th', 'kp-win-opposition', 'kp-draw-opposition'], intro: 'Hai thế thắng và một thế thủ hòa. Đánh tiếp với máy: chỉ một nước Vua sai là kết quả đổi ngay, và máy sẽ báo cho bạn biết.' },

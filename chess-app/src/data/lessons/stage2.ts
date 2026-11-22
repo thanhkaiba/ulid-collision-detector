@@ -121,7 +121,7 @@ Cuộc đua: đẩy tốt cánh có vua đối phương, không đổi quân t�
       {
         kind: 'diagram',
         fen: 'r1bq1rk1/pppn1ppp/2n1p3/3pP3/1b1P4/2NB1N2/PPP2PPP/R1BQK2R w KQ - 0 1',
-        caption: 'Đủ điều kiện của Bxh7+: tượng d3, mã f3 (sẽ tới g5), hậu có đường tới h5, tốt e5 đã đuổi mã f6, tượng Đen ở b4 không canh g5, tượng c8 bị tốt e6 chặn. Thử {Bxh7+ Kxh7 Ng5+ Kg8 Qh5}: Đen chỉ thoát mất bằng cách trả hậu.',
+        caption: 'Đủ điều kiện của Bxh7+: tượng d3, mã f3 (sẽ tới g5), hậu có đường tới h5, tốt e5 đã đuổi mã f6, tượng Đen ở b4 không canh g5, tượng c8 bị tốt e6 chặn. Thử {Bxh7+ Kxh7 Ng5+ Kg8 Qh5}: Đen chỉ tránh được chiếu hết bằng cách bỏ hậu lấy mã (...Qxg5).',
         marks: ['d3h7', 'f3g5', 'd1h5'],
       },
       { kind: 'puzzles', themes: ['kingsideAttack', 'sacrifice'], rating: [1500, 1900], count: 8, intro: 'Tấn công cánh vua với thí quân: 8 bài.' },

@@ -22,7 +22,7 @@ Sau 3...Bc5 4.c3 Nf6 5.d3 d6 6.O-O O-O: Trắng chơi **Re1, Nbd2, Bb3, Nf1-g3, 
 Người mới hay thích 4.Ng5 nhưng biến đó rất sắc và Đen có nhiều cách tốt. Ở trình độ này hãy chơi đơn giản **4.d3** rồi kế hoạch như trên.
 
 ### Bẫy cần biết
-- Sau 3...Nd4 (Gambit Blackburne Shilling) đừng tham 4.Nxe5?? vì 4...Qg5! đánh cùng lúc mã e5 và tốt g2, Trắng mất quân. Đáp đúng là 4.Nxd4 exd4 5.c3.
+- Sau 3...Nd4 (Gambit Blackburne Shilling) đừng tham 4.Nxe5?? vì 4...Qg5! đánh cùng lúc mã e5 và tốt g2, Trắng mất quân. Đáp đúng là 4.Nxd4 exd4 5.O-O (rồi c3 hoặc d3); 4.O-O, 4.c3 hay 4.Nc3 cũng tốt.
 - Nếu Đen đi ...Bg4 ghim mã f3 và Trắng đã có Nc3, hãy nhớ mẫu chiếu hết Légal ở bài tập dưới.`,
       },
       {
@@ -30,7 +30,7 @@ Người mới hay thích 4.Ng5 nhưng biến đó rất sắc và Đen có nhi�
         fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         moves: ['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f1c4', 'f8c5', 'c2c3', 'g8f6', 'd2d3', 'd7d6', 'e1g1', 'e8g8', 'f1e1', 'a7a6', 'b1d2', 'c5a7', 'c4b3', 'c8e6'],
         prompt: 'Đi lại kế hoạch Ý chậm cho Trắng: 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.c3 Nf6 5.d3 d6 6.O-O O-O 7.Re1 a6 8.Nbd2 Ba7 9.Bb3 Be6.',
-        explain: 'Trắng đã sẵn sàng: Nf1 rồi Ng3, h3, và d4 khi thích hợp. Tượng b3 tránh bị ...Na5 đổi.',
+        explain: 'Trắng đã sẵn sàng: Nf1 rồi Ng3, h3, và d4 khi thích hợp. Tượng lui b3 trước để ...d5 hay ...Na5 không đuổi được với nhịp; nếu Đen đổi ...Bxb3 thì Qxb3 vẫn tốt.',
         verify: 'line',
       },
       {
@@ -44,10 +44,10 @@ Người mới hay thích 4.Ng5 nhưng biến đó rất sắc và Đen có nhi�
       {
         kind: 'task',
         fen: 'r1bqkbnr/pppp1ppp/8/4p3/2BnP3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
-        moves: ['f3d4', 'e5d4', 'c2c3'],
-        alternatives: ['c2c3', 'e1g1'],
+        moves: ['f3d4', 'e5d4', 'e1g1'],
+        alternatives: ['e1g1', 'c2c3', 'b1c3'],
         prompt: 'Đen đi 3...Nd4?! (Blackburne Shilling). Trắng đáp đúng.',
-        explain: 'Nxd4 exd4 rồi c3 hoặc O-O: Trắng phát triển bình thường và hơn chút. Tuyệt đối không 4.Nxe5?? Qg5!.',
+        explain: 'Nxd4 exd4 rồi O-O (sau đó c3 hoặc d3): Trắng phát triển bình thường và hơn chút. O-O, c3, Nc3 ngay cũng được. Tuyệt đối không 4.Nxe5?? Qg5!.',
         verify: 'best',
       },
       {
@@ -74,19 +74,19 @@ Người mới hay thích 4.Ng5 nhưng biến đó rất sắc và Đen có nhi�
       {
         kind: 'text',
         md: `### Vì sao 1...e5
-Đen cũng chiếm trung tâm và phát triển tự nhiên. Các khai cuộc "kỳ lạ" (Sicilian, French) rất tốt nhưng đòi hỏi hiểu biết cấu trúc tốt; để sau 1500.
+Đen cũng chiếm trung tâm và phát triển tự nhiên. Các phòng thủ bất đối xứng (Sicilian, French) rất tốt nhưng đòi hỏi hiểu biết cấu trúc tốt; để sau 1500.
 
 ### Chống Ý (3.Bc4): 3...Bc5
-Đi gương Trắng: ...Nf6, ...d6, ...O-O, ...a6, ...Ba7. Nếu Trắng đi c3 và d4 sớm: 4.c3 Nf6 5.d4 exd4 6.cxd4 Bb4+ 7.Bd2 Bxd2+ 8.Nbxd2 d5! Đen giải tỏa trung tâm và cân bằng.
+Đi gương Trắng: ...Nf6, ...d6, ...O-O, ...a6, ...Ba7. Nếu Trắng đi c3 và d4 sớm: 4.c3 Nf6 5.d4 exd4 6.cxd4 Bb4+ 7.Bd2 Bxd2+ 8.Nbxd2 d5! Đen giải tỏa trung tâm và cân bằng. Nếu 6.e5 thì 6...d5!; nếu 7.Nc3 thì 7...Nxe4 (biến sắc, nên xem kỹ).
 
 ### Chống 4.Ng5 (nếu bạn đi 3...Nf6)
-4...d5 5.exd5 **Na5!** (không 5...Nxd5? 6.Nxf7! Fried Liver). Sau 6.Bb5+ c6 7.dxc6 bxc6 Đen mất tốt nhưng có phát triển vượt trội.
+4...d5 5.exd5 **Na5!** (không 5...Nxd5? 6.Nxf7! Fried Liver). Sau 6.Bb5+ c6 7.dxc6 bxc6 Đen kém một tốt nhưng phát triển nhanh hơn, đủ bù đắp.
 
 ### Chống Ruy López (3.Bb5): 3...a6 4.Ba4 Nf6 5.O-O Be7
 Rồi ...b5, ...d6, ...O-O. Đây là hệ thống đóng kinh điển, chơi theo nguyên tắc là đủ.
 
 ### Chống Scotch (3.d4): 3...exd4 4.Nxd4 Bc5
-Tượng tấn công mã d4; sau 5.Be3 Qf6 6.c3 Nge7 Đen thoải mái.`,
+Tượng tấn công mã d4; sau 5.Be3 Qf6 6.c3 Nge7 Đen thoải mái. Nếu 5.Nb3 thì 5...Bb6; nếu 5.Nxc6 thì 5...Qf6.`,
       },
       {
         kind: 'task',
@@ -100,9 +100,9 @@ Tượng tấn công mã d4; sau 5.Be3 Qf6 6.c3 Nge7 Đen thoải mái.`,
         kind: 'task',
         fen: 'r1bqkb1r/ppp2ppp/2n2n2/3Pp1N1/2B5/8/PPPP1PPP/RNBQK2R b KQkq - 0 5',
         moves: ['c6a5'],
-        alternatives: ['b7b5'],
+        alternatives: ['b7b5', 'c6d4'],
         prompt: 'Sau 4.Ng5 d5 5.exd5. Đen tìm nước đúng (không phải 5...Nxd5?).',
-        explain: 'Na5! tấn công tượng c4. Nxd5? cho phép 6.Nxf7 Kxf7 7.Qf3+ với tấn công rất mạnh. b5 (Ulvestad) cũng chơi được; Nd4 (Fritz) phức tạp và kém hơn một chút.',
+        explain: 'Na5! tấn công tượng c4. Nxd5? cho phép 6.Nxf7 Kxf7 7.Qf3+ với tấn công rất mạnh. b5 (Ulvestad) và Nd4 (Fritz) cũng chơi được nhưng sắc hơn và kém Na5 một chút.',
         verify: 'best',
       },
       {
@@ -128,10 +128,10 @@ Tượng tấn công mã d4; sau 5.Be3 Qf6 6.c3 Nge7 Đen thoải mái.`,
       {
         kind: 'text',
         md: `### Gambit Hậu từ chối (QGD): 1.d4 d5 2.c4 e6
-Đen giữ tốt d5, phát triển ...Nf6, ...Be7, ...O-O, ...Nbd7, ...c6 hoặc ...c5. Tượng c8 là vấn đề duy nhất; giải quyết bằng ...b6 và ...Bb7, hoặc ...dxc4 rồi ...c5 (giải phóng).
+Đen giữ tốt d5, phát triển ...Nf6, ...Be7, ...O-O, ...Nbd7, ...c6 hoặc ...c5. Tượng c8 là vấn đề duy nhất; giải quyết bằng ...b6 và ...Bb7, hoặc ...dxc4 rồi ...c5 hay ...e5 (giải phóng).
 
 ### Kế hoạch chính
-- Nếu Trắng đổi cxd5 exd5 (Cấu trúc Carlsbad): Đen đặt tượng ở d6, mã f6-e4 hoặc đi ...Re8, ...Nf8, ...Ne6.
+- Nếu Trắng đổi cxd5 exd5 (Cấu trúc Carlsbad): tượng c8 đã thoát, tìm cách đưa ra f5 hoặc g4; mã f6-e4 hoặc đi ...Re8, ...Nf8, ...Ne6/...Ng6. Trắng thường tấn công thiểu số b4-b5.
 - Nếu Trắng chơi Bg5: ...Be7, ...O-O, ...h6 rồi ...Nbd7, ...c6. Đừng sợ Bxf6: Đen có cặp tượng.
 - Chống London (2.Bf4): ...c5, ...Nc6, ...Qb6 tấn công b2 sớm.
 
@@ -143,7 +143,7 @@ Tượng tấn công mã d4; sau 5.Be3 Qf6 6.c3 Nge7 Đen thoải mái.`,
         fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         moves: ['d2d4', 'd7d5', 'c2c4', 'e7e6', 'b1c3', 'g8f6', 'c1g5', 'f8e7', 'e2e3', 'e8g8', 'g1f3', 'b8d7', 'a1c1', 'c7c6'],
         prompt: 'Đi lại cho Đen: 1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Bg5 Be7 5.e3 O-O 6.Nf3 Nbd7 7.Rc1 c6.',
-        explain: 'Thế cờ QGD chính thống. Kế hoạch tiếp theo của Đen: ...dxc4 rồi ...Nd5 hoặc ...b5, hoặc ...h6 rồi ...Re8.',
+        explain: 'Thế cờ QGD chính thống. Kế hoạch tiếp theo của Đen: sau 8.Bd3 dxc4 9.Bxc4 thì ...Nd5 (đổi quân) rồi ...e5, hoặc ...b5; cũng có thể ...h6 trước.',
         verify: 'line',
       },
       {
@@ -249,12 +249,12 @@ Bắt hoặc đổi quân đang bảo vệ mục tiêu. Hãy nhìn xem mỗi qu�
 ### Lucena (bên hơn tốt thắng)
 Điều kiện:
 - Tốt đã tới hàng 7, vua mình đứng ngay trước tốt ở hàng 8.
-- Vua đối phương bị xe cắt, **cách tốt ít nhất hai cột** (ở bài tập: tốt cột c, vua đen ở cột f, xe trắng giữ cột e).
+- Vua đối phương bị xe cắt, **giữa vua và tốt có ít nhất hai cột** (ở bài tập: tốt cột c, vua đen ở cột f, xe trắng giữ cột e).
 - Không áp dụng cho tốt biên (cột a, h): vua bị kẹt ở góc.
 
 Vấn đề của Trắng: vua bước ra khỏi ô phong cấp thì bị xe đen chiếu liên tục từ xa. Lời giải là **"xây cầu"**: đưa xe lên hàng 4 trước, rồi đưa vua ra; khi vua lùi tới hàng 5, xe bước vào giữa che chiếu và tốt phong hậu.
 
-Nếu vua đối phương đứng quá gần (chỉ cách một cột), trước hết phải **chiếu đuổi nó ra xa** rồi mới xây cầu, nếu không đối phương đổi xe và vua họ bắt kịp tốt.
+Nếu vua đối phương đứng quá gần (giữa vua và tốt chỉ có một cột), trước hết phải **chiếu đuổi nó ra xa** rồi mới xây cầu, nếu không đối phương đổi xe và vua họ bắt kịp tốt.
 
 ### Philidor (bên kém tốt hòa)
 Điều kiện: vua phòng thủ đứng trên ô phong cấp, và **vua tấn công chưa lên được hàng 6**.
@@ -265,8 +265,8 @@ Nếu vua đối phương đứng quá gần (chỉ cách một cột), trước
         kind: 'task',
         fen: '2K5/2P2k2/8/8/8/8/r7/4R3 w - - 0 1',
         moves: ['e1e4', 'a2a1', 'c8d7', 'a1d1', 'd7c6', 'd1c1', 'c6d6', 'c1d1', 'd6c5', 'd1c1', 'e4c4'],
-        prompt: 'Lucena: đi trọn cây cầu. Bước 1 đưa xe lên hàng 4; bước 2 vua ra bằng cột d; mỗi lần bị chiếu vua lùi dần về phía xe đen; cuối cùng xe che chiếu.',
-        explain: '1.Re4! Ra1 2.Kd7 Rd1+ 3.Kc6 Rc1+ 4.Kd6 Rd1+ 5.Kc5 Rc1+ 6.Rc4! Xe che chiếu, tốt c7 phong hậu ở nước sau. Xe phải lên hàng 4 trước khi vua ra: nếu vua ra ngay, các nước chiếu không bao giờ dứt. Trong thế này Trắng còn những cách thắng khác, nhưng cây cầu là kỹ thuật dùng được cho mọi tốt từ cột b đến cột g.',
+        prompt: 'Lucena: đi trọn cây cầu. Bước 1 đưa xe lên hàng 4; bước 2 vua ra bằng cột d; mỗi lần bị chiếu vua lùi dần xuống, đi chữ chi giữa cột c và cột d, không để xe đen ăn tốt c7; cuối cùng xe che chiếu.',
+        explain: '1.Re4! Ra1 2.Kd7 Rd1+ 3.Kc6 Rc1+ 4.Kd6 Rd1+ 5.Kc5 Rc1+ 6.Rc4! Xe che chiếu, tốt c7 phong hậu ở nước sau. Chú ý 4.Kd5? Rxc7 chỉ hòa: vua phải giữ tốt. Xe phải lên hàng 4 trước khi vua ra: nếu vua ra ngay, các nước chiếu không bao giờ dứt. Trong thế này Trắng còn những cách thắng khác, nhưng cây cầu là kỹ thuật dùng được cho mọi tốt từ cột b đến cột g.',
         verify: 'line',
       },
       {
@@ -306,7 +306,7 @@ Tốt thông ở cánh xa vua đối phương là "mồi nhử": vua họ phải
 Khi tốt của hai bên đối diện nhau, thí hai tốt để tạo một tốt thông không ai cản được. Điều kiện: vua đối phương ở xa.
 
 ### Ô then chốt (key squares)
-Với tốt ở hàng 2 đến hàng 4, ba ô cách tốt hai hàng phía trước là then chốt: vua tấn công đặt chân lên là thắng. Với tốt ở hàng 5 và hàng 6, cả ba ô ngay trước tốt cũng là then chốt.
+Với tốt ở hàng 2 đến hàng 4 (trừ tốt biên), ba ô cách tốt hai hàng phía trước là then chốt: vua tấn công đặt chân lên là thắng. Với tốt ở hàng 5 và hàng 6, cả ba ô ngay trước tốt cũng là then chốt.
 
 ### Tam giác (triangulation)
 Khi cần "mất một nhịp" để giành đối vua, vua đi tam giác (3 nước về chỗ cũ) trong khi vua đối phương chỉ có 2 ô để đi.`,
@@ -344,27 +344,27 @@ Cột không còn tốt. Xe thuộc về cột mở, và từ đó xâm nhập h
 ### Tốt yếu
 - **Tốt cô lập**: không có tốt bạn ở cột cạnh. Phải được bảo vệ bằng quân, ô trước nó là ô tiền đồn cho đối phương.
 - **Tốt chồng**: hai tốt cùng cột, không bảo vệ được nhau.
-- **Tốt lạc hậu**: bị tụt lại, không thể tiến vì ô trước bị kiểm soát.
+- **Tốt lạc hậu**: tụt lại sau các tốt cột cạnh nên không tốt nào bảo vệ được, và ô trước nó bị tốt đối phương kiểm soát nên khó tiến.
 Kế hoạch: tấn công tốt yếu bằng nhiều quân hơn số quân bảo vệ.
 
 ### Tốt thông
 Tốt không có tốt đối phương nào cản ở phía trước (cả cột cạnh). "Tốt thông phải được đẩy" nhưng chỉ khi được hỗ trợ.
 
 ### Ô tiền đồn (outpost)
-Ô trong trận địa đối phương, được tốt bạn bảo vệ, không bị tốt họ đuổi. Mã ở tiền đồn hàng 5-6 mạnh ngang xe.
+Ô trong trận địa đối phương, được tốt bạn bảo vệ, không bị tốt họ đuổi. Mã ở tiền đồn hàng 5-6 có thể mạnh ngang xe.
 
 ### Cặp tượng
-Hai tượng ở thế cờ mở mạnh hơn tượng + mã hay hai mã. Khi có cặp tượng, hãy mở thế cờ; khi đối phương có, hãy đóng.`,
+Hai tượng ở thế cờ mở thường mạnh hơn tượng + mã hay hai mã. Khi có cặp tượng, hãy mở thế cờ; khi đối phương có, hãy đóng.`,
       },
       {
         kind: 'diagram',
-        fen: 'r4rk1/pp3ppp/2n1p3/8/3P4/2N2N2/PP3PPP/R3R1K1 w - - 0 1',
-        caption: 'Trắng có tốt cô lập d4: điểm yếu để tấn công, nhưng cho Trắng không gian và cột e mở. Đen muốn đổi quân nhẹ và phong tỏa d5; Trắng muốn tấn công vua khi còn nhiều quân.',
+        fen: 'r1bq1rk1/pp2bppp/2n1pn2/8/3P4/2NB1N2/PP3PPP/R1BQR1K1 w - - 0 1',
+        caption: 'Trắng có tốt cô lập d4: điểm yếu để tấn công, nhưng cho Trắng không gian, ô e5 cho mã và cột e nửa mở. Đen muốn đổi quân nhẹ và phong tỏa d5; Trắng muốn tấn công vua khi còn nhiều quân.',
       },
       {
         kind: 'diagram',
-        fen: 'r2q1rk1/pp2bppp/2p1pn2/8/3PN3/5N2/PP3PPP/R2QR1K1 w - - 0 1',
-        caption: 'Mã e4 ở tiền đồn: không tốt Đen nào đuổi được. Trắng có thể Nxf6+ để cặp tượng hoặc giữ mã để tấn công.',
+        fen: 'r2q1rk1/pp3pbp/3p2p1/3Np3/4P3/8/PPP2PPP/R2Q1RK1 w - - 0 1',
+        caption: 'Mã d5 ở tiền đồn: tốt e4 bảo vệ, Đen không còn tốt c và tốt e đã qua e5 nên không tốt nào đuổi được. Tượng g7 đi ô đen, không đổi được mã, lại bị tốt e5 của chính mình chặn.',
       },
       { kind: 'puzzles', themes: ['quietMove'], rating: [1100, 1500], count: 6, intro: 'Nước lặng mang tính chiến lược: 6 bài.' },
     ],
