@@ -1,0 +1,413 @@
+import type { Lesson } from './types';
+
+export const STAGE1: Lesson[] = [
+  {
+    id: 'opening-white-italian',
+    stage: 1,
+    title: 'Khai cuộc cho Trắng: Ván cờ Ý',
+    summary: 'Một hệ thống duy nhất, dễ hiểu, dùng được tới 2000.',
+    minutes: 30,
+    blocks: [
+      {
+        kind: 'text',
+        md: `### Vì sao chọn Ván cờ Ý (1.e4 e5 2.Nf3 Nc6 3.Bc4)
+- Tuân thủ mọi nguyên tắc: trung tâm, phát triển, nhập thành sớm.
+- Tượng c4 nhắm vào f7, điểm yếu nhất của Đen.
+- Kế hoạch rõ ràng, ít phải học thuộc.
+
+### Kế hoạch "Ý chậm" (Giuoco Pianissimo)
+Sau 3...Bc5 4.c3 Nf6 5.d3 d6 6.O-O O-O: Trắng chơi **Re1, Nbd2, Bb3, Nf1-g3, h3** rồi tùy tình hình đẩy d4. Ý tưởng: xây dựng chắc, đưa mã sang g3 hướng về vua Đen.
+
+### Nếu Đen chơi 3...Nf6 (Hai Mã)
+Người mới hay thích 4.Ng5 nhưng biến đó rất sắc và Đen có nhiều cách tốt. Ở trình độ này hãy chơi đơn giản **4.d3** rồi kế hoạch như trên.
+
+### Bẫy cần biết
+- Đừng đi 4.Nxe5?? sau 3...Nd4 (Gambit Blackburne Shilling): 4...Qg5! và Trắng mất quân. Đáp đúng là 4.Nxd4 exd4 5.c3.
+- Nếu Đen đi ...Bg4 ghim mã f3 và Trắng đã có Nc3, hãy nhớ mẫu chiếu hết Légal ở bài tập dưới.`,
+      },
+      {
+        kind: 'task',
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        moves: ['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f1c4', 'f8c5', 'c2c3', 'g8f6', 'd2d3', 'd7d6', 'e1g1', 'e8g8', 'f1e1', 'a7a6', 'b1d2', 'c5a7', 'c4b3', 'c8e6'],
+        prompt: 'Đi lại kế hoạch Ý chậm cho Trắng: 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.c3 Nf6 5.d3 d6 6.O-O O-O 7.Re1 a6 8.Nbd2 Ba7 9.Bb3 Be6.',
+        explain: 'Trắng đã sẵn sàng: Nf1 rồi Ng3, h3, và d4 khi thích hợp. Tượng b3 tránh bị ...Na5 đổi.',
+        verify: 'line',
+      },
+      {
+        kind: 'task',
+        fen: 'rn1qkbnr/ppp2p1p/3p2p1/4N3/2B1P3/2N5/PPPP1PPP/R1BbK2R w KQkq - 0 6',
+        moves: ['c4f7', 'e8e7', 'c3d5'],
+        prompt: 'Chiếu hết Légal. Đen vừa tham ăn hậu bằng 5...Bxd1. Trắng chiếu hết trong 2 nước.',
+        explain: '6.Bxf7+ Ke7 7.Nd5#. Ba quân nhẹ phối hợp chiếu hết vua đứng giữa bàn. Mẫu này xảy ra khi Đen ghim mã f3 bằng Bg4 quá sớm.',
+        verify: 'mate',
+      },
+      {
+        kind: 'task',
+        fen: 'r1bqkbnr/pppp1ppp/8/4p3/2BnP3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
+        moves: ['f3d4', 'e5d4', 'c2c3'],
+        alternatives: ['c2c3', 'e1g1'],
+        prompt: 'Đen đi 3...Nd4?! (Blackburne Shilling). Trắng đáp đúng.',
+        explain: 'Nxd4 exd4 rồi c3 hoặc O-O: Trắng phát triển bình thường và hơn chút. Tuyệt đối không 4.Nxe5?? Qg5!.',
+        verify: 'best',
+      },
+      {
+        kind: 'puzzles',
+        themes: ['attackingF2F7', 'opening'],
+        rating: [900, 1300],
+        count: 6,
+        intro: 'Khai thác f7/f2 trong khai cuộc: 6 bài.',
+      },
+    ],
+    resources: [
+      { label: 'Wikibooks: Italian Game', url: 'https://en.wikibooks.org/wiki/Chess_Opening_Theory/1._e4/1...e5/2._Nf3/2...Nc6/3._Bc4', note: 'Lý thuyết mở, miễn phí (CC BY-SA).' },
+      { label: 'Lichess Opening Explorer', url: 'https://lichess.org/analysis#explorer', note: 'Xem thống kê nước đi của kiện tướng và người chơi cùng trình độ.' },
+    ],
+  },
+
+  {
+    id: 'opening-black-e4',
+    stage: 1,
+    title: 'Khai cuộc cho Đen chống 1.e4: 1...e5',
+    summary: 'Chơi đối xứng, lành mạnh, học được nhiều về trung cuộc mở.',
+    minutes: 30,
+    blocks: [
+      {
+        kind: 'text',
+        md: `### Vì sao 1...e5
+Đen cũng chiếm trung tâm và phát triển tự nhiên. Các khai cuộc "kỳ lạ" (Sicilian, French) rất tốt nhưng đòi hỏi hiểu biết cấu trúc tốt; để sau 1500.
+
+### Chống Ý (3.Bc4): 3...Bc5
+Đi gương Trắng: ...Nf6, ...d6, ...O-O, ...a6, ...Ba7. Nếu Trắng đi c3 và d4 sớm: 4.c3 Nf6 5.d4 exd4 6.cxd4 Bb4+ 7.Bd2 Bxd2+ 8.Nbxd2 d5! Đen giải tỏa trung tâm và cân bằng.
+
+### Chống 4.Ng5 (nếu bạn đi 3...Nf6)
+4...d5 5.exd5 **Na5!** (không 5...Nxd5? 6.Nxf7! Fried Liver). Sau 6.Bb5+ c6 7.dxc6 bxc6 Đen mất tốt nhưng có phát triển vượt trội.
+
+### Chống Ruy López (3.Bb5): 3...a6 4.Ba4 Nf6 5.O-O Be7
+Rồi ...b5, ...d6, ...O-O. Đây là hệ thống đóng kinh điển, chơi theo nguyên tắc là đủ.
+
+### Chống Scotch (3.d4): 3...exd4 4.Nxd4 Bc5
+Tượng tấn công mã d4; sau 5.Be3 Qf6 6.c3 Nge7 Đen thoải mái.`,
+      },
+      {
+        kind: 'task',
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        moves: ['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f1c4', 'f8c5', 'c2c3', 'g8f6', 'd2d4', 'e5d4', 'c3d4', 'c5b4', 'c1d2', 'b4d2', 'b1d2', 'd7d5'],
+        prompt: 'Đi lại cho Đen: 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.c3 Nf6 5.d4 exd4 6.cxd4 Bb4+ 7.Bd2 Bxd2+ 8.Nbxd2 d5.',
+        explain: 'Đen đã đổi tượng và đánh d5 đúng lúc: trung tâm Trắng bị tấn công, Đen phát triển hết quân nhẹ.',
+        verify: 'line',
+      },
+      {
+        kind: 'task',
+        fen: 'r1bqkb1r/ppp2ppp/2n2n2/3Pp1N1/2B5/8/PPPP1PPP/RNBQK2R b KQkq - 0 5',
+        moves: ['c6a5'],
+        alternatives: ['c6d4', 'b7b5'],
+        prompt: 'Sau 4.Ng5 d5 5.exd5. Đen tìm nước đúng (không phải 5...Nxd5?).',
+        explain: 'Na5! tấn công tượng c4. Nxd5? cho phép 6.Nxf7 Kxf7 7.Qf3+ với tấn công rất mạnh. Nd4 và b5 cũng là lựa chọn tốt.',
+        verify: 'best',
+      },
+      {
+        kind: 'puzzles',
+        themes: ['opening', 'attackingF2F7'],
+        rating: [1000, 1400],
+        count: 6,
+        intro: 'Khai cuộc mở: 6 bài khi đối phương vi phạm nguyên tắc.',
+      },
+    ],
+    resources: [
+      { label: 'Wikibooks: 1.e4 e5', url: 'https://en.wikibooks.org/wiki/Chess_Opening_Theory/1._e4/1...e5', note: 'Mọi biến chính kèm ý tưởng.' },
+    ],
+  },
+
+  {
+    id: 'opening-black-d4',
+    stage: 1,
+    title: 'Khai cuộc cho Đen chống 1.d4: Gambit Hậu từ chối',
+    summary: 'Chắc chắn, tự nhiên, không cần nhớ nhiều.',
+    minutes: 25,
+    blocks: [
+      {
+        kind: 'text',
+        md: `### Gambit Hậu từ chối (QGD): 1.d4 d5 2.c4 e6
+Đen giữ tốt d5, phát triển ...Nf6, ...Be7, ...O-O, ...Nbd7, ...c6 hoặc ...c5. Tượng c8 là vấn đề duy nhất; giải quyết bằng ...b6 và ...Bb7, hoặc ...dxc4 rồi ...c5 (giải phóng).
+
+### Kế hoạch chính
+- Nếu Trắng đổi cxd5 exd5 (Cấu trúc Carlsbad): Đen đặt tượng ở d6, mã f6-e4 hoặc đi ...Re8, ...Nf8, ...Ne6.
+- Nếu Trắng chơi Bg5: ...Be7, ...O-O, ...h6 rồi ...Nbd7, ...c6. Đừng sợ Bxf6: Đen có cặp tượng.
+- Chống London (2.Bf4): ...c5, ...Nc6, ...Qb6 tấn công b2 sớm.
+
+### Lỗi cần tránh
+Đừng đi ...dxc4 sớm rồi cố giữ tốt bằng ...b5: Trắng mở cột a và lấy lại tốt với lợi thế.`,
+      },
+      {
+        kind: 'task',
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        moves: ['d2d4', 'd7d5', 'c2c4', 'e7e6', 'b1c3', 'g8f6', 'c1g5', 'f8e7', 'e2e3', 'e8g8', 'g1f3', 'b8d7', 'a1c1', 'c7c6'],
+        prompt: 'Đi lại cho Đen: 1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Bg5 Be7 5.e3 O-O 6.Nf3 Nbd7 7.Rc1 c6.',
+        explain: 'Thế cờ QGD chính thống. Kế hoạch tiếp theo của Đen: ...dxc4 rồi ...Nd5 hoặc ...b5, hoặc ...h6 rồi ...Re8.',
+        verify: 'line',
+      },
+      {
+        kind: 'puzzles',
+        themes: ['queensideAttack', 'middlegame'],
+        rating: [1000, 1400],
+        count: 5,
+        intro: 'Trung cuộc đóng: 5 bài chiến thuật cánh hậu.',
+      },
+    ],
+    resources: [
+      { label: "Wikibooks: Queen's Gambit Declined", url: 'https://en.wikibooks.org/wiki/Chess_Opening_Theory/1._d4/1...d5/2._c4/2...e6' },
+    ],
+  },
+
+  {
+    id: 'tactics-3',
+    stage: 1,
+    title: 'Chiến thuật 3: đánh lạc hướng, dụ, diệt quân bảo vệ',
+    summary: 'Ba kỹ thuật "phá phòng thủ" trước khi ra đòn.',
+    minutes: 30,
+    blocks: [
+      {
+        kind: 'text',
+        md: `### Tư duy chung
+Khi đòn của bạn bị **một quân duy nhất** cản trở, hãy hỏi: làm sao đẩy nó đi (đánh lạc hướng), kéo vua/hậu vào ô xấu (dụ), hay đơn giản đổi nó đi (diệt quân bảo vệ)?
+
+### Đánh lạc hướng (deflection)
+Ép quân phòng thủ rời khỏi vị trí, thường bằng cách thí quân. Ví dụ kinh điển: hậu đối phương canh hàng cuối, bạn thí xe để kéo hậu đi rồi chiếu hết.
+
+### Dụ (attraction / decoy)
+Kéo vua hoặc hậu đến một ô cụ thể để đòn đôi hoặc chiếu hết xuất hiện. Thí hậu kéo vua rồi mã đòn đôi là mẫu rất hay gặp.
+
+### Diệt quân bảo vệ (removing the defender)
+Bắt hoặc đổi quân đang bảo vệ mục tiêu. Hãy nhìn xem mỗi quân đối phương đang "làm việc" gì; quân nào làm hai việc là quân quá tải (overloaded).`,
+      },
+      { kind: 'puzzles', themes: ['deflection'], rating: [1000, 1400], count: 6, intro: 'Đánh lạc hướng: 6 bài.' },
+      { kind: 'puzzles', themes: ['attraction'], rating: [1000, 1400], count: 6, intro: 'Dụ vua/hậu: 6 bài.' },
+      { kind: 'puzzles', themes: ['capturingDefender'], rating: [1000, 1400], count: 6, intro: 'Diệt quân bảo vệ: 6 bài.' },
+    ],
+    resources: [
+      { label: 'Sách: Chess Tactics for Students (John Bain)', url: 'https://www.google.com/search?q=Chess+Tactics+for+Students+John+Bain', note: 'Có bản tiếng Anh dễ đọc, mỗi chủ đề 25 bài.' },
+    ],
+  },
+
+  {
+    id: 'mating-patterns',
+    stage: 1,
+    title: 'Các mẫu chiếu hết kinh điển',
+    summary: 'Nhận ra mẫu thì không cần tính.',
+    minutes: 35,
+    blocks: [
+      {
+        kind: 'text',
+        md: `Mỗi mẫu dưới đây là một "hình ảnh" cần in vào đầu. Khi thấy đủ điều kiện (vua ở góc, tốt g/h, quân nào ở đâu) bạn sẽ tìm ra đòn ngay cả ở cờ chớp.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '6rk/5Npp/8/8/8/8/8/6K1 b - - 0 1',
+        caption: 'Chiếu hết ngạt (smothered mate): vua bị chính quân mình bao vây, mã chiếu hết. Thường đến từ Qg8+! Rxg8 Nf7#.',
+        mate: true,
+      },
+      {
+        kind: 'diagram',
+        fen: '8/4N1pk/8/8/8/8/8/K6R b - - 0 1',
+        caption: 'Mẫu Anastasia: mã e7 khóa g8 và g6, xe chiếu dọc cột h. Thường cần thí hậu ở h7 để mở cột.',
+        mate: true,
+      },
+      {
+        kind: 'diagram',
+        fen: '7k/7R/5N2/8/8/8/8/K7 b - - 0 1',
+        caption: 'Mẫu Ả Rập (Arabian mate): mã f6 bảo vệ xe h7 và khóa g8.',
+        mate: true,
+      },
+      {
+        kind: 'diagram',
+        fen: '2kr4/3p4/B7/8/5B2/8/8/K7 b - - 0 1',
+        caption: 'Mẫu Boden: hai tượng chéo nhau, vua nhập thành dài bị kẹt. Thường đến từ thí hậu Qxc6+! bxc6 Ba6#.',
+        mate: true,
+      },
+      {
+        kind: 'diagram',
+        fen: '5rk1/5p1p/8/8/8/8/8/5RQK b - - 0 1',
+        caption: 'Hậu dọc cột g: nhưng Đen đi được f6 hay Kh8 nên đây CHƯA phải mate. Ở ví dụ này Trắng còn thiếu quân khóa cột f. Kiểm tra kỹ các ô thoát trước khi thí quân.',
+      },
+      { kind: 'puzzles', themes: ['smotheredMate', 'arabianMate', 'anastasiaMate'], rating: [1000, 1500], count: 6, intro: 'Mẫu ngạt, Ả Rập, Anastasia: 6 bài.' },
+      { kind: 'puzzles', themes: ['bodenMate', 'hookMate', 'dovetailMate', 'doubleBishopMate'], rating: [1000, 1500], count: 6, intro: 'Boden, móc, đuôi én, hai tượng: 6 bài.' },
+      { kind: 'puzzles', themes: ['mateIn2'], rating: [1100, 1400], count: 8, intro: 'Tổng hợp chiếu hết 2 nước: 8 bài.' },
+    ],
+  },
+
+  {
+    id: 'rook-endings-1',
+    stage: 1,
+    title: 'Cờ tàn xe: Lucena và Philidor',
+    summary: 'Hai thế cờ mọi kỳ thủ câu lạc bộ phải biết.',
+    minutes: 30,
+    blocks: [
+      {
+        kind: 'text',
+        md: `Cờ tàn xe là loại cờ tàn phổ biến nhất (hơn 50% các ván vào cờ tàn). Chỉ cần hai thế cờ này là bạn đã hơn phần lớn đối thủ cùng trình độ.
+
+### Lucena (bên hơn tốt thắng)
+Điều kiện: tốt đã tới hàng 7, vua mình đứng trước tốt ở hàng 8, vua đối phương bị cắt ít nhất một cột. Kỹ thuật **"xây cầu"**: đưa xe lên hàng 4 (hoặc 5), đưa vua ra, khi bị chiếu thì che bằng xe.
+
+### Philidor (bên kém tốt hòa)
+Điều kiện: vua mình đứng trước tốt đối phương ở hàng 8, tốt chưa qua hàng 5. Kỹ thuật: giữ xe ở **hàng 6** (tính từ phía mình: hàng 3) để vua đối phương không lên được. Khi tốt tiến lên hàng 6, xe xuống hàng 1 và **chiếu từ phía sau** liên tục.`,
+      },
+      {
+        kind: 'task',
+        fen: '2K5/2P1k3/8/8/8/8/r7/3R4 w - - 0 1',
+        moves: ['d1d4'],
+        alternatives: ['d1d5', 'd1d3', 'd1e1'],
+        prompt: 'Lucena. Trắng đi và thắng. Tìm nước chuẩn bị "xây cầu".',
+        explain: '1.Rd4! Xe lên hàng 4. Kế hoạch: Kb7, và khi bị chiếu Rb1+ Kc6, Rc1+ Kb6, Rb1+ Kc5, Rc1+ thì Rc4! che chiếu bằng xe (cây cầu) rồi tốt phong hậu. Rd3/Rd5 cũng thắng nhưng Rd4 là cách chuẩn. (Rd2?? thì Rxd2.)',
+        verify: 'best',
+      },
+      {
+        kind: 'task',
+        fen: '4k3/1R6/r3P3/3K4/8/8/8/8 b - - 0 1',
+        moves: ['a6a1'],
+        alternatives: ['e8f8', 'a6a2'],
+        prompt: 'Philidor, giai đoạn 2. Tốt Trắng đã lên e6. Đen đi và hòa (tìm nước theo phương pháp Philidor).',
+        explain: 'Ra1! Xe xuống hàng 1 để chiếu từ phía sau: Kd6 Rd1+ Ke5 Re1+ Kf6 Rf1+ ... vua Trắng không trốn được vì tốt e6 chiếm mất ô che. Nếu Đen giữ xe ở hàng 6 thì Trắng Kd6 rồi Rb8+ và e7 thắng.',
+        verify: 'best',
+      },
+      { kind: 'puzzles', themes: ['rookEndgame'], rating: [1100, 1500], count: 6, intro: 'Chiến thuật trong cờ tàn xe: 6 bài.' },
+    ],
+    resources: [
+      { label: "Sách: Silman's Complete Endgame Course", url: 'https://www.google.com/search?q=Silman%27s+Complete+Endgame+Course', note: 'Chia theo Elo. Đọc đúng phần của bạn thôi.' },
+      { label: 'Lichess Practice: Rook endgames', url: 'https://lichess.org/practice' },
+    ],
+  },
+
+  {
+    id: 'pawn-endings-2',
+    stage: 1,
+    title: 'Cờ tàn tốt nâng cao: tốt xa, đột phá, ô then chốt',
+    summary: 'Biến hơn một tốt thành thắng.',
+    minutes: 25,
+    blocks: [
+      {
+        kind: 'text',
+        md: `### Tốt thông xa (outside passed pawn)
+Tốt thông ở cánh xa vua đối phương là "mồi nhử": vua họ phải chạy sang bắt, vua bạn ăn hết tốt cánh kia.
+
+### Đột phá (breakthrough)
+Khi tốt của hai bên đối diện nhau, thí hai tốt để tạo một tốt thông không ai cản được. Điều kiện: vua đối phương ở xa.
+
+### Ô then chốt (key squares)
+Với tốt chưa qua hàng 5, ba ô cách tốt hai hàng phía trước là then chốt: vua tấn công đặt chân lên là thắng. Với tốt ở hàng 5 trở lên, then chốt là ba ô ngay trước tốt.
+
+### Tam giác (triangulation)
+Khi cần "mất một nhịp" để giành đối vua, vua đi tam giác (3 nước về chỗ cũ) trong khi vua đối phương chỉ có 2 ô để đi.`,
+      },
+      {
+        kind: 'task',
+        fen: '7k/ppp5/8/PPP5/8/8/8/7K w - - 0 1',
+        moves: ['b5b6', 'a7b6', 'c5c6', 'b7c6', 'a5a6'],
+        prompt: 'Đột phá kinh điển. Trắng đi và tạo tốt thông.',
+        explain: '1.b6! Nếu axb6 2.c6! bxc6 3.a6 và tốt a phong hậu. Nếu cxb6 2.a6! bxa6 3.c6. Đen không cản được.',
+        verify: 'best',
+      },
+      {
+        kind: 'diagram',
+        fen: '8/8/8/8/2k5/8/3P4/3K4 w - - 0 1',
+        caption: 'Tốt d2 chưa đi: các ô then chốt là c4, d4, e4 (cách tốt hai hàng). Vua Đen đang chiếm c4 nên Trắng không thắng được dù đi trước.',
+      },
+      { kind: 'puzzles', themes: ['pawnEndgame'], rating: [1100, 1500], count: 6, intro: 'Cờ tàn tốt từ ván thật: 6 bài.' },
+    ],
+  },
+
+  {
+    id: 'strategy-basics',
+    stage: 1,
+    title: 'Chiến lược cơ bản: cột mở, tốt yếu, ô tiền đồn',
+    summary: 'Khi không có đòn chiến thuật, làm gì?',
+    minutes: 30,
+    blocks: [
+      {
+        kind: 'text',
+        md: `### Cột mở
+Cột không còn tốt. Xe thuộc về cột mở, và từ đó xâm nhập hàng 7 ("xe hàng 7" tấn công tốt và vua). Ai chiếm cột mở trước có lợi thế.
+
+### Tốt yếu
+- **Tốt cô lập**: không có tốt bạn ở cột cạnh. Phải được bảo vệ bằng quân, ô trước nó là ô tiền đồn cho đối phương.
+- **Tốt chồng**: hai tốt cùng cột, không bảo vệ được nhau.
+- **Tốt lạc hậu**: bị tụt lại, không thể tiến vì ô trước bị kiểm soát.
+Kế hoạch: tấn công tốt yếu bằng nhiều quân hơn số quân bảo vệ.
+
+### Tốt thông
+Tốt không có tốt đối phương nào cản ở phía trước (cả cột cạnh). "Tốt thông phải được đẩy" nhưng chỉ khi được hỗ trợ.
+
+### Ô tiền đồn (outpost)
+Ô trong trận địa đối phương, được tốt bạn bảo vệ, không bị tốt họ đuổi. Mã ở tiền đồn hàng 5-6 mạnh ngang xe.
+
+### Cặp tượng
+Hai tượng ở thế cờ mở mạnh hơn tượng + mã hay hai mã. Khi có cặp tượng, hãy mở thế cờ; khi đối phương có, hãy đóng.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'r4rk1/pp3ppp/2n1p3/8/3P4/2N2N2/PP3PPP/R3R1K1 w - - 0 1',
+        caption: 'Trắng có tốt cô lập d4: điểm yếu để tấn công, nhưng cho Trắng không gian và cột e mở. Đen muốn đổi quân nhẹ và phong tỏa d5; Trắng muốn tấn công vua khi còn nhiều quân.',
+      },
+      {
+        kind: 'diagram',
+        fen: 'r2q1rk1/pp2bppp/2p1pn2/8/3PN3/5N2/PP3PPP/R2QR1K1 w - - 0 1',
+        caption: 'Mã e4 ở tiền đồn: không tốt Đen nào đuổi được. Trắng có thể Nxf6+ để cặp tượng hoặc giữ mã để tấn công.',
+      },
+      { kind: 'puzzles', themes: ['quietMove'], rating: [1100, 1500], count: 6, intro: 'Nước lặng mang tính chiến lược: 6 bài.' },
+    ],
+    resources: [
+      { label: 'Sách: Chess Fundamentals (Capablanca), miễn phí', url: 'https://www.gutenberg.org/ebooks/33870', note: 'Public domain. Ngắn, rõ, vẫn là sách chiến lược nhập môn tốt nhất.' },
+    ],
+  },
+
+  {
+    id: 'analyze-your-games',
+    stage: 1,
+    title: 'Phân tích ván của chính mình',
+    summary: 'Cách học nhanh nhất mà hầu hết người chơi bỏ qua.',
+    minutes: 15,
+    blocks: [
+      {
+        kind: 'text',
+        md: `### Quy trình sau mỗi ván chậm
+1. **Chưa bật engine.** Xem lại ván, ghi ra 3 chỗ bạn cảm thấy không chắc hoặc thế cờ xoay chuyển.
+2. Tự tìm nước tốt hơn ở 3 chỗ đó.
+3. Vào tab **Phân tích** của app: nhập ván từ Lichess/Chess.com hoặc chơi với máy rồi bấm "Phân tích toàn ván".
+4. So sánh: chỗ nào engine đánh dấu sai nghiêm trọng (??) mà bạn không nhận ra? Đó chính là **lỗ hổng kiến thức** của bạn.
+5. Mỗi lỗi lớn được app đưa vào mục **"Lỗi của chính bạn"** ở tab Tập. Ôn lại khi tới hạn.
+
+### Phân loại lỗi
+- Lỗi chiến thuật (bỏ quân, không thấy đòn): tăng bài tập.
+- Lỗi khai cuộc (thua ngay 10 nước đầu): xem lại bài khai cuộc, tra Opening Explorer.
+- Lỗi cờ tàn (không thắng được thế thắng): học cờ tàn.
+- Lỗi thời gian: tập quản lý thời gian.
+
+Ghi lại lỗi lặp lại. Sau 20 ván, bạn sẽ thấy rõ 2-3 kiểu lỗi chiếm phần lớn thất bại.`,
+      },
+    ],
+  },
+
+  {
+    id: 'time-and-mind',
+    stage: 1,
+    title: 'Thời gian và tâm lý thi đấu',
+    summary: 'Chơi tốt không chỉ là biết nhiều.',
+    minutes: 10,
+    blocks: [
+      {
+        kind: 'text',
+        md: `### Quản lý thời gian
+- Khai cuộc quen thuộc: đi nhanh, dành thời gian cho trung cuộc.
+- Nước quan trọng (đổi quân, cấu trúc tốt thay đổi, quyết định tấn công): dành 10-20% tổng thời gian.
+- Dưới 1 phút với cờ chậm: chỉ đi nước an toàn, đừng tính biến phức tạp.
+- Quy tắc: nếu đã nghĩ 5 phút mà không chọn được giữa hai nước, chọn nước đơn giản hơn.
+
+### Tâm lý
+- **Sau khi bỏ quân**: dừng 30 giây, thở, đánh giá lại thế cờ như mới. Đa số ván thua là do sai lầm thứ hai ngay sau sai lầm thứ nhất.
+- **Khi đang thắng**: nguy hiểm nhất. Đổi quân, đơn giản hóa, tránh biến phức tạp.
+- **Khi đang thua**: làm thế cờ phức tạp, tạo vấn đề thực tế cho đối phương.
+- Không chơi khi mệt hay tức giận: "tilt" phá hỏng rating nhanh hơn mọi thứ. Thua 2 ván liên tiếp: nghỉ.`,
+      },
+    ],
+  },
+];
