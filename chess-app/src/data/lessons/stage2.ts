@@ -13,14 +13,14 @@ export const STAGE2: Lesson[] = [
         md: `"Tốt là linh hồn của cờ vua" (Philidor). Cấu trúc tốt cho biết **kế hoạch đúng** cho cả hai bên. Học cấu trúc là học kế hoạch, không phải học biến.
 
 ### Tốt cô lập ở cột d (IQP)
-- Bên có IQP: không gian, cột e và c nửa mở, tiền đồn e5 cho mã. Kế hoạch: **tấn công vua** khi còn nhiều quân, đẩy d4-d5 để mở thế.
+- Bên có IQP: không gian, cột e nửa mở và cột c mở cho xe, tiền đồn e5 cho mã. Kế hoạch: **tấn công vua** khi còn nhiều quân, đẩy d4-d5 để mở thế.
 - Bên chống IQP: **phong tỏa** d5, đổi quân nhẹ, vào cờ tàn để tấn công tốt yếu.
 
 ### Tốt treo (hanging pawns c4-d4 hoặc c5-d5)
 Linh hoạt nhưng dễ bị tấn công. Bên có: đẩy một tốt đúng lúc để mở đường. Bên chống: ép đối phương đẩy sớm, rồi phong tỏa.
 
 ### Cấu trúc Carlsbad (sau cxd5 exd5)
-Trắng: **tấn công thiểu số** b4-b5 tạo tốt yếu c6. Đen: tấn công cánh vua bằng ...f5 hoặc ...Ne4, hoặc phản ứng ...a6, ...b5.
+Trắng: **tấn công thiểu số** b4-b5 tạo tốt yếu c6. Đen: đổi tượng ô trắng bằng ...Bf5, đưa mã tới e4 hoặc d6, và tìm phản công ở cánh vua.
 
 ### Chuỗi tốt (Pháp: e5-d4 vs e6-d5)
 Tấn công vào **chân chuỗi** (d4 bằng ...c5, ...Nc6, ...Qb6). Bên có không gian tấn công cánh mà chuỗi hướng tới (Trắng: cánh vua).
@@ -36,12 +36,12 @@ Tấn công vào **chân chuỗi** (d4 bằng ...c5, ...Nc6, ...Qb6). Bên có k
       {
         kind: 'diagram',
         fen: 'r1bq1rk1/pp2bppp/2n2n2/2pp4/3P4/2N1PN2/PP2BPPP/R2Q1RK1 b - - 0 1',
-        caption: 'Đen có tốt treo c5-d5 (sau khi Trắng đổi ở c4/e6). Trắng muốn ép ...c4 hoặc ...d4 rồi phong tỏa; Đen giữ linh hoạt, chuẩn bị ...d4.',
+        caption: 'Đen có tốt treo c5-d5: hai tốt đứng cạnh nhau, không có tốt bạn ở cột b và e (thường sinh ra sau khi đổi tốt ở c5 và d5). Trắng muốn ép ...c4 hoặc ...d4 rồi phong tỏa; Đen giữ hai tốt linh hoạt và chuẩn bị ...d4 đúng lúc. Ván Fischer – Spassky trong "Từng nước một" là ví dụ mẫu.',
       },
       {
         kind: 'diagram',
         fen: 'r1bq1rk1/pp1nbppp/2p2n2/3p4/3P1B2/2NBP3/PPQ2PPP/R3K1NR w KQ - 0 1',
-        caption: 'Carlsbad. Kế hoạch Trắng: Nf3, O-O, Rab1, b4-b5 (tấn công thiểu số). Kế hoạch Đen: ...Re8, ...Nf8, ...Ne4 hoặc ...g6, ...Ng7, ...f5.',
+        caption: 'Carlsbad. Kế hoạch Trắng: Nf3, O-O, Rab1, b4-b5 (tấn công thiểu số). Kế hoạch Đen: ...Re8, ...Nf8, đổi tượng ô trắng bằng ...Bf5 (thường qua ...g6, ...Ne6-g7), hoặc đưa mã tới e4.',
       },
       { kind: 'puzzles', themes: ['advancedPawn', 'promotion'], rating: [1500, 1900], count: 6, intro: 'Tốt thông và phong cấp trong trung cuộc: 6 bài.' },
     ],
@@ -172,7 +172,7 @@ Trong cờ tàn kém chất, một số thế cờ đối phương không thể 
 Xe thường thắng tốt, trừ khi tốt đã tới hàng 6-7 với vua hỗ trợ và vua bên có xe ở xa. Nguyên tắc: xe **đứng sau** tốt thông (Tarrasch), cả tốt mình lẫn tốt đối phương.
 
 ### Thế Vancura (xe + tốt biên hàng 6 vs xe, hòa)
-Tốt a6 của Trắng, xe Trắng a8, vua Đen ở cánh vua. Đen hòa bằng cách đặt xe ở **hàng 6 (f6/g6)** tấn công tốt từ bên, chiếu vua Trắng từ bên khi nó đến gần. Xe Đen không được đứng sau tốt trong thế này.
+Tốt a6 của Trắng, xe Trắng a8 đứng trước tốt, vua Đen ở g7 hoặc h7. Đen hòa bằng cách đặt xe ở **hàng 6 (ví dụ f6)** tấn công tốt từ bên cạnh, và chiếu ngang vua Trắng khi nó đến gần tốt.
 
 ### Tượng khác màu
 Hơn một tốt hầu như luôn hòa. Hơn hai tốt thắng nếu hai tốt **cách nhau ít nhất 2 cột**. Bên hơn: đặt tốt ở ô khác màu với tượng đối phương.
@@ -185,8 +185,8 @@ Mã cản tốt được trừ tốt biên hàng 7. Mã + vua vs tốt thông: g
       },
       {
         kind: 'diagram',
-        fen: 'R7/8/P4k2/8/8/8/5r2/4K3 b - - 0 1',
-        caption: 'Vancura: Đen hòa bằng ...Rf6! rồi giữ xe ở hàng 6 tấn công tốt a6 từ bên. Khi vua Trắng tới b5, Đen chiếu từ bên (Rb6+). Vua Đen đứng ở g7 để xe Trắng không chiếu được.',
+        fen: 'R7/6k1/P4r2/8/8/8/8/3K4 w - - 0 1',
+        caption: 'Thế Vancura (hòa). Xe đen ở f6 tấn công tốt a6 từ bên cạnh nên xe trắng bị trói ở a8. Khi vua trắng tới b5 để bảo vệ tốt, Đen chiếu ngang bằng Rf5+ và vua trắng không có chỗ nấp. Nếu Trắng đẩy a7, xe đen về a6 đứng sau tốt. Vua đen ở g7 (hoặc h7) để xe trắng không thể rời a8 kèm chiếu.',
       },
       { kind: 'puzzles', themes: ['rookEndgame'], rating: [1600, 2000], count: 6, intro: 'Cờ tàn xe nâng cao: 6 bài.' },
       { kind: 'puzzles', themes: ['queenEndgame', 'queenRookEndgame'], rating: [1500, 2000], count: 6, intro: 'Cờ tàn hậu: 6 bài.' },

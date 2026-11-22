@@ -415,19 +415,19 @@ Sau khi nhập thành, ba tốt f-g-h che vua nhưng cũng nhốt nó. Nếu hà
     id: 'pawn-endings-1',
     stage: 0,
     title: 'Cờ tàn tốt cơ bản: hình vuông và đối vua',
-    summary: 'Hai quy tắc quyết định 80% cờ tàn vua + tốt.',
+    summary: 'Hai quy tắc nền tảng của cờ tàn vua + tốt.',
     minutes: 25,
     blocks: [
       {
         kind: 'text',
         md: `### Quy tắc hình vuông
-Vẽ hình vuông có cạnh từ tốt tới ô phong cấp. Nếu vua đối phương **đang ở trong** hình vuông (hoặc bước vào được khi đến lượt), nó bắt kịp tốt. Nếu không, tốt phong cấp. Không cần đếm từng nước.
+Vẽ hình vuông có cạnh từ tốt tới ô phong cấp. Nếu vua đối phương **đang ở trong** hình vuông (hoặc bước vào được khi đến lượt), nó bắt kịp tốt. Nếu không, tốt phong cấp. Không cần đếm từng nước. Lưu ý: tốt còn ở hàng 2 được đi hai ô, nên hãy vẽ hình vuông như thể nó đã đứng ở hàng 3.
 
 ### Đối vua (opposition)
-Hai vua đứng cùng cột cách nhau **một ô**. Bên **không phải đi** đang "có đối vua" và thắng thế: bên kia buộc phải nhường đường.
+Hai vua đứng đối diện nhau, cách nhau **một ô** (thường gặp nhất là trên cùng một cột; cùng hàng hay cùng đường chéo cũng tính). Bên **không phải đi** đang "có đối vua" và thắng thế: bên kia buộc phải nhường đường.
 
 ### Vua + tốt chống vua
-- Vua tấn công đứng **trước** tốt của mình (không phải cạnh hay sau) là điều kiện cần.
+- Vua tấn công nên đứng **trước** tốt của mình, không phải cạnh hay sau: đó là cách thắng trong hầu hết các thế.
 - Vua đứng ở hàng 6 (trước tốt) thì **luôn thắng**, bất kể ai đi.
 - Vua phòng thủ chặn ngay trước tốt và giữ đối vua thì **hòa**.
 - Tốt biên (a, h): hòa nếu vua phòng thủ tới được góc.`,

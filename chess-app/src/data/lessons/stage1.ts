@@ -22,7 +22,7 @@ Sau 3...Bc5 4.c3 Nf6 5.d3 d6 6.O-O O-O: Trắng chơi **Re1, Nbd2, Bb3, Nf1-g3, 
 Người mới hay thích 4.Ng5 nhưng biến đó rất sắc và Đen có nhiều cách tốt. Ở trình độ này hãy chơi đơn giản **4.d3** rồi kế hoạch như trên.
 
 ### Bẫy cần biết
-- Đừng đi 4.Nxe5?? sau 3...Nd4 (Gambit Blackburne Shilling): 4...Qg5! và Trắng mất quân. Đáp đúng là 4.Nxd4 exd4 5.c3.
+- Sau 3...Nd4 (Gambit Blackburne Shilling) đừng tham 4.Nxe5?? vì 4...Qg5! đánh cùng lúc mã e5 và tốt g2, Trắng mất quân. Đáp đúng là 4.Nxd4 exd4 5.c3.
 - Nếu Đen đi ...Bg4 ghim mã f3 và Trắng đã có Nc3, hãy nhớ mẫu chiếu hết Légal ở bài tập dưới.`,
       },
       {
@@ -244,31 +244,43 @@ Bắt hoặc đổi quân đang bảo vệ mục tiêu. Hãy nhìn xem mỗi qu�
     blocks: [
       {
         kind: 'text',
-        md: `Cờ tàn xe là loại cờ tàn phổ biến nhất (hơn 50% các ván vào cờ tàn). Chỉ cần hai thế cờ này là bạn đã hơn phần lớn đối thủ cùng trình độ.
+        md: `Cờ tàn xe là loại cờ tàn hay gặp nhất. Hai thế cờ dưới đây là nền móng: một thế để **thắng** khi hơn tốt, một thế để **hòa** khi kém tốt.
 
 ### Lucena (bên hơn tốt thắng)
-Điều kiện: tốt đã tới hàng 7, vua mình đứng trước tốt ở hàng 8, vua đối phương bị cắt ít nhất một cột. Kỹ thuật **"xây cầu"**: đưa xe lên hàng 4 (hoặc 5), đưa vua ra, khi bị chiếu thì che bằng xe.
+Điều kiện:
+- Tốt đã tới hàng 7, vua mình đứng ngay trước tốt ở hàng 8.
+- Vua đối phương bị xe cắt, **cách tốt ít nhất hai cột** (ở bài tập: tốt cột c, vua đen ở cột f, xe trắng giữ cột e).
+- Không áp dụng cho tốt biên (cột a, h): vua bị kẹt ở góc.
+
+Vấn đề của Trắng: vua bước ra khỏi ô phong cấp thì bị xe đen chiếu liên tục từ xa. Lời giải là **"xây cầu"**: đưa xe lên hàng 4 trước, rồi đưa vua ra; khi vua lùi tới hàng 5, xe bước vào giữa che chiếu và tốt phong hậu.
+
+Nếu vua đối phương đứng quá gần (chỉ cách một cột), trước hết phải **chiếu đuổi nó ra xa** rồi mới xây cầu, nếu không đối phương đổi xe và vua họ bắt kịp tốt.
 
 ### Philidor (bên kém tốt hòa)
-Điều kiện: vua mình đứng trước tốt đối phương ở hàng 8, tốt chưa qua hàng 5. Kỹ thuật: giữ xe ở **hàng 6** (tính từ phía mình: hàng 3) để vua đối phương không lên được. Khi tốt tiến lên hàng 6, xe xuống hàng 1 và **chiếu từ phía sau** liên tục.`,
+Điều kiện: vua phòng thủ đứng trên ô phong cấp, và **vua tấn công chưa lên được hàng 6**.
+- Giai đoạn 1: xe phòng thủ giữ **hàng 6** (hàng thứ ba tính từ phía mình), không cho vua đối phương tiến lên.
+- Giai đoạn 2: muốn tiến, đối phương buộc phải đẩy tốt lên hàng 6. Lúc đó tốt chiếm mất ô che của chính vua họ, nên xe lập tức **xuống tận cuối bàn và chiếu từ phía sau**. Vua không còn chỗ trốn: hòa.`,
       },
       {
         kind: 'task',
-        fen: '2K5/2P1k3/8/8/8/8/r7/3R4 w - - 0 1',
-        moves: ['d1d4'],
-        alternatives: ['d1d5', 'd1d3', 'd1e1'],
-        prompt: 'Lucena. Trắng đi và thắng. Tìm nước chuẩn bị "xây cầu".',
-        explain: '1.Rd4! Xe lên hàng 4. Kế hoạch: Kb7, và khi bị chiếu Rb1+ Kc6, Rc1+ Kb6, Rb1+ Kc5, Rc1+ thì Rc4! che chiếu bằng xe (cây cầu) rồi tốt phong hậu. Rd3/Rd5 cũng thắng nhưng Rd4 là cách chuẩn. (Rd2?? thì Rxd2.)',
-        verify: 'best',
+        fen: '2K5/2P2k2/8/8/8/8/r7/4R3 w - - 0 1',
+        moves: ['e1e4', 'a2a1', 'c8d7', 'a1d1', 'd7c6', 'd1c1', 'c6d6', 'c1d1', 'd6c5', 'd1c1', 'e4c4'],
+        prompt: 'Lucena: đi trọn cây cầu. Bước 1 đưa xe lên hàng 4; bước 2 vua ra bằng cột d; mỗi lần bị chiếu vua lùi dần về phía xe đen; cuối cùng xe che chiếu.',
+        explain: '1.Re4! Ra1 2.Kd7 Rd1+ 3.Kc6 Rc1+ 4.Kd6 Rd1+ 5.Kc5 Rc1+ 6.Rc4! Xe che chiếu, tốt c7 phong hậu ở nước sau. Xe phải lên hàng 4 trước khi vua ra: nếu vua ra ngay, các nước chiếu không bao giờ dứt. Trong thế này Trắng còn những cách thắng khác, nhưng cây cầu là kỹ thuật dùng được cho mọi tốt từ cột b đến cột g.',
+        verify: 'line',
+      },
+      {
+        kind: 'diagram',
+        fen: '4k3/7R/r7/3KP3/8/8/8/8 w - - 0 1',
+        caption: 'Philidor, giai đoạn 1. Xe đen ở a6 canh cả hàng 6 nên vua trắng không thể lên d6 hay e6. Trắng chỉ còn cách đẩy e6 để tiến.',
       },
       {
         kind: 'task',
-        fen: '4k3/1R6/r3P3/3K4/8/8/8/8 b - - 0 1',
-        moves: ['a6a1'],
-        alternatives: ['e8f8', 'a6a2'],
-        prompt: 'Philidor, giai đoạn 2. Tốt Trắng đã lên e6. Đen đi và hòa (tìm nước theo phương pháp Philidor).',
-        explain: 'Ra1! Xe xuống hàng 1 để chiếu từ phía sau: Kd6 Rd1+ Ke5 Re1+ Kf6 Rf1+ ... vua Trắng không trốn được vì tốt e6 chiếm mất ô che. Nếu Đen giữ xe ở hàng 6 thì Trắng Kd6 rồi Rb8+ và e7 thắng.',
-        verify: 'best',
+        fen: '4k3/7R/r3P3/3K4/8/8/8/8 b - - 0 1',
+        moves: ['a6a1', 'd5d6', 'a1d1', 'd6e5', 'd1e1', 'e5f6', 'e1f1'],
+        prompt: 'Philidor, giai đoạn 2. Trắng vừa đẩy e6. Đưa xe xuống cuối bàn rồi chiếu vua trắng từ phía sau, mỗi lần nó tìm chỗ nấp.',
+        explain: '1...Ra1! 2.Kd6 (dọa Rh8#) Rd1+ 3.Ke5 Re1+ 4.Kf6 Rf1+ và vua trắng không có chỗ nấp, vì tốt e6 đứng đúng ô lẽ ra che cho vua. Hòa. Ở thế này còn vài nước khác cũng giữ được hòa, nhưng "tốt lên hàng 6 thì xe xuống cuối bàn" là quy tắc dễ nhớ và luôn đúng.',
+        verify: 'line',
       },
       { kind: 'puzzles', themes: ['rookEndgame'], rating: [1100, 1500], count: 6, intro: 'Chiến thuật trong cờ tàn xe: 6 bài.' },
     ],
@@ -294,7 +306,7 @@ Tốt thông ở cánh xa vua đối phương là "mồi nhử": vua họ phải
 Khi tốt của hai bên đối diện nhau, thí hai tốt để tạo một tốt thông không ai cản được. Điều kiện: vua đối phương ở xa.
 
 ### Ô then chốt (key squares)
-Với tốt chưa qua hàng 5, ba ô cách tốt hai hàng phía trước là then chốt: vua tấn công đặt chân lên là thắng. Với tốt ở hàng 5 trở lên, then chốt là ba ô ngay trước tốt.
+Với tốt ở hàng 2 đến hàng 4, ba ô cách tốt hai hàng phía trước là then chốt: vua tấn công đặt chân lên là thắng. Với tốt ở hàng 5 và hàng 6, cả ba ô ngay trước tốt cũng là then chốt.
 
 ### Tam giác (triangulation)
 Khi cần "mất một nhịp" để giành đối vua, vua đi tam giác (3 nước về chỗ cũ) trong khi vua đối phương chỉ có 2 ô để đi.`,
