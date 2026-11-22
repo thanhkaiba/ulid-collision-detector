@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import Board from '../components/Board';
 import PuzzleBoard, { type PuzzleOutcome } from '../components/PuzzleBoard';
 import { Button, Card, Spinner, Tag } from '../components/ui';
-import { LESSONS, STAGES, lessonById, type Block, type Lesson, type PuzzleSetBlock, type TaskBlock } from '../data/lessons';
+import { LESSONS, STAGES, lessonById, type Block, type Lesson, type PuzzleSetBlock, type TaskBlock, type LichessBlock } from '../data/lessons';
 import { renderMd } from '../lib/markdown';
 import { loadPuzzles, type Puzzle } from '../lib/puzzles';
 import { loadLessonProgress, saveLessonProgress, setLessonStatus, loadSettings, type LessonProgress, type Settings } from '../lib/storage';
@@ -43,7 +43,7 @@ export default function Learn({ route }: { route: Route }) {
 }
 
 function taskCount(l: Lesson) {
-  return l.blocks.filter((b) => b.kind === 'task' || b.kind === 'puzzles' || b.kind === 'squares').length;
+  return l.blocks.filter((b) => b.kind === 'task' || b.kind === 'puzzles' || b.kind === 'squares' || b.kind === 'lichess').length;
 }
 function lessonDone(l: Lesson, p: LessonProgress) {
   if (p.status[l.id] === 'done') return true;
@@ -351,7 +351,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
   {
     let n = 0;
     lesson.blocks.forEach((b, i) => {
-      if (b.kind === 'task' || b.kind === 'squares' || b.kind === 'puzzles') taskNo.set(i, ++n);
+      if (b.kind === 'task' || b.kind === 'squares' || b.kind === 'puzzles' || b.kind === 'lichess') taskNo.set(i, ++n);
     });
   }
   const passed = (sl: Slide): boolean | null => {
@@ -452,6 +452,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
           </Card>
         );
       if (b.kind === 'puzzles') return <PuzzleSet key={i} block={b} n={taskNo.get(i)!} done={doneSet.has(i)} onDone={() => markDone(i)} />;
+      if (b.kind === 'lichess') return <LichessTask key={i} block={b} n={taskNo.get(i)!} done={doneSet.has(i)} onDone={() => markDone(i)} />;
       if (b.kind === 'practice' && sl.id) {
         const p = practiceById(sl.id);
         if (!p) return null;
@@ -621,6 +622,68 @@ function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: num
       {showExplain && (
         <div className="task-box small">
           <b>{finished !== null ? 'Giải thích:' : 'Gợi ý lời giải:'}</b> {renderRich(block.explain, { onShow, seqStart: block.fen, squareFen: block.fen, braces: { before: block.fen, after: block.fen } })}
+        </div>
+      )}
+    </Card>
+  );
+}
+
+/** A fixed puzzle from the Lichess database (a real game): passes when the student finds the moves. */
+function LichessTask({ block, n, done, onDone }: { block: LichessBlock; n: number; done: boolean; onDone: () => void }) {
+  const [p, setP] = useState<Puzzle | null | undefined>(undefined);
+  const [finished, setFinished] = useState<PuzzleOutcome | null>(null);
+  useEffect(() => {
+    loadPuzzles().then((all) => setP(all.find((x) => x.id === block.id) ?? null));
+  }, [block.id]);
+  const info = useMemo(() => {
+    if (!p) return null;
+    const c = new Chess(p.fen);
+    const first = c.move({ from: p.moves[0].slice(0, 2), to: p.moves[0].slice(2, 4), promotion: p.moves[0][4] as 'q' | undefined });
+    const side = c.turn() === 'w' ? 'Trắng' : 'Đen';
+    const startNo = Number(c.fen().split(' ')[5]);
+    const sans: string[] = [];
+    for (const u of p.moves.slice(1)) sans.push(c.move({ from: u.slice(0, 2), to: u.slice(2, 4), promotion: u[4] as 'q' | undefined }).san);
+    const line = sans.map((s, k) => {
+      const ply = k + (side === 'Đen' ? 1 : 0);
+      const no = startNo + Math.floor(ply / 2);
+      return (ply % 2 === 0 ? `${no}.` : k === 0 ? `${no}...` : '') + s;
+    });
+    return { side, opp: first.san, line: line.join(' ') };
+  }, [p]);
+  if (p === undefined) return <Spinner label="Đang tải bài tập..." />;
+  if (!p || !info) return null;
+  return (
+    <Card>
+      <div className="row-between">
+        <h3 style={{ margin: 0 }}>
+          Bài {n} {done && <Tag tone="good">✓ đã qua</Tag>}
+        </h3>
+        <Tag tone="info">ván thật · Lichess</Tag>
+      </div>
+      <PuzzleBoard
+        key={p.id}
+        fen={p.fen}
+        moves={p.moves}
+        playerFirst={false}
+        prompt={`Bạn cầm ${info.side} (phía dưới bàn cờ). Đối phương vừa đi ${info.opp}. ${block.prompt}`}
+        onFinish={(_, how) => {
+          setFinished(how);
+          if (how !== 'shown') onDone();
+        }}
+      />
+      {finished === 'shown' && !done && (
+        <div className="feedback bad small">Chưa tính là qua vì bạn đã xem nước đi. Bấm “Làm lại” và tự đi.</div>
+      )}
+      {finished !== null && (
+        <div className="task-box small">
+          <b>Lời giải:</b> {info.line}
+          {block.explain && <div className="mt">{block.explain}</div>}
+          <div className="tiny muted mt">
+            Bài lấy từ một ván đấu thật trong cơ sở dữ liệu bài tập của Lichess (rating bài {p.rating}).{' '}
+            <a href={p.url} target="_blank" rel="noreferrer">
+              Xem trên Lichess
+            </a>
+          </div>
         </div>
       )}
     </Card>

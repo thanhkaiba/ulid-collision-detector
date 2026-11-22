@@ -7,6 +7,7 @@ const fs = require('fs');
 const os = require('os');
 const { execSync, spawn } = require('child_process');
 const { Chess } = require('chess.js');
+const PUZZLES = require(path.join(__dirname, '..', 'src/data/puzzles.json'));
 
 const args = process.argv.slice(2);
 const depth = Number(args[args.indexOf('--depth') + 1] || 20);
@@ -81,6 +82,20 @@ const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -10
   for (const lesson of LESSONS) {
     if (only && lesson.id !== only) continue;
     lesson.blocks.forEach((b, i) => {
+      if (b.kind === 'lichess') {
+        checks++;
+        const row = PUZZLES.find((r) => r[0] === b.id);
+        if (!row) return fail(lesson, i, `Lichess puzzle ${b.id} is not in src/data/puzzles.json`);
+        const c = new Chess(row[1]);
+        for (const u of row[2].split(' ')) {
+          try {
+            c.move({ from: u.slice(0, 2), to: u.slice(2, 4), promotion: u[4] });
+          } catch {
+            return fail(lesson, i, `Lichess puzzle ${b.id}: illegal move ${u}`);
+          }
+        }
+        return;
+      }
       if (b.kind === 'diagram' || b.kind === 'task') {
         try {
           const c = new Chess(b.fen);

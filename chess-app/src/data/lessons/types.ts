@@ -54,7 +54,18 @@ export interface PracticeBlock {
   intro?: string;
 }
 
-export type Block = TaskBlock | PuzzleSetBlock | DiagramBlock | TextBlock | SquaresBlock | PracticeBlock;
+/** One fixed puzzle from the Lichess database (a position from a real game, solution checked by Lichess). */
+export interface LichessBlock {
+  kind: 'lichess';
+  /** Lichess puzzle id, must be in src/data/puzzles.json */
+  id: string;
+  /** what to look for, shown above the board after "Bạn cầm ..." */
+  prompt: string;
+  /** shown after the puzzle is finished */
+  explain?: string;
+}
+
+export type Block = TaskBlock | PuzzleSetBlock | DiagramBlock | TextBlock | SquaresBlock | PracticeBlock | LichessBlock;
 
 export interface Resource {
   label: string;
