@@ -878,7 +878,7 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
   };
   const missedHere = missed === i && results.length === i;
   // say why only when coming back to it: right after the wrong move the board already says so
-  const resumedMiss = missedHere && saved?.missed === i && (saved?.results?.length ?? 0) === i;
+  const resumedMiss = !!saved && saved.missed === i && (saved.results?.length ?? 0) === i && saved.round === round;
   return (
     <Card>
       <div className="row-between">
@@ -897,7 +897,7 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
           {right >= need ? ' Đã đủ để qua!' : right + left < need ? ' Bộ này không còn đủ câu để qua, làm hết rồi làm bộ khác.' : ''}
         </p>
       )}
-      {!finishedAll && resumedMiss && cur === null && <p className="tiny muted">Câu này đã đi sai một lần nên không tính là đúng ngay lần đầu, nhưng vẫn cần giải xong.</p>}
+      {!finishedAll && resumedMiss && <p className="tiny muted">Câu này bạn đã đi sai một lần trước khi rời trang, nên không tính là đúng ngay lần đầu. Vẫn giải nốt để sang câu tiếp.</p>}
       {!finishedAll && (
         <>
           <PuzzleBoard
