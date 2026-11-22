@@ -7,6 +7,8 @@ import { renderMd } from '../lib/markdown';
 import { loadPuzzles, type Puzzle } from '../lib/puzzles';
 import { loadLessonProgress, saveLessonProgress, loadPuzzleProgress, type LessonProgress } from '../lib/storage';
 import { navigate, type Route } from '../lib/router';
+import Videos from './Videos';
+import Book from './Book';
 import { Chess } from 'chess.js';
 import type { Key } from 'chessground/types';
 import type { DrawShape } from 'chessground/draw';
@@ -18,6 +20,8 @@ export default function Learn({ route }: { route: Route }) {
   }, [route.parts.join('/')]);
   if (!progress) return <Spinner />;
 
+  if (route.parts[0] === 'videos') return <Videos />;
+  if (route.parts[0] === 'book') return <Book route={route} />;
   const lessonId = route.parts[0] === 'lesson' ? route.parts[1] : undefined;
   if (lessonId) {
     const lesson = lessonById(lessonId);
@@ -63,6 +67,20 @@ function Overview({ progress }: { progress: LessonProgress }) {
           </Button>
         )}
       </Card>
+      <div className="grid-2">
+        <Card onClick={() => navigate('learn/book')}>
+          <h3 style={{ margin: 0 }}>📖 Sách: Capablanca</h3>
+          <p className="small muted" style={{ margin: '4px 0 0' }}>
+            "Chess Fundamentals" dịch tiếng Việt, 150 hình tương tác.
+          </p>
+        </Card>
+        <Card onClick={() => navigate('learn/videos')}>
+          <h3 style={{ margin: 0 }}>🎬 Thư viện video</h3>
+          <p className="small muted" style={{ margin: '4px 0 0' }}>
+            Kênh tiếng Việt và series tiếng Anh có phụ đề.
+          </p>
+        </Card>
+      </div>
       <Card>
         <h3>Cách dùng lộ trình</h3>
         <p className="small muted" style={{ margin: 0 }}>

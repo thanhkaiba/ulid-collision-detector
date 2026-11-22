@@ -1,0 +1,62 @@
+import { useState } from 'react';
+import { Card, Seg, Tag } from '../components/ui';
+import { VIDEOS } from '../data/videos';
+import { STAGES } from '../data/lessons';
+import { navigate } from '../lib/router';
+
+export default function Videos() {
+  const [lang, setLang] = useState<'all' | 'vi' | 'en'>('all');
+  const list = VIDEOS.filter((v) => lang === 'all' || v.lang === lang);
+  return (
+    <div>
+      <div className="topbar">
+        <button className="back" onClick={() => navigate('learn')} aria-label="Quay lại">
+          ‹
+        </button>
+        <h2 style={{ margin: 0 }}>Thư viện video</h2>
+      </div>
+      <Card>
+        <p className="small" style={{ margin: 0 }}>
+          <b>Video tiếng Anh có thể xem bằng phụ đề tiếng Việt:</b> trong YouTube bấm ⚙ Cài đặt → Phụ đề → Dịch tự động → Tiếng Việt. Thuật ngữ cờ dịch máy đôi khi lạ
+          (ví dụ "rook" thành "quạ"), nhưng vì có bàn cờ minh họa nên vẫn theo được. Mọi link đã được kiểm tra còn hoạt động.
+        </p>
+      </Card>
+      <Seg
+        value={lang}
+        onChange={setLang}
+        options={[
+          { value: 'all', label: 'Tất cả' },
+          { value: 'vi', label: 'Tiếng Việt' },
+          { value: 'en', label: 'Tiếng Anh (phụ đề)' },
+        ]}
+      />
+      {STAGES.map((s) => {
+        const vs = list.filter((v) => v.stage === s.n);
+        if (!vs.length) return null;
+        return (
+          <div key={s.n}>
+            <h2 className="mt">
+              Giai đoạn {s.n + 1}: {s.title} <span className="muted small">Elo {s.elo}</span>
+            </h2>
+            {vs.map((v) => (
+              <Card key={v.url}>
+                <div className="row-between">
+                  <a href={v.url} target="_blank" rel="noreferrer">
+                    <b>{v.title}</b>
+                  </a>
+                  <Tag tone={v.lang === 'vi' ? 'good' : 'info'}>{v.lang === 'vi' ? 'VI' : 'EN'}</Tag>
+                </div>
+                <div className="small muted">
+                  {v.by} · {v.kind === 'playlist' ? 'playlist' : v.kind === 'channel' ? 'kênh' : 'video'}
+                </div>
+                <p className="small" style={{ margin: '6px 0 0' }}>
+                  {v.note}
+                </p>
+              </Card>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}

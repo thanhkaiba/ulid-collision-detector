@@ -202,3 +202,21 @@ label.field > span { display: block; font-size: 0.85rem; color: var(--fg-2); mar
 .chip.active { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); }
 .topbar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
 .back { border: 0; background: none; font-size: 1.3rem; cursor: pointer; padding: 4px 8px 4px 0; }
+
+/* book reader */
+.mv-chip { border: 0; background: color-mix(in srgb, var(--info) 14%, transparent); color: var(--info); border-radius: 6px; padding: 0 5px; margin: 0 1px; font: inherit; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.mv-chip.active { background: var(--accent); color: var(--accent-fg); }
+.mv-plain { font-weight: 600; color: var(--fg-2); }
+.book-fig { margin: 10px 0; }
+.book-fig .board-wrap.mini { width: 100%; max-width: 280px; margin-top: 6px; }
+.book-moves { display: grid; grid-template-columns: 2.6em 1fr 1fr; gap: 2px 8px; margin: 8px 0; font-size: 0.95rem; }
+.book-move-row { display: contents; }
+.book-move-row .num { color: var(--fg-3); text-align: right; }
+.book-board { position: sticky; top: 0; z-index: 5; background: var(--bg); padding-bottom: 6px; }
+@media (min-width: 640px) {
+  .book-layout { display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: 16px; align-items: start; }
+  .book-board { top: 8px; }
+}
+@media (max-width: 639px) {
+  .book-board .board-wrap { max-width: 260px; margin: 0 auto; }
+}
