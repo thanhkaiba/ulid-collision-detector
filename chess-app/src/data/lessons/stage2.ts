@@ -175,18 +175,18 @@ Xe thường thắng tốt, trừ khi tốt đã tới hàng 6-7 với vua hỗ 
 Tốt a6 của Trắng, xe Trắng a8 đứng trước tốt, vua Đen ở g7 hoặc h7. Đen hòa bằng cách đặt xe ở **hàng 6 (ví dụ f6)** tấn công tốt từ bên cạnh, và chiếu ngang vua Trắng khi nó đến gần tốt.
 
 ### Tượng khác màu
-Hơn một tốt hầu như luôn hòa. Hơn hai tốt thắng nếu hai tốt **cách nhau ít nhất 2 cột**. Bên hơn: đặt tốt ở ô khác màu với tượng đối phương.
+Hơn một tốt hầu như luôn hòa. Hơn hai tốt thường thắng nếu hai tốt **cách xa nhau** (ở giữa có ít nhất hai cột, càng xa càng dễ); tốt e và g chẳng hạn vẫn thường hòa. Bên hơn: đặt tốt ở ô khác màu với tượng đối phương.
 
 ### Hậu chống tốt hàng 7
-Hậu thắng tốt ở cột b, d, e, g (bằng cách tiếp cận dần). Tốt ở cột **a, c, f, h** hòa nếu vua hậu ở xa: tốt xe nhờ pat, tốt tượng nhờ thí vào góc.
+Hậu thắng tốt ở cột b, d, e, g (bằng cách tiếp cận dần). Tốt ở cột **a, c, f, h** hòa nếu vua hậu ở xa: tốt xe nhờ pat, tốt tượng nhờ vua chạy vào góc bỏ mặc tốt (hậu ăn tốt là pat).
 
 ### Mã chống tốt
-Mã cản tốt được trừ tốt biên hàng 7. Mã + vua vs tốt thông: giữ mã trước tốt.`,
+Mã kịp tới trước tốt thường cản được tốt; khó nhất là tốt biên đã tới hàng 7, vì ở góc mã rất ít ô. Mã + vua vs tốt thông: giữ mã trước tốt.`,
       },
       {
         kind: 'diagram',
         fen: 'R7/6k1/P4r2/8/8/8/8/3K4 w - - 0 1',
-        caption: 'Thế Vancura (hòa). Xe đen ở f6 tấn công tốt a6 từ bên cạnh nên xe trắng bị trói ở a8. Khi vua trắng tới b5 để bảo vệ tốt, Đen chiếu ngang bằng Rf5+ và vua trắng không có chỗ nấp. Nếu Trắng đẩy a7, xe đen về a6 đứng sau tốt. Vua đen ở g7 (hoặc h7) để xe trắng không thể rời a8 kèm chiếu.',
+        caption: 'Thế Vancura (hòa). Xe đen ở f6 tấn công tốt a6 từ bên cạnh nên xe trắng bị trói ở a8. Khi vua trắng tới b5 để bảo vệ tốt, Đen chiếu ngang bằng Rf5+ và vua trắng không có chỗ nấp. Nếu Trắng đẩy a7, xe đen về a6 đứng sau tốt. Vua đen ở g7 (hoặc h7) để tránh đòn xiên: nếu vua đứng xa hơn, sau a7 Trắng có Rh8, Đen ăn ...Rxa7 thì Rh7+ bắt xe.',
       },
       { kind: 'puzzles', themes: ['rookEndgame'], rating: [1600, 2000], count: 6, intro: 'Cờ tàn xe nâng cao: 6 bài.' },
       { kind: 'puzzles', themes: ['queenEndgame', 'queenRookEndgame'], rating: [1500, 2000], count: 6, intro: 'Cờ tàn hậu: 6 bài.' },
@@ -296,8 +296,8 @@ Học chiến lược hiệu quả nhất qua **ván có bình luận từng nư
       },
       {
         kind: 'diagram',
-        fen: '2r2rk1/pp1bppbp/3p1np1/q7/3BP3/2N2P2/PPPQ2PP/1K1R3R w - - 0 1',
-        caption: 'Nhập thành khác phía. Mất cân bằng: Trắng có không gian trung tâm và kế hoạch h4-h5, g4; Đen có cột c và kế hoạch ...b5-b4, ...Rc8xc3. Ai nhanh hơn? Trắng nên Bxf6 để giảm quân tấn công rồi h4.',
+        fen: '2rq1rk1/pp1bppbp/3p1np1/4n3/3NP3/1BN1BP2/PPPQ2PP/1K1R3R b - - 0 1',
+        caption: 'Nhập thành khác phía (Dragon, biến Nam Tư). Mất cân bằng: Trắng có trung tâm e4-f3 vững và kế hoạch g4, h4-h5, Bh6 đổi Tượng g7; Đen có cột c nửa mở và kế hoạch ...Nc4, ...b5, có khi thí ...Rxc3. Ai nhanh hơn? Mỗi nhịp đều quý.',
       },
       { kind: 'puzzles', themes: ['middlegame', 'quietMove'], rating: [1600, 2000], count: 6, intro: 'Nước đi chiến lược: 6 bài.' },
     ],

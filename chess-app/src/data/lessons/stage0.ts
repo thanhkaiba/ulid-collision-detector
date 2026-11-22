@@ -145,10 +145,10 @@ Mã đi hình **chữ L**: hai ô thẳng rồi rẽ một ô sang bên. Mã là
       },
       {
         kind: 'task',
-        fen: '7k/8/8/8/3r4/1PPP4/1PNP4/4K3 w - - 0 1',
+        fen: '7k/8/8/8/3r4/1PRP4/1PNP4/4K3 w - - 0 1',
         moves: ['c2d4'],
-        prompt: 'Mã trắng (ô c2) bị Tốt nhà vây kín. Nó vẫn bắt được Xe đen. Thử xem.',
-        explain: 'Mã nhảy qua đầu các Tốt để tới d4. Xe, Tượng hay Hậu ở vị trí đó thì không đi đâu được.',
+        prompt: 'Mã trắng (ô c2) bị quân nhà chắn kín phía trước và hai bên. Nó vẫn bắt được Xe đen. Thử xem.',
+        explain: 'Mã nhảy qua đầu các quân nhà để tới d4. Xe, Tượng hay Hậu đứng ở c2 thì bị chặn, không vượt lên phía trước được.',
         verify: 'best',
       },
       {
@@ -256,7 +256,7 @@ Vua đi 2 ô về phía xe, xe nhảy qua vua đứng cạnh. Điều kiện:
 - Giữa vua và xe **không có quân nào**.
 - Vua **không đang bị chiếu**, không đi qua và không đến ô bị tấn công. (Xe thì được phép bị tấn công.)
 
-Nhập thành sớm là một trong ba nguyên tắc khai cuộc quan trọng nhất: vua an toàn, xe vào cuộc.
+Nhập thành sớm là một trong những nguyên tắc khai cuộc quan trọng nhất (xem bài Nguyên tắc khai cuộc): vua an toàn, xe vào cuộc.
 
 ### Bắt tốt qua đường (en passant)
 Khi tốt đối phương đi 2 ô từ vị trí ban đầu và đứng **ngay cạnh** tốt của bạn, bạn được bắt nó như thể nó chỉ đi 1 ô. Chỉ được làm **ngay nước tiếp theo**, sau đó mất quyền.
@@ -274,7 +274,7 @@ Tốt đến hàng cuối **bắt buộc** đổi thành hậu, xe, tượng ho�
       },
       {
         kind: 'task',
-        fen: 'rnbqkb1r/ppp1pppp/5n2/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 3',
+        fen: 'rnbqkbnr/ppp2ppp/4p3/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq d6 0 3',
         moves: ['e5d6'],
         prompt: 'Đen vừa đi d7-d5 (2 ô) đứng cạnh tốt e5 của bạn. Bắt tốt qua đường.',
         explain: 'Tốt e5 bắt chéo tới d6, tốt d5 bị lấy khỏi bàn. Nếu Trắng đi nước khác, quyền này mất.',
@@ -322,9 +322,9 @@ Bị chiếu và không có cách nào thoát. Ván cờ kết thúc. Đây là 
         kind: 'task',
         fen: '7k/5Q2/6K1/8/8/8/8/8 w - - 0 1',
         moves: ['f7g7'],
-        alternatives: ['f7f8'],
+        alternatives: ['f7f8', 'f7e8', 'f7h7'],
         prompt: 'Cùng thế cờ trên nhưng Trắng đi. Chiếu hết trong 1 nước.',
-        explain: 'Qg7# (hậu được vua g6 bảo vệ) hoặc Qf8#. Chú ý Qf6?? hay Qe7?? không chiếu hết: hãy luôn kiểm tra vua đối phương còn ô nào.',
+        explain: 'Qg7# hoặc Qh7# (hậu được vua g6 bảo vệ), hoặc Qf8#, Qe8# (chiếu dọc hàng 8). Chú ý Qf6+ chưa chiếu hết (vua chạy g8), còn Qe7 không chiếu: hãy luôn kiểm tra vua đối phương còn ô nào.',
         verify: 'mate',
       },
       {
@@ -337,10 +337,10 @@ Bị chiếu và không có cách nào thoát. Ván cờ kết thúc. Đây là 
       },
       {
         kind: 'task',
-        fen: 'r1bqkbnr/pppp1ppp/2n5/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4',
+        fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4',
         moves: ['h5f7'],
-        prompt: 'Chiếu hết "học trò" (Scholar\'s mate). Trắng đi.',
-        explain: 'Qxf7#. Điểm f7 chỉ được vua bảo vệ, nên là mục tiêu kinh điển trong khai cuộc. Bài sau dạy cách phòng thủ.',
+        prompt: 'Chiếu hết "học trò" (Scholar\'s mate). Đen vừa đi Nf6?? đuổi hậu mà quên f7. Trắng đi.',
+        explain: 'Qxf7#. Điểm f7 chỉ được vua bảo vệ, nên là mục tiêu kinh điển trong khai cuộc. Bài "Nguyên tắc khai cuộc" dạy cách phòng thủ.',
         verify: 'mate',
       },
     ],
@@ -416,7 +416,7 @@ Trước mỗi lần bắt quân hãy đếm: "tôi lấy bao nhiêu, mất bao 
         moves: ['g7g6'],
         alternatives: ['d8e7', 'd8f6'],
         prompt: 'Trắng đưa hậu ra sớm đe dọa Qxf7#. Đen phòng thủ thế nào cho tốt?',
-        explain: 'g6! vừa chặn hậu vừa đuổi nó (sau Qf3, Đen đi Nf6 tiếp tục phát triển có tempo). Qe7 hoặc Qf6 cũng chặn được nhưng kém chủ động hơn.',
+        explain: 'g6! vừa chặn hậu vừa đuổi nó. Sau {g6 Qf3} Trắng lại dọa Qxf7#, Đen chặn bằng {g6 Qf3 Nf6}: vừa phòng thủ vừa phát triển. Qe7 hoặc Qf6 cũng giữ được f7 nhưng kém hơn (Qe7 chắn tượng f8, Qf6 chiếm ô của mã).',
         verify: 'best',
       },
       {
@@ -424,12 +424,12 @@ Trước mỗi lần bắt quân hãy đếm: "tôi lấy bao nhiêu, mất bao 
         fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         moves: ['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f1c4', 'f8c5', 'c2c3', 'g8f6', 'd2d3', 'd7d6', 'e1g1', 'e8g8'],
         prompt: 'Đi lại khai cuộc Ý theo nguyên tắc: 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.c3 Nf6 5.d3 d6 6.O-O O-O. Bạn cầm Trắng.',
-        explain: 'Sau 6 nước cả hai bên đã chiếm trung tâm, phát triển hai quân nhẹ và nhập thành. Đây là thế cờ mẫu mực.',
+        explain: 'Sau 6 nước cả hai bên đã có tốt ở trung tâm, phát triển ít nhất hai quân nhẹ và nhập thành. Đây là thế cờ mẫu mực.',
         verify: 'line',
       },
     ],
     resources: [
-      { label: 'John Bartholomew: Chess Fundamentals (YouTube)', url: 'https://www.youtube.com/@JohnBartholomewChess', note: 'Series 5 video dạy cách tư duy, được coi là chuẩn nhất cho người mới. Tìm playlist "Chess Fundamentals".' },
+      { label: 'John Bartholomew: Chess Fundamentals (YouTube)', url: 'https://www.youtube.com/@JohnBartholomewChess', note: 'Loạt video dạy cách tư duy, được nhiều người coi là chuẩn cho người mới. Tìm playlist "Chess Fundamentals".' },
     ],
   },
 
@@ -443,7 +443,7 @@ Trước mỗi lần bắt quân hãy đếm: "tôi lấy bao nhiêu, mất bao 
       {
         kind: 'text',
         md: `### Nguyên tắc chung
-Vua đơn độc chỉ bị chiếu hết ở **biên** hoặc **góc**. Kế hoạch luôn gồm hai bước: (1) dồn vua đối phương ra biên bằng cách thu hẹp "chiếc hộp", (2) đưa vua của mình lại gần để hỗ trợ, rồi chiếu hết.
+Với một hậu hoặc một xe, vua đơn độc chỉ bị chiếu hết ở **biên** hoặc **góc**. Kế hoạch gồm hai bước: (1) dồn vua đối phương ra biên bằng cách thu hẹp "chiếc hộp", (2) đưa vua của mình lại gần để hỗ trợ, rồi chiếu hết (riêng hai xe thì không cần vua giúp).
 
 Bài này có ba kỹ thuật. Mỗi kỹ thuật: đọc cách làm, giải một thế chiếu hết ngắn, rồi **đánh trọn từ đầu tới cuối với máy** ngay bên dưới. Máy chạy Vua theo cách khó chịu nhất, nên làm được với máy là làm được trong ván thật.
 
