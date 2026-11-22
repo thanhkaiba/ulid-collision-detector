@@ -40,6 +40,7 @@ export async function analyzeGame(
     verbose.push({ san: m.san, uci: moveToUci(m), fenBefore, fenAfter: chess.fen() });
   }
   const total = verbose.length;
+  await engine.fullStrength();
   const useServer = !!game.serverEvals && game.serverEvals.length >= total - 1;
 
   // evals[k] = eval of the position after k plies (white POV); evals[0] = start position

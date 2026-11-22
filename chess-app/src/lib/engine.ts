@@ -85,6 +85,12 @@ export class Engine {
     this.send(`setoption name ${name} value ${value}`);
   }
 
+  /** Undo any strength limit set for play-vs-computer, so analysis and puzzle checks use full strength. */
+  async fullStrength() {
+    await this.setOption('UCI_LimitStrength', false);
+    await this.setOption('Skill Level', 20);
+  }
+
   async newGame() {
     await this.ready;
     this.send('ucinewgame');

@@ -2,58 +2,242 @@ import type { Lesson } from './types';
 
 export const STAGE0: Lesson[] = [
   {
-    id: 'rules-pieces',
+    id: 'intro-board',
     stage: 0,
-    title: 'Bàn cờ và cách đi của từng quân',
-    summary: 'Quy ước ký hiệu, cách di chuyển và bắt quân.',
-    minutes: 15,
+    title: 'Làm quen: bàn cờ, quân cờ và mục tiêu',
+    summary: 'Bắt đầu từ con số không. Chưa cần biết gì cả.',
+    minutes: 10,
     blocks: [
       {
         kind: 'text',
-        md: `### Bàn cờ
-Bàn cờ có 64 ô, 8 cột (a đến h, từ trái sang phải khi bạn cầm Trắng) và 8 hàng (1 đến 8, từ phía Trắng lên). Mỗi ô có tên theo cột và hàng: ô góc dưới bên trái của Trắng là **a1**, góc trên bên phải là **h8**. Quy tắc nhớ: "ô trắng bên phải" — góc gần tay phải của mỗi người chơi luôn là ô sáng.
+        md: `### Hai người, hai màu quân
+Cờ vua là trò chơi cho hai người. Một người cầm quân **Trắng**, người kia cầm quân **Đen**. Trắng luôn đi trước, sau đó hai bên lần lượt mỗi người đi một nước.
 
-### Ký hiệu nước đi
-Ứng dụng này dùng ký hiệu đại số quốc tế vì mọi sách, trang web và engine đều dùng nó:
-- **K** = Vua (King), **Q** = Hậu (Queen), **R** = Xe (Rook), **B** = Tượng (Bishop), **N** = Mã (Knight). Tốt không có chữ.
-- Nước đi ghi bằng chữ quân + ô đến: **Nf3** là mã đi tới f3, **e4** là tốt đi tới e4.
-- **x** là bắt quân (Bxe5), **+** là chiếu, **#** là chiếu hết, **O-O** nhập thành ngắn, **O-O-O** nhập thành dài, **=Q** là phong hậu.
+### Mục tiêu
+Mỗi bên có một quân **Vua**. Bạn thắng khi tấn công Vua đối phương mà nó không còn cách nào thoát. Tình huống đó gọi là **chiếu hết**. Không cần ăn hết quân của đối phương.
 
-### Cách đi
-- **Xe** đi thẳng theo cột hoặc hàng, bao nhiêu ô cũng được, không nhảy qua quân.
-- **Tượng** đi chéo. Mỗi tượng cả đời chỉ đi trên một màu ô.
-- **Hậu** = xe + tượng, mạnh nhất.
-- **Vua** đi một ô mọi hướng. Không bao giờ được đi vào ô bị tấn công.
-- **Mã** đi hình chữ L (2 ô thẳng rồi 1 ô ngang) và là quân duy nhất được nhảy qua quân khác. Mã luôn đổi màu ô sau mỗi nước.
-- **Tốt** tiến thẳng 1 ô (nước đầu được 2 ô), nhưng **bắt chéo** 1 ô. Tốt không đi lùi.`,
+### Sáu loại quân
+- **Vua** ♔ (1 quân): quân quan trọng nhất.
+- **Hậu** ♕ (1 quân): quân mạnh nhất.
+- **Xe** ♖ (2 quân).
+- **Tượng** ♗ (2 quân).
+- **Mã** ♘ (2 quân): hình đầu ngựa.
+- **Tốt** ♙ (8 quân): quân nhỏ nhất, đứng hàng đầu.
+
+Bài sau sẽ dạy từng quân đi thế nào. Bây giờ hãy nhìn cách xếp bàn cờ lúc bắt đầu.`,
       },
       {
-        kind: 'task',
-        fen: '7k/8/8/3p4/8/2N5/8/4K3 w - - 0 1',
-        moves: ['c3d5'],
-        prompt: 'Mã trắng ở c3. Bắt tốt đen bằng mã.',
-        explain: 'Mã c3 đi chữ L tới d5: lên 2 ô (c5) rồi sang phải 1 ô. Các ô mã c3 có thể tới: a2, a4, b1, b5, d1, d5, e2, e4.',
-        verify: 'best',
+        kind: 'diagram',
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        caption: 'Thế xuất phát. Quân Trắng ở phía dưới. Hàng trong cùng, từ trái sang: Xe, Mã, Tượng, Hậu, Vua, Tượng, Mã, Xe. Hàng trước mặt là tám Tốt. Mẹo: Hậu trắng đứng ô sáng, Hậu đen đứng ô sẫm.',
       },
       {
-        kind: 'task',
-        fen: '7k/8/8/8/5p2/8/3B4/4K3 w - - 0 1',
-        moves: ['d2f4'],
-        prompt: 'Tượng trắng ở d2. Bắt tốt đen.',
-        explain: 'Tượng đi chéo: d2 → e3 → f4. Để ý tượng này chỉ đi được trên ô tối.',
-        verify: 'best',
+        kind: 'text',
+        md: `### Tên của từng ô
+Bàn cờ có 64 ô. Để nói rõ một ô, người ta đặt tên cho nó:
+- 8 **cột** dọc mang chữ cái **a, b, c, d, e, f, g, h** (từ trái sang phải khi bạn cầm Trắng).
+- 8 **hàng** ngang mang số **1 đến 8** (từ phía Trắng đi lên).
+- Tên ô = chữ của cột + số của hàng. Ô góc dưới bên trái là **a1**, ô góc trên bên phải là **h8**.
+
+Các chữ và số nhỏ in ngay trên mép bàn cờ để bạn dò. Hãy luyện một chút: tìm đúng ô được hỏi.`,
+      },
+      {
+        kind: 'squares',
+        targets: ['a1', 'h8', 'e4', 'd5', 'f3', 'b7', 'g2', 'c6'],
+        intro: 'Chạm vào ô được hỏi. Sai cũng không sao, bàn cờ sẽ cho biết bạn vừa chạm ô nào.',
+      },
+    ],
+  },
+
+  {
+    id: 'pieces-straight',
+    stage: 0,
+    title: 'Cách đi: Xe, Tượng và Hậu',
+    summary: 'Ba quân đi đường dài. Chạm vào quân để thấy nó đi được tới đâu.',
+    minutes: 10,
+    blocks: [
+      {
+        kind: 'text',
+        md: `Trong các bài tập, hãy **chạm vào quân**: những chấm tròn hiện ra là các ô nó đi tới được. Chạm tiếp vào ô đích để đi.
+
+**Bắt quân**: đi quân của mình vào ô có quân đối phương. Quân đó bị lấy ra khỏi bàn.
+
+### Xe ♖
+Xe đi **thẳng**: dọc theo cột hoặc ngang theo hàng, xa bao nhiêu cũng được. Xe không nhảy qua quân khác.`,
       },
       {
         kind: 'task',
         fen: '7k/8/8/8/8/8/R6p/4K3 w - - 0 1',
         moves: ['a2h2'],
-        prompt: 'Tốt đen h2 sắp phong hậu. Dùng xe bắt nó ngay.',
-        explain: 'Xe a2 đi ngang hết hàng 2 tới h2. Nếu để tốt lên h1, Đen có thêm một hậu.',
+        prompt: 'Bạn cầm Trắng. Dùng Xe (ô a2) bắt Tốt đen ở cuối hàng.',
+        explain: 'Xe a2 đi ngang hết hàng 2 tới h2 và bắt Tốt. Nếu để yên, Tốt đen đi thêm một ô nữa sẽ biến thành Hậu.',
+        verify: 'best',
+      },
+      {
+        kind: 'task',
+        fen: '7k/8/8/8/n2R1P1b/8/8/6K1 w - - 0 1',
+        moves: ['d4a4'],
+        prompt: 'Xe trắng ở d4. Bên trái có Mã đen, bên phải có Tượng đen. Xe bắt được quân nào?',
+        explain: 'Xe bắt Mã ở a4. Bên phải, Tốt trắng f4 đứng chắn đường nên Xe không tới được Tượng h4: Xe không nhảy qua quân, kể cả quân nhà.',
+        verify: 'best',
+      },
+      {
+        kind: 'text',
+        md: `### Tượng ♗
+Tượng đi **chéo**, xa bao nhiêu cũng được, không nhảy qua quân. Vì chỉ đi chéo nên mỗi Tượng suốt ván chỉ đứng trên ô một màu.`,
+      },
+      {
+        kind: 'task',
+        fen: '7k/8/8/8/5p2/8/3B4/4K3 w - - 0 1',
+        moves: ['d2f4'],
+        prompt: 'Dùng Tượng (ô d2) bắt Tốt đen.',
+        explain: 'Tượng đi chéo từ d2 qua e3 tới f4.',
+        verify: 'best',
+      },
+      {
+        kind: 'text',
+        md: `### Hậu ♕
+Hậu đi được như **Xe và Tượng cộng lại**: thẳng hoặc chéo, xa bao nhiêu cũng được. Vì thế Hậu là quân mạnh nhất, và mất Hậu thường là thua.`,
+      },
+      {
+        kind: 'task',
+        fen: '7k/8/8/1r6/8/8/4Q3/4K3 w - - 0 1',
+        moves: ['e2b5'],
+        prompt: 'Dùng Hậu (ô e2) bắt Xe đen.',
+        explain: 'Hậu đi chéo từ e2 qua d3, c4 tới b5. Một quân không được quân nào bảo vệ như Xe đen ở đây gọi là quân "treo".',
         verify: 'best',
       },
     ],
-    resources: [
-      { label: 'Lichess Learn: học từng quân bằng mini game', url: 'https://lichess.org/learn', note: 'Miễn phí, có tiếng Việt, 20 phút là xong.' },
+  },
+
+  {
+    id: 'pieces-special',
+    stage: 0,
+    title: 'Cách đi: Vua, Mã và Tốt',
+    summary: 'Ba quân có cách đi riêng.',
+    minutes: 12,
+    blocks: [
+      {
+        kind: 'text',
+        md: `### Vua ♔
+Vua đi **một ô** theo mọi hướng. Vua không bao giờ được đi vào ô đang bị quân đối phương tấn công.`,
+      },
+      {
+        kind: 'task',
+        fen: '7k/8/8/8/8/8/P2n4/4K3 w - - 0 1',
+        moves: ['e1d2'],
+        prompt: 'Mã đen đứng ngay cạnh Vua trắng. Dùng Vua bắt nó.',
+        explain: 'Vua bước một ô chéo từ e1 sang d2 và bắt Mã. Vua cũng bắt quân được, miễn là quân đó không được bảo vệ.',
+        verify: 'best',
+      },
+      {
+        kind: 'text',
+        md: `### Mã ♘
+Mã đi hình **chữ L**: hai ô thẳng rồi rẽ một ô sang bên. Mã là quân duy nhất **nhảy qua** được quân khác.`,
+      },
+      {
+        kind: 'task',
+        fen: '7k/8/8/3p4/8/2N5/8/4K3 w - - 0 1',
+        moves: ['c3d5'],
+        prompt: 'Chạm vào Mã (ô c3) để xem tám ô nó tới được, rồi bắt Tốt đen.',
+        explain: 'Từ c3, Mã lên hai ô rồi sang phải một ô là tới d5.',
+        verify: 'best',
+      },
+      {
+        kind: 'task',
+        fen: '7k/8/8/8/3r4/1PPP4/1PNP4/4K3 w - - 0 1',
+        moves: ['c2d4'],
+        prompt: 'Mã trắng (ô c2) bị Tốt nhà vây kín. Nó vẫn bắt được Xe đen. Thử xem.',
+        explain: 'Mã nhảy qua đầu các Tốt để tới d4. Xe, Tượng hay Hậu ở vị trí đó thì không đi đâu được.',
+        verify: 'best',
+      },
+      {
+        kind: 'text',
+        md: `### Tốt ♙
+Tốt là quân duy nhất **đi một kiểu, bắt một kiểu**:
+- **Đi**: tiến thẳng một ô. Riêng nước đầu tiên của mỗi Tốt được chọn tiến hai ô.
+- **Bắt**: chéo lên một ô (sang trái hoặc phải).
+- Tốt không bao giờ đi lùi. Gặp quân đứng ngay trước mặt thì Tốt bị chặn.`,
+      },
+      {
+        kind: 'task',
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        moves: ['e2e4'],
+        prompt: 'Thế xuất phát. Đưa Tốt trước mặt Vua (ô e2) tiến hai ô.',
+        explain: 'Tốt e2 tiến hai ô tới e4. Đây là nước mở đầu phổ biến nhất trong cờ vua.',
+        verify: 'line',
+      },
+      {
+        kind: 'task',
+        fen: '7k/8/8/8/3n1b2/4P3/8/4K3 w - - 0 1',
+        moves: ['e3d4'],
+        alternatives: ['e3f4'],
+        prompt: 'Tốt trắng (ô e3) có thể bắt chéo sang trái hoặc sang phải. Bắt một trong hai quân đen.',
+        explain: 'Tốt bắt chéo: sang d4 lấy Mã hoặc sang f4 lấy Tượng. Nó không thể tiến thẳng mà bắt quân.',
+        verify: 'best',
+      },
+      {
+        kind: 'diagram',
+        fen: '7k/8/8/8/4p3/4P3/8/4K3 w - - 0 1',
+        caption: 'Hai Tốt đứng đối mặt nhau: cả hai đều bị chặn, không Tốt nào đi tiếp hay bắt quân kia được.',
+      },
+    ],
+    resources: [{ label: 'Lichess Learn: luyện thêm từng quân bằng mini game', url: 'https://lichess.org/learn', note: 'Miễn phí, có tiếng Việt.' }],
+  },
+
+  {
+    id: 'notation',
+    stage: 0,
+    title: 'Đọc và ghi nước đi',
+    summary: 'Ký hiệu ngắn gọn mà mọi sách và trang web dùng.',
+    minutes: 8,
+    blocks: [
+      {
+        kind: 'text',
+        md: `Bạn đã biết tên ô. Một nước đi được ghi bằng **chữ cái của quân + ô nó đi tới**.
+
+### Chữ cái của quân (theo tiếng Anh, vì cả thế giới dùng chung)
+- **K** = Vua (King)
+- **Q** = Hậu (Queen)
+- **R** = Xe (Rook)
+- **B** = Tượng (Bishop)
+- **N** = Mã (Knight)
+- Tốt không có chữ: chỉ ghi ô đến.
+
+### Ví dụ
+- **Nf3**: Mã đi tới ô f3.
+- **e4**: Tốt đi tới ô e4.
+- **Bxe5**: Tượng bắt quân ở e5. Dấu **x** nghĩa là bắt.
+- **exd5**: Tốt ở cột e bắt quân ở d5.
+
+Các ký hiệu khác sẽ gặp ở những bài sau: **+** là chiếu, **#** là chiếu hết, **O-O** là nhập thành.
+
+Số đứng trước cho biết đó là nước thứ mấy: **1.e4 e5** nghĩa là ở nước 1, Trắng đi e4 và Đen đáp e5.`,
+      },
+      {
+        kind: 'task',
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        moves: ['g1f3'],
+        prompt: 'Hãy đi nước Nf3.',
+        explain: 'N là Mã, f3 là ô đến: Mã ở g1 nhảy tới f3.',
+        verify: 'line',
+      },
+      {
+        kind: 'task',
+        fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3',
+        moves: ['f1c4'],
+        prompt: 'Hãy đi nước Bc4.',
+        explain: 'B là Tượng: Tượng ở f1 đi chéo tới c4.',
+        verify: 'line',
+      },
+      {
+        kind: 'task',
+        fen: 'rnbqkbnr/ppp1pppp/8/3p4/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2',
+        moves: ['e4d5'],
+        prompt: 'Hãy đi nước exd5.',
+        explain: 'Tốt ở cột e bắt (x) Tốt đen ở d5.',
+        verify: 'line',
+      },
     ],
   },
 

@@ -6,6 +6,8 @@ export interface Settings {
   analysisDepth: number;
   boardTheme: 'brown' | 'blue' | 'green';
   sound: boolean;
+  /** self-declared level chosen on first run (see lib/level.ts) */
+  level?: string;
 }
 
 export const DEFAULT_SETTINGS: Settings = {

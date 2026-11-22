@@ -246,3 +246,15 @@ label.field > span { display: block; font-size: 0.85rem; color: var(--fg-2); mar
 @media (max-width: 639px) { .gm-board .board-wrap { max-width: 300px; margin: 0 auto; } }
 
 .mv-chip.loose { background: color-mix(in srgb, var(--fg-3) 18%, transparent); color: var(--fg-2); }
+
+/* board coordinates: inside the squares, lowercase, readable on both square colours.
+   Selectors start with .board-wrap so they outrank chessground's own sheet, which loads later. */
+.board-wrap .cg-wrap coords { opacity: 1; font-size: 10px; font-weight: 700; font-family: inherit; }
+.board-wrap .cg-wrap coords.ranks { left: 2px; top: 1px; width: auto; height: 100%; }
+.board-wrap .cg-wrap coords.ranks coord { transform: none; flex: 1 1 0; line-height: 1; }
+.board-wrap .cg-wrap coords.files { left: 0; bottom: 2px; width: 100%; height: auto; text-transform: lowercase; text-align: right; }
+.board-wrap .cg-wrap coords.files coord { flex: 1 1 0; padding-right: 3px; line-height: 1; }
+.board-wrap .cg-wrap coords.ranks coord:nth-child(odd), .board-wrap .cg-wrap coords.files coord:nth-child(odd) { color: #f3e3c3; }
+.board-wrap .cg-wrap coords.ranks coord:nth-child(even), .board-wrap .cg-wrap coords.files coord:nth-child(even) { color: #7a5c3e; }
+.board-wrap .cg-wrap coords.ranks.black coord:nth-child(odd), .board-wrap .cg-wrap coords.files.black coord:nth-child(odd) { color: #7a5c3e; }
+.board-wrap .cg-wrap coords.ranks.black coord:nth-child(even), .board-wrap .cg-wrap coords.files.black coord:nth-child(even) { color: #f3e3c3; }

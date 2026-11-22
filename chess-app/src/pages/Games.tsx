@@ -12,6 +12,7 @@ import { renderRich, type Preview } from '../lib/richtext';
 import { loadLessonProgress, setLessonStatus, type LessonProgress } from '../lib/storage';
 import { needsPromotion, toDests } from '../lib/chess-utils';
 import { navigate, type Route } from '../lib/router';
+import { logActivity } from '../lib/activity';
 
 const LEVEL = { 1: 'Cơ bản', 2: 'Trung bình', 3: 'Nâng cao' } as const;
 
@@ -84,7 +85,7 @@ function GameView({ meta }: { meta: GameMeta }) {
   const [preview, setPreview] = useState<Preview | null>(null);
   const [flip, setFlip] = useState(false);
   const [guess, setGuess] = useState(false);
-  const [guessMsg, setGuessMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [guessMsg, setGuessMsg] = useState<{ tone: 'ok' | 'info'; text: string } | null>(null);
   const [showList, setShowList] = useState(false);
   const [status, setStatus] = useState<'done' | 'skipped' | undefined>();
   const [pendingPromo, setPendingPromo] = useState<{ from: Key; to: Key } | null>(null);
@@ -184,7 +185,11 @@ function GameView({ meta }: { meta: GameMeta }) {
     } catch {
       /* ignore */
     }
-    setGuessMsg(ok ? { ok: true, text: `Đúng! Ván đấu cũng đi ${actual}.` } : { ok: false, text: `Bạn chọn ${san}. Ván đấu đi ${actual}. Đọc lời giải thích bên dưới.` });
+    setGuessMsg(
+      ok
+        ? { tone: 'ok', text: `Trùng với ván đấu: ${actual}.` }
+        : { tone: 'info', text: `Bạn chọn ${san}, ván đấu đi ${actual}. Khác ván đấu chưa chắc là sai: đọc lời bình bên dưới để so sánh.` },
+    );
   };
 
   return (
@@ -247,7 +252,7 @@ function GameView({ meta }: { meta: GameMeta }) {
           </div>
           <div className="row-between tiny muted" style={{ marginTop: 6 }}>
             <span>
-              {ply}/{total} nước
+              Nước {Math.ceil(ply / 2)}/{Math.ceil(total / 2)}
             </span>
             <span className="row" style={{ gap: 6 }}>
               <button className={`chip ${guess ? 'active' : ''}`} onClick={() => { setGuess(!guess); setGuessMsg(null); }}>
@@ -269,7 +274,7 @@ function GameView({ meta }: { meta: GameMeta }) {
               <MoveList moves={line.sans} current={ply - 1} onSelect={(i) => setPly(i + 1)} />
             </Card>
           )}
-          {guessMsg && <div className={`feedback ${guessMsg.ok ? 'ok' : 'bad'} mb`}>{guessMsg.text}</div>}
+          {guessMsg && <div className={`feedback ${guessMsg.tone} mb`}>{guessMsg.text}</div>}
           {ply === 0 ? (
             <Card>
               <div className="row mb">
@@ -303,6 +308,7 @@ function GameView({ meta }: { meta: GameMeta }) {
                 status={status}
                 onMark={async (v) => {
                   const lp = await setLessonStatus(`game:${meta.id}`, v);
+                  if (v === 'done') logActivity('lessons');
                   setStatus(lp.status[`game:${meta.id}`]);
                   if (v) {
                     const idx = GAMES.findIndex((g) => g.id === meta.id);

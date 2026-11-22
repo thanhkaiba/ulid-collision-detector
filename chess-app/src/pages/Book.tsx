@@ -7,6 +7,7 @@ import { Button, Card, Spinner } from '../components/ui';
 import { navigate, type Route } from '../lib/router';
 import { loadLessonProgress, saveLessonProgress, setLessonStatus, type LessonProgress } from '../lib/storage';
 import MarkBar from '../components/MarkBar';
+import { logActivity } from '../lib/activity';
 
 /* ---------- data shape produced by scripts/book (Capablanca, Chess Fundamentals, public domain) ---------- */
 type BookMoveRow = [number, string, string, string]; // id, san, uci, fen
@@ -280,6 +281,7 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
         status={status}
         onMark={async (v) => {
           const lp = await setLessonStatus(statusKey, v);
+          if (v === 'done') logActivity('lessons');
           setStatus(lp.status[statusKey]);
           if (v) navigate(next ?? 'learn/book');
         }}

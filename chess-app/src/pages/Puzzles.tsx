@@ -6,14 +6,21 @@ import { DRILL_THEMES, THEMES, themeLabel } from '../lib/themes';
 import { updateRating } from '../lib/rating';
 import { loadPuzzleProgress, savePuzzleProgress, loadMistakes, saveMistakes, type PuzzleProgress, type Mistake } from '../lib/storage';
 import { navigate, type Route } from '../lib/router';
+import { Chess } from 'chess.js';
+import { getEngine, toWhitePov, winPercent } from '../lib/engine';
+import { playUci, uciLineToSan } from '../lib/chess-utils';
+import { logActivity } from '../lib/activity';
 
 type Mode = 'rated' | 'theme' | 'daily' | 'mistakes';
+/** what a player below ~1000 should drill first */
+const BASIC_THEMES = ['mateIn1', 'hangingPiece', 'fork', 'pin', 'backRankMate', 'mateIn2'];
 
 export default function Puzzles({ route }: { route: Route }) {
   const mode = (route.parts[0] as Mode | undefined) ?? undefined;
   const theme = route.parts[1];
   const [progress, setProgress] = useState<PuzzleProgress | null>(null);
   const [mistakes, setMistakes] = useState<Mistake[]>([]);
+  const [allThemes, setAllThemes] = useState(false);
 
   useEffect(() => {
     loadPuzzleProgress().then(setProgress);
@@ -56,7 +63,7 @@ export default function Puzzles({ route }: { route: Route }) {
           </div>
         </div>
         <p className="small muted mt">
-          Mục tiêu mỗi ngày: 20 đến 30 bài, làm chậm. Tính hết biến trước khi đi, đừng đoán.
+          Làm chậm, tính hết biến trước khi đi, đừng đoán. Mục tiêu mỗi ngày nằm ở thẻ "Hôm nay" trong tab Học.
         </p>
       </Card>
 
@@ -65,7 +72,7 @@ export default function Puzzles({ route }: { route: Route }) {
           <div>
             <h3>Luyện theo trình độ</h3>
             <p className="muted small" style={{ margin: 0 }}>
-              Bài tập tự chọn quanh rating của bạn, đủ mọi chủ đề. Giống Lichess Puzzle.
+              Bài tập tự chọn theo sức của bạn, đủ mọi chủ đề. Giải đúng thì bài sau khó dần lên.
             </p>
           </div>
           <span>›</span>
@@ -99,11 +106,16 @@ export default function Puzzles({ route }: { route: Route }) {
       <h2 className="mt">Theo chủ đề</h2>
       <p className="muted small">Học một mẫu cho đến khi nhận ra trong 3 giây, rồi chuyển chủ đề.</p>
       <div className="chip-row mb">
-        {DRILL_THEMES.map((t) => (
+        {(progress.rating < 1000 && !allThemes ? BASIC_THEMES : DRILL_THEMES).map((t) => (
           <button key={t} className="chip" onClick={() => navigate(`puzzles/theme/${t}`)}>
             {themeLabel(t)}
           </button>
         ))}
+        {progress.rating < 1000 && !allThemes && (
+          <button className="chip active" onClick={() => setAllThemes(true)}>
+            Xem thêm chủ đề…
+          </button>
+        )}
       </div>
     </div>
   );
@@ -123,6 +135,8 @@ function Trainer({
   const [result, setResult] = useState<{ ok: boolean; delta: number } | null>(null);
   const [streak, setStreak] = useState(0);
   const [n, setN] = useState(0);
+  // theme drills: unrated, start a little below your level and adapt within the session
+  const [drillLevel, setDrillLevel] = useState(() => Math.max(500, progress.rating - 250));
 
   useEffect(() => {
     loadPuzzles().then(setAll);
@@ -130,14 +144,16 @@ function Trainer({
 
   useEffect(() => {
     if (!all) return;
-    setPuzzle(pickPuzzle(all, progress.rating, progress.solved, theme));
+    setPuzzle(pickPuzzle(all, theme ? drillLevel : progress.rating, progress.solved, theme));
     setResult(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [all, n, theme]);
 
   const onFinish = async (ok: boolean) => {
     if (!puzzle) return;
-    const r = updateRating(progress, puzzle.rating, ok);
+    const r = theme ? { rating: progress.rating, rd: progress.rd, delta: 0 } : updateRating(progress, puzzle.rating, ok);
+    if (theme) setDrillLevel((l) => Math.max(450, Math.min(2600, l + (ok ? 50 : -70))));
+    logActivity('puzzles');
     const next: PuzzleProgress = {
       ...progress,
       rating: r.rating,
@@ -165,20 +181,24 @@ function Trainer({
       </div>
       {info?.desc && <p className="muted small">{info.desc}</p>}
       <div className="row-between mb small">
-        <span>
-          Rating của bạn: <b>{progress.rating}</b>
-          {result && (
-            <span className={result.delta >= 0 ? 'tag tag-good' : 'tag tag-bad'} style={{ marginLeft: 6 }}>
-              {result.delta >= 0 ? '+' : ''}
-              {result.delta}
-            </span>
-          )}
-        </span>
+        {theme ? (
+          <span className="muted">Luyện tự do, không tính điểm</span>
+        ) : (
+          <span>
+            Rating của bạn: <b>{progress.rating}</b>
+            {result && (
+              <span className={result.delta >= 0 ? 'tag tag-good' : 'tag tag-bad'} style={{ marginLeft: 6 }}>
+                {result.delta >= 0 ? '+' : ''}
+                {result.delta}
+              </span>
+            )}
+          </span>
+        )}
         <span className="muted">
           Bài: {puzzle.rating} · chuỗi {streak}
         </span>
       </div>
-      <PuzzleBoard key={puzzle.id} fen={puzzle.fen} moves={puzzle.moves} playerFirst={puzzle.playerFirst} onFinish={onFinish} />
+      <PuzzleBoard key={puzzle.id} fen={puzzle.fen} moves={puzzle.moves} playerFirst={puzzle.playerFirst} onFinish={onFinish} prompt={puzzlePrompt(puzzle)} />
       <div className="row mt">
         {result && (
           <Button kind="primary" onClick={() => setN(n + 1)}>
@@ -205,6 +225,17 @@ function Trainer({
       )}
     </div>
   );
+}
+
+/** Tell the solver which side they play and, for mates, what the goal is. */
+function puzzlePrompt(p: Puzzle): string {
+  const c = new Chess(p.fen);
+  if (!p.playerFirst && p.moves[0]) playUci(c, p.moves[0]);
+  const side = c.turn() === 'w' ? 'Trắng' : 'Đen';
+  const mate = p.themes.find((t) => /^mateIn\d$/.test(t));
+  if (mate) return `Bạn cầm ${side} (phía dưới bàn cờ). Chiếu hết trong ${mate.slice(-1)} nước.`;
+  if (p.themes.includes('hangingPiece')) return `Bạn cầm ${side} (phía dưới bàn cờ). Có quân không được bảo vệ: hãy bắt nó.`;
+  return `Bạn cầm ${side} (phía dưới bàn cờ). Tìm nước tốt nhất.`;
 }
 
 function Daily() {
@@ -246,23 +277,43 @@ function Daily() {
 function MistakeTrainer({ mistakes, setMistakes }: { mistakes: Mistake[]; setMistakes: (m: Mistake[]) => void }) {
   const [i, setI] = useState(0);
   const [done, setDone] = useState<boolean | null>(null);
-  const queue = useMemo(() => {
+  // freeze the order for this session: grading a card changes its due date and must not reshuffle the queue
+  const [order, setOrder] = useState<string[] | null>(null);
+  useEffect(() => {
+    if (order || !mistakes.length) return;
     const now = Date.now();
     const due = mistakes.filter((m) => m.due <= now).sort((a, b) => a.due - b.due);
     const rest = mistakes.filter((m) => m.due > now).sort((a, b) => a.due - b.due);
-    return [...due, ...rest];
-  }, [mistakes]);
+    setOrder([...due, ...rest].map((m) => m.id));
+  }, [mistakes, order]);
+  const queue = useMemo(() => (order ?? []).map((id) => mistakes.find((m) => m.id === id)).filter((m): m is Mistake => !!m), [order, mistakes]);
   const m = queue[i];
 
   const onFinish = async (ok: boolean) => {
     if (!m) return;
     setDone(ok);
     const interval = ok ? Math.max(1, Math.round((m.interval || 0.5) * 2.5)) : 1;
-    const updated = mistakes.map((x) =>
-      x.id === m.id ? { ...x, interval, reps: x.reps + 1, due: Date.now() + interval * 86400000 } : x,
-    );
+    const updated = mistakes.map((x) => (x.id === m.id ? { ...x, interval, reps: x.reps + 1, due: Date.now() + interval * 86400000 } : x));
     setMistakes(updated);
     await saveMistakes(updated);
+    logActivity('puzzles');
+  };
+
+  /** Accept any move that is practically as good as the engine's first choice. */
+  const judge = async (uci: string, fenBefore: string): Promise<boolean> => {
+    const engine = getEngine();
+    await engine.fullStrength();
+    const side = fenBefore.split(' ')[1] as 'w' | 'b';
+    const best = await engine.evaluate(fenBefore, { depth: 12 });
+    const c = new Chess(fenBefore);
+    if (!playUci(c, uci)) return false;
+    if (c.isCheckmate()) return true;
+    const mine = await engine.evaluate(c.fen(), { depth: 12 });
+    if (!best.lines[0] || !mine.lines[0]) return false;
+    const wpBest = winPercent(toWhitePov(best.lines[0], side));
+    const wpMine = winPercent(toWhitePov(mine.lines[0], side === 'w' ? 'b' : 'w'));
+    const loss = side === 'w' ? wpBest - wpMine : wpMine - wpBest;
+    return loss <= 6;
   };
 
   return (
@@ -284,21 +335,23 @@ function MistakeTrainer({ mistakes, setMistakes }: { mistakes: Mistake[]; setMis
       {m && (
         <>
           <p className="muted small">
-            {i + 1}/{queue.length} · bạn đã đi <b>{m.playedSan}</b> ({m.judgment === 'blunder' ? 'sai nghiêm trọng' : 'sai lầm'}). Tìm nước tốt hơn.
-            {m.due <= Date.now() ? '' : ' · (chưa tới hạn, ôn trước)'}
+            {i + 1}/{queue.length} · trong ván bạn đã đi <b>{m.playedSan}</b> ({m.judgment === 'blunder' ? 'sai nghiêm trọng' : 'sai lầm'}). Tìm nước tốt hơn.
+            {m.due <= Date.now() || done !== null ? '' : ' · (chưa tới hạn, ôn trước)'}
           </p>
           <PuzzleBoard
             key={m.id}
             fen={m.fen}
-            moves={[m.best, ...m.bestPv.slice(1, 3)]}
+            moves={[m.best]}
             playerFirst
+            judge={judge}
             onFinish={onFinish}
-            prompt={`${m.color === 'w' ? 'Trắng' : 'Đen'} đi. Nước tốt nhất là gì?`}
+            prompt={`Bạn cầm ${m.color === 'w' ? 'Trắng' : 'Đen'}. Một nước thôi: nước tốt nhất là gì?`}
           />
           {done !== null && (
             <div className="mt">
-              <p className="small muted">
-                Nước tốt nhất: <b>{m.bestSan}</b>. Ôn lại sau {queue.find((x) => x.id === m.id)?.interval ?? 1} ngày.
+              <p className="small">
+                Nước tốt nhất theo engine: <b>{m.bestSan}</b>
+                {m.bestPv.length > 1 && <span className="muted"> (tiếp theo: {uciLineToSan(m.fen, m.bestPv.slice(0, 5)).slice(1).join(' ')})</span>}. Ôn lại sau {m.interval || 1} ngày.
               </p>
               <div className="row">
                 <Button

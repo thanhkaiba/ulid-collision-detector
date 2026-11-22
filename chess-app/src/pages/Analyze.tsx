@@ -166,7 +166,7 @@ function GameRow({ g, analyzed }: { g: StoredGame; analyzed: boolean }) {
           {g.blackElo && <span className="muted small">({g.blackElo})</span>}
         </div>
         <div className="small muted">
-          {d.toLocaleDateString('vi-VN')} · {g.speed ?? g.source} · {g.moves.length} nước
+          {d.toLocaleDateString('vi-VN')} · {g.speed ?? g.source} · {Math.ceil(g.moves.length / 2)} nước
           {g.opening ? ` · ${g.opening}` : ''}
         </div>
       </div>
@@ -249,7 +249,9 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
     let active = true;
     engine.stop();
     engine
-      .evaluate(fen, {
+      .fullStrength()
+      .then(() =>
+        engine.evaluate(fen, {
         depth: 18,
         multipv: 2,
         onInfo: (lines) => {
@@ -258,6 +260,7 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
           setLiveDepth(lines[0]?.depth ?? 0);
         },
       })
+      )
       .then((r) => active && setLive(r.lines));
     return () => {
       active = false;

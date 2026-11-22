@@ -10,15 +10,16 @@ import { LEVELS, TIME_CONTROLS, applyLevel, type Level, type TimeControl } from 
 import { fmtClock, gameEnd, playUci, turnColor, kingInCheckColor, toDests, needsPromotion } from '../lib/chess-utils';
 import { upsertGames, type StoredGame } from '../lib/storage';
 import { navigate, type Route } from '../lib/router';
+import { logActivity } from '../lib/activity';
 
 type Setup = { color: 'w' | 'b' | 'random'; level: number; tc: string };
 const SETUP_KEY = 'play-setup';
 
 function loadSetup(): Setup {
   try {
-    return { color: 'w', level: 4, tc: '10+0', ...JSON.parse(localStorage.getItem(SETUP_KEY) ?? '{}') };
+    return { color: 'w', level: 2, tc: '15+10', ...JSON.parse(localStorage.getItem(SETUP_KEY) ?? '{}') };
   } catch {
-    return { color: 'w', level: 4, tc: '10+0' };
+    return { color: 'w', level: 2, tc: '15+10' };
   }
 }
 
@@ -87,7 +88,9 @@ export default function Play(_: { route: Route }) {
       <Card>
         <h3>Thời gian</h3>
         <Seg value={setup.tc} onChange={(v) => setSetup({ ...setup, tc: v })} options={TIME_CONTROLS.map((t) => ({ value: t.id, label: t.label }))} />
-        <p className="small muted mt">Để học, nên chơi 15+10 hoặc 30+0. Cờ chớp chỉ để giải trí.</p>
+        <p className="small muted mt">
+          "15+10" nghĩa là mỗi bên có 15 phút, cộng thêm 10 giây sau mỗi nước đi. Để học, nên chơi 15+10 hoặc 30+0, hoặc "Không giờ" khi mới tập. Cờ chớp chỉ để giải trí.
+        </p>
       </Card>
       <Button
         kind="primary"
@@ -135,12 +138,14 @@ function GameView({
   const history = chess.history();
   const moveCount = history.length;
 
-  const finish = useCallback(
-    (result: string, reason: string) => {
-      setOver((o) => o ?? { result, reason });
-    },
-    [],
-  );
+  const logged = useRef(false);
+  const finish = useCallback((result: string, reason: string) => {
+    setOver((o) => o ?? { result, reason });
+    if (!logged.current) {
+      logged.current = true;
+      logActivity('games');
+    }
+  }, []);
 
   // clock
   useEffect(() => {
@@ -263,6 +268,16 @@ function GameView({
 
   const resign = () => finish(me === 'w' ? '0-1' : '1-0', 'Bạn xin thua');
 
+  /** Take back your last move (and the computer's reply). Practice games only, so no limit. */
+  const canTakeback = !over && !thinking && chess.turn() === me && chess.history().length >= 2;
+  const takeback = () => {
+    if (!canTakeback) return;
+    chess.undo();
+    chess.undo();
+    setViewPly(null);
+    setVersion((v) => v + 1);
+  };
+
   const myName = 'Bạn';
   const botName = `Stockfish · cấp ${level.n} (${level.elo})`;
   const top = me === 'w' ? 'b' : 'w';
@@ -344,9 +359,14 @@ function GameView({
               </Button>
               <span className="grow" />
               {!over && (
-                <Button kind="danger" onClick={resign}>
-                  Xin thua
-                </Button>
+                <>
+                  <Button kind="ghost" onClick={takeback} disabled={!canTakeback}>
+                    ↶ Đi lại
+                  </Button>
+                  <Button kind="danger" onClick={resign}>
+                    Xin thua
+                  </Button>
+                </>
               )}
             </div>
           </Card>

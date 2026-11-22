@@ -3,6 +3,7 @@ import { Button, Card, Seg, Spinner } from '../components/ui';
 import { loadSettings, saveSettings, type Settings as S } from '../lib/storage';
 import type { Route } from '../lib/router';
 import { clear } from 'idb-keyval';
+import { LEVELS_INFO, chooseLevel } from '../lib/level';
 
 export default function Settings(_: { route: Route }) {
   const [s, setS] = useState<S | null>(null);
@@ -29,6 +30,23 @@ export default function Settings(_: { route: Route }) {
           <span>Tên người dùng Chess.com</span>
           <input value={s.chesscomUser} onChange={(e) => update({ ...s, chesscomUser: e.target.value })} autoCapitalize="off" />
         </label>
+      </Card>
+      <Card>
+        <h3>Trình độ của bạn</h3>
+        <select
+          value={s.level ?? ''}
+          onChange={async (e) => {
+            if (e.target.value) setS(await chooseLevel(e.target.value as (typeof LEVELS_INFO)[number]['id']));
+          }}
+        >
+          <option value="">Chưa chọn</option>
+          {LEVELS_INFO.map((l) => (
+            <option key={l.id} value={l.id}>
+              {l.label}
+            </option>
+          ))}
+        </select>
+        <p className="small muted mt">Quyết định bài bắt đầu, mục tiêu mỗi ngày và cấp độ máy mặc định. Rating bài tập chỉ được đặt lại khi bạn giải chưa tới 10 bài.</p>
       </Card>
       <Card>
         <h3>Độ sâu phân tích ván</h3>

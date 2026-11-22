@@ -22,6 +22,8 @@ export interface BoardProps {
   movableColor?: Color | 'both';
   dests?: Map<Key, Key[]>;
   onMove?: (from: Key, to: Key) => void;
+  /** fired when a square is tapped (the board must not be viewOnly) */
+  onSelect?: (key: Key) => void;
   shapes?: DrawShape[];
   viewOnly?: boolean;
   coordinates?: boolean;
@@ -35,6 +37,8 @@ export default function Board(props: BoardProps) {
   const api = useRef<Api | null>(null);
   const onMoveRef = useRef(props.onMove);
   onMoveRef.current = props.onMove;
+  const onSelectRef = useRef(props.onSelect);
+  onSelectRef.current = props.onSelect;
 
   const config = (): Config => ({
     fen: props.fen,
@@ -56,6 +60,7 @@ export default function Board(props: BoardProps) {
       events: { after: (from, to) => onMoveRef.current?.(from, to) },
       rookCastle: true,
     },
+    events: { select: (key) => onSelectRef.current?.(key) },
     premovable: { enabled: false },
     draggable: { enabled: true, showGhost: true },
     selectable: { enabled: true },

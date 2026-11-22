@@ -40,7 +40,14 @@ export interface TextBlock {
   md: string;
 }
 
-export type Block = TaskBlock | PuzzleSetBlock | DiagramBlock | TextBlock;
+export interface SquaresBlock {
+  kind: 'squares';
+  /** squares the student must tap, in order */
+  targets: string[];
+  intro: string;
+}
+
+export type Block = TaskBlock | PuzzleSetBlock | DiagramBlock | TextBlock | SquaresBlock;
 
 export interface Resource {
   label: string;

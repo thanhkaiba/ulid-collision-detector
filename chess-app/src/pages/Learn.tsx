@@ -5,13 +5,16 @@ import { Button, Card, Spinner, Tag } from '../components/ui';
 import { LESSONS, STAGES, lessonById, type Block, type Lesson, type PuzzleSetBlock, type TaskBlock } from '../data/lessons';
 import { renderMd } from '../lib/markdown';
 import { loadPuzzles, type Puzzle } from '../lib/puzzles';
-import { loadLessonProgress, saveLessonProgress, setLessonStatus, loadPuzzleProgress, type LessonProgress } from '../lib/storage';
+import { loadLessonProgress, saveLessonProgress, setLessonStatus, loadSettings, type LessonProgress, type Settings } from '../lib/storage';
+import { LEVELS_INFO, levelInfo, chooseLevel, type LevelId, type LevelInfo } from '../lib/level';
+import { loadActivity, logActivity, dayKey, streak, type ActivityLog } from '../lib/activity';
 import MarkBar from '../components/MarkBar';
 import { navigate, type Route } from '../lib/router';
 import Videos from './Videos';
 import Book from './Book';
 import Games from './Games';
 import PreviewSheet from '../components/PreviewSheet';
+import SquareQuiz from '../components/SquareQuiz';
 import { renderRich, type Preview } from '../lib/richtext';
 import { START_FEN } from '../lib/chess-utils';
 import { Chess } from 'chess.js';
@@ -34,11 +37,11 @@ export default function Learn({ route }: { route: Route }) {
     if (!lesson) return <p>Không tìm thấy bài học.</p>;
     return <LessonView lesson={lesson} progress={progress} setProgress={setProgress} />;
   }
-  return <Overview progress={progress} />;
+  return <Overview progress={progress} setProgress={setProgress} />;
 }
 
 function taskCount(l: Lesson) {
-  return l.blocks.filter((b) => b.kind === 'task' || b.kind === 'puzzles').length;
+  return l.blocks.filter((b) => b.kind === 'task' || b.kind === 'puzzles' || b.kind === 'squares').length;
 }
 function lessonDone(l: Lesson, p: LessonProgress) {
   if (p.status[l.id] === 'done') return true;
@@ -49,40 +52,101 @@ function lessonDone(l: Lesson, p: LessonProgress) {
 }
 const lessonSkipped = (l: Lesson, p: LessonProgress) => p.status[l.id] === 'skipped';
 
-function Overview({ progress }: { progress: LessonProgress }) {
-  const [puzzleRating, setPuzzleRating] = useState<number | null>(null);
+function LevelPicker({ current, onPick }: { current?: string; onPick: (id: LevelId) => void }) {
+  return (
+    <Card>
+      <h3>Bạn đang ở trình độ nào?</h3>
+      <p className="small muted">Ứng dụng sẽ chọn bài bắt đầu, độ khó bài tập và cấp độ máy cho phù hợp. Đổi lại lúc nào cũng được.</p>
+      {LEVELS_INFO.map((l) => (
+        <div key={l.id} className="list-item" onClick={() => onPick(l.id)}>
+          <div>
+            <b>{l.label}</b>
+            <div className="small muted">{l.desc}</div>
+          </div>
+          {current === l.id ? <Tag tone="good">đang chọn</Tag> : <span className="muted">›</span>}
+        </div>
+      ))}
+    </Card>
+  );
+}
+
+function TodayCard({ level, log, nextLesson }: { level: LevelInfo; log: ActivityLog; nextLesson?: Lesson }) {
+  const today = log[dayKey()] ?? { puzzles: 0, games: 0, lessons: 0 };
+  const days = streak(log);
+  const items: { done: boolean; label: string; go: string }[] = [
+    { done: today.puzzles >= level.dailyPuzzles, label: `Giải ${level.dailyPuzzles} bài tập (${Math.min(today.puzzles, level.dailyPuzzles)}/${level.dailyPuzzles})`, go: 'puzzles/rated' },
+    { done: today.lessons >= 1, label: nextLesson ? `Học 1 bài: ${nextLesson.title}` : 'Học 1 bài hoặc 1 ván "Từng nước một"', go: nextLesson ? `learn/lesson/${nextLesson.id}` : 'learn/games' },
+    { done: today.games >= 1, label: `Chơi 1 ván với máy (cấp ${level.engineLevel})`, go: 'play' },
+  ];
+  return (
+    <Card>
+      <div className="row-between">
+        <h3 style={{ margin: 0 }}>Hôm nay</h3>
+        <span className="small muted">{days > 0 ? `🔥 ${days} ngày liên tiếp` : 'Bắt đầu chuỗi ngày học'}</span>
+      </div>
+      {items.map((it) => (
+        <div key={it.label} className="list-item" onClick={() => navigate(it.go)}>
+          <span>
+            {it.done ? '✅' : '⬜'} {it.label}
+          </span>
+          <span className="muted">›</span>
+        </div>
+      ))}
+    </Card>
+  );
+}
+
+function Overview({ progress, setProgress }: { progress: LessonProgress; setProgress: (p: LessonProgress) => void }) {
+  const [settings, setSettings] = useState<Settings | null>(null);
+  const [log, setLog] = useState<ActivityLog>({});
+  const [picking, setPicking] = useState(false);
   useEffect(() => {
-    loadPuzzleProgress().then((p) => setPuzzleRating(p.rating));
+    loadSettings().then(setSettings);
+    loadActivity().then(setLog);
   }, []);
+  if (!settings) return <Spinner />;
+  const level = levelInfo(settings.level);
+  const pick = async (id: LevelId) => {
+    setSettings(await chooseLevel(id));
+    setPicking(false);
+    window.scrollTo({ top: 0 });
+  };
+  if (!level || picking) {
+    return (
+      <div>
+        <h1>Học cờ vua</h1>
+        <LevelPicker current={settings.level} onPick={pick} />
+      </div>
+    );
+  }
+
   const total = LESSONS.length;
   const doneCount = LESSONS.filter((l) => lessonDone(l, progress)).length;
   const skippedCount = LESSONS.filter((l) => lessonSkipped(l, progress)).length;
-  const next = LESSONS.find((l) => !lessonDone(l, progress) && !lessonSkipped(l, progress));
-  return (
-    <div>
-      <h1>Lộ trình học cờ</h1>
-      <Card>
-        <div className="row-between">
-          <span>
-            Hoàn thành <b>{doneCount}</b>/{total} bài{skippedCount > 0 && <span className="muted small"> · bỏ qua {skippedCount}</span>}
-          </span>
-          {puzzleRating !== null && <span className="muted small">Rating bài tập: {puzzleRating}</span>}
-        </div>
-        <div className="progress mt">
-          <div style={{ width: `${(100 * doneCount) / total}%` }} />
-        </div>
-        {next && (
-          <Button kind="primary" className="mt" onClick={() => navigate(`learn/lesson/${next.id}`)}>
-            Tiếp tục: {next.title}
-          </Button>
-        )}
-      </Card>
+  const open = (l: Lesson) => !lessonDone(l, progress) && !lessonSkipped(l, progress);
+  const startIdx = Math.max(0, LESSONS.findIndex((l) => l.id === level.startLesson));
+  const next = LESSONS.slice(startIdx).find(open) ?? LESSONS.find(open);
+  const isNew = level.id === 'new';
+
+  const setStage = async (stage: number, value: 'skipped' | undefined) => {
+    const status = { ...progress.status };
+    for (const l of LESSONS.filter((x) => x.stage === stage)) {
+      if (value === 'skipped' && !status[l.id] && !lessonDone(l, progress)) status[l.id] = 'skipped';
+      if (value === undefined && status[l.id] === 'skipped') delete status[l.id];
+    }
+    const p = { ...progress, status };
+    setProgress(p);
+    await saveLessonProgress(p);
+  };
+
+  const extras = (
+    <>
       <Card onClick={() => navigate('learn/games')}>
         <div className="row-between">
           <div>
             <h3 style={{ margin: 0 }}>♟ Từng nước một</h3>
             <p className="small muted" style={{ margin: '4px 0 0' }}>
-              12 ván kinh điển, giải thích mọi nước đi bằng tiếng Việt. Cách học hiệu quả nhất để hiểu vì sao.
+              12 ván kinh điển, giải thích mọi nước đi bằng tiếng Việt.{isNew ? ' Nên học sau khi xong Giai đoạn 1.' : ' Cách học hiệu quả nhất để hiểu vì sao.'}
             </p>
           </div>
           <span>›</span>
@@ -102,25 +166,73 @@ function Overview({ progress }: { progress: LessonProgress }) {
           </p>
         </Card>
       </div>
+    </>
+  );
+
+  return (
+    <div>
+      <h1>Lộ trình học cờ</h1>
       <Card>
-        <h3>Cách dùng lộ trình</h3>
-        <p className="small muted" style={{ margin: 0 }}>
-          Học theo thứ tự. Mỗi bài có phần đọc ngắn, vị trí tương tác (phải đi đúng nước), và bài tập từ ván thật. Thời gian học chỉ nên chiếm 20%, còn lại là giải bài tập (tab Tập) và chơi + phân tích (tab Chơi, Phân tích).
-          Nguồn: nội dung tự biên soạn và kiểm chứng bằng Stockfish; bài tập từ cơ sở dữ liệu Lichess (CC0); sách và trang được dẫn link ở cuối mỗi bài.
-        </p>
+        <div className="row-between">
+          <span>
+            Hoàn thành <b>{doneCount}</b>/{total} bài{skippedCount > 0 && <span className="muted small"> · bỏ qua {skippedCount}</span>}
+          </span>
+          <button className="chip" onClick={() => setPicking(true)}>
+            {level.label} · đổi
+          </button>
+        </div>
+        <div className="progress mt">
+          <div style={{ width: `${(100 * doneCount) / total}%` }} />
+        </div>
+        {next && (
+          <Button kind="primary" className="mt" onClick={() => navigate(`learn/lesson/${next.id}`)}>
+            {doneCount + skippedCount > 0 ? 'Tiếp tục' : 'Bắt đầu'}: {next.title}
+          </Button>
+        )}
       </Card>
+      <TodayCard level={level} log={log} nextLesson={next} />
+      {!isNew && extras}
+      {!isNew && (
+        <Card>
+          <h3>Cách dùng lộ trình</h3>
+          <p className="small muted" style={{ margin: 0 }}>
+            Mỗi bài có phần đọc ngắn, vị trí tương tác (phải đi đúng nước) và bài tập từ ván thật. Đọc chỉ nên chiếm 20% thời gian, còn lại là giải bài tập (tab Tập) và chơi rồi phân tích (tab Chơi, Phân tích).
+            Phần đã biết thì bấm "Bỏ qua cả giai đoạn".
+          </p>
+        </Card>
+      )}
       {STAGES.map((s) => {
         const ls = LESSONS.filter((l) => l.stage === s.n);
+        const anyOpen = ls.some(open);
+        const anySkipped = ls.some((l) => lessonSkipped(l, progress));
         return (
           <div key={s.n}>
             <h2 className="mt">
-              Giai đoạn {s.n + 1}: {s.title} <span className="muted small">Elo {s.elo}</span>
+              Giai đoạn {s.n + 1}: {s.title} {!isNew && <span className="muted small">Elo {s.elo}</span>}
             </h2>
             <p className="small muted">
               <b>Mục tiêu:</b> {s.goal}
-              <br />
-              <b>Lịch:</b> {s.routine}
+              {!isNew && (
+                <>
+                  <br />
+                  <b>Lịch:</b> {s.routine}
+                </>
+              )}
             </p>
+            {!isNew && (anyOpen || anySkipped) && (
+              <div className="row mb">
+                {anyOpen && (
+                  <button className="chip" onClick={() => setStage(s.n, 'skipped')}>
+                    Tôi đã biết: bỏ qua cả giai đoạn
+                  </button>
+                )}
+                {anySkipped && (
+                  <button className="chip" onClick={() => setStage(s.n, undefined)}>
+                    Học lại các bài đã bỏ qua
+                  </button>
+                )}
+              </div>
+            )}
             {ls.map((l, i) => {
               const done = lessonDone(l, progress);
               const started = (progress.done[l.id]?.length ?? 0) > 0 || progress.read[l.id];
@@ -130,6 +242,7 @@ function Overview({ progress }: { progress: LessonProgress }) {
                     <div>
                       <span className="muted small">{i + 1}. </span>
                       <b>{l.title}</b>
+                      {next?.id === l.id && <span className="tag tag-info" style={{ marginLeft: 6 }}>học tiếp</span>}
                     </div>
                     <div className="small muted">
                       {l.summary} · {l.minutes} phút
@@ -139,6 +252,7 @@ function Overview({ progress }: { progress: LessonProgress }) {
                 </div>
               );
             })}
+            {isNew && s.n === 0 && <div className="mt">{extras}</div>}
           </div>
         );
       })}
@@ -193,6 +307,18 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
           taskNo++;
           return <TaskView key={i} block={b} n={taskNo} done={doneSet.has(i)} onDone={() => markDone(i)} onShow={setPreview} />;
         }
+        if (b.kind === 'squares') {
+          taskNo++;
+          return (
+            <Card key={i}>
+              <h3 style={{ margin: 0 }}>
+                Bài {taskNo}: tìm ô {doneSet.has(i) && <Tag tone="good">✓</Tag>}
+              </h3>
+              <p className="small muted">{b.intro}</p>
+              <SquareQuiz targets={b.targets} onDone={() => markDone(i)} />
+            </Card>
+          );
+        }
         if (b.kind === 'puzzles') {
           taskNo++;
           return <PuzzleSet key={i} block={b} n={taskNo} done={doneSet.has(i)} onDone={() => markDone(i)} />;
@@ -217,6 +343,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
         status={progress.status[lesson.id]}
         onMark={async (v) => {
           setProgress(await setLessonStatus(lesson.id, v));
+          if (v === 'done') logActivity('lessons');
           if (v && next) navigate(`learn/lesson/${next.id}`);
           else if (v) navigate('learn');
         }}
@@ -256,35 +383,31 @@ function Diagram({ block, onShow }: { block: Extract<Block, { kind: 'diagram' }>
 
 function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: number; done: boolean; onDone: () => void; onShow: (p: Preview) => void }) {
   const [finished, setFinished] = useState<boolean | null>(null);
-  const [key, setKey] = useState(0);
+  const [misses, setMisses] = useState(0);
+  const showExplain = finished !== null || misses >= 2;
   return (
     <Card>
       <div className="row-between">
         <h3 style={{ margin: 0 }}>
           Bài {n} {done && <Tag tone="good">✓</Tag>}
         </h3>
-        {block.verify === 'line' && <Tag tone="info">đi lại biến</Tag>}
+        {block.verify === 'line' && <Tag tone="info">đi theo hướng dẫn</Tag>}
       </div>
       <PuzzleBoard
-        key={key}
         fen={block.fen}
         moves={block.moves}
         alternatives={block.alternatives}
         playerFirst
         prompt={block.prompt}
+        onWrong={setMisses}
         onFinish={(ok) => {
           setFinished(ok);
           onDone();
         }}
       />
-      {finished !== null && (
+      {showExplain && (
         <div className="task-box small">
-          <b>Giải thích:</b> {renderRich(block.explain, { onShow, seqStart: block.fen, squareFen: block.fen })}
-          <div className="row mt">
-            <Button kind="ghost" onClick={() => { setFinished(null); setKey(key + 1); }}>
-              Làm lại
-            </Button>
-          </div>
+          <b>{finished !== null ? 'Giải thích:' : 'Gợi ý lời giải:'}</b> {renderRich(block.explain, { onShow, seqStart: block.fen, squareFen: block.fen })}
         </div>
       )}
     </Card>
