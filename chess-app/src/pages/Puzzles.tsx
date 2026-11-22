@@ -67,6 +67,16 @@ export default function Puzzles({ route }: { route: Route }) {
         </p>
       </Card>
 
+      <details className="card small">
+        <summary>
+          <b>Giải bài tập như thế nào?</b>
+        </summary>
+        <p style={{ marginBottom: 0 }}>
+          Mỗi bài là một tình huống lấy từ ván thật, có đúng một lời giải rõ ràng nhất, dài từ 1 đến vài nước. Bạn <b>không cần đánh hết ván</b>: đi đúng nước, máy tự đi thay đối phương,
+          rồi bạn đi tiếp cho tới hết chuỗi là xong. Dòng chữ xanh dưới bàn cờ cho biết mục tiêu (chiếu hết, hoặc thắng quân) và số nước cần tìm. “Nước tốt nhất” nghĩa là nước mạnh hơn hẳn
+          các nước còn lại; nước chỉ “tạm được” sẽ bị tính là sai.
+        </p>
+      </details>
       <Card onClick={() => navigate('puzzles/rated')}>
         <div className="row-between">
           <div>
@@ -227,15 +237,20 @@ function Trainer({
   );
 }
 
-/** Tell the solver which side they play and, for mates, what the goal is. */
+/** Tell the solver which side they play, what counts as solved, and how many moves they must find. */
 function puzzlePrompt(p: Puzzle): string {
   const c = new Chess(p.fen);
   if (!p.playerFirst && p.moves[0]) playUci(c, p.moves[0]);
   const side = c.turn() === 'w' ? 'Trắng' : 'Đen';
+  const mine = Math.ceil((p.moves.length - (p.playerFirst ? 0 : 1)) / 2);
+  const who = `Bạn cầm ${side} (phía dưới bàn cờ).`;
+  const count = mine <= 1 ? 'Chỉ cần đúng một nước.' : `Cần tìm ${mine} nước liên tiếp, máy tự đi thay đối phương.`;
   const mate = p.themes.find((t) => /^mateIn\d$/.test(t));
-  if (mate) return `Bạn cầm ${side} (phía dưới bàn cờ). Chiếu hết trong ${mate.slice(-1)} nước.`;
-  if (p.themes.includes('hangingPiece')) return `Bạn cầm ${side} (phía dưới bàn cờ). Có quân không được bảo vệ: hãy bắt nó.`;
-  return `Bạn cầm ${side} (phía dưới bàn cờ). Tìm nước tốt nhất.`;
+  if (mate) return `${who} Mục tiêu: chiếu hết trong ${mate.slice(-1)} nước.`;
+  if (p.themes.includes('mate')) return `${who} Mục tiêu: chiếu hết. ${count}`;
+  if (p.themes.includes('hangingPiece')) return `${who} Mục tiêu: bắt quân không được bảo vệ. ${count}`;
+  if (p.themes.includes('equality')) return `${who} Bạn đang kém thế. Mục tiêu: tìm cách cứu hòa. ${count}`;
+  return `${who} Mục tiêu: thắng quân hoặc giành ưu thế rõ rệt, không cần chiếu hết. ${count}`;
 }
 
 function Daily() {

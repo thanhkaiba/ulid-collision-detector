@@ -54,6 +54,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   const undoPlies = useRef(0);
 
   const chess = chessRef.current;
+  /** how many of the solver's own moves are still to be found */
+  const movesLeft = Math.ceil((moves.length - idx) / 2);
   const playerColor: Color = useMemo(() => {
     const c = new Chess(fen);
     if (!playerFirst && moves[0]) playUci(c, moves[0]);
@@ -299,7 +301,14 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
       </div>
       <div className="mt">
         {status === 'intro' && <div className="feedback info">Đối phương vừa đi…</div>}
-        {status === 'solving' && <div className="feedback info">{props.prompt ?? `Bạn cầm ${sideText}. Tìm nước tốt nhất.`}</div>}
+        {status === 'solving' &&
+          (idx > (playerFirst ? 0 : 1) ? (
+            <div className="feedback info">
+              Đúng rồi! Đối phương đã đáp lại. {movesLeft > 1 ? `Còn ${movesLeft} nước nữa: tìm nước tiếp theo.` : 'Còn một nước nữa để kết thúc bài.'}
+            </div>
+          ) : (
+            <div className="feedback info">{props.prompt ?? `Bạn cầm ${sideText}. Tìm nước tốt nhất.`}</div>
+          ))}
         {status === 'checking' && <div className="feedback info">Đang kiểm tra nước của bạn…</div>}
         {status === 'wrong' && wrongInfo && (
           <div className="feedback bad">

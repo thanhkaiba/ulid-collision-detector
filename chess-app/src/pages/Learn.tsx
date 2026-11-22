@@ -74,23 +74,39 @@ function LevelPicker({ current, onPick }: { current?: string; onPick: (id: Level
 function TodayCard({ level, log, nextLesson }: { level: LevelInfo; log: ActivityLog; nextLesson?: Lesson }) {
   const today = log[dayKey()] ?? { puzzles: 0, games: 0, lessons: 0 };
   const days = streak(log);
-  const items: { done: boolean; label: string; go: string }[] = [
-    { done: today.puzzles >= level.dailyPuzzles, label: `Giải ${level.dailyPuzzles} bài tập (${Math.min(today.puzzles, level.dailyPuzzles)}/${level.dailyPuzzles})`, go: 'puzzles/rated' },
-    { done: today.lessons >= 1, label: nextLesson ? `Học 1 bài: ${nextLesson.title}` : 'Học 1 bài hoặc 1 ván "Từng nước một"', go: nextLesson ? `learn/lesson/${nextLesson.id}` : 'learn/games' },
-    { done: today.games >= 1, label: `Chơi 1 ván với máy (cấp ${level.engineLevel})`, go: 'play' },
+  // one plan for the day, in the order to do it: learn something new, drill it, then use it in a game
+  const items: { done: boolean; label: string; why: string; go: string }[] = [
+    {
+      done: today.lessons >= 1,
+      label: nextLesson ? `Học bài: ${nextLesson.title}` : 'Học 1 bài hoặc 1 ván "Từng nước một"',
+      why: 'Kiến thức mới',
+      go: nextLesson ? `learn/lesson/${nextLesson.id}` : 'learn/games',
+    },
+    {
+      done: today.puzzles >= level.dailyPuzzles,
+      label: `Giải ${level.dailyPuzzles} bài tập chiến thuật (${Math.min(today.puzzles, level.dailyPuzzles)}/${level.dailyPuzzles})`,
+      why: 'Luyện mắt nhìn đòn',
+      go: 'puzzles/rated',
+    },
+    { done: today.games >= 1, label: `Chơi 1 ván với máy (cấp ${level.engineLevel})`, why: 'Áp dụng vào ván thật', go: 'play' },
   ];
+  const nextIdx = items.findIndex((it) => !it.done);
   return (
     <Card>
       <div className="row-between">
-        <h3 style={{ margin: 0 }}>Hôm nay</h3>
+        <h3 style={{ margin: 0 }}>Hôm nay làm gì</h3>
         <span className="small muted">{days > 0 ? `🔥 ${days} ngày liên tiếp` : 'Bắt đầu chuỗi ngày học'}</span>
       </div>
-      {items.map((it) => (
-        <div key={it.label} className="list-item" onClick={() => navigate(it.go)}>
+      <p className="small muted" style={{ margin: '4px 0 0' }}>
+        {nextIdx === -1 ? 'Xong cả ba việc hôm nay. Hẹn bạn ngày mai!' : 'Ba việc, làm theo thứ tự từ trên xuống, tổng cộng khoảng 30 đến 45 phút.'}
+      </p>
+      {items.map((it, i) => (
+        <div key={i} className="list-item" onClick={() => navigate(it.go)}>
           <span>
-            {it.done ? '✅' : '⬜'} {it.label}
+            {it.done ? '✅' : `${i + 1}.`} {i === nextIdx ? <b>{it.label}</b> : it.label}
+            <div className="tiny muted">{it.why}</div>
           </span>
-          <span className="muted">›</span>
+          {i === nextIdx ? <span className="btn btn-primary small" style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>Làm ngay</span> : <span className="muted">›</span>}
         </div>
       ))}
     </Card>
@@ -185,11 +201,7 @@ function Overview({ progress, setProgress }: { progress: LessonProgress; setProg
         <div className="progress mt">
           <div style={{ width: `${(100 * doneCount) / total}%` }} />
         </div>
-        {next && (
-          <Button kind="primary" className="mt" onClick={() => navigate(`learn/lesson/${next.id}`)}>
-            {doneCount + skippedCount > 0 ? 'Tiếp tục' : 'Bắt đầu'}: {next.title}
-          </Button>
-        )}
+
       </Card>
       <TodayCard level={level} log={log} nextLesson={next} />
       {!isNew && extras}
