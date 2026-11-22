@@ -44,16 +44,35 @@ export default function Learn({ route }: { route: Route }) {
   return <Overview progress={progress} setProgress={setProgress} />;
 }
 
-function taskCount(l: Lesson) {
-  return l.blocks.filter((b) => b.kind === 'task' || b.kind === 'puzzles' || b.kind === 'squares' || b.kind === 'lichess').length;
+/**
+ * A stable name for an exercise, so progress survives when blocks are added, removed or reordered
+ * (it used to be the block's position, and every edit of a lesson shifted the ticks).
+ */
+function exerciseKey(b: Block, i: number): string {
+  if (b.kind === 'lichess' || b.kind === 'example') return `l:${b.id}`;
+  if (b.kind === 'task') return `t:${b.fen}:${b.moves[0]}`;
+  if (b.kind === 'squares') return `s:${b.targets.join(',')}`;
+  if (b.kind === 'puzzles') return `p:${b.themes.join(',')}:${b.rating.join('-')}`;
+  return `b:${i}`;
+}
+/** lessons rebuilt after the index-based progress was written: old indices no longer point at the same exercise */
+const RELAID = new Set(['tactics-1', 'tactics-2', 'tactics-3', 'piece-values']);
+/** keys of the exercises of lesson `l` that are passed */
+function doneKeys(l: Lesson, p: LessonProgress): Set<string> {
+  const out = new Set<string>();
+  for (const v of p.done[l.id] ?? []) {
+    if (typeof v === 'string') out.add(v);
+    else if (!RELAID.has(l.id) && l.blocks[v]) out.add(exerciseKey(l.blocks[v], v));
+  }
+  return out;
 }
 function lessonDone(l: Lesson, p: LessonProgress) {
   if (p.status[l.id] === 'done') return true;
   if (p.status[l.id] === 'skipped') return false;
   if (l.blocks.some((b) => b.kind === 'practice')) return false;
-  const n = taskCount(l);
-  const done = p.done[l.id]?.length ?? 0;
-  return n > 0 && done >= n;
+  const keys = doneKeys(l, p);
+  const ex = l.blocks.map((b, i) => ({ b, i })).filter(({ b }) => b.kind === 'task' || b.kind === 'puzzles' || b.kind === 'squares' || b.kind === 'lichess');
+  return ex.length > 0 && ex.every(({ b, i }) => keys.has(exerciseKey(b, i)));
 }
 const lessonSkipped = (l: Lesson, p: LessonProgress) => p.status[l.id] === 'skipped';
 
@@ -265,7 +284,7 @@ function Overview({ progress, setProgress }: { progress: LessonProgress; setProg
             )}
             {ls.map((l, i) => {
               const done = lessonDone(l, progress);
-              const started = (progress.done[l.id]?.length ?? 0) > 0 || progress.read[l.id];
+              const started = doneKeys(l, progress).size > 0 || progress.read[l.id];
               return (
                 <div key={l.id} className="list-item" onClick={() => navigate(`learn/lesson/${l.id}`)}>
                   <div>
@@ -341,7 +360,9 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
   const idx = LESSONS.indexOf(lesson);
   const prev = LESSONS[idx - 1];
   const next = LESSONS[idx + 1];
-  const doneSet = new Set(progress.done[lesson.id] ?? []);
+  const keys = doneKeys(lesson, progress);
+  /** passed? by block position, looked up through the stable key */
+  const doneSet = { has: (i: number) => !!lesson.blocks[i] && keys.has(exerciseKey(lesson.blocks[i], i)) };
   const [preview, setPreview] = useState<Preview | null>(null);
   const [practiceDone, setPracticeDone] = useState<Record<string, 1>>(loadPracticeDone);
   const slides = useMemo(() => buildSlides(lesson), [lesson]);
@@ -399,7 +420,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
 
   const markDone = async (blockIndex: number) => {
     if (doneSet.has(blockIndex)) return;
-    const p: LessonProgress = { ...progress, done: { ...progress.done, [lesson.id]: [...doneSet, blockIndex] } };
+    const p: LessonProgress = { ...progress, done: { ...progress.done, [lesson.id]: [...keys, exerciseKey(lesson.blocks[blockIndex], blockIndex)] } };
     setProgress(p);
     await saveLessonProgress(p);
   };
@@ -471,7 +492,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
             <SquareQuiz targets={b.targets} onDone={() => markDone(i)} />
           </Card>
         );
-      if (b.kind === 'puzzles') return <PuzzleSet key={i} block={b} n={taskNo.get(i)!} done={doneSet.has(i)} onDone={() => markDone(i)} storeKey={`pset:${lesson.id}:${i}`} />;
+      if (b.kind === 'puzzles') return <PuzzleSet key={i} block={b} n={taskNo.get(i)!} done={doneSet.has(i)} onDone={() => markDone(i)} storeKey={`pset:${lesson.id}:${exerciseKey(b, i)}`} />;
       if (b.kind === 'lichess') return <LichessTask key={i} block={b} n={taskNo.get(i)!} done={doneSet.has(i)} onDone={() => markDone(i)} />;
       if (b.kind === 'practice' && sl.id) {
         const p = practiceById(sl.id);

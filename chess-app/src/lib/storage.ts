@@ -50,7 +50,11 @@ export async function savePuzzleProgress(p: PuzzleProgress) {
 
 export interface LessonProgress {
   /** lessonId -> set of completed task indices */
-  done: Record<string, number[]>;
+  /**
+   * lessonId -> exercises passed, as stable keys (see exerciseKey in Learn.tsx).
+   * Older versions stored block indices (numbers); those are still read for lessons whose layout did not change.
+   */
+  done: Record<string, (number | string)[]>;
   read: Record<string, 1>;
   /** manual marks: lesson id or `book:p.c.s` -> done / skipped */
   status: Record<string, 'done' | 'skipped'>;
