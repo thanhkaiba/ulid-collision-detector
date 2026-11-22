@@ -1,7 +1,12 @@
 import { get, set } from 'idb-keyval';
 
-export type ActivityKind = 'puzzles' | 'games' | 'lessons';
-export type DayLog = Record<ActivityKind, number> & {
+/**
+ * games: any finished game, endgame practice included (kept for old logs).
+ * played: a real game against the engine from the starting position, the one the daily plan asks for.
+ */
+export type ActivityKind = 'puzzles' | 'games' | 'lessons' | 'played';
+export type DayLog = Record<'puzzles' | 'games' | 'lessons', number> & {
+  played?: number;
   /** titles of the lessons / book sections / annotated games finished that day */
   learned?: string[];
 };
@@ -20,7 +25,7 @@ export async function logActivity(kind: ActivityKind, n = 1, title?: string): Pr
   const log = await loadActivity();
   const k = dayKey();
   const day: DayLog = log[k] ?? { puzzles: 0, games: 0, lessons: 0 };
-  day[kind] = (day[kind] ?? 0) + n;
+  day[kind] = ((day[kind] as number | undefined) ?? 0) + n;
   if (title && !(day.learned ?? []).includes(title)) day.learned = [...(day.learned ?? []), title];
   log[k] = day;
   await set('activity', log);

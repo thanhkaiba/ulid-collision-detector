@@ -98,7 +98,12 @@ function TodayCard({ level, log, nextLesson }: { level: LevelInfo; log: Activity
       why: 'Luyện mắt nhìn đòn',
       go: 'puzzles/rated',
     },
-    { done: today.games >= 1, label: `Chơi 1 ván với máy (cấp ${level.engineLevel})`, why: 'Áp dụng vào ván thật', go: 'play' },
+    {
+      done: (today.played ?? 0) >= 1,
+      label: `Chơi 1 ván với máy (cấp ${level.engineLevel})`,
+      why: 'Áp dụng vào ván thật. Tính khi ván kết thúc, hoặc khi đã đi ít nhất 10 nước. Luyện cờ tàn trong bài học không tính.',
+      go: 'play',
+    },
   ];
   const nextIdx = items.findIndex((it) => !it.done);
   return (

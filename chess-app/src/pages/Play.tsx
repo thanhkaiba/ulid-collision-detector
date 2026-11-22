@@ -262,9 +262,14 @@ function GameView({
       if (!logged.current) {
         logged.current = true;
         logActivity('games');
+        // the daily "play one game" goal needs a real game from the start: not endgame practice,
+        // and not a game resigned or abandoned in the first few moves
+        const plies = chess.history().length;
+        const natural = chess.isGameOver();
+        if (!practice && (natural || plies >= 20)) logActivity('played');
       }
     },
-    [practice, me, onGoal],
+    [practice, me, onGoal, chess],
   );
 
   // clock
