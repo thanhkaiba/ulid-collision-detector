@@ -53,6 +53,51 @@ function PracticeRun({ pos, back }: { pos: PracticePosition; back: string }) {
   );
 }
 
+/**
+ * A practice position played right inside a lesson. The board is static until the student presses start,
+ * so several of these can sit on one page without the engine moving on all of them.
+ */
+export function PracticeInline({ pos }: { pos: PracticePosition }) {
+  const [attempt, setAttempt] = useState(0);
+  const [started, setStarted] = useState(false);
+  const [done, setDone] = useState(() => !!loadPracticeDone()[pos.id]);
+  if (!started) {
+    const c = new Chess(pos.fen);
+    return (
+      <div>
+        <Board
+          fen={pos.fen}
+          orientation={pos.me === 'w' ? 'white' : 'black'}
+          turnColor={c.turn() === 'w' ? 'white' : 'black'}
+          check={kingInCheckColor(c)}
+          viewOnly
+        />
+        <div className="row mt">
+          <Button kind="primary" onClick={() => setStarted(true)}>
+            {done ? 'Đánh lại với máy' : 'Bắt đầu đánh với máy'}
+          </Button>
+          {done && <span className="tag tag-good">✓ đã đạt</span>}
+        </div>
+      </div>
+    );
+  }
+  return (
+    <GameView
+      key={attempt}
+      me={pos.me}
+      level={PRACTICE_LEVEL}
+      tc={NO_CLOCK}
+      practice={pos}
+      embedded
+      onExit={() => {
+        setDone(!!loadPracticeDone()[pos.id]);
+        setStarted(false);
+      }}
+      onRematch={() => setAttempt((a) => a + 1)}
+    />
+  );
+}
+
 function PracticeList() {
   const done = loadPracticeDone();
   const groups = [...new Set(PRACTICE.map((p) => p.group))];
@@ -189,6 +234,7 @@ function GameView({
   onExit,
   onRematch,
   practice,
+  embedded,
 }: {
   me: 'w' | 'b';
   level: Level;
@@ -197,6 +243,8 @@ function GameView({
   onRematch: () => void;
   /** endgame practice: start from this position with a goal instead of a normal game */
   practice?: PracticePosition;
+  /** shown inside a lesson: no page header, no link to the practice list */
+  embedded?: boolean;
 }) {
   const startFen = practice?.fen;
   /** a practice position where Black moves first: shift the move list by one cell */
@@ -437,12 +485,14 @@ function GameView({
 
   return (
     <div>
-      <div className="topbar">
-        <button className="back" onClick={onExit} aria-label="Quay lại">
-          ‹
-        </button>
-        <h2 style={{ margin: 0 }}>{practice ? practice.title : 'Ván đấu'}</h2>
-      </div>
+      {!embedded && (
+        <div className="topbar">
+          <button className="back" onClick={onExit} aria-label="Quay lại">
+            ‹
+          </button>
+          <h2 style={{ margin: 0 }}>{practice ? practice.title : 'Ván đấu'}</h2>
+        </div>
+      )}
       <div className="board-layout">
         <div>
           {bar(top)}
@@ -462,7 +512,7 @@ function GameView({
           {practice && !over && (
             <Card>
               <div className="tiny muted">{practice.goal === 'draw' ? 'MỤC TIÊU: THỦ HÒA' : practice.goal === 'mate' ? 'MỤC TIÊU: CHIẾU HẾT' : 'MỤC TIÊU: PHONG HẬU HOẶC THẮNG QUÂN'}</div>
-              <p className="small" style={{ margin: '4px 0' }}>{practice.brief}</p>
+              {!embedded && <p className="small" style={{ margin: '4px 0' }}>{practice.brief}</p>}
               {showHint ? (
                 <div className="explain">{practice.hint}</div>
               ) : (
@@ -486,10 +536,12 @@ function GameView({
                 <Button kind="primary" onClick={onRematch}>
                   {goalMet ? 'Đánh lại lần nữa' : 'Thử lại'}
                 </Button>
-                <Button onClick={onExit}>Quay lại</Button>
-                <Button kind="ghost" onClick={() => navigate('play/practice')}>
-                  Thế khác
-                </Button>
+                <Button onClick={onExit}>{embedded ? 'Đóng' : 'Quay lại'}</Button>
+                {!embedded && (
+                  <Button kind="ghost" onClick={() => navigate('play/practice')}>
+                    Thế khác
+                  </Button>
+                )}
               </div>
             </Card>
           )}

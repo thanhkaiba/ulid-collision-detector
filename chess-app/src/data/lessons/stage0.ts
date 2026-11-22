@@ -445,30 +445,10 @@ Trước mỗi lần bắt quân hãy đếm: "tôi lấy bao nhiêu, mất bao 
         md: `### Nguyên tắc chung
 Vua đơn độc chỉ bị chiếu hết ở **biên** hoặc **góc**. Kế hoạch luôn gồm hai bước: (1) dồn vua đối phương ra biên bằng cách thu hẹp "chiếc hộp", (2) đưa vua của mình lại gần để hỗ trợ, rồi chiếu hết.
 
-### Hậu + vua chống vua
-Hậu đứng cách vua đối phương "một nước mã" sẽ nhốt nó vào hộp nhỏ dần. Khi vua đối phương ở biên, đưa vua mình đến đối diện rồi chiếu hết. **Cảnh báo pat**: khi vua đối phương ở góc chỉ còn 1-2 ô, kiểm tra kỹ trước khi đi hậu.
+Bài này có ba kỹ thuật. Mỗi kỹ thuật: đọc cách làm, giải một thế chiếu hết ngắn, rồi **đánh trọn từ đầu tới cuối với máy** ngay bên dưới. Máy chạy Vua theo cách khó chịu nhất, nên làm được với máy là làm được trong ván thật.
 
-### Hai xe (chiếu thang)
-Hai xe luân phiên cắt từng hàng, vua đối phương bị đẩy lùi như leo thang. Nếu vua đối phương đến gần xe, chuyển xe sang cánh kia.
-
-### Xe + vua chống vua
-Khó hơn: cần dùng vua đối diện (đối vua) rồi xe chiếu. Luyện trên Lichess Practice cho đến khi làm dưới 30 giây.`,
-      },
-      {
-        kind: 'task',
-        fen: '3k4/8/3K4/8/8/8/8/6Q1 w - - 0 1',
-        moves: ['g1g8'],
-        prompt: 'Vua trắng đã đối diện vua đen. Chiếu hết trong 1 nước.',
-        explain: 'Qg8#. Hậu kiểm soát cả hàng 8, vua d6 kiểm soát c7, d7, e7.',
-        verify: 'mate',
-      },
-      {
-        kind: 'task',
-        fen: '7k/8/6K1/8/8/8/8/R7 w - - 0 1',
-        moves: ['a1a8'],
-        prompt: 'Xe + vua. Chiếu hết trong 1 nước.',
-        explain: 'Ra8#. Vua g6 che hết các ô g7, h7; xe chiếu dọc hàng 8.',
-        verify: 'mate',
+### 1. Hai xe (chiếu thang)
+Dễ nhất, nên học trước. Hai xe luân phiên cắt từng hàng, vua đối phương bị đẩy lùi như leo thang. Nếu vua đối phương đến gần xe, chuyển xe sang cánh kia, càng xa càng tốt.`,
       },
       {
         kind: 'task',
@@ -479,10 +459,37 @@ Khó hơn: cần dùng vua đối diện (đối vua) rồi xe chiếu. Luyện 
         explain: '1.Rb7 (cắt hàng 7, vua không xuống được) Kf8 2.Ra8#. Hoặc 1.Ra7 rồi 2.Rb8#.',
         verify: 'mate',
       },
-      { kind: 'practice', ids: ['mate-two-rooks', 'mate-queen', 'mate-rook'], intro: 'Ba kiểu chiếu hết này phải làm được không cần nghĩ. Đánh với máy cho tới khi chiếu hết thật sự, máy sẽ chạy Vua theo cách khó chịu nhất.' },
-    ],
-    resources: [
-      { label: 'Lichess Practice: Checkmating patterns', url: 'https://lichess.org/practice', note: 'Mục "Checkmates" luyện hậu, xe, hai xe với máy.' },
+      { kind: 'practice', ids: ['mate-two-rooks'] },
+      {
+        kind: 'text',
+        md: `### 2. Hậu + vua chống vua
+Hậu đứng cách vua đối phương "một nước mã" sẽ nhốt nó vào hộp nhỏ dần, không cần chiếu. Khi vua đối phương đã ở biên, **dừng hậu lại** và đưa vua mình đến đối diện, rồi chiếu hết. **Cảnh báo pat**: khi vua đối phương ở góc chỉ còn 1-2 ô, kiểm tra kỹ xem nó còn nước đi không trước khi đi hậu.`,
+      },
+      {
+        kind: 'task',
+        fen: '3k4/8/3K4/8/8/8/8/6Q1 w - - 0 1',
+        moves: ['g1g8'],
+        prompt: 'Vua trắng đã đối diện vua đen. Chiếu hết trong 1 nước.',
+        explain: 'Qg8#. Hậu kiểm soát cả hàng 8, vua d6 kiểm soát c7, d7, e7.',
+        verify: 'mate',
+      },
+      { kind: 'practice', ids: ['mate-queen'] },
+      {
+        kind: 'text',
+        md: `### 3. Xe + vua chống vua
+Khó hơn, cần khoảng 15 đến 20 nước. Xe cắt vua đối phương trong một cái hộp. Đưa vua mình tới **đối diện** vua đối phương (cách nhau một ô, cùng cột hoặc cùng hàng): đúng lúc đó xe chiếu để đẩy nó lùi một hàng. Nếu chưa đối diện được, đi một nước chờ bằng xe trên cùng hàng. Lặp lại cho tới khi vua đối phương ở hàng cuối.
+
+Đánh lại thế dưới đây nhiều lần cho tới khi bạn chiếu hết được trong khoảng 20 nước mà không phải nghĩ lâu.`,
+      },
+      {
+        kind: 'task',
+        fen: '7k/8/6K1/8/8/8/8/R7 w - - 0 1',
+        moves: ['a1a8'],
+        prompt: 'Xe + vua. Chiếu hết trong 1 nước.',
+        explain: 'Ra8#. Vua g6 che hết các ô g7, h7; xe chiếu dọc hàng 8.',
+        verify: 'mate',
+      },
+      { kind: 'practice', ids: ['mate-rook'] },
     ],
   },
 
@@ -538,7 +545,7 @@ Quân đứng giữa bị "dính" vì phía sau nó là quân giá trị hơn (h
         themes: ['fork', 'pin'],
         rating: [600, 1000],
         count: 6,
-        intro: 'Luyện 6 bài đòn đôi và ghim từ ván thật (Lichess).',
+        intro: 'Luyện 6 bài đòn đôi và ghim lấy từ ván thật.',
       },
     ],
   },
@@ -644,9 +651,6 @@ Hai vua đứng đối diện nhau, cách nhau **một ô** (thường gặp nh�
         verify: 'best',
       },
       { kind: 'practice', ids: ['kp-win-6th', 'kp-win-opposition', 'kp-draw-opposition'], intro: 'Hai thế thắng và một thế thủ hòa. Đánh tiếp với máy: chỉ một nước Vua sai là kết quả đổi ngay, và máy sẽ báo cho bạn biết.' },
-    ],
-    resources: [
-      { label: 'Lichess Practice: Pawn endgames', url: 'https://lichess.org/practice', note: 'Mục "Pawn Endgames" có bài tập tương tác về đối vua và hình vuông.' },
     ],
   },
 

@@ -287,7 +287,6 @@ Nếu vua đối phương đứng quá gần (chỉ cách một cột), trước
     ],
     resources: [
       { label: "Sách: Silman's Complete Endgame Course", url: 'https://www.google.com/search?q=Silman%27s+Complete+Endgame+Course', note: 'Chia theo Elo. Đọc đúng phần của bạn thôi.' },
-      { label: 'Lichess Practice: Rook endgames', url: 'https://lichess.org/practice' },
     ],
   },
 

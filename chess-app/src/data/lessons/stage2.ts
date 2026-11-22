@@ -195,7 +195,6 @@ Mã cản tốt được trừ tốt biên hàng 7. Mã + vua vs tốt thông: g
     ],
     resources: [
       { label: 'Sách: 100 Endgames You Must Know (de la Villa)', url: 'https://www.google.com/search?q=100+Endgames+You+Must+Know', note: 'Đúng 100 thế, đủ tới 2200.' },
-      { label: 'Lichess: Endgame studies & practice', url: 'https://lichess.org/practice' },
     ],
   },
 
