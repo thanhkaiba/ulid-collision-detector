@@ -883,7 +883,7 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
           {right >= need ? ' Đã đủ để qua!' : right + left < need ? ' Bộ này không còn đủ câu để qua, làm hết rồi làm bộ khác.' : ''}
         </p>
       )}
-      {!finishedAll && missedHere && cur === null && <p className="tiny muted">Câu này đã đi sai một lần nên không tính là đúng ngay lần đầu, nhưng vẫn cần giải xong.</p>}
+      {!finishedAll && resumedMiss && cur === null && <p className="tiny muted">Câu này đã đi sai một lần nên không tính là đúng ngay lần đầu, nhưng vẫn cần giải xong.</p>}
       {!finishedAll && (
         <>
           <PuzzleBoard

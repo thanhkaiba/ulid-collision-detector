@@ -362,6 +362,8 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
   const [line, setLine] = useState<{ sans: string[]; from: number } | null>(null);
 
   useEffect(() => {
+    // arriving from a scrolled list (games, report, trainer): start with the board in view
+    window.scrollTo(0, 0);
     loadGames().then((gs) => setGame(gs.find((g) => g.id === gameId) ?? null));
     loadAnalysis(gameId).then((a) => a && setAnalysis(a));
     loadSettings().then(setSettings);
