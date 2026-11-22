@@ -83,8 +83,8 @@ Trị giá khoảng nửa tốt ở thế mở. Có cặp tượng: tránh đổ
       },
       {
         kind: 'diagram',
-        fen: '8/pp3kpp/2p5/3pN3/3P4/8/PPP2KPP/8 b - - 0 1',
-        caption: 'Mã e5 ở tiền đồn, thế cờ nửa đóng: mã hơn hẳn tượng xấu c8 trước đó đã đổi đi. Bên có mã nên giữ thế đóng.',
+        fen: '8/1b2k2p/p1p3p1/1p1pN3/1P1P4/P1P1K1P1/7P/8 w - - 0 1',
+        caption: 'Mã e5 ở tiền đồn không thể bị tốt đuổi, thế cờ đóng: tốt Đen đều ở ô trắng nên tượng b7 xấu, chỉ biết giữ c6. Mã hơn hẳn tượng xấu, vua Trắng sẽ vào qua f4-g5. Bên có mã nên giữ thế đóng.',
       },
       { kind: 'puzzles', themes: ['bishopEndgame', 'knightEndgame'], rating: [1500, 1900], count: 6, intro: 'Cờ tàn quân nhẹ: 6 bài.' },
     ],
@@ -120,8 +120,9 @@ Cuộc đua: đẩy tốt cánh có vua đối phương, không đổi quân t�
       },
       {
         kind: 'diagram',
-        fen: 'r1bq1rk1/ppp2ppp/2n5/3pP3/3Pn3/3B1N2/PP3PPP/R1BQK2R w KQ - 0 1',
-        caption: 'Điều kiện của Bxh7+: tượng d3, mã f3 (sẽ tới g5), hậu có đường tới h5, tốt e5 đã đuổi mã f6. Đen có mã e4 nhưng Trắng vẫn có thể cân nhắc Bxe4 trước.',
+        fen: 'r1bq1rk1/pppn1ppp/2n1p3/3pP3/1b1P4/2NB1N2/PPP2PPP/R1BQK2R w KQ - 0 1',
+        caption: 'Đủ điều kiện của Bxh7+: tượng d3, mã f3 (sẽ tới g5), hậu có đường tới h5, tốt e5 đã đuổi mã f6, tượng Đen ở b4 không canh g5, tượng c8 bị tốt e6 chặn. Thử {Bxh7+ Kxh7 Ng5+ Kg8 Qh5}: Đen chỉ thoát mất bằng cách trả hậu.',
+        marks: ['d3h7', 'f3g5', 'd1h5'],
       },
       { kind: 'puzzles', themes: ['kingsideAttack', 'sacrifice'], rating: [1500, 1900], count: 8, intro: 'Tấn công cánh vua với thí quân: 8 bài.' },
       { kind: 'puzzles', themes: ['exposedKing'], rating: [1500, 1900], count: 6, intro: 'Vua hở, vua ở giữa: 6 bài.' },
