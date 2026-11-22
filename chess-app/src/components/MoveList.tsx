@@ -15,13 +15,18 @@ export default function MoveList({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const el = ref.current?.querySelector('.mv.cur');
-    el?.scrollIntoView({ block: 'nearest' });
+    // scroll only the list itself: scrollIntoView would also scroll the page and push the board away
+    const box = ref.current;
+    const el = box?.querySelector<HTMLElement>('.mv.cur');
+    if (!box || !el) return;
+    const top = el.offsetTop - box.offsetTop;
+    if (top < box.scrollTop) box.scrollTop = top;
+    else if (top + el.offsetHeight > box.scrollTop + box.clientHeight) box.scrollTop = top + el.offsetHeight - box.clientHeight;
   }, [current]);
   const rows: { n: number; w?: number; b?: number }[] = [];
   for (let i = 0; i < moves.length; i += 2) rows.push({ n: i / 2 + 1, w: i, b: i + 1 < moves.length ? i + 1 : undefined });
   const glyph = (j?: Judgment) =>
-    j === 'blunder' ? '??' : j === 'mistake' ? '?' : j === 'inaccuracy' ? '?!' : j === 'best' ? '!' : '';
+    j === 'blunder' ? '??' : j === 'mistake' ? '?' : j === 'inaccuracy' ? '?!' : '';
   return (
     <div className="moves" ref={ref}>
       {rows.map((r) => (

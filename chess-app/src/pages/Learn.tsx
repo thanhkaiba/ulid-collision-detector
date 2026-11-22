@@ -342,7 +342,9 @@ function Overview({ progress, setProgress }: { progress: LessonProgress; setProg
                       {l.summary} · {l.minutes} phút
                     </div>
                   </div>
-                  {done ? <Tag tone="good">✓</Tag> : lessonSkipped(l, progress) ? <Tag>bỏ qua</Tag> : started ? <Tag tone="warn">đang học</Tag> : <span className="muted">›</span>}
+                  <span style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
+                    {done ? <Tag tone="good">✓</Tag> : lessonSkipped(l, progress) ? <Tag>bỏ qua</Tag> : started ? <Tag tone="warn">đang học</Tag> : <span className="muted">›</span>}
+                  </span>
                 </div>
               );
             })}

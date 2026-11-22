@@ -190,9 +190,9 @@ label.field > span { display: block; font-size: 0.85rem; color: var(--fg-2); mar
 .moves { display: grid; grid-template-columns: 2.4em 1fr 1fr; gap: 2px 6px; font-size: 0.92rem; max-height: 260px; overflow: auto; }
 .moves .num { color: var(--fg-3); text-align: right; }
 .mv { padding: 2px 6px; border-radius: 6px; cursor: pointer; white-space: nowrap; }
-.mv.cur { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
 .mv.blunder { color: var(--bad); font-weight: 700; }
 .mv.mistake { color: var(--accent-2); font-weight: 600; }
+.mv.cur, .mv.cur.blunder, .mv.cur.mistake, .mv.cur.inaccuracy, .mv.cur.best { background: var(--accent); color: var(--accent-fg); font-weight: 600; }
 .mv.inaccuracy { color: var(--warn); }
 .mv.best { color: var(--good); }
 

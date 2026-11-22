@@ -100,7 +100,7 @@ export default function Puzzles({ route }: { route: Route }) {
         </summary>
         <p style={{ marginBottom: 0 }}>
           Mỗi bài là một tình huống lấy từ ván thật, có đúng một lời giải rõ ràng nhất, dài từ 1 đến vài nước. Bạn <b>không cần đánh hết ván</b>: đi đúng nước, máy tự đi thay đối phương,
-          rồi bạn đi tiếp cho tới hết chuỗi là xong. Dòng chữ xanh dưới bàn cờ cho biết mục tiêu (chiếu hết, hoặc thắng quân) và số nước cần tìm. “Nước tốt nhất” nghĩa là nước mạnh hơn hẳn
+          rồi bạn đi tiếp cho tới hết chuỗi là xong. Khung chữ ngay phía trên bàn cờ cho biết bạn cầm bên nào, mục tiêu (chiếu hết, hoặc thắng quân) và số nước cần tìm. “Nước tốt nhất” nghĩa là nước mạnh hơn hẳn
           các nước còn lại; nước chỉ “tạm được” sẽ bị tính là sai.
         </p>
       </details>
@@ -121,7 +121,7 @@ export default function Puzzles({ route }: { route: Route }) {
           <div>
             <h3>Bài tập hàng ngày</h3>
             <p className="muted small" style={{ margin: 0 }}>
-              Puzzle of the day từ Lichess (cần mạng).
+              Mỗi ngày một bài do Lichess chọn, không tính vào rating (cần mạng).
             </p>
           </div>
           <span>›</span>
@@ -182,6 +182,8 @@ function Trainer({
   /** the board calls onFinish again after "Làm lại": only the first finish of a puzzle is scored */
   const scored = useRef<string | null>(null);
   const skipped = useRef<Record<string, 1>>({});
+  /** "Bỏ qua" appears exactly where "Bài tiếp theo" was: a double tap must not skip the new puzzle unseen */
+  const shownAt = useRef(0);
   // theme drills: unrated, start a little below your level and adapt within the session
   const [drillLevel, setDrillLevel] = useState(() => Math.max(500, progress.rating - 250));
 
@@ -196,6 +198,7 @@ function Trainer({
     const seen = { ...progress.solved, ...skipped.current, ...(puzzle ? { [puzzle.id]: 1 } : {}) };
     const next = resume ?? pickPuzzle(all, theme ? drillLevel : progress.rating, seen, theme);
     setPuzzle(next);
+    shownAt.current = Date.now();
     setWrong(!!(resume && saved?.wrong));
     scored.current = null;
     setResult(null);
@@ -209,7 +212,7 @@ function Trainer({
   };
 
   const skip = () => {
-    if (!puzzle) return;
+    if (!puzzle || Date.now() - shownAt.current < 1000) return;
     // a wrong move already counts: skipping must not be a way to dodge the rating loss
     if (wrong && scored.current !== puzzle.id) void onFinish(false);
     else skipped.current[puzzle.id] = 1;

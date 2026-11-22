@@ -362,9 +362,16 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
   // a line opened from an explanation ("Xem vì sao sai"): stepped through with ▶, `from` = the explained ply
   const [line, setLine] = useState<{ sans: string[]; from: number } | null>(null);
 
+  // arriving from a scrolled list (games, report, trainer): start with the board in view. Runs once the game
+  // is on screen, after the move list has scrolled its current move into view (which also moves the page).
+  const shown = !!game && !!settings;
   useEffect(() => {
-    // arriving from a scrolled list (games, report, trainer): start with the board in view
-    window.scrollTo(0, 0);
+    if (!shown) return;
+    const id = requestAnimationFrame(() => window.scrollTo(0, 0));
+    return () => cancelAnimationFrame(id);
+  }, [shown]);
+
+  useEffect(() => {
     loadGames().then((gs) => setGame(gs.find((g) => g.id === gameId) ?? null));
     loadAnalysis(gameId).then((a) => {
       if (a) setAnalysis(a);

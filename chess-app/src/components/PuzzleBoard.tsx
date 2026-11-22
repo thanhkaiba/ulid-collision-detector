@@ -59,6 +59,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   const wrongCount = useRef(0);
   const attempt = useRef(0); // invalidates async engine answers after a retry / reset
   const undoPlies = useRef(0);
+  /** "Làm lại" can appear right under the finger that tapped "Xem lời giải": ignore a double tap */
+  const endedAt = useRef(0);
 
   const chess = chessRef.current;
   /** how many of the solver's own moves are still to be found */
@@ -269,6 +271,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     setStatus('revealed');
     setShapes([]);
     setWrongInfo(null);
+    endedAt.current = Date.now();
     finish(false, true);
     // a pending opponent reply was cancelled above, so moves[idx] is exactly the next move to show
     let i = idx;
@@ -285,6 +288,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   };
 
   const restart = () => {
+    if (Date.now() - endedAt.current < 600) return;
     clearTimers();
     attempt.current++;
     chessRef.current = new Chess(fen);
@@ -363,7 +367,14 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
           ) : (
             <div className="feedback ok">{failed ? 'Đã giải xong, nhưng có dùng gợi ý hoặc đã đi sai trước đó.' : 'Chính xác!'}</div>
           ))}
-        {status === 'revealed' && <div className="feedback info">Lời giải: {solutionSan.slice(playerFirst ? 0 : 1).join(' ')}</div>}
+        {status === 'revealed' && (
+          <div className="feedback info">
+            Lời giải{solutionSan.length - (playerFirst ? 0 : 1) > 1 ? ' (nước của bạn in đậm)' : ''}:{' '}
+            {solutionSan.slice(playerFirst ? 0 : 1).map((san, k) => (
+              <span key={k}>{k % 2 === 0 ? <b>{san}</b> : san} </span>
+            ))}
+          </div>
+        )}
         {(props.showControls ?? true) && (
           <div className="row mt">
             {myTurn && (
