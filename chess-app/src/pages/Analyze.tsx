@@ -399,6 +399,12 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
     return c;
   }, [mainFen, variation]);
   const fen = chess.fen();
+  // highlight the last move of a try-out line too, so the user sees what just happened
+  const varLastMove = useMemo(() => {
+    const h = chess.history({ verbose: true });
+    const m = h[h.length - 1];
+    return m ? ([m.from, m.to] as Key[]) : undefined;
+  }, [chess]);
 
   // live engine evaluation of the shown position
   useEffect(() => {
@@ -566,7 +572,7 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
               fen={fen}
               orientation={orientation}
               turnColor={turnColor(chess)}
-              lastMove={variation.length ? undefined : positions[ply + 1]?.lastMove}
+              lastMove={variation.length ? varLastMove : positions[ply + 1]?.lastMove}
               check={kingInCheckColor(chess)}
               movableColor="both"
               dests={toDests(chess)}
