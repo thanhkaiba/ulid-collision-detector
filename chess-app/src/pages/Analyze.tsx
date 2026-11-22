@@ -48,7 +48,7 @@ export default function Analyze({ route }: { route: Route }) {
         key={`${route.parts[1]}?${route.query.get('ply') ?? ''}`}
         gameId={route.parts[1]}
         initialPly={route.query.get('ply') ? Number(route.query.get('ply')) : undefined}
-        back={route.query.get('from') === 'stats' ? 'analyze/stats' : 'analyze'}
+        back={route.query.get('from') === 'stats' ? 'analyze/stats' : route.query.get('from') === 'mistakes' ? 'puzzles/mistakes' : 'analyze'}
       />
     );
   }

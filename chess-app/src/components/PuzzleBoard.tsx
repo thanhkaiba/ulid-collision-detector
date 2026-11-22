@@ -26,6 +26,8 @@ export interface PuzzleBoardProps {
   onFinish?: (ok: boolean, how: PuzzleOutcome) => void;
   /** called on every wrong attempt with the running count */
   onWrong?: (count: number) => void;
+  /** a hint was shown (the solve no longer counts as clean) */
+  onHint?: () => void;
   prompt?: string;
   showControls?: boolean;
   /** when the key changes, the puzzle resets */
@@ -254,6 +256,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     if (!m || status !== 'solving' || turnColor(chess) !== playerColor) return;
     const orig = m.slice(0, 2) as Key;
     const dest = m.slice(2, 4) as Key;
+    props.onHint?.();
     if (hintLevel === 0) setShapes([{ orig, brush: 'green' }]);
     else {
       setShapes([{ orig, dest, brush: 'green' }]);

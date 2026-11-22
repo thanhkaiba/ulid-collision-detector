@@ -279,6 +279,7 @@ function Trainer({
         playerFirst={puzzle.playerFirst}
         onFinish={onFinish}
         onWrong={onWrong}
+        onHint={onWrong}
         prompt={puzzlePrompt(puzzle)}
       />
       <div className="row mt">
@@ -522,7 +523,7 @@ function MistakeTrainer({ mistakes, setMistakes }: { mistakes: Mistake[]; setMis
                 >
                   {i + 1 >= queue.length ? 'Xong lượt ôn' : `Lỗi tiếp theo (${i + 2}/${queue.length}) →`}
                 </Button>
-                <Button kind="ghost" onClick={() => navigate(`analyze/game/${m.gameId}?ply=${m.ply}`)}>
+                <Button kind="ghost" onClick={() => navigate(`analyze/game/${m.gameId}?ply=${m.ply}&from=mistakes`)}>
                   Xem trong ván
                 </Button>
               </div>
