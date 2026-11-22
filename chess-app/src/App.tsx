@@ -1,6 +1,81 @@
-import { lazy, Suspense, type JSX } from 'react';
+import { lazy, Suspense, useLayoutEffect, type JSX } from 'react';
 import { useRoute, navigate, type Tab } from './lib/router';
 import { Spinner } from './components/ui';
+
+/**
+ * Scroll per history entry: a new page opens at the top, while browser back/forward (and a reload) return to where the
+ * reader was. Entries are tagged with an id in history.state; positions live in sessionStorage so they survive a reload.
+ * Pages load their content asynchronously, so the restore keeps retrying until the page is tall enough (or the user
+ * touches the screen).
+ */
+const SCROLL_KEY = 'scroll-pos';
+const scrollMem: Record<string, number> = (() => {
+  try {
+    return JSON.parse(sessionStorage.getItem(SCROLL_KEY) ?? '{}') as Record<string, number>;
+  } catch {
+    return {};
+  }
+})();
+let flushTimer = 0;
+function rememberScroll(entry: string, y: number) {
+  scrollMem[entry] = y;
+  window.clearTimeout(flushTimer);
+  flushTimer = window.setTimeout(() => {
+    try {
+      sessionStorage.setItem(SCROLL_KEY, JSON.stringify(scrollMem));
+    } catch {
+      /* ignore */
+    }
+  }, 150);
+}
+function useScrollMemory(routeKey: string) {
+  useLayoutEffect(() => {
+    try {
+      history.scrollRestoration = 'manual';
+    } catch {
+      /* ignore */
+    }
+    let id = (history.state as { k?: string } | null)?.k;
+    const fresh = !id;
+    if (!id) {
+      id = Math.random().toString(36).slice(2);
+      try {
+        history.replaceState({ ...((history.state as object | null) ?? {}), k: id }, '');
+      } catch {
+        /* ignore */
+      }
+    }
+    const entry = id;
+    const target = fresh ? 0 : (scrollMem[entry] ?? 0);
+    let restoring = true;
+    let raf = 0;
+    const t0 = performance.now();
+    const step = () => {
+      if (!restoring) return;
+      window.scrollTo(0, target);
+      if (Math.abs(window.scrollY - target) > 2 && performance.now() - t0 < 2500) raf = requestAnimationFrame(step);
+      else restoring = false;
+    };
+    step();
+    const stop = () => {
+      restoring = false;
+    };
+    const onScroll = () => {
+      if (!restoring) rememberScroll(entry, Math.round(window.scrollY));
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('touchstart', stop, { passive: true });
+    window.addEventListener('wheel', stop, { passive: true });
+    window.addEventListener('keydown', stop);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('touchstart', stop);
+      window.removeEventListener('wheel', stop);
+      window.removeEventListener('keydown', stop);
+    };
+  }, [routeKey]);
+}
 
 const Learn = lazy(() => import('./pages/Learn'));
 const Puzzles = lazy(() => import('./pages/Puzzles'));
@@ -36,6 +111,7 @@ const TABS: { id: Tab; label: string }[] = [
 
 export default function App() {
   const route = useRoute();
+  useScrollMemory(`${route.tab}/${route.parts.join('/')}?${route.query.toString()}`);
   const Page = { learn: Learn, puzzles: Puzzles, play: Play, analyze: Analyze, settings: Settings }[route.tab];
   return (
     <div className="app">
@@ -49,7 +125,12 @@ export default function App() {
           <button
             key={t.id}
             className={`tab ${route.tab === t.id ? 'active' : ''}`}
-            onClick={() => navigate(t.id)}
+            onClick={() => {
+              // tapping the tab you are already on (at its start page) scrolls back to the top, as in native apps
+              if (route.tab === t.id && route.parts.length === 0) window.scrollTo({ top: 0, behavior: 'smooth' });
+              else navigate(t.id);
+            }}
+            aria-current={route.tab === t.id ? 'page' : undefined}
             aria-label={t.label}
           >
             <span className="tab-icon">{ICON[t.id]}</span>

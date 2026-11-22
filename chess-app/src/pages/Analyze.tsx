@@ -22,7 +22,7 @@ import {
   type WeaknessInput,
   type WeaknessReport,
 } from '../lib/explain';
-import { fetchChesscomGames, fetchLichessGames, importPgn } from '../lib/import';
+import { fetchChesscomGames, fetchLichessGames, parsePgnText } from '../lib/import';
 import { kingInCheckColor, turnColor, uciLineToSan, toDests, playUci } from '../lib/chess-utils';
 import {
   loadGames,
@@ -43,21 +43,52 @@ import { navigate, type Route } from '../lib/router';
 
 export default function Analyze({ route }: { route: Route }) {
   if (route.parts[0] === 'game' && route.parts[1]) {
-    return <GameAnalysisView gameId={route.parts[1]} initialPly={route.query.get('ply') ? Number(route.query.get('ply')) : undefined} />;
+    return (
+      <GameAnalysisView
+        key={`${route.parts[1]}?${route.query.get('ply') ?? ''}`}
+        gameId={route.parts[1]}
+        initialPly={route.query.get('ply') ? Number(route.query.get('ply')) : undefined}
+        back={route.query.get('from') === 'stats' ? 'analyze/stats' : 'analyze'}
+      />
+    );
   }
   if (route.parts[0] === 'stats') return <Weaknesses />;
   return <GamesList />;
 }
 
-/** Save an analysis and add the user's own mistakes to the spaced-repetition queue. Returns how many were found. */
-async function storeAnalysis(game: StoredGame, res: GameAnalysis): Promise<number> {
+/**
+ * Save an analysis and add the user's own mistakes to the spaced-repetition queue.
+ * Returns how many of the user's mistakes the game has, and how many of them were not in the queue yet.
+ */
+async function storeAnalysis(game: StoredGame, res: GameAnalysis): Promise<{ found: number; added: number }> {
   await saveAnalysis(res);
+  return addMistakes(game, res);
+}
+
+async function addMistakes(game: StoredGame, res: GameAnalysis): Promise<{ found: number; added: number }> {
   const mine = extractMistakes(game, res);
   const existing = await loadMistakes();
   const ids = new Set(existing.map((m) => m.id));
-  await saveMistakes([...existing, ...mine.filter((m) => !ids.has(m.id))].slice(-500));
-  return mine.length;
+  const fresh = mine.filter((m) => !ids.has(m.id));
+  if (fresh.length) await saveMistakes([...existing, ...fresh].slice(-500));
+  return { found: mine.length, added: fresh.length };
 }
+
+const resultVi = (r: string) => (r === '1-0' ? 'Trắng thắng' : r === '0-1' ? 'Đen thắng' : r === '1/2-1/2' ? 'Hòa' : 'Chưa rõ kết quả');
+
+/** Half-moves to full moves, as players count them ("nước 12" = White's and Black's 12th move). */
+const fullMoves = (plies: number) => Math.ceil(plies / 2);
+
+const SOURCE_VI: Record<StoredGame['source'], string> = { app: 'ván với máy', lichess: 'Lichess', chesscom: 'Chess.com', pgn: 'PGN' };
+const SPEED_VI: Record<string, string> = {
+  ultraBullet: 'cờ siêu chớp',
+  bullet: 'cờ siêu chớp',
+  blitz: 'cờ chớp',
+  rapid: 'cờ nhanh',
+  classical: 'cờ tiêu chuẩn',
+  correspondence: 'cờ thư',
+  daily: 'cờ thư',
+};
 
 /* ------------------------------------------------------------------ */
 
@@ -67,6 +98,7 @@ function GamesList() {
   const [settings, setSettings] = useState<Settings | null>(null);
   const [busy, setBusy] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [ok, setOk] = useState<string | null>(null);
   const [pgn, setPgn] = useState('');
   const [showPgn, setShowPgn] = useState(false);
 
@@ -76,11 +108,25 @@ function GamesList() {
     loadSettings().then(setSettings);
   }, []);
 
+  /** Store imported games and say how many were new. */
+  const addGames = async (list: StoredGame[], from: string) => {
+    const known = new Set((games ?? []).map((g) => g.id));
+    const fresh = list.filter((g) => !known.has(g.id)).length;
+    setGames(await upsertGames(list));
+    return list.length === 0
+      ? `Không tìm thấy ván nào ${from} (chỉ lấy ván cờ vua tiêu chuẩn).`
+      : fresh === 0
+        ? `${list.length} ván ${from} đã có sẵn trong danh sách.`
+        : `Đã thêm ${fresh} ván mới ${from}${list.length > fresh ? ` (${list.length - fresh} ván đã có sẵn)` : ''}.`;
+  };
+
   const doImport = async (source: 'lichess' | 'chesscom') => {
     if (!settings) return;
+    const site = source === 'lichess' ? 'Lichess' : 'Chess.com';
     const user = source === 'lichess' ? settings.lichessUser : settings.chesscomUser;
+    setOk(null);
     if (!user.trim()) {
-      setErr(`Nhập tên người dùng ${source === 'lichess' ? 'Lichess' : 'Chess.com'} trước.`);
+      setErr(`Nhập tên người dùng ${site} trước.`);
       return;
     }
     setErr(null);
@@ -88,7 +134,7 @@ function GamesList() {
     try {
       await saveSettings(settings);
       const fetched = source === 'lichess' ? await fetchLichessGames(user.trim(), 30) : await fetchChesscomGames(user.trim(), 30);
-      setGames(await upsertGames(fetched));
+      setOk(await addGames(fetched, `từ ${site}`));
     } catch (e) {
       setErr(e instanceof Error ? e.message : String(e));
     } finally {
@@ -97,15 +143,21 @@ function GamesList() {
   };
 
   const doPgn = async () => {
-    const parsed = importPgn(pgn, settings?.lichessUser || settings?.chesscomUser || undefined);
-    if (!parsed.length) {
-      setErr('Không đọc được PGN nào.');
+    setOk(null);
+    if (!pgn.trim()) {
+      setErr('Dán nội dung PGN của ván vào ô trên trước đã.');
       return;
     }
-    setGames(await upsertGames(parsed));
+    const { games: parsed, failed } = parsePgnText(pgn, [settings?.lichessUser ?? '', settings?.chesscomUser ?? '']);
+    if (!parsed.length) {
+      setErr('Không đọc được ván nào. Kiểm tra lại PGN: cần có các nước đi dạng "1. e4 e5 2. Nf3 ...", nước nào sai luật thì cả ván bị bỏ qua.');
+      return;
+    }
+    const msg = await addGames(parsed, 'từ PGN');
     setPgn('');
     setShowPgn(false);
-    setErr(null);
+    setErr(failed ? `Có ${failed} ván không đọc được (sai định dạng hoặc có nước sai luật) nên đã bỏ qua.` : null);
+    setOk(msg);
   };
 
   const batchCancel = useRef<{ cancelled: boolean }>({ cancelled: false });
@@ -116,7 +168,8 @@ function GamesList() {
 
   if (!games || !settings) return <Spinner label="Đang tải..." />;
 
-  const pendingGames = games.filter((g) => !analyzed.has(g.id) && g.moves.length >= 10).slice(0, 20);
+  const allPending = games.filter((g) => !analyzed.has(g.id) && g.moves.length >= 10);
+  const pendingGames = allPending.slice(0, 20);
   const runBatch = async () => {
     const engine = getEngine();
     batchCancel.current = { cancelled: false };
@@ -142,17 +195,23 @@ function GamesList() {
           <div className="row-between">
             <div>
               <b>Điểm yếu của bạn</b>
-              <div className="small muted">Tổng hợp lỗi từ {analyzed.size} ván đã phân tích: loại lỗi, giai đoạn, khai cuộc.</div>
+              <div className="small muted">
+                {analyzed.size > 0
+                  ? `Tổng hợp lỗi từ ${analyzed.size} ván đã phân tích: loại lỗi, giai đoạn, khai cuộc.`
+                  : 'Phân tích vài ván để biết bạn hay sai ở đâu: loại lỗi, giai đoạn, khai cuộc.'}
+              </div>
             </div>
-            <Button kind="primary" onClick={() => navigate('analyze/stats')}>
-              Xem
-            </Button>
+            {analyzed.size > 0 && (
+              <Button kind="primary" onClick={() => navigate('analyze/stats')}>
+                Xem
+              </Button>
+            )}
           </div>
           {batch ? (
             <div className="mt">
               <div className="row-between small">
                 <span>
-                  Đang phân tích ván {batch.game}/{batch.games} · nước {batch.done}/{batch.total}
+                  Đang phân tích ván {batch.game}/{batch.games} · nước {fullMoves(batch.done)}/{fullMoves(batch.total)}
                 </span>
                 <button
                   className="chip"
@@ -172,9 +231,11 @@ function GamesList() {
             pendingGames.length > 0 && (
               <div className="mt">
                 <Button kind="ghost" className="small" onClick={runBatch}>
-                  Phân tích {pendingGames.length} ván chưa phân tích
+                  {allPending.length > pendingGames.length
+                    ? `Phân tích ${pendingGames.length} ván gần nhất chưa phân tích`
+                    : `Phân tích ${pendingGames.length} ván chưa phân tích`}
                 </Button>
-                <span className="tiny muted"> Cứ để máy chạy, có thể dừng bất cứ lúc nào.</span>
+                <div className="tiny muted">Cứ để máy chạy và ở lại trang này, có thể dừng bất cứ lúc nào. Ván đã xong được lưu ngay.</div>
               </div>
             )
           )}
@@ -191,7 +252,7 @@ function GamesList() {
               autoCapitalize="off"
             />
             <Button kind="primary" onClick={() => doImport('lichess')} disabled={busy !== null}>
-              {busy === 'lichess' ? '…' : 'Lấy ván'}
+              <span style={{ whiteSpace: 'nowrap' }}>{busy === 'lichess' ? 'Đang lấy…' : 'Lấy ván'}</span>
             </Button>
           </div>
         </label>
@@ -205,22 +266,24 @@ function GamesList() {
               autoCapitalize="off"
             />
             <Button kind="primary" onClick={() => doImport('chesscom')} disabled={busy !== null}>
-              {busy === 'chesscom' ? '…' : 'Lấy ván'}
+              <span style={{ whiteSpace: 'nowrap' }}>{busy === 'chesscom' ? 'Đang lấy…' : 'Lấy ván'}</span>
             </Button>
           </div>
         </label>
         <Button kind="ghost" onClick={() => setShowPgn(!showPgn)}>
-          {showPgn ? 'Ẩn' : 'Hoặc dán PGN'}
+          {showPgn ? 'Ẩn ô dán PGN' : 'Hoặc dán PGN'}
         </Button>
         {showPgn && (
           <div className="mt">
             <textarea value={pgn} onChange={(e) => setPgn(e.target.value)} placeholder="[Event ...]&#10;1. e4 e5 2. Nf3 ..." />
+            <div className="tiny muted">Dán được nhiều ván một lúc. Nếu tên của bạn trong PGN trùng tên Lichess/Chess.com ở trên, app tự biết bạn cầm bên nào.</div>
             <Button className="mt" onClick={doPgn}>
               Nhập PGN
             </Button>
           </div>
         )}
         {err && <div className="feedback bad mt">{err}</div>}
+        {ok && <div className="feedback ok mt">{ok}</div>}
         <p className="small muted mt" style={{ marginBottom: 0 }}>
           Lấy 30 ván gần nhất. Ván Lichess đã có phân tích máy chủ sẽ hiển thị ngay, các ván khác được phân tích bằng Stockfish trong máy bạn.
         </p>
@@ -228,7 +291,7 @@ function GamesList() {
 
       {games.length === 0 && (
         <Card>
-          <p className="muted">Chưa có ván nào. Nhập tên người dùng ở trên hoặc chơi một ván ở tab Chơi.</p>
+          <p className="muted">Chưa có ván nào. Nhập tên người dùng ở trên, dán PGN, hoặc chơi một ván ở tab Chơi.</p>
         </Card>
       )}
       {games.map((g) => (
@@ -247,21 +310,21 @@ function GameRow({ g, analyzed }: { g: StoredGame; analyzed: boolean }) {
         : (g.result === '1-0') === (g.me === 'w')
           ? 'Thắng'
           : 'Thua'
-      : g.result;
+      : resultVi(g.result);
   const tone = myResult === 'Thắng' ? 'good' : myResult === 'Thua' ? 'bad' : 'default';
   return (
     <div className="list-item" onClick={() => navigate(`analyze/game/${g.id}`)}>
-      <div>
+      <div style={{ minWidth: 0 }}>
         <div>
           <b>{g.white}</b> {g.whiteElo && <span className="muted small">({g.whiteElo})</span>} – <b>{g.black}</b>{' '}
           {g.blackElo && <span className="muted small">({g.blackElo})</span>}
         </div>
         <div className="small muted">
-          {d.toLocaleDateString('vi-VN')} · {g.speed ?? g.source} · {Math.ceil(g.moves.length / 2)} nước
+          {d.toLocaleDateString('vi-VN')} · {g.speed ? (SPEED_VI[g.speed] ?? g.speed) : SOURCE_VI[g.source]} · {fullMoves(g.moves.length)} nước
           {g.opening ? ` · ${g.opening}` : ''}
         </div>
       </div>
-      <div className="row" style={{ flexWrap: 'nowrap' }}>
+      <div className="row" style={{ flexWrap: 'nowrap', flexShrink: 0, whiteSpace: 'nowrap' }}>
         {analyzed && <Tag tone="info">đã phân tích</Tag>}
         <Tag tone={tone}>{myResult}</Tag>
       </div>
@@ -280,7 +343,7 @@ const JUDGE_VI: Record<Judgment, string> = {
   book: 'Lý thuyết',
 };
 
-function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?: number }) {
+function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initialPly?: number; back: string }) {
   const [game, setGame] = useState<StoredGame | null | undefined>(undefined);
   const [analysis, setAnalysis] = useState<GameAnalysis | null>(null);
   const [ply, setPly] = useState<number>(initialPly ?? -1); // -1 = start position
@@ -290,11 +353,13 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
   const [showBest, setShowBest] = useState(true);
   const [flip, setFlip] = useState(false);
   const [settings, setSettings] = useState<Settings | null>(null);
-  const [mistakeCount, setMistakeCount] = useState<number | null>(null);
+  const [mistakeCount, setMistakeCount] = useState<{ found: number; added: number } | null>(null);
   const cancel = useRef<{ cancelled: boolean }>({ cancelled: false });
   const engine = useMemo(() => getEngine(), []);
   // "try a move" sandbox: user can play moves from the current position
   const [variation, setVariation] = useState<string[]>([]); // SAN from the main-line position
+  // a line opened from an explanation ("Xem vì sao sai"): stepped through with ▶, `from` = the explained ply
+  const [line, setLine] = useState<{ sans: string[]; from: number } | null>(null);
 
   useEffect(() => {
     loadGames().then((gs) => setGame(gs.find((g) => g.id === gameId) ?? null));
@@ -386,17 +451,35 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
       </div>
     );
 
-  const cur = analysis?.plies[ply];
-  const curExplain = cur && isError(cur.judgment) ? explainPly(cur, analysis?.plies[ply - 1], !!game.me && (ply % 2 === 0 ? 'w' : 'b') === game.me) : null;
-  /** Step back to the position before the move and play a line on the board as a "try" variation. */
+  // while a line from an explanation is on the board, keep showing the move it explains
+  const onLine = !!line && variation.length > 0 && variation.every((s, i) => line.sans[i] === s);
+  const cardPly = onLine ? line!.from : ply;
+  const cur = analysis?.plies[cardPly];
+  const curExplain = cur && isError(cur.judgment) ? explainPly(cur, analysis?.plies[cardPly - 1], !!game.me && (cardPly % 2 === 0 ? 'w' : 'b') === game.me) : null;
+  /** Step back to the position before the move and step through a line on the board, one move at a time. */
   const showLine = (sans: string[]) => {
-    setPly(ply - 1);
-    setVariation(sans);
+    setLine({ sans, from: cardPly });
+    setPly(cardPly - 1);
+    setVariation(sans.slice(0, 1));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+  /** Leave the try-out variation and go back to the move the user was looking at. */
+  const backToGame = () => {
+    if (line) setPly(line.from);
+    setLine(null);
+    setVariation([]);
+  };
+  const lineHasMore = onLine && variation.length < line!.sans.length;
   const judgments = analysis?.plies.map((p) => p.judgment);
   const sideToMove = chess.turn();
-  const liveScore = live[0] ? toWhitePov(live[0], sideToMove) : cur ? cur.evalAfter : undefined;
+  const over = chess.isGameOver();
+  const overScore = chess.isCheckmate() ? (sideToMove === 'w' ? { mate: -1 } : { mate: 1 }) : over ? { cp: 0 } : undefined;
+  const overLabel = chess.isCheckmate() ? (sideToMove === 'w' ? '0-1' : '1-0') : over ? '½' : undefined;
+  const liveScore = overScore ?? (live[0] ? toWhitePov(live[0], sideToMove) : variation.length === 0 && cur ? cur.evalAfter : undefined);
   const orientation = flip ? (game.me === 'b' ? 'white' : 'black') : game.me === 'b' ? 'black' : 'white';
+  /** Score text, saying "chiếu hết" once the mate is on the board instead of "#1". */
+  const scoreAfter = (p: { ply: number; evalAfter: { cp?: number; mate?: number } }) =>
+    positions[p.ply + 1] && new Chess(positions[p.ply + 1].fen).isCheckmate() ? 'chiếu hết' : formatScore(p.evalAfter);
 
   const shapes: DrawShape[] = [];
   if (showBest && variation.length === 0) {
@@ -410,8 +493,16 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
 
   const go = (p: number) => {
     setVariation([]);
+    setLine(null);
     setPly(Math.max(-1, Math.min(game.moves.length - 1, p)));
   };
+  /** Jump to a move from a list further down the page: bring the board back into view. */
+  const goAndShow = (p: number) => {
+    go(p);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const forward = () => (lineHasMore ? setVariation(line!.sans.slice(0, variation.length + 1)) : go(ply + 1));
+  const backward = () => (variation.length ? setVariation(variation.slice(0, -1)) : go(ply - 1));
 
   const onBoardMove = (from: Key, to: Key) => {
     const c = new Chess(fen);
@@ -420,18 +511,23 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
     setVariation([...variation, m.san]);
   };
 
-  const myCounts = game.me && analysis ? analysis.counts[game.me] : null;
-  const myAcc = game.me && analysis ? analysis.accuracy[game.me] : null;
+  const chooseSide = async (me: 'w' | 'b') => {
+    const updated = { ...game, me };
+    await upsertGames([updated]);
+    setGame(updated);
+    if (analysis) setMistakeCount(await addMistakes(updated, analysis));
+  };
+
 
   return (
     <div>
       <div className="topbar">
-        <button className="back" onClick={() => navigate('analyze')} aria-label="Quay lại">
+        <button className="back" onClick={() => navigate(back)} aria-label="Quay lại">
           ‹
         </button>
         <div className="grow">
           <div>
-            <b>{game.white}</b> – <b>{game.black}</b> <span className="muted small">{game.result}</span>
+            <b>{game.white}</b> – <b>{game.black}</b> <span className="muted small">{resultVi(game.result)}</span>
           </div>
           <div className="tiny muted">
             {game.opening ?? ''} {game.url && (
@@ -449,7 +545,7 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
       <div className="board-layout">
         <div>
           <div className="board-area">
-            <EvalBar score={liveScore} orientation={orientation} />
+            <EvalBar score={liveScore} orientation={orientation} label={overLabel} />
             <Board
               fen={fen}
               orientation={orientation}
@@ -466,10 +562,10 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
             <Button kind="ghost" onClick={() => go(-1)}>
               ⏮
             </Button>
-            <Button kind="ghost" onClick={() => (variation.length ? setVariation(variation.slice(0, -1)) : go(ply - 1))}>
+            <Button kind="ghost" onClick={backward} disabled={ply < 0 && variation.length === 0}>
               ◀
             </Button>
-            <Button kind="ghost" onClick={() => go(ply + 1)} disabled={ply >= game.moves.length - 1}>
+            <Button kind="ghost" onClick={forward} disabled={!lineHasMore && ply >= game.moves.length - 1}>
               ▶
             </Button>
             <Button kind="ghost" onClick={() => go(game.moves.length - 1)}>
@@ -478,9 +574,22 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
           </div>
           {variation.length > 0 && (
             <div className="feedback info small">
-              Biến thử: {variation.join(' ')}{' '}
-              <button className="chip" onClick={() => setVariation([])}>
-                về ván chính
+              {onLine ? (
+                <>
+                  {line!.sans.map((s, i) => (
+                    <span key={i} style={{ opacity: i < variation.length ? 1 : 0.45, fontWeight: i === variation.length - 1 ? 700 : undefined }}>
+                      {s}{' '}
+                    </span>
+                  ))}
+                  <div className="tiny" style={{ marginTop: 2 }}>
+                    {lineHasMore ? `${variation.length}/${line!.sans.length} · bấm ▶ để xem nước tiếp theo.` : 'Hết biến.'} Có thể tự đi thử quân trên bàn cờ.
+                  </div>
+                </>
+              ) : (
+                <>Biến thử: {variation.join(' ')} </>
+              )}
+              <button className="chip mt" onClick={backToGame}>
+                ← về ván chính
               </button>
             </div>
           )}
@@ -495,29 +604,36 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
                 <input type="checkbox" checked={showBest} onChange={(e) => setShowBest(e.target.checked)} style={{ width: 'auto' }} /> mũi tên
               </label>
             </div>
-            {live.length === 0 && !chess.isGameOver() && <Spinner label="đang tính..." />}
+            {live.length === 0 && !over && running && <div className="small muted">Tạm dừng trong lúc phân tích toàn ván.</div>}
+            {live.length === 0 && !over && !running && <Spinner label="đang tính..." />}
             {live.map((l) => (
               <div key={l.multipv} className="small" style={{ marginTop: 4 }}>
                 <b>{formatScore(toWhitePov(l, sideToMove))}</b> {uciLineToSan(fen, l.pv.slice(0, 8)).join(' ')}
               </div>
             ))}
-            {chess.isGameOver() && <div className="small muted">Ván kết thúc.</div>}
+            {over && (
+              <div className="small muted">
+                {chess.isCheckmate() ? `Chiếu hết. ${sideToMove === 'w' ? 'Đen' : 'Trắng'} thắng.` : 'Ván kết thúc, hòa.'}
+              </div>
+            )}
           </Card>
 
           {/* current move judgement */}
-          {cur && variation.length === 0 && (
+          {cur && (variation.length === 0 || onLine) && (
             <Card>
               <div className="row-between">
                 <b>
-                  {Math.floor(ply / 2) + 1}
-                  {ply % 2 === 0 ? '.' : '...'} {cur.san}
+                  {Math.floor(cardPly / 2) + 1}
+                  {cardPly % 2 === 0 ? '.' : '...'} {cur.san}
                 </b>
-                <Tag tone={cur.judgment === 'blunder' ? 'bad' : cur.judgment === 'mistake' ? 'warn' : cur.judgment === 'inaccuracy' ? 'warn' : cur.judgment === 'best' ? 'good' : 'default'}>
-                  {JUDGE_VI[cur.judgment]}
-                </Tag>
+                <span style={{ flexShrink: 0, whiteSpace: 'nowrap' }}>
+                  <Tag tone={cur.judgment === 'blunder' ? 'bad' : cur.judgment === 'mistake' ? 'warn' : cur.judgment === 'inaccuracy' ? 'warn' : cur.judgment === 'best' ? 'good' : 'default'}>
+                    {JUDGE_VI[cur.judgment]}
+                  </Tag>
+                </span>
               </div>
               <div className="small muted">
-                {formatScore(cur.evalBefore)} → {formatScore(cur.evalAfter)}
+                {formatScore(cur.evalBefore)} → {scoreAfter(cur)}
                 {cur.judgment !== 'best' && cur.judgment !== 'good' && (
                   <>
                     {' '}
@@ -529,10 +645,11 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
                 <div className="explain mt">
                   <div className="tiny muted">{CATEGORY_VI[curExplain.category]}</div>
                   <div>{curExplain.text}</div>
-                  {curExplain.line && curExplain.line.length > 0 && (
+                  {curExplain.line && curExplain.line.length > 0 && !onLine && (
                     <div className="row mt" style={{ gap: 6 }}>
                       <button className="chip" onClick={() => showLine(curExplain.line!)}>
                         ▶ {curExplain.lineIsRefutation ? 'Xem vì sao sai' : 'Xem nước đúng'}: {curExplain.line.slice(0, 5).join(' ')}
+                        {curExplain.line.length > 5 ? ' …' : ''}
                       </button>
                     </div>
                   )}
@@ -555,7 +672,9 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
             {running && (
               <>
                 <div className="row-between small">
-                  <span>Đang phân tích… {running.done}/{running.total}</span>
+                  <span>
+                    Đang phân tích… nước {fullMoves(running.done)}/{fullMoves(running.total)}
+                  </span>
                   <button
                     className="chip"
                     onClick={() => {
@@ -573,20 +692,15 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
             )}
             {analysis && !running && (
               <>
-                <EvalGraph plies={analysis.plies} current={ply} onSelect={go} />
+                <EvalGraph plies={analysis.plies} current={cardPly} onSelect={go} />
                 <div className="grid-2 mt">
-                  <Summary label={game.white} acc={analysis.accuracy.w} counts={analysis.counts.w} />
-                  <Summary label={game.black} acc={analysis.accuracy.b} counts={analysis.counts.b} />
+                  <Summary label={game.white} mine={game.me === 'w'} acc={analysis.accuracy.w} counts={analysis.counts.w} />
+                  <Summary label={game.black} mine={game.me === 'b'} acc={analysis.accuracy.b} counts={analysis.counts.b} />
                 </div>
-                {myCounts && (
+                {mistakeCount && mistakeCount.found > 0 && (
                   <p className="small muted mt" style={{ margin: '8px 0 0' }}>
-                    Bạn: độ chính xác {myAcc}% · {myCounts.blunder} sai nghiêm trọng, {myCounts.mistake} sai lầm, {myCounts.inaccuracy} không chính xác.
-                    {mistakeCount !== null && mistakeCount > 0 && (
-                      <>
-                        {' '}
-                        Đã thêm {mistakeCount} vị trí vào <a onClick={() => navigate('puzzles/mistakes')}>Lỗi của chính bạn</a>.
-                      </>
-                    )}
+                    {mistakeCount.added > 0 ? `Đã thêm ${mistakeCount.added} vị trí bạn đi sai vào` : `${mistakeCount.found} vị trí bạn đi sai đã có sẵn trong`}{' '}
+                    <a onClick={() => navigate('puzzles/mistakes')}>Lỗi của chính bạn</a> để ôn lại.
                   </p>
                 )}
                 <div className="row mt">
@@ -603,7 +717,19 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
             <MoveList moves={game.moves} current={ply} onSelect={go} judgments={judgments} />
           </Card>
 
-          {analysis && game.me && <ReviewList analysis={analysis} me={game.me} onGo={go} />}
+          {analysis && game.me && <ReviewList analysis={analysis} me={game.me} onGo={goAndShow} />}
+          {!game.me && (
+            <Card>
+              <b className="small">Bạn cầm quân nào trong ván này?</b>
+              <p className="small muted" style={{ margin: '4px 0 8px' }}>
+                Chọn để app gom nước sai của bạn vào “Lỗi của chính bạn” và báo cáo “Điểm yếu của bạn”. Bỏ qua nếu đây không phải ván của bạn.
+              </p>
+              <div className="row">
+                <Button onClick={() => chooseSide('w')}>Tôi cầm Trắng</Button>
+                <Button onClick={() => chooseSide('b')}>Tôi cầm Đen</Button>
+              </div>
+            </Card>
+          )}
         </div>
       </div>
     </div>
@@ -638,7 +764,9 @@ function ReviewList({ analysis, me, onGo }: { analysis: GameAnalysis; me: 'w' | 
               <span className="muted small">nên {p.bestSan}</span>
               <div className="small">{ex.text}</div>
             </span>
-            <Tag tone={p.judgment === 'blunder' ? 'bad' : 'warn'}>{JUDGE_VI[p.judgment]}</Tag>
+            <span style={{ flexShrink: 0, whiteSpace: 'nowrap' }}>
+              <Tag tone={p.judgment === 'blunder' ? 'bad' : 'warn'}>{JUDGE_VI[p.judgment]}</Tag>
+            </span>
           </div>
         );
       })}
@@ -703,7 +831,7 @@ function Weaknesses() {
         <Card>
           <p className="muted">
             Chưa có ván nào đã phân tích mà biết bạn cầm quân nào. Hãy lấy ván từ Lichess hoặc Chess.com, hoặc chơi với máy, rồi bấm “Phân tích” ở danh sách ván.
-            {unknownSide > 0 && ` Có ${unknownSide} ván nhập bằng PGN không rõ bạn cầm bên nào nên không tính.`}
+            {unknownSide > 0 && ` Có ${unknownSide} ván đã phân tích nhưng chưa rõ bạn cầm bên nào nên không tính: mở ván đó và chọn “Tôi cầm Trắng/Đen”.`}
           </p>
         </Card>
       </div>
@@ -719,7 +847,6 @@ function Weaknesses() {
   const worstCat = totalErr > 0 ? cats[0] : null;
   const perGame = (totalErr / rep.games).toFixed(1);
   const shown = rep.examples.filter((e) => !cat || e.category === cat).slice(0, 8);
-  const colorRate = (c: 'w' | 'b') => (rep.byColor[c].moves ? (100 * rep.byColor[c].errors) / rep.byColor[c].moves : 0);
 
   return (
     <div>
@@ -781,6 +908,7 @@ function Weaknesses() {
             label={PHASE_VI[ph]}
             value={rate(ph)}
             max={maxRate}
+            tone="bad"
             note={rep.byPhase[ph].moves ? `${rep.byPhase[ph].errors} lỗi lớn / ${rep.byPhase[ph].moves} nước (${rate(ph).toFixed(1)}%)` : 'chưa có nước nào'}
           />
         ))}
@@ -789,8 +917,8 @@ function Weaknesses() {
           <Bar
             key={c}
             label={c === 'w' ? `Cầm Trắng · ${rep.gamesByColor.w} ván` : `Cầm Đen · ${rep.gamesByColor.b} ván`}
-            value={colorRate(c)}
-            max={Math.max(1, colorRate('w'), colorRate('b'))}
+            value={rep.gamesByColor[c] ? (rep.accuracy[c] ?? 0) : 0}
+            max={100}
             note={rep.gamesByColor[c] ? `chính xác ${rep.accuracy[c]}% · ${rep.byColor[c].errors} lỗi lớn` : 'chưa có ván'}
           />
         ))}
@@ -803,7 +931,7 @@ function Weaknesses() {
             <div key={o.name} className="row-between small" style={{ padding: '6px 0', borderBottom: '1px solid var(--line)' }}>
               <span>{o.name}</span>
               <span className="muted" style={{ whiteSpace: 'nowrap' }}>
-                {o.games} ván · {o.points}/{o.games} điểm · {o.accuracy}%
+                {o.games} ván · {o.points}/{o.games} điểm · chính xác {o.accuracy}%
               </span>
             </div>
           ))}
@@ -814,31 +942,38 @@ function Weaknesses() {
         <h3>Ví dụ từ ván của bạn{cat ? `: ${CATEGORY_VI[cat]}` : ''}</h3>
         {shown.length === 0 && <p className="small muted">Không có ví dụ.</p>}
         {shown.map((e) => (
-          <div key={`${e.gameId}:${e.ply}`} className="list-item" style={{ alignItems: 'flex-start' }} onClick={() => navigate(`analyze/game/${e.gameId}?ply=${e.ply}`)}>
+          <div key={`${e.gameId}:${e.ply}`} className="list-item" style={{ alignItems: 'flex-start' }} onClick={() => navigate(`analyze/game/${e.gameId}?ply=${e.ply}&from=stats`)}>
             <span>
               <b>{e.label}</b> <span className="muted small">{PHASE_VI[e.phase]} · {CATEGORY_VI[e.category]}</span>
               <div className="small">{e.text}</div>
             </span>
-            <Tag tone={e.judgment === 'blunder' ? 'bad' : 'warn'}>{JUDGE_VI[e.judgment]}</Tag>
+            <span style={{ flexShrink: 0, whiteSpace: 'nowrap' }}>
+              <Tag tone={e.judgment === 'blunder' ? 'bad' : 'warn'}>{JUDGE_VI[e.judgment]}</Tag>
+            </span>
           </div>
         ))}
-        {unknownSide > 0 && <p className="tiny muted">{unknownSide} ván nhập bằng PGN không rõ bạn cầm bên nào nên không tính.</p>}
+        {unknownSide > 0 && <p className="tiny muted">{unknownSide} ván chưa rõ bạn cầm bên nào nên không tính: mở ván đó và chọn “Tôi cầm Trắng/Đen”.</p>}
       </Card>
     </div>
   );
 }
 
-function Summary({ label, acc, counts }: { label: string; acc: number; counts: Record<Judgment, number> }) {
+function Summary({ label, mine, acc, counts }: { label: string; mine: boolean; acc: number; counts: Record<Judgment, number> }) {
   return (
-    <div className="stat" style={{ textAlign: 'left' }}>
-      <div className="small">
+    <div className="stat" style={{ textAlign: 'left', minWidth: 0 }}>
+      <div className="small" style={{ overflowWrap: 'anywhere' }}>
         <b style={{ display: 'inline', fontSize: '1rem' }}>{label}</b>
+        {mine && <span className="muted"> (bạn)</span>}
       </div>
       <div className="small">
         Chính xác <b style={{ display: 'inline', fontSize: '1rem' }}>{acc}%</b>
       </div>
       <div className="tiny muted">
-        ?? {counts.blunder} · ? {counts.mistake} · ?! {counts.inaccuracy} · ! {counts.best}
+        {counts.blunder} sai nghiêm trọng (??)
+        <br />
+        {counts.mistake} sai lầm (?)
+        <br />
+        {counts.inaccuracy} không chính xác (?!)
       </div>
     </div>
   );

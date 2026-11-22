@@ -43,22 +43,34 @@ export function pickPuzzle(all: Puzzle[], rating: number, seen: Record<string, u
 }
 
 export async function fetchDailyPuzzle(): Promise<Puzzle> {
-  const res = await fetch('https://lichess.org/api/puzzle/daily', { headers: { Accept: 'application/json' } });
-  if (!res.ok) throw new Error(`Lichess ${res.status}`);
-  const data = (await res.json()) as {
+  // never leave the learner on an endless spinner: give up after 15 s
+  const ctl = new AbortController();
+  const timer = setTimeout(() => ctl.abort(), 15000);
+  let data: {
     game: { pgn: string; id: string };
     puzzle: { id: string; rating: number; solution: string[]; themes: string[]; initialPly: number };
   };
+  try {
+    const res = await fetch('https://lichess.org/api/puzzle/daily', { headers: { Accept: 'application/json' }, signal: ctl.signal });
+    if (!res.ok) throw new Error(`Lichess trả lỗi ${res.status}`);
+    data = await res.json();
+  } finally {
+    clearTimeout(timer);
+  }
   const { Chess } = await import('chess.js');
   const c = new Chess();
-  for (const san of data.game.pgn.trim().split(/\s+/)) c.move(san);
+  const sans = data.game.pgn.trim().split(/\s+/);
+  // stop before the opponent's last move: the board then shows that move being played (like the other puzzles)
+  for (const san of sans.slice(0, -1)) c.move(san);
+  const fen = c.fen();
+  const last = sans.length ? c.move(sans[sans.length - 1]) : null;
   return {
     id: `daily-${data.puzzle.id}`,
-    fen: c.fen(),
-    moves: data.puzzle.solution,
+    fen: last ? fen : c.fen(),
+    moves: last ? [last.from + last.to + (last.promotion ?? ''), ...data.puzzle.solution] : data.puzzle.solution,
     rating: data.puzzle.rating,
     themes: data.puzzle.themes,
-    playerFirst: true,
+    playerFirst: !last,
     source: 'daily',
     url: `https://lichess.org/training/${data.puzzle.id}`,
   };

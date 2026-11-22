@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import PuzzleBoard from '../components/PuzzleBoard';
 import { Button, Card, Spinner, Tag } from '../components/ui';
 import { loadPuzzles, pickPuzzle, fetchDailyPuzzle, type Puzzle } from '../lib/puzzles';
@@ -9,25 +9,53 @@ import { navigate, type Route } from '../lib/router';
 import { Chess } from 'chess.js';
 import { getEngine, toWhitePov, winPercent } from '../lib/engine';
 import { playUci, uciLineToSan } from '../lib/chess-utils';
-import { logActivity } from '../lib/activity';
+import { logActivity, loadActivity, dayKey } from '../lib/activity';
 
 type Mode = 'rated' | 'theme' | 'daily' | 'mistakes';
 /** what a player below ~1000 should drill first */
 const BASIC_THEMES = ['mateIn1', 'hangingPiece', 'fork', 'pin', 'backRankMate', 'mateIn2'];
+/** Lichess bookkeeping tags (solution length, game phase duplicates) that say nothing about the idea */
+const NOISE_THEMES = new Set(['short', 'long', 'veryLong', 'oneMove', 'mate']);
+const shownThemes = (p: Puzzle) => p.themes.filter((t) => THEMES[t] && !NOISE_THEMES.has(t));
+
+/** localStorage can throw (private mode, blocked storage): never let that break the page */
+function lsGet<T>(k: string): T | null {
+  try {
+    const v = localStorage.getItem(k);
+    return v ? (JSON.parse(v) as T) : null;
+  } catch {
+    return null;
+  }
+}
+function lsSet(k: string, v: unknown) {
+  try {
+    if (v === null) localStorage.removeItem(k);
+    else localStorage.setItem(k, JSON.stringify(v));
+  } catch {
+    /* ignore */
+  }
+}
 
 export default function Puzzles({ route }: { route: Route }) {
   const mode = (route.parts[0] as Mode | undefined) ?? undefined;
   const theme = route.parts[1];
   const [progress, setProgress] = useState<PuzzleProgress | null>(null);
   const [mistakes, setMistakes] = useState<Mistake[]>([]);
+  const [mistakesLoaded, setMistakesLoaded] = useState(false);
   const [allThemes, setAllThemes] = useState(false);
+  const [todayCount, setTodayCount] = useState(0);
 
   useEffect(() => {
     loadPuzzleProgress().then(setProgress);
-    loadMistakes().then(setMistakes);
+    loadMistakes().then((m) => {
+      setMistakes(m);
+      setMistakesLoaded(true);
+    });
+    // same counter as the "Hôm nay" plan in the Learn tab (calendar day, every kind of puzzle)
+    loadActivity().then((log) => setTodayCount(log[dayKey()]?.puzzles ?? 0));
   }, [mode]);
 
-  if (!progress) return <Spinner label="Đang tải..." />;
+  if (!progress || (mode === 'mistakes' && !mistakesLoaded)) return <Spinner label="Đang tải..." />;
 
   if (mode === 'rated' || mode === 'theme') {
     return <Trainer theme={mode === 'theme' ? theme : undefined} progress={progress} setProgress={setProgress} />;
@@ -38,7 +66,6 @@ export default function Puzzles({ route }: { route: Route }) {
   const due = mistakes.filter((m) => m.due <= Date.now()).length;
   const recent = progress.history.slice(-50);
   const acc = recent.length ? Math.round((100 * recent.filter((h) => h.ok).length) / recent.length) : 0;
-  const today = progress.history.filter((h) => h.at > Date.now() - 86400000).length;
 
   return (
     <div>
@@ -51,15 +78,15 @@ export default function Puzzles({ route }: { route: Route }) {
           </div>
           <div className="stat">
             <b>{progress.history.length}</b>
-            <span>Đã giải</span>
+            <span>Đã làm</span>
           </div>
           <div className="stat">
-            <b>{acc}%</b>
-            <span>Đúng (50 bài gần nhất)</span>
+            <b>{recent.length ? `${acc}%` : '–'}</b>
+            <span>{recent.length < 50 ? 'Đúng ngay lần đầu' : 'Đúng ngay (50 bài gần nhất)'}</span>
           </div>
           <div className="stat">
-            <b>{today}</b>
-            <span>Hôm nay</span>
+            <b>{todayCount}</b>
+            <span>Bài đã làm hôm nay</span>
           </div>
         </div>
         <p className="small muted mt">
@@ -143,8 +170,18 @@ function Trainer({
   const [all, setAll] = useState<Puzzle[] | null>(null);
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [result, setResult] = useState<{ ok: boolean; delta: number } | null>(null);
-  const [streak, setStreak] = useState(0);
+  // the current puzzle and streak survive leaving the page / reloading (per mode)
+  const key = theme ? `theme:${theme}` : 'rated';
+  const [streak, setStreakState] = useState(() => lsGet<number>(`pz-streak:${key}`) ?? 0);
+  const setStreak = (v: number) => {
+    setStreakState(v);
+    lsSet(`pz-streak:${key}`, v);
+  };
   const [n, setN] = useState(0);
+  const [wrong, setWrong] = useState(false);
+  /** the board calls onFinish again after "Làm lại": only the first finish of a puzzle is scored */
+  const scored = useRef<string | null>(null);
+  const skipped = useRef<Record<string, 1>>({});
   // theme drills: unrated, start a little below your level and adapt within the session
   const [drillLevel, setDrillLevel] = useState(() => Math.max(500, progress.rating - 250));
 
@@ -154,16 +191,41 @@ function Trainer({
 
   useEffect(() => {
     if (!all) return;
-    setPuzzle(pickPuzzle(all, theme ? drillLevel : progress.rating, progress.solved, theme));
+    const saved = n === 0 ? lsGet<{ id: string; wrong?: boolean }>(`pz-cur:${key}`) : null;
+    const resume = saved && progress.solved[saved.id] === undefined ? all.find((p) => p.id === saved.id) : undefined;
+    const seen = { ...progress.solved, ...skipped.current, ...(puzzle ? { [puzzle.id]: 1 } : {}) };
+    const next = resume ?? pickPuzzle(all, theme ? drillLevel : progress.rating, seen, theme);
+    setPuzzle(next);
+    setWrong(!!(resume && saved?.wrong));
+    scored.current = null;
     setResult(null);
+    lsSet(`pz-cur:${key}`, next ? { id: next.id } : null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [all, n, theme]);
 
-  const onFinish = async (ok: boolean) => {
+  const onWrong = () => {
+    setWrong(true);
+    if (puzzle && scored.current !== puzzle.id) lsSet(`pz-cur:${key}`, { id: puzzle.id, wrong: true });
+  };
+
+  const skip = () => {
     if (!puzzle) return;
+    // a wrong move already counts: skipping must not be a way to dodge the rating loss
+    if (wrong && scored.current !== puzzle.id) void onFinish(false);
+    else skipped.current[puzzle.id] = 1;
+    setN(n + 1);
+  };
+
+  const onFinish = async (solved: boolean) => {
+    if (!puzzle || scored.current === puzzle.id) return;
+    scored.current = puzzle.id;
+    // a wrong move made before a reload still counts against this puzzle
+    const ok = solved && !wrong;
+    lsSet(`pz-cur:${key}`, null);
     const r = theme ? { rating: progress.rating, rd: progress.rd, delta: 0 } : updateRating(progress, puzzle.rating, ok);
     if (theme) setDrillLevel((l) => Math.max(450, Math.min(2600, l + (ok ? 50 : -70))));
-    logActivity('puzzles');
+    // the daily plan counts puzzles worked on: a solution looked up without trying a move does not count
+    if (ok || wrong) logActivity('puzzles');
     const next: PuzzleProgress = {
       ...progress,
       rating: r.rating,
@@ -197,18 +259,25 @@ function Trainer({
           <span>
             Rating của bạn: <b>{progress.rating}</b>
             {result && (
-              <span className={result.delta >= 0 ? 'tag tag-good' : 'tag tag-bad'} style={{ marginLeft: 6 }}>
-                {result.delta >= 0 ? '+' : ''}
-                {result.delta}
+              <span className={result.delta > 0 ? 'tag tag-good' : result.delta < 0 ? 'tag tag-bad' : 'tag'} style={{ marginLeft: 6 }}>
+                {result.delta > 0 ? `+${result.delta}` : result.delta < 0 ? `${result.delta}` : '±0'}
               </span>
             )}
           </span>
         )}
         <span className="muted">
-          Bài: {puzzle.rating} · chuỗi {streak}
+          Độ khó bài: {puzzle.rating} · chuỗi đúng: {streak}
         </span>
       </div>
-      <PuzzleBoard key={puzzle.id} fen={puzzle.fen} moves={puzzle.moves} playerFirst={puzzle.playerFirst} onFinish={onFinish} prompt={puzzlePrompt(puzzle)} />
+      <PuzzleBoard
+        key={puzzle.id}
+        fen={puzzle.fen}
+        moves={puzzle.moves}
+        playerFirst={puzzle.playerFirst}
+        onFinish={onFinish}
+        onWrong={onWrong}
+        prompt={puzzlePrompt(puzzle)}
+      />
       <div className="row mt">
         {result && (
           <Button kind="primary" onClick={() => setN(n + 1)}>
@@ -216,14 +285,14 @@ function Trainer({
           </Button>
         )}
         {!result && (
-          <Button kind="ghost" onClick={() => setN(n + 1)}>
-            Bỏ qua
+          <Button kind="ghost" onClick={skip}>
+            {wrong ? 'Bỏ qua (tính là sai)' : 'Bỏ qua'}
           </Button>
         )}
       </div>
       {result && (
         <div className="chip-row mt">
-          {puzzle.themes.filter((t) => THEMES[t]).map((t) => (
+          {shownThemes(puzzle).map((t) => (
             <Tag key={t}>{themeLabel(t)}</Tag>
           ))}
           {puzzle.url && (
@@ -257,9 +326,25 @@ function Daily() {
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState<boolean | null>(null);
+  const [tries, setTries] = useState(0);
+  const wrong = useRef(false);
   useEffect(() => {
-    fetchDailyPuzzle().then(setPuzzle).catch((e) => setErr(String(e)));
-  }, []);
+    setErr(null);
+    fetchDailyPuzzle()
+      .then(setPuzzle)
+      .catch((e: unknown) => {
+        const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
+        const aborted = e instanceof DOMException && e.name === 'AbortError';
+        const detail = e instanceof Error && /^Lichess/.test(e.message) ? ` (${e.message})` : '';
+        setErr(
+          offline
+            ? 'Bạn đang ngoại tuyến. Bài tập hàng ngày lấy từ Lichess nên cần kết nối mạng.'
+            : aborted
+              ? 'Lichess phản hồi quá lâu. Kiểm tra kết nối mạng rồi thử lại.'
+              : `Không lấy được bài tập hàng ngày từ Lichess${detail}. Kiểm tra kết nối mạng rồi thử lại.`,
+        );
+      });
+  }, [tries]);
   return (
     <div>
       <div className="topbar">
@@ -268,20 +353,43 @@ function Daily() {
         </button>
         <h2 style={{ margin: 0 }}>Bài tập hàng ngày</h2>
       </div>
-      {err && <div className="feedback bad">Không tải được: {err}</div>}
-      {!puzzle && !err && <Spinner label="Đang lấy puzzle từ Lichess..." />}
+      {err && (
+        <div className="feedback bad">
+          {err}
+          <div className="row mt">
+            <Button onClick={() => setTries(tries + 1)}>Thử lại</Button>
+            <Button kind="ghost" onClick={() => navigate('puzzles/rated')}>
+              Luyện bài có sẵn (không cần mạng)
+            </Button>
+          </div>
+        </div>
+      )}
+      {!puzzle && !err && <Spinner label="Đang lấy bài tập từ Lichess..." />}
       {puzzle && (
         <>
-          <p className="muted small">
-            Rating {puzzle.rating} · {puzzle.themes.filter((t) => THEMES[t]).map(themeLabel).join(', ')}
-          </p>
-          <PuzzleBoard fen={puzzle.fen} moves={puzzle.moves} playerFirst onFinish={setDone} />
-          {done !== null && puzzle.url && (
-            <p className="mt">
-              <a href={puzzle.url} target="_blank" rel="noreferrer">
-                Xem trên Lichess
-              </a>
-            </p>
+          <p className="muted small">Bài tập của ngày hôm nay trên Lichess · độ khó {puzzle.rating}. Bài này không tính vào rating của bạn.</p>
+          <PuzzleBoard
+            fen={puzzle.fen}
+            moves={puzzle.moves}
+            playerFirst={puzzle.playerFirst}
+            prompt={puzzlePrompt(puzzle)}
+            onWrong={() => (wrong.current = true)}
+            onFinish={(ok) => {
+              if (done === null && (ok || wrong.current)) logActivity('puzzles');
+              if (done === null) setDone(ok);
+            }}
+          />
+          {done !== null && (
+            <div className="chip-row mt">
+              {shownThemes(puzzle).map((t) => (
+                <Tag key={t}>{themeLabel(t)}</Tag>
+              ))}
+              {puzzle.url && (
+                <a className="small" href={puzzle.url} target="_blank" rel="noreferrer">
+                  Xem trên Lichess
+                </a>
+              )}
+            </div>
           )}
         </>
       )}
@@ -303,15 +411,20 @@ function MistakeTrainer({ mistakes, setMistakes }: { mistakes: Mistake[]; setMis
   }, [mistakes, order]);
   const queue = useMemo(() => (order ?? []).map((id) => mistakes.find((m) => m.id === id)).filter((m): m is Mistake => !!m), [order, mistakes]);
   const m = queue[i];
+  const allDone = queue.length > 0 && i >= queue.length;
+  /** "Làm lại" finishes the board again: only the first finish of a card is graded */
+  const scored = useRef<string | null>(null);
+  const wrong = useRef(false);
 
   const onFinish = async (ok: boolean) => {
-    if (!m) return;
+    if (!m || scored.current === m.id) return;
+    scored.current = m.id;
     setDone(ok);
     const interval = ok ? Math.max(1, Math.round((m.interval || 0.5) * 2.5)) : 1;
     const updated = mistakes.map((x) => (x.id === m.id ? { ...x, interval, reps: x.reps + 1, due: Date.now() + interval * 86400000 } : x));
     setMistakes(updated);
     await saveMistakes(updated);
-    logActivity('puzzles');
+    if (ok || wrong.current) logActivity('puzzles');
   };
 
   /** Accept any move that is practically as good as the engine's first choice. */
@@ -339,7 +452,31 @@ function MistakeTrainer({ mistakes, setMistakes }: { mistakes: Mistake[]; setMis
         </button>
         <h2 style={{ margin: 0 }}>Lỗi của chính bạn</h2>
       </div>
-      {!m && (
+      {allDone && (
+        <Card>
+          <p>
+            Đã ôn hết {queue.length} lỗi trong lượt này. Lỗi nào bạn tìm đúng sẽ được hẹn ôn lại thưa dần; lỗi làm sai sẽ quay lại sau 1 ngày.
+          </p>
+          <div className="row">
+            <Button kind="primary" onClick={() => navigate('puzzles')}>
+              Về trang Tập
+            </Button>
+            <Button
+              kind="ghost"
+              onClick={() => {
+                scored.current = null;
+                wrong.current = false;
+                setDone(null);
+                setOrder(null);
+                setI(0);
+              }}
+            >
+              Ôn lại từ đầu
+            </Button>
+          </div>
+        </Card>
+      )}
+      {!m && !allDone && (
         <Card>
           <p>Chưa có lỗi nào để ôn. Vào tab Phân tích, nhập ván từ Lichess và chạy phân tích. Mọi nước sai lầm (?) và sai nghiêm trọng (??) của bạn sẽ xuất hiện ở đây.</p>
           <Button kind="primary" onClick={() => navigate('analyze')}>
@@ -350,8 +487,8 @@ function MistakeTrainer({ mistakes, setMistakes }: { mistakes: Mistake[]; setMis
       {m && (
         <>
           <p className="muted small">
-            {i + 1}/{queue.length} · trong ván bạn đã đi <b>{m.playedSan}</b> ({m.judgment === 'blunder' ? 'sai nghiêm trọng' : 'sai lầm'}). Tìm nước tốt hơn.
-            {m.due <= Date.now() || done !== null ? '' : ' · (chưa tới hạn, ôn trước)'}
+            Lỗi {i + 1}/{queue.length}
+            {m.due <= Date.now() || done !== null ? '' : ' · chưa tới hạn ôn, bạn đang ôn trước'}
           </p>
           <PuzzleBoard
             key={m.id}
@@ -360,7 +497,10 @@ function MistakeTrainer({ mistakes, setMistakes }: { mistakes: Mistake[]; setMis
             playerFirst
             judge={judge}
             onFinish={onFinish}
-            prompt={`Bạn cầm ${m.color === 'w' ? 'Trắng' : 'Đen'}. Một nước thôi: nước tốt nhất là gì?`}
+            onWrong={() => (wrong.current = true)}
+            prompt={`Bạn cầm ${m.color === 'w' ? 'Trắng' : 'Đen'} (phía dưới bàn cờ). Trong ván, ở thế này bạn đã đi ${m.playedSan} (${
+              m.judgment === 'blunder' ? 'sai nghiêm trọng' : 'sai lầm'
+            }). Mục tiêu: tìm một nước tốt hơn, chỉ cần một nước.`}
           />
           {done !== null && (
             <div className="mt">
@@ -373,10 +513,11 @@ function MistakeTrainer({ mistakes, setMistakes }: { mistakes: Mistake[]; setMis
                   kind="primary"
                   onClick={() => {
                     setDone(null);
-                    setI((i + 1) % Math.max(1, queue.length));
+                    wrong.current = false;
+                    setI(i + 1);
                   }}
                 >
-                  Tiếp →
+                  {i + 1 >= queue.length ? 'Xong lượt ôn' : `Lỗi tiếp theo (${i + 2}/${queue.length}) →`}
                 </Button>
                 <Button kind="ghost" onClick={() => navigate(`analyze/game/${m.gameId}?ply=${m.ply}`)}>
                   Xem trong ván

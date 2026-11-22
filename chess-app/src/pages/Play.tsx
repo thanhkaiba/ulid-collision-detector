@@ -31,6 +31,42 @@ function loadSetup(): Setup {
   }
 }
 
+/** The game in progress against the engine, kept so leaving the tab or reloading does not lose it. */
+type CurrentGame = {
+  me: 'w' | 'b';
+  level: number;
+  tc: string;
+  moves: string[];
+  clock: { w: number; b: number };
+  startedAt: number;
+  /** the daily-plan "played" credit was already given for this game */
+  played?: boolean;
+};
+const CURRENT_KEY = 'play-current';
+
+function loadCurrent(): CurrentGame | null {
+  try {
+    const g = JSON.parse(localStorage.getItem(CURRENT_KEY) ?? 'null');
+    return g && Array.isArray(g.moves) && g.moves.length > 0 ? g : null;
+  } catch {
+    return null;
+  }
+}
+function saveCurrent(g: CurrentGame | null) {
+  try {
+    if (g) localStorage.setItem(CURRENT_KEY, JSON.stringify(g));
+    else localStorage.removeItem(CURRENT_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+/** Only a bare king, or a king with a single minor piece: cannot checkmate (so the opponent's flag fall is a draw). */
+function cannotMate(chess: Chess, side: 'w' | 'b'): boolean {
+  const pcs = chess.board().flat().filter((p) => p && p.color === side && p.type !== 'k');
+  return pcs.length === 0 || (pcs.length === 1 && (pcs[0]!.type === 'n' || pcs[0]!.type === 'b'));
+}
+
 export default function Play({ route }: { route: Route }) {
   if (route.parts[0] === 'practice') {
     const pos = route.parts[1] ? practiceById(route.parts[1]) : undefined;
@@ -72,6 +108,7 @@ function PracticeRun({ pos, back }: { pos: PracticePosition; back: string }) {
         onExit={() => navigate(back)}
         onRematch={() => setAttempt((a) => a + 1)}
         switcher={<SideSwitch pos={pos} swap={swap} onChange={setSwap} />}
+        otherLink={back !== 'play/practice'}
       />
     </>
   );
@@ -169,7 +206,19 @@ function PracticeList() {
 
 function PlaySetup() {
   const [setup, setSetup] = useState<Setup>(loadSetup);
-  const [game, setGame] = useState<{ me: 'w' | 'b'; level: Level; tc: TimeControl } | null>(null);
+  type Game = { me: 'w' | 'b'; level: Level; tc: TimeControl; resume?: CurrentGame; n: number };
+  const fromCurrent = (c: CurrentGame, n: number): Game => ({
+    me: c.me,
+    level: LEVELS.find((l) => l.n === c.level) ?? LEVELS[1],
+    tc: TIME_CONTROLS.find((t) => t.id === c.tc) ?? TIME_CONTROLS[0],
+    resume: c,
+    n,
+  });
+  // coming back to the tab (or reloading) brings back the game in progress
+  const [game, setGame] = useState<Game | null>(() => {
+    const c = loadCurrent();
+    return c ? fromCurrent(c, 0) : null;
+  });
 
   useEffect(() => {
     try {
@@ -182,19 +231,37 @@ function PlaySetup() {
   if (game) {
     return (
       <GameView
+        key={game.n}
         me={game.me}
         level={game.level}
         tc={game.tc}
+        resume={game.resume}
         onExit={() => setGame(null)}
-        onRematch={() => setGame({ ...game, me: setup.color === 'random' ? (Math.random() < 0.5 ? 'w' : 'b') : game.me })}
+        onRematch={() =>
+          setGame({ me: setup.color === 'random' ? (Math.random() < 0.5 ? 'w' : 'b') : game.me, level: game.level, tc: game.tc, n: game.n + 1 })
+        }
       />
     );
   }
 
   const level = LEVELS.find((l) => l.n === setup.level) ?? LEVELS[3];
+  const current = loadCurrent();
   return (
     <div>
       <h1>Chơi với máy</h1>
+      {current && (
+        <Card>
+          <b>Ván đang chơi dở</b>
+          <div className="small muted">
+            Bạn cầm {current.me === 'w' ? 'Trắng' : 'Đen'} · cấp {current.level} · đã đi {Math.ceil(current.moves.length / 2)} nước
+          </div>
+          <div className="row mt">
+            <Button kind="primary" onClick={() => setGame(fromCurrent(current, Date.now()))}>
+              Tiếp tục ván này
+            </Button>
+          </div>
+        </Card>
+      )}
       <Card>
         <h3>Bạn cầm</h3>
         <Seg
@@ -246,17 +313,19 @@ function PlaySetup() {
         </div>
       </Card>
       <Button
-        kind="primary"
+        kind={current ? 'default' : 'primary'}
         className="grow"
-        onClick={() =>
+        onClick={() => {
+          saveCurrent(null);
           setGame({
             me: setup.color === 'random' ? (Math.random() < 0.5 ? 'w' : 'b') : setup.color,
             level,
             tc: TIME_CONTROLS.find((t) => t.id === setup.tc) ?? TIME_CONTROLS[0],
-          })
-        }
+            n: Date.now(),
+          });
+        }}
       >
-        Bắt đầu ván mới
+        {current ? 'Bắt đầu ván mới (bỏ ván dở)' : 'Bắt đầu ván mới'}
       </Button>
     </div>
   );
@@ -272,7 +341,13 @@ function GameView({
   embedded,
   onGoal,
   switcher,
+  resume,
+  otherLink,
 }: {
+  /** a game in progress to carry on (normal games only) */
+  resume?: CurrentGame;
+  /** practice: also offer a link to the practice list (when "back" leads elsewhere) */
+  otherLink?: boolean;
   me: 'w' | 'b';
   level: Level;
   tc: TimeControl;
@@ -290,7 +365,19 @@ function GameView({
   const startFen = practice?.fen;
   /** a practice position where Black moves first: shift the move list by one cell */
   const listOffset = startFen?.split(' ')[1] === 'b' ? 1 : 0;
-  const chessRef = useRef(new Chess(startFen));
+  const chessRef = useRef<Chess | null>(null);
+  if (!chessRef.current) {
+    const c = new Chess(startFen);
+    if (resume && !practice)
+      for (const san of resume.moves) {
+        try {
+          c.move(san);
+        } catch {
+          break;
+        }
+      }
+    chessRef.current = c;
+  }
   const chess = chessRef.current;
   /** practice only: the goal was reached / the engine thinks the goal has slipped away */
   const [goalMet, setGoalMet] = useState(false);
@@ -300,13 +387,16 @@ function GameView({
   const [engineMate, setEngineMate] = useState<number | null>(null);
   const [version, setVersion] = useState(0);
   const [pending, setPending] = useState<{ from: Key; to: Key } | null>(null);
-  const [clock, setClock] = useState({ w: tc.initial * 1000, b: tc.initial * 1000 });
+  const [clock, setClock] = useState(() => (resume && !practice ? resume.clock : { w: tc.initial * 1000, b: tc.initial * 1000 }));
   const [over, setOver] = useState<{ result: string; reason: string } | null>(null);
   const [thinking, setThinking] = useState(false);
   const [viewPly, setViewPly] = useState<number | null>(null); // null = live
-  const [savedId, setSavedId] = useState<string | null>(null);
+  const [confirmResign, setConfirmResign] = useState(false);
+  const savedId = useRef<string | null>(null);
   const lastTick = useRef<number>(0);
-  const startedAt = useRef(Date.now());
+  const startedAt = useRef(resume && !practice ? resume.startedAt : Date.now());
+  /** the daily-plan credit for playing a game was given (once per game) */
+  const played = useRef(!!(resume && !practice && resume.played));
   const engine = useMemo(() => getEngine(), []);
   const orientation: Color = me === 'w' ? 'white' : 'black';
   const history = chess.history();
@@ -332,15 +422,24 @@ function GameView({
       if (!logged.current) {
         logged.current = true;
         logActivity('games');
-        // the daily "play one game" goal needs a real game from the start: not endgame practice,
-        // and not a game resigned or abandoned in the first few moves
-        const plies = chess.history().length;
-        const natural = chess.isGameOver();
-        if (!practice && (natural || plies >= 20)) logActivity('played');
+        // the daily "play one game" goal needs a real game from the start: not endgame practice, and not a game
+        // resigned, abandoned or lost on time in the first few moves. A game ended on the board (mate, draw) counts;
+        // otherwise 10 moves each are needed (see countPlayed).
+        if (!practice && !played.current && chess.isGameOver()) {
+          played.current = true;
+          logActivity('played');
+        }
       }
     },
     [practice, me, onGoal, chess],
   );
+
+  /** The daily plan counts a game once 10 moves each are played, even if it is left unfinished. */
+  const countPlayed = () => {
+    if (practice || played.current || chess.history().length < 20) return;
+    played.current = true;
+    logActivity('played');
+  };
 
   // clock
   useEffect(() => {
@@ -355,7 +454,10 @@ function GameView({
         const next = { ...c, [side]: c[side] - dt };
         if (next[side] <= 0) {
           next[side] = 0;
-          finish(side === 'w' ? '0-1' : '1-0', side === me ? 'Bạn hết giờ' : 'Máy hết giờ');
+          const who = side === me ? 'Bạn hết giờ' : 'Máy hết giờ';
+          // out of time against a side that cannot mate is a draw (FIDE rule)
+          if (cannotMate(chess, side === 'w' ? 'b' : 'w')) finish('1/2-1/2', `${who}, nhưng bên kia không đủ quân để chiếu hết nên hòa`);
+          else finish(side === 'w' ? '0-1' : '1-0', who);
         }
         return next;
       });
@@ -368,6 +470,7 @@ function GameView({
       if (tc.initial > 0 && moveCount >= 1) setClock((c) => ({ ...c, [mover]: c[mover] + tc.inc * 1000 }));
       setVersion((v) => v + 1);
       setViewPly(null);
+      countPlayed();
       const end = gameEnd(chess);
       if (end.over) finish(end.result!, end.reason!);
     },
@@ -487,7 +590,7 @@ function GameView({
   const live = viewPly === null;
 
   const saveGame = async (): Promise<string> => {
-    if (savedId) return savedId;
+    if (savedId.current) return savedId.current;
     const id = `app-${startedAt.current.toString(36)}`;
     const result = over?.result ?? '*';
     const white = me === 'w' ? 'Bạn' : `Stockfish ${level.n}`;
@@ -510,21 +613,70 @@ function GameView({
       moves: chess.history(),
       speed: tc.label,
     };
+    savedId.current = id;
     await upsertGames([g]);
-    setSavedId(id);
     return id;
   };
 
+  // normal games: keep the game in progress (moves, clocks) so leaving the tab or reloading does not lose it;
+  // a finished game goes to the list in the Analyze tab
+  const clockRef = useRef(clock);
+  clockRef.current = clock;
+  const snapshot = (): CurrentGame => ({
+    me,
+    level: level.n,
+    tc: tc.id,
+    moves: chess.history(),
+    clock: clockRef.current,
+    startedAt: startedAt.current,
+    played: played.current,
+  });
+  const keep = useRef<() => CurrentGame | null>(snapshot);
+  keep.current = () => (over || chess.history().length === 0 ? null : snapshot());
+  useEffect(() => {
+    if (practice) return;
+    if (over) {
+      saveCurrent(null);
+      if (chess.history().length >= 2) saveGame();
+      return;
+    }
+    const s = keep.current();
+    if (s) saveCurrent(s);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [version, over]);
+  useEffect(() => {
+    if (practice) return;
+    // leaving the page: store the clocks as they are now
+    const save = () => {
+      const s = keep.current();
+      if (s) saveCurrent(s);
+    };
+    window.addEventListener('pagehide', save);
+    return () => {
+      window.removeEventListener('pagehide', save);
+      save();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const resign = () => finish(me === 'w' ? '0-1' : '1-0', 'Bạn xin thua');
 
-  /** Take back your last move (and the computer's reply). Practice games only, so no limit. */
-  const canTakeback = !over && !thinking && chess.turn() === me && chess.history().length >= 2;
+  /**
+   * Take back your last move (and the computer's reply, if it made one). No limit.
+   * In endgame practice it also works after a failed attempt (e.g. the pawn was lost), so the student can try another move.
+   */
+  const undoPlies = chess.turn() === me ? 2 : 1;
+  const canTakeback =
+    !thinking &&
+    chess.history().length >= undoPlies &&
+    (over ? !!practice && !goalMet : chess.turn() === me);
   const takeback = () => {
     if (!canTakeback) return;
-    chess.undo();
-    chess.undo();
+    for (let i = 0; i < undoPlies; i++) chess.undo();
+    setOver(null);
     setSlipped(false);
     setViewPly(null);
+    setConfirmResign(false);
     setVersion((v) => v + 1);
   };
 
@@ -623,7 +775,13 @@ function GameView({
           {over && practice && (
             <Card>
               <h3>{resultText}</h3>
-              <p className="muted small">{over.reason}</p>
+              <p className="muted small">
+                {!goalMet && over.reason === 'Không đủ quân chiếu hết'
+                  ? 'Hòa: bên tấn công không còn đủ quân để chiếu hết (Tốt hoặc quân chính đã bị bắt).'
+                  : !goalMet && over.reason === 'Hết nước đi (pat)'
+                    ? 'Hòa pat: Vua bị dồn không còn nước đi nhưng không bị chiếu.'
+                    : over.reason}
+              </p>
               {practice.swapped && !goalMet && (
                 <p className="small">
                   {practice.goal === 'draw'
@@ -637,11 +795,16 @@ function GameView({
                 </Button>
               )}
               <div className="row mt">
-                <Button kind="primary" onClick={onRematch}>
-                  {goalMet ? 'Đánh lại lần nữa' : 'Thử lại'}
+                {canTakeback && (
+                  <Button kind="primary" onClick={takeback}>
+                    ↶ Đi lại nước vừa rồi
+                  </Button>
+                )}
+                <Button kind={canTakeback ? 'default' : 'primary'} onClick={onRematch}>
+                  {goalMet ? 'Đánh lại lần nữa' : 'Làm lại từ đầu'}
                 </Button>
-                {!embedded && <Button onClick={onExit}>Quay lại</Button>}
-                {!embedded && (
+                {!embedded && <Button onClick={onExit}>{otherLink ? 'Quay lại' : 'Chọn thế khác'}</Button>}
+                {!embedded && otherLink && (
                   <Button kind="ghost" onClick={() => navigate('play/practice')}>
                     Thế khác
                   </Button>
@@ -654,7 +817,10 @@ function GameView({
               <h3>
                 {resultText} <span className="muted small">({over.result})</span>
               </h3>
-              <p className="muted small">{over.reason}</p>
+              <p className="muted small">
+                {over.reason}
+                {moveCount >= 2 && '. Ván đã được lưu ở tab Phân tích.'}
+              </p>
               <div className="row">
                 <Button
                   kind="primary"
@@ -675,31 +841,49 @@ function GameView({
               current={(viewPly ?? moveCount - 1) + listOffset}
               onSelect={(p) => setViewPly(p - listOffset === moveCount - 1 ? null : Math.max(-1, p - listOffset))}
             />
-            <div className="row mt">
-              <Button kind="ghost" onClick={() => setViewPly(Math.max(-1, (viewPly ?? moveCount - 1) - 1))} disabled={moveCount === 0}>
-                ◀
-              </Button>
-              <Button kind="ghost" onClick={() => setViewPly((viewPly ?? moveCount - 1) + 1 >= moveCount - 1 ? null : (viewPly ?? -1) + 1)} disabled={live}>
-                ▶
-              </Button>
-              <span className="grow" />
-              {!over && (
-                <>
-                  <Button kind="ghost" onClick={takeback} disabled={!canTakeback}>
-                    ↶ Đi lại
-                  </Button>
-                  {practice ? (
-                    <Button kind="ghost" onClick={onRematch}>
-                      Làm lại từ đầu
+            {!live && (
+              <div className="row-between small mt">
+                <span className="muted">Đang xem lại nước cũ{!over ? ', ván vẫn chờ bạn' : ''}.</span>
+                <Button kind="ghost" onClick={() => setViewPly(null)}>
+                  Về nước mới nhất
+                </Button>
+              </div>
+            )}
+            {confirmResign && !over ? (
+              <div className="row mt">
+                <span className="small grow">Bạn chắc chắn muốn xin thua?</span>
+                <Button kind="danger" onClick={resign}>
+                  Xin thua
+                </Button>
+                <Button onClick={() => setConfirmResign(false)}>Đánh tiếp</Button>
+              </div>
+            ) : (
+              <div className="row mt">
+                <Button kind="ghost" onClick={() => setViewPly(Math.max(-1, (viewPly ?? moveCount - 1) - 1))} disabled={moveCount === 0 || viewPly === -1}>
+                  ◀
+                </Button>
+                <Button kind="ghost" onClick={() => setViewPly((viewPly ?? moveCount - 1) + 1 >= moveCount - 1 ? null : (viewPly ?? -1) + 1)} disabled={live}>
+                  ▶
+                </Button>
+                <span className="grow" />
+                {!over && (
+                  <>
+                    <Button kind="ghost" onClick={takeback} disabled={!canTakeback}>
+                      ↶ Đi lại
                     </Button>
-                  ) : (
-                    <Button kind="danger" onClick={resign}>
-                      Xin thua
-                    </Button>
-                  )}
-                </>
-              )}
-            </div>
+                    {practice ? (
+                      <Button kind="ghost" onClick={onRematch}>
+                        Làm lại từ đầu
+                      </Button>
+                    ) : (
+                      <Button kind="danger" onClick={() => setConfirmResign(true)}>
+                        Xin thua
+                      </Button>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </Card>
         </div>
       </div>

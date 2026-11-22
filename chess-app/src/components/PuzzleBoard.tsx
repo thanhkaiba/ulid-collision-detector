@@ -52,6 +52,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   const [hintLevel, setHintLevel] = useState(0);
   const [lastMove, setLastMove] = useState<Key[] | undefined>();
   const [wrongInfo, setWrongInfo] = useState<{ san: string; reply?: string; mate?: boolean } | null>(null);
+  /** the last thing the solver did was a correct move (drives the "Đúng rồi!" message) */
+  const [justRight, setJustRight] = useState(false);
   const finished = useRef(false);
   const timers = useRef<number[]>([]);
   const wrongCount = useRef(0);
@@ -82,16 +84,22 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     const t = window.setTimeout(fn, ms);
     timers.current.push(t);
   };
+  /** cancel pending opponent replies / solution playback, so they cannot land on a reset board */
+  const clearTimers = () => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+  };
 
   // reset on new puzzle
   useEffect(() => {
-    timers.current.forEach(clearTimeout);
-    timers.current = [];
+    clearTimers();
     attempt.current++;
     chessRef.current = new Chess(fen);
     finished.current = false;
+    shown.current = false;
     wrongCount.current = 0;
     undoPlies.current = 0;
+    setJustRight(false);
     setFailed(false);
     setPending(null);
     setShapes([]);
@@ -123,6 +131,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     setShapes([]);
     setHintLevel(0);
     setWrongInfo(null);
+    setJustRight(true);
     const next = expectedIdx + 1;
     setIdx(next);
     bump();
@@ -151,6 +160,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     undoPlies.current = 1;
     setLastMove([from, to]);
     setStatus('wrong');
+    setJustRight(false);
     setFailed(true);
     setShapes([]);
     setWrongInfo({ san });
@@ -178,6 +188,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   };
 
   const retry = () => {
+    if (status !== 'wrong') return;
     attempt.current++;
     for (let i = 0; i < undoPlies.current; i++) chess.undo();
     undoPlies.current = 0;
@@ -237,7 +248,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
 
   const showHint = () => {
     const m = moves[idx];
-    if (!m) return;
+    // only while the solver is to move: during the opponent's reply moves[idx] is the opponent's move
+    if (!m || status !== 'solving' || turnColor(chess) !== playerColor) return;
     const orig = m.slice(0, 2) as Key;
     const dest = m.slice(2, 4) as Key;
     if (hintLevel === 0) setShapes([{ orig, brush: 'green' }]);
@@ -250,12 +262,15 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   };
 
   const reveal = () => {
+    if (status !== 'solving') return;
+    clearTimers();
     attempt.current++;
     setFailed(true);
     setStatus('revealed');
     setShapes([]);
     setWrongInfo(null);
     finish(false, true);
+    // a pending opponent reply was cancelled above, so moves[idx] is exactly the next move to show
     let i = idx;
     const step = () => {
       if (i >= moves.length) return;
@@ -270,11 +285,14 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   };
 
   const restart = () => {
+    clearTimers();
     attempt.current++;
     chessRef.current = new Chess(fen);
     finished.current = false;
     shown.current = false;
     undoPlies.current = 0;
+    setJustRight(false);
+    setPending(null);
     setFailed(false);
     setShapes([]);
     setHintLevel(0);
@@ -293,6 +311,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
 
   const solutionSan = useMemo(() => uciLineToSan(fen, moves), [fen, moves]);
   const live = status === 'solving';
+  const myTurn = live && turnColor(chess) === playerColor;
+  const left = movesLeft > 1 ? `Còn ${movesLeft} nước nữa: tìm nước tiếp theo.` : 'Còn một nước nữa để kết thúc bài.';
   const sideText = playerColor === 'white' ? 'Trắng' : 'Đen';
 
   return (
@@ -314,11 +334,10 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
       </div>
       <div className="mt">
         {status === 'intro' && <div className="feedback info">Đối phương vừa đi…</div>}
-        {status === 'solving' &&
+        {live && !myTurn && <div className="feedback ok">Đúng rồi! Chờ đối phương đáp…</div>}
+        {myTurn &&
           (idx > (playerFirst ? 0 : 1) ? (
-            <div className="feedback info">
-              Đúng rồi! Đối phương đã đáp lại. {movesLeft > 1 ? `Còn ${movesLeft} nước nữa: tìm nước tiếp theo.` : 'Còn một nước nữa để kết thúc bài.'}
-            </div>
+            <div className="feedback info">{justRight ? `Đúng rồi! Đối phương đã đáp lại. ${left}` : `Tới lượt bạn. ${left}`}</div>
           ) : (
             <div className="feedback info">Tới lượt bạn: đi quân trên bàn cờ.</div>
           ))}
@@ -338,15 +357,17 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
             </div>
           </div>
         )}
-        {status === 'solved' && <div className="feedback ok">{failed ? 'Đã giải (có gợi ý hoặc sai một lần).' : 'Chính xác!'}</div>}
+        {status === 'solved' && <div className="feedback ok">{failed ? 'Đã giải xong, nhưng có dùng gợi ý hoặc đã đi sai trước đó.' : 'Chính xác!'}</div>}
         {status === 'revealed' && <div className="feedback info">Lời giải: {solutionSan.slice(playerFirst ? 0 : 1).join(' ')}</div>}
         {(props.showControls ?? true) && (
           <div className="row mt">
-            {live && (
+            {myTurn && (
               <>
-                <Button kind="ghost" onClick={showHint}>
-                  {hintLevel === 0 ? 'Gợi ý' : 'Gợi ý thêm'}
-                </Button>
+                {hintLevel < 2 && (
+                  <Button kind="ghost" onClick={showHint}>
+                    {hintLevel === 0 ? 'Gợi ý' : 'Gợi ý thêm'}
+                  </Button>
+                )}
                 <Button kind="ghost" onClick={reveal}>
                   Xem lời giải
                 </Button>

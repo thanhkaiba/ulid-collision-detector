@@ -175,13 +175,26 @@ export function explainPly(p: PlyAnalysis, prev?: PlyAnalysis, mine = true): Exp
     const replySan = reply?.san ?? '';
     const net = -played.delta;
     const first = played.lost[0];
-    // the loss that matters: the most valuable piece taken (earliest on ties)
-    const key = [...played.lost].sort((a, b) => VAL[b.type] - VAL[a.type] || a.index - b.index)[0];
+    // the loss that matters: the most valuable piece taken (earliest on ties), not counting pieces that
+    // were simply traded (a Queen lost after winning the opponent's Queen is an exchange, not the point)
+    const unmatched = [...played.lost];
+    for (const g of played.gained) {
+      const k = unmatched.findIndex((l) => l.type === g.type);
+      if (k >= 0) unmatched.splice(k, 1);
+    }
+    const key = [...(unmatched.length ? unmatched : played.lost)].sort((a, b) => VAL[b.type] - VAL[a.type] || a.index - b.index)[0];
     const total = ` Tính cả biến, ${s} thiệt ${pts(net)}.`;
     if (reply?.captured && first && key === first) {
       const what = NAME[first.type];
       const takenBack = played.gained.some((g) => g.index === first.index + 1 && g.square === first.square);
       const tail = takenBack ? ` Dù bắt lại được, ${s} vẫn thiệt ${pts(net)}.` : played.lost.length > 1 ? total : first.type === 'p' ? '' : ` ${S} mất trắng quân này.`;
+      if (first.square === mv.to && mv.captured)
+        return {
+          category: 'hang',
+          text: `${what} vừa ăn ${NAME[mv.captured as PieceSymbol]} ở ${mv.to} nhưng bị bắt lại ngay bằng ${replySan}.${total}${tip('Trước khi ăn quân, hãy đếm số quân tấn công và số quân bảo vệ ô đó.')} Nên đi ${best}.`,
+          line: played.sans,
+          lineIsRefutation: true,
+        };
       if (first.square === mv.to)
         return {
           category: 'hang',
@@ -309,6 +322,17 @@ export interface WeaknessReport {
 
 const zeroCat = (): Record<ErrorCategory, number> => ({ mate: 0, hang: 0, tactic: 0, missed: 0, positional: 0 });
 
+/**
+ * Opening family used to group games: "Sicilian Defense: Najdorf Variation" (Lichess) and
+ * "Sicilian Defense Open Najdorf Variation 6.Be3" (Chess.com, no colon) both become "Sicilian Defense".
+ */
+export function openingFamily(opening: string): string {
+  const base = opening.split(':')[0].split(',')[0].trim();
+  if (opening.includes(':')) return base;
+  const m = base.match(/^(.*?\b(?:Opening|Defense|Defence|Game|Gambit|Attack|System))(?=\b|\.)/);
+  return (m ? m[1] : base).trim();
+}
+
 export function buildWeaknessReport(inputs: WeaknessInput[]): WeaknessReport {
   const rep: WeaknessReport = {
     games: inputs.length,
@@ -335,7 +359,7 @@ export function buildWeaknessReport(inputs: WeaknessInput[]): WeaknessReport {
     const pts = g.result === '1/2-1/2' ? 0.5 : (g.result === '1-0') === (g.me === 'w') ? 1 : g.result === '*' ? 0.5 : 0;
     if (g.result !== '*') rep.score[pts === 1 ? 'win' : pts === 0.5 ? 'draw' : 'loss']++;
     if (g.opening) {
-      const name = g.opening.split(':')[0].split(',')[0].trim();
+      const name = openingFamily(g.opening);
       const o = op.get(name) ?? { games: 0, points: 0, acc: [] };
       o.games++;
       o.points += pts;

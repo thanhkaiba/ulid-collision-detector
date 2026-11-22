@@ -15,6 +15,16 @@ import { navigate, type Route } from '../lib/router';
 import { logActivity } from '../lib/activity';
 
 const LEVEL = { 1: 'Cơ bản', 2: 'Trung bình', 3: 'Nâng cao' } as const;
+const GUESS_KEY = 'games-guess';
+
+/** ply the reader stopped at in a game (0 = not started) */
+function savedPly(id: string): number {
+  try {
+    return Number(localStorage.getItem(`game-ply:${id}`) ?? 0) || 0;
+  } catch {
+    return 0;
+  }
+}
 
 export default function Games({ route }: { route: Route }) {
   const id = route.parts[1];
@@ -30,7 +40,9 @@ function GameList() {
   }, []);
   const st = (id: string) => lp?.status[`game:${id}`];
   const done = GAMES.filter((g) => st(g.id) === 'done').length;
-  const next = GAMES.find((g) => !st(g.id));
+  // a game already under way comes first, then the first one not yet marked
+  const next = GAMES.find((g) => !st(g.id) && savedPly(g.id) > 0) ?? GAMES.find((g) => !st(g.id));
+  const started = !!next && savedPly(next.id) > 0;
   return (
     <div>
       <div className="topbar">
@@ -54,7 +66,7 @@ function GameList() {
         </div>
         {next && (
           <Button kind="primary" className="mt" onClick={() => navigate(`learn/games/${next.id}`)}>
-            {done > 0 ? 'Học tiếp' : 'Bắt đầu'}: {next.title}
+            {done > 0 || started ? 'Học tiếp' : 'Bắt đầu'}: {next.title}
           </Button>
         )}
       </Card>
@@ -68,6 +80,12 @@ function GameList() {
           </div>
           <div className="small muted">
             {g.white} – {g.black}, {g.event} {g.year} · {Math.ceil(g.plies / 2)} nước
+            {!st(g.id) && savedPly(g.id) > 0 && (
+              <>
+                {' '}
+                · <b>đang xem nước {Math.ceil(Math.min(savedPly(g.id), g.plies) / 2)}</b>
+              </>
+            )}
           </div>
           <p className="small" style={{ margin: '6px 0 0' }}>
             {g.theme}
@@ -84,7 +102,21 @@ function GameView({ meta }: { meta: GameMeta }) {
   const [ply, setPlyRaw] = useState(0);
   const [preview, setPreview] = useState<Preview | null>(null);
   const [flip, setFlip] = useState(false);
-  const [guess, setGuess] = useState(false);
+  const [guess, setGuessRaw] = useState(() => {
+    try {
+      return localStorage.getItem(GUESS_KEY) === '1';
+    } catch {
+      return false;
+    }
+  });
+  const setGuess = (v: boolean) => {
+    setGuessRaw(v);
+    try {
+      localStorage.setItem(GUESS_KEY, v ? '1' : '0');
+    } catch {
+      /* ignore */
+    }
+  };
   const [guessMsg, setGuessMsg] = useState<{ tone: 'ok' | 'info'; text: string } | null>(null);
   const [showList, setShowList] = useState(false);
   const [status, setStatus] = useState<'done' | 'skipped' | undefined>();
@@ -102,8 +134,13 @@ function GameView({ meta }: { meta: GameMeta }) {
     }
     setPlyRaw(Math.min(saved, meta.plies));
     setPreview(null);
-    window.scrollTo({ top: 0 });
+    setGuessMsg(null);
   }, [meta.id, meta.plies, storeKey]);
+
+  /** after a step, bring the new comment back into view if the reader had scrolled down a long one */
+  const toTop = () => {
+    if (window.scrollY > 0) window.scrollTo({ top: 0 });
+  };
 
   const line = useMemo(() => {
     if (!game) return null;
@@ -130,6 +167,7 @@ function GameView({ meta }: { meta: GameMeta }) {
       } catch {
         /* ignore */
       }
+      if (window.scrollY > 0) window.scrollTo({ top: 0 });
     },
     [total, storeKey],
   );
@@ -180,6 +218,8 @@ function GameView({ meta }: { meta: GameMeta }) {
     const actual = game.moves[ply].san;
     const ok = san === actual;
     setPlyRaw(ply + 1);
+    setPreview(null);
+    toTop();
     try {
       localStorage.setItem(storeKey, String(ply + 1));
     } catch {
@@ -237,18 +277,18 @@ function GameView({ meta }: { meta: GameMeta }) {
             canGuess && <div className="feedback info small" style={{ marginTop: 6 }}>{chess?.turn() === 'w' ? 'Trắng' : 'Đen'} đi. Bạn sẽ đi nước nào?</div>
           )}
           <div className="gm-nav">
-            <Button kind="ghost" onClick={() => setPly(0)} disabled={ply === 0}>
+            <button type="button" className="btn btn-ghost" onClick={() => setPly(0)} disabled={ply === 0} aria-label="Về đầu ván" title="Về đầu ván">
               ⏮
-            </Button>
-            <Button kind="ghost" onClick={() => setPly(ply - 1)} disabled={ply === 0}>
+            </button>
+            <button type="button" className="btn btn-ghost" onClick={() => setPly(ply - 1)} disabled={ply === 0} aria-label="Nước trước" title="Nước trước">
               ◀
-            </Button>
+            </button>
             <Button kind="primary" onClick={() => setPly(ply + 1)} disabled={atEnd}>
               {ply === 0 ? 'Bắt đầu ▶' : atEnd ? 'Hết ván' : 'Nước tiếp ▶'}
             </Button>
-            <Button kind="ghost" onClick={() => setPly(total)} disabled={atEnd}>
+            <button type="button" className="btn btn-ghost" onClick={() => setPly(total)} disabled={atEnd} aria-label="Tới cuối ván" title="Tới cuối ván">
               ⏭
-            </Button>
+            </button>
           </div>
           <div className="row-between tiny muted" style={{ marginTop: 6 }}>
             <span>

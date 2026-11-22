@@ -38,8 +38,14 @@ export default function Learn({ route }: { route: Route }) {
   const lessonId = route.parts[0] === 'lesson' ? route.parts[1] : undefined;
   if (lessonId) {
     const lesson = lessonById(lessonId);
-    if (!lesson) return <p>Không tìm thấy bài học.</p>;
-    return <LessonView key={lesson.id} lesson={lesson} progress={progress} setProgress={setProgress} />;
+    if (!lesson)
+      return (
+        <div>
+          <p>Không tìm thấy bài học.</p>
+          <Button onClick={() => navigate('learn')}>‹ Về lộ trình</Button>
+        </div>
+      );
+    return <LessonGate key={lesson.id} lesson={lesson} progress={progress} setProgress={setProgress} />;
   }
   return <Overview progress={progress} setProgress={setProgress} />;
 }
@@ -66,13 +72,38 @@ function doneKeys(l: Lesson, p: LessonProgress): Set<string> {
   }
   return out;
 }
+/**
+ * A lesson is done only once "Đã học" was pressed on its summary. It used to also count as done as soon as every exercise
+ * was passed, so the roadmap showed ✓ while the summary still offered "Đã học" and today's plan did not tick.
+ */
 function lessonDone(l: Lesson, p: LessonProgress) {
-  if (p.status[l.id] === 'done') return true;
-  if (p.status[l.id] === 'skipped') return false;
-  if (l.blocks.some((b) => b.kind === 'practice')) return false;
-  const keys = doneKeys(l, p);
-  const ex = l.blocks.map((b, i) => ({ b, i })).filter(({ b }) => b.kind === 'task' || b.kind === 'puzzles' || b.kind === 'squares' || b.kind === 'lichess');
-  return ex.length > 0 && ex.every(({ b, i }) => keys.has(exerciseKey(b, i)));
+  return p.status[l.id] === 'done';
+}
+
+/** puzzles a puzzle-set block draws from (deterministic order: short puzzles first, then by id) */
+function setCandidates(all: Puzzle[], block: PuzzleSetBlock): Puzzle[] {
+  const [lo, hi] = block.rating;
+  const cands = all.filter((p) => p.rating >= lo && p.rating <= hi && block.themes.some((t) => p.themes.includes(t)));
+  return cands.sort((a, b) => a.moves.length - b.moves.length || (a.id < b.id ? -1 : 1));
+}
+
+/**
+ * Loads the puzzle base first when the lesson has puzzle sets: a set with no puzzle to deal (theme missing from the
+ * bundled base) is left out, otherwise it showed an empty slide and locked "Đã học" forever.
+ */
+function LessonGate({ lesson, progress, setProgress }: { lesson: Lesson; progress: LessonProgress; setProgress: (p: LessonProgress) => void }) {
+  const needs = lesson.blocks.some((b) => b.kind === 'puzzles');
+  const [all, setAll] = useState<Puzzle[] | null>(null);
+  useEffect(() => {
+    if (needs) loadPuzzles().then(setAll);
+  }, [needs]);
+  const empty = useMemo(() => {
+    const out = new Set<number>();
+    if (all) lesson.blocks.forEach((b, i) => b.kind === 'puzzles' && setCandidates(all, b).length === 0 && out.add(i));
+    return out;
+  }, [all, lesson]);
+  if (needs && !all) return <Spinner label="Đang tải bài học..." />;
+  return <LessonView lesson={lesson} progress={progress} setProgress={setProgress} hidden={empty} />;
 }
 const lessonSkipped = (l: Lesson, p: LessonProgress) => p.status[l.id] === 'skipped';
 
@@ -331,9 +362,10 @@ function chunksOf(md: string): { title: string; md: string }[] {
   return out;
 }
 
-function buildSlides(lesson: Lesson): Slide[] {
+function buildSlides(lesson: Lesson, hidden: Set<number>): Slide[] {
   const slides: Slide[] = [];
   lesson.blocks.forEach((b, i) => {
+    if (hidden.has(i)) return;
     if (b.kind === 'text') {
       chunksOf(b.md).forEach((c, k) => slides.push({ kind: 'text', title: c.title, block: i, chunk: k, diagrams: [] }));
     } else if (b.kind === 'example') {
@@ -356,7 +388,7 @@ function buildSlides(lesson: Lesson): Slide[] {
 
 const slideKey = (id: string) => `lesson-slide:${id}`;
 
-function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progress: LessonProgress; setProgress: (p: LessonProgress) => void }) {
+function LessonView({ lesson, progress, setProgress, hidden }: { lesson: Lesson; progress: LessonProgress; setProgress: (p: LessonProgress) => void; hidden: Set<number> }) {
   const idx = LESSONS.indexOf(lesson);
   const prev = LESSONS[idx - 1];
   const next = LESSONS[idx + 1];
@@ -365,7 +397,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
   const doneSet = { has: (i: number) => !!lesson.blocks[i] && keys.has(exerciseKey(lesson.blocks[i], i)) };
   const [preview, setPreview] = useState<Preview | null>(null);
   const [practiceDone, setPracticeDone] = useState<Record<string, 1>>(loadPracticeDone);
-  const slides = useMemo(() => buildSlides(lesson), [lesson]);
+  const slides = useMemo(() => buildSlides(lesson, hidden), [lesson, hidden]);
   const [at, setAt] = useState(() => {
     try {
       return Math.min(Number(localStorage.getItem(slideKey(lesson.id)) ?? 0) || 0, slides.length - 1);
@@ -379,7 +411,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
   {
     let n = 0;
     lesson.blocks.forEach((b, i) => {
-      if (b.kind === 'task' || b.kind === 'squares' || b.kind === 'puzzles' || b.kind === 'lichess') taskNo.set(i, ++n);
+      if (!hidden.has(i) && (b.kind === 'task' || b.kind === 'squares' || b.kind === 'puzzles' || b.kind === 'lichess')) taskNo.set(i, ++n);
     });
   }
   const passed = (sl: Slide): boolean | null => {
@@ -489,7 +521,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
               Bài {taskNo.get(i)}: tìm ô {doneSet.has(i) && <Tag tone="good">✓ đã qua</Tag>}
             </h3>
             <p className="small muted">{b.intro}</p>
-            <SquareQuiz targets={b.targets} onDone={() => markDone(i)} />
+            <SquareQuiz targets={b.targets} onDone={() => markDone(i)} storeKey={`squares:${lesson.id}:${exerciseKey(b, i)}`} />
           </Card>
         );
       if (b.kind === 'puzzles') return <PuzzleSet key={i} block={b} n={taskNo.get(i)!} done={doneSet.has(i)} onDone={() => markDone(i)} storeKey={`pset:${lesson.id}:${exerciseKey(b, i)}`} />;
@@ -527,7 +559,9 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
                   {passed(x) ? '✅' : required(x) ? '⬜' : '◻️'} {exerciseLabel(x)}
                   {!required(x) && <span className="tiny muted"> · không bắt buộc</span>}
                 </span>
-                <span className="muted">{passed(x) ? 'xem lại' : 'làm'} ›</span>
+                <span className="muted" style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
+                  {passed(x) ? 'xem lại' : 'làm'} ›
+                </span>
               </div>
             ))}
           </Card>
@@ -537,7 +571,8 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
           missing={missing}
           onMark={async (v) => {
             setProgress(await setLessonStatus(lesson.id, v));
-            if (v === 'done') logActivity('lessons', 1, lesson.title);
+            // written before leaving, so the overview's plan already shows it ticked
+            if (v === 'done') await logActivity('lessons', 1, lesson.title);
             if (v && next) navigate(`learn/lesson/${next.id}`);
             else if (v) navigate('learn');
           }}
@@ -574,7 +609,8 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
   })();
 
   const state = passed(sl);
-  const nextLabel = state === false ? 'Bỏ qua, làm sau' : at === slides.length - 2 ? 'Tổng kết' : 'Tiếp';
+  // not "Bỏ qua": that word is the lesson-level skip on the summary, this only leaves the exercise for later
+  const nextLabel = state === false ? 'Để sau' : at === slides.length - 2 ? 'Tổng kết' : 'Tiếp';
   return (
     <div className="lesson-body slides">
       <div className="slide-head">
@@ -770,7 +806,7 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
   // progress survives leaving the slide (e.g. tapping the slide button by mistake)
   const saved = useMemo(() => {
     try {
-      return JSON.parse(localStorage.getItem(storeKey) ?? 'null') as { round: number; i: number; results: boolean[] } | null;
+      return JSON.parse(localStorage.getItem(storeKey) ?? 'null') as { round: number; i: number; results: boolean[]; missed?: number } | null;
     } catch {
       return null;
     }
@@ -779,23 +815,25 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
   // results are recorded the moment a puzzle ends; a puzzle answered before leaving counts as done
   const [i, setI] = useState(Math.max(saved?.i ?? 0, saved?.results?.length ?? 0));
   const [results, setResults] = useState<boolean[]>(saved?.results ?? []);
+  /**
+   * index of the puzzle in play that already had a wrong move. Kept with the rest, so leaving the slide (or reloading)
+   * after a wrong move no longer hands out a fresh "first try".
+   */
+  const [missed, setMissed] = useState<number | null>(saved?.missed ?? null);
   const [cur, setCur] = useState<boolean | null>(null);
   useEffect(() => {
     loadPuzzles().then(setAll);
   }, []);
   useEffect(() => {
     try {
-      localStorage.setItem(storeKey, JSON.stringify({ round, i, results }));
+      localStorage.setItem(storeKey, JSON.stringify({ round, i, results, missed }));
     } catch {
       /* ignore */
     }
-  }, [storeKey, round, i, results]);
+  }, [storeKey, round, i, results, missed]);
   const set = useMemo(() => {
     if (!all) return [];
-    const [lo, hi] = block.rating;
-    const cands = all.filter((p) => p.rating >= lo && p.rating <= hi && block.themes.some((t) => p.themes.includes(t)));
-    // deterministic order: short puzzles first, then by id
-    cands.sort((a, b) => (a.moves.length - b.moves.length) || (a.id < b.id ? -1 : 1));
+    const cands = setCandidates(all, block);
     // spread across themes so a set is not all one theme; each retry round deals the next puzzles
     const perTheme = Math.ceil(block.count / block.themes.length);
     const pick = (r: number) => {
@@ -821,8 +859,10 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
     setResults([]);
     setI(0);
     setCur(null);
+    setMissed(null);
     setRound(round + 1);
   };
+  const missedHere = missed === i && results.length === i;
   return (
     <Card>
       <div className="row-between">

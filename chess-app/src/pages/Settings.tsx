@@ -1,53 +1,81 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button, Card, Seg, Spinner } from '../components/ui';
 import { loadSettings, saveSettings, type Settings as S } from '../lib/storage';
 import type { Route } from '../lib/router';
 import { clear } from 'idb-keyval';
-import { LEVELS_INFO, chooseLevel } from '../lib/level';
+import { LEVELS_INFO, chooseLevel, levelInfo } from '../lib/level';
 import { BOARD_THEMES, applyBoardTheme, currentBoardTheme, type BoardThemeId } from '../lib/boardTheme';
 
 export default function Settings(_: { route: Route }) {
   const [s, setS] = useState<S | null>(null);
   const [saved, setSaved] = useState(false);
   const [board, setBoard] = useState<BoardThemeId>(currentBoardTheme);
+  const savedTimer = useRef(0);
   useEffect(() => {
     loadSettings().then(setS);
+    return () => window.clearTimeout(savedTimer.current);
   }, []);
   if (!s) return <Spinner />;
+  const flashSaved = () => {
+    setSaved(true);
+    window.clearTimeout(savedTimer.current);
+    savedTimer.current = window.setTimeout(() => setSaved(false), 1400);
+  };
   const update = async (next: S) => {
     setS(next);
     await saveSettings(next);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 1200);
+    flashSaved();
   };
+  const level = levelInfo(s.level);
   return (
     <div>
       <h1>Cài đặt</h1>
       <Card>
         <label className="field">
           <span>Tên người dùng Lichess</span>
-          <input value={s.lichessUser} onChange={(e) => update({ ...s, lichessUser: e.target.value })} autoCapitalize="off" />
+          <input
+            value={s.lichessUser}
+            onChange={(e) => update({ ...s, lichessUser: e.target.value })}
+            onBlur={() => s.lichessUser !== s.lichessUser.trim() && update({ ...s, lichessUser: s.lichessUser.trim() })}
+            autoCapitalize="off"
+            autoCorrect="off"
+            spellCheck={false}
+          />
         </label>
         <label className="field">
           <span>Tên người dùng Chess.com</span>
-          <input value={s.chesscomUser} onChange={(e) => update({ ...s, chesscomUser: e.target.value })} autoCapitalize="off" />
+          <input
+            value={s.chesscomUser}
+            onChange={(e) => update({ ...s, chesscomUser: e.target.value })}
+            onBlur={() => s.chesscomUser !== s.chesscomUser.trim() && update({ ...s, chesscomUser: s.chesscomUser.trim() })}
+            autoCapitalize="off"
+            autoCorrect="off"
+            spellCheck={false}
+          />
         </label>
+        <p className="small muted" style={{ margin: 0 }}>
+          Dùng để tải ván của bạn ở tab Phân tích. Không cần mật khẩu.
+        </p>
       </Card>
       <Card>
         <h3>Trình độ của bạn</h3>
         <select
           value={s.level ?? ''}
           onChange={async (e) => {
-            if (e.target.value) setS(await chooseLevel(e.target.value as (typeof LEVELS_INFO)[number]['id']));
+            if (e.target.value) {
+              setS(await chooseLevel(e.target.value as (typeof LEVELS_INFO)[number]['id']));
+              flashSaved();
+            }
           }}
         >
-          <option value="">Chưa chọn</option>
+          {!level && <option value="">Chưa chọn</option>}
           {LEVELS_INFO.map((l) => (
             <option key={l.id} value={l.id}>
               {l.label}
             </option>
           ))}
         </select>
+        {level && <p className="small mt" style={{ marginBottom: 0 }}>{level.desc}</p>}
         <p className="small muted mt">Quyết định bài bắt đầu, mục tiêu mỗi ngày và cấp độ máy mặc định. Rating bài tập chỉ được đặt lại khi bạn giải chưa tới 10 bài.</p>
       </Card>
       <Card>
@@ -60,6 +88,7 @@ export default function Settings(_: { route: Route }) {
               onClick={() => {
                 applyBoardTheme(t.id);
                 setBoard(t.id);
+                flashSaved();
               }}
             >
               <span className="swatch" style={{ ['--l' as string]: t.light, ['--d' as string]: t.dark }} />
@@ -89,8 +118,16 @@ export default function Settings(_: { route: Route }) {
         <Button
           kind="danger"
           onClick={async () => {
-            if (confirm('Xóa toàn bộ tiến độ, ván đã nhập và phân tích?')) {
+            if (confirm('Xóa toàn bộ tiến độ, ván đã nhập, phân tích và cài đặt (tên người dùng, trình độ, màu bàn cờ)? Không thể hoàn tác.')) {
               await clear();
+              // progress also lives in localStorage (game positions, lesson slides, practice marks, play setup...)
+              try {
+                localStorage.clear();
+                sessionStorage.clear();
+              } catch {
+                /* ignore */
+              }
+              location.hash = '#/learn';
               location.reload();
             }
           }}
@@ -98,7 +135,15 @@ export default function Settings(_: { route: Route }) {
           Xóa toàn bộ dữ liệu
         </Button>
       </Card>
-      {saved && <div className="feedback ok">Đã lưu</div>}
+      {saved && (
+        <div
+          className="feedback ok"
+          role="status"
+          style={{ position: 'fixed', left: 16, right: 16, bottom: 'calc(var(--tabbar-h) + 12px + env(safe-area-inset-bottom))', maxWidth: 400, margin: '0 auto', zIndex: 30, textAlign: 'center', boxShadow: 'var(--shadow)', background: 'color-mix(in srgb, var(--good) 15%, var(--bg-2))' }}
+        >
+          ✓ Đã lưu
+        </div>
+      )}
     </div>
   );
 }

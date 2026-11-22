@@ -41,6 +41,19 @@ export default function Book({ route }: { route: Route }) {
   return <Toc book={book} />;
 }
 
+/** last section opened, so "Đọc tiếp" resumes there even when the reader moved on with "Tiếp" without marking */
+const LAST_KEY = 'book-last';
+function loadLast(): string | null {
+  try {
+    return localStorage.getItem(LAST_KEY);
+  } catch {
+    return null;
+  }
+}
+
+/** Part II's chapter "heading" is really game 1's venue (the converter lifted it from the first game), so it is only shown there. */
+const chapterHeading = (pi: number, si: number | null, ch: BookChapter) => (pi === 1 && si !== 0 ? '' : ch.heading);
+
 function Toc({ book }: { book: BookData }) {
   const [lp, setLp] = useState<LessonProgress | null>(null);
   useEffect(() => {
@@ -51,7 +64,9 @@ function Toc({ book }: { book: BookData }) {
   const st = (k: string) => lp?.status[`book:${k.replace(/\//g, '.')}`];
   const doneCount = keys.filter((k) => st(k) === 'done').length;
   const skippedCount = keys.filter((k) => st(k) === 'skipped').length;
-  const nextKey = keys.find((k) => !st(k));
+  const last = loadLast();
+  const lastIdx = last ? keys.indexOf(last) : -1;
+  const nextKey = (lastIdx >= 0 ? keys.slice(lastIdx).find((k) => !st(k)) : undefined) ?? keys.find((k) => !st(k));
   return (
     <div>
       <div className="topbar">
@@ -74,7 +89,7 @@ function Toc({ book }: { book: BookData }) {
         </div>
         {nextKey && (
           <Button kind="primary" className="mt" onClick={() => navigate(`learn/book/${nextKey}`)}>
-            {doneCount + skippedCount > 0 ? 'Đọc tiếp' : 'Bắt đầu đọc'}
+            {doneCount + skippedCount > 0 || lastIdx >= 0 ? 'Đọc tiếp' : 'Bắt đầu đọc'}
           </Button>
         )}
       </Card>
@@ -84,7 +99,7 @@ function Toc({ book }: { book: BookData }) {
           {part.chapters.map((ch, ci) => (
             <div key={ci}>
               <h3 className="mt">
-                {ch.title} <span className="muted small">{ch.heading}</span>
+                {ch.title} <span className="muted small">{chapterHeading(pi, null, ch)}</span>
               </h3>
               {ch.sections.map((sec, si) => (
                 <div key={si} className="list-item" onClick={() => navigate(`learn/book/${pi}/${ci}/${si}`)}>
@@ -103,6 +118,8 @@ function Toc({ book }: { book: BookData }) {
 }
 
 const TOKEN = /⟦(-|\d+)\|([^⟧]*)⟧/g;
+const TOKEN_TEST = /⟦/;
+const SQUARE_TEST = /(?<![\w/])[a-h][1-8](?![\w/])/;
 
 function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: number; si: number }) {
   const ch = book.parts[pi]?.chapters[ci];
@@ -114,8 +131,12 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
   const [status, setStatus] = useState<'done' | 'skipped' | undefined>(undefined);
 
   useEffect(() => {
-    window.scrollTo({ top: 0 });
     setActive(null);
+    try {
+      localStorage.setItem(LAST_KEY, `${pi}/${ci}/${si}`);
+    } catch {
+      /* ignore */
+    }
     loadLessonProgress().then((lp) => {
       const key = `book:${pi}.${ci}.${si}`;
       setStatus(lp.status[key]);
@@ -123,9 +144,31 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
     });
   }, [pi, ci, si]);
 
-  if (!sec) return <p>Không tìm thấy mục.</p>;
+  if (!sec)
+    return (
+      <div>
+        <div className="topbar">
+          <button className="back" onClick={() => navigate('learn/book')} aria-label="Mục lục">
+            ‹
+          </button>
+          <h2 style={{ margin: 0 }}>Không tìm thấy mục</h2>
+        </div>
+        <p className="muted">Đường dẫn này không trỏ tới mục nào trong sách.</p>
+        <Button kind="primary" onClick={() => navigate('learn/book')}>
+          Về mục lục
+        </Button>
+      </div>
+    );
   const all = ch.sections;
-  const prev = si > 0 ? `learn/book/${pi}/${ci}/${si - 1}` : ci > 0 ? `learn/book/${pi}/${ci - 1}/${book.parts[pi].chapters[ci - 1].sections.length - 1}` : null;
+  const lastOf = (p: number, c: number) => `learn/book/${p}/${c}/${book.parts[p].chapters[c].sections.length - 1}`;
+  const prev =
+    si > 0
+      ? `learn/book/${pi}/${ci}/${si - 1}`
+      : ci > 0
+        ? lastOf(pi, ci - 1)
+        : pi > 0
+          ? lastOf(pi - 1, book.parts[pi - 1].chapters.length - 1)
+          : null;
   const next =
     si < all.length - 1
       ? `learn/book/${pi}/${ci}/${si + 1}`
@@ -211,6 +254,10 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
   const isGame = pi === 1;
   const shownFen = active?.fen ?? (isGame ? undefined : firstFig?.fen) ?? 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
   const chess = safeChess(shownFen);
+  // chapter openers and a few prose-only sections have nothing to show on a board
+  const hasBoard = sec.moves.length > 0 || sec.blocks.some((b) => (b.t === 'fig' && b.fen) || ((b.t === 'p' || b.t === 'h') && (TOKEN_TEST.test(b.text) || SQUARE_TEST.test(b.text))));
+  const sub = chapterHeading(pi, si, ch);
+  const subtitle = sub && sub !== sec.heading ? `${ch.title} · ${sub}` : ch.title;
 
   return (
     <div className="lesson-body">
@@ -219,14 +266,13 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
           ‹
         </button>
         <div>
-          <div className="tiny muted">
-            {ch.title} · {ch.heading}
-          </div>
+          <div className="tiny muted">{subtitle}</div>
           <h2 style={{ margin: 0 }}>{sec.heading}</h2>
         </div>
       </div>
 
-      <div className="book-layout">
+      <div className={hasBoard ? 'book-layout' : undefined}>
+        {hasBoard && (
         <div className="book-board" ref={boardRef}>
           <Board
             fen={shownFen}
@@ -247,6 +293,7 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
             )}
           </div>
         </div>
+        )}
 
         <div className="book-text">
           {sec.blocks.map((b, i) => {
@@ -299,7 +346,8 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
           <span />
         )}
         {next && (
-          <Button kind="primary" onClick={() => navigate(next)}>
+          // while the section is unmarked, "✓ Đã học" above is the main way on; this one only turns the page
+          <Button kind={status ? 'primary' : 'ghost'} onClick={() => navigate(next)}>
             Tiếp ›
           </Button>
         )}

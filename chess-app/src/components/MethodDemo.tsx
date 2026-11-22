@@ -102,7 +102,13 @@ export default function MethodDemo({ pos, method }: { pos: PracticePosition; met
           {i === 0 ? 'Thế cờ ban đầu' : `${moveNo(i) || `${moveNo(i - 1).replace('.', '')}...`} ${f.san}`}
           {box && <span> · Vua {def === 'w' ? 'Trắng' : 'Đen'} còn {box.size} ô (vùng tô đỏ)</span>}
         </div>
-        <div>{i === 0 ? 'Bấm ▶ để xem từng bước.' : note || (f.mover === pos.me ? '' : 'Đối phương đi.')}</div>
+        <div>
+          {i === 0
+            ? playing
+              ? 'Lời giải đang tự chạy. Bấm ⏸ Dừng để xem chậm, rồi ◀ ▶ để đi từng nước.'
+              : 'Bấm “▶ Chạy” để xem tự động, hoặc nút ▶ bên phải để đi từng nước.'
+            : note || (f.mover === pos.me ? '' : 'Đối phương đi.')}
+        </div>
       </div>
       <div className="row" style={{ justifyContent: 'center', gap: 6 }}>
         <Button kind="ghost" onClick={() => { setPlaying(false); setI(0); }}>⏮</Button>

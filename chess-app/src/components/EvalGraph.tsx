@@ -14,23 +14,28 @@ export default function EvalGraph({
   const h = 70;
   const n = plies.length;
   if (!n) return <svg className="evalgraph" viewBox={`0 0 ${w} ${h}`} />;
-  const x = (i: number) => (i / Math.max(1, n)) * w;
-  const y = (wp: number) => h - (wp / 100) * h;
-  let d = `M0 ${y(50)}`;
+  // keep a small margin so the mistake dots at the edges (mate, last move) are not cut in half
+  const pad = 4;
+  const x = (i: number) => (i / Math.max(1, n)) * (w - 2 * pad) + pad;
+  const y = (wp: number) => h - pad - (wp / 100) * (h - 2 * pad);
+  let d = `M0 ${y(50)} L${x(0)} ${y(50)}`;
   plies.forEach((p, i) => {
     d += ` L${x(i + 1)} ${y(winPercent(p.evalAfter))}`;
   });
-  const area = `${d} L${w} ${h} L0 ${h} Z`;
+  const last = n ? y(winPercent(plies[n - 1].evalAfter)) : y(50);
+  const area = `${d} L${w} ${last} L${w} ${h} L0 ${h} Z`;
   const cx = x(current + 1);
   return (
     <svg
       className="evalgraph"
       viewBox={`0 0 ${w} ${h}`}
       preserveAspectRatio="none"
+      role="img"
+      aria-label="Biểu đồ đánh giá theo từng nước, chạm để tới nước đó"
       onClick={(e) => {
         const rect = (e.currentTarget as SVGSVGElement).getBoundingClientRect();
-        const frac = (e.clientX - rect.left) / rect.width;
-        onSelect?.(Math.min(n - 1, Math.max(0, Math.round(frac * n) - 1)));
+        const frac = ((e.clientX - rect.left) / rect.width) * w;
+        onSelect?.(Math.min(n - 1, Math.max(-1, Math.round(((frac - pad) / (w - 2 * pad)) * n) - 1)));
       }}
     >
       <rect x={0} y={0} width={w} height={h} fill="#3b3b3b" />

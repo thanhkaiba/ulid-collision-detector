@@ -39,11 +39,10 @@ export default function Videos() {
               Giai đoạn {s.n + 1}: {s.title} <span className="muted small">Elo {s.elo}</span>
             </h2>
             {vs.map((v) => (
-              <Card key={v.url}>
+              // the whole card opens the video: a small title link is hard to hit on a phone
+              <a key={v.url} className="card card-click" href={v.url} target="_blank" rel="noreferrer" style={{ display: 'block', color: 'inherit', textDecoration: 'none' }}>
                 <div className="row-between">
-                  <a href={v.url} target="_blank" rel="noreferrer">
-                    <b>{v.title}</b>
-                  </a>
+                  <b style={{ color: 'var(--accent)' }}>{v.title} ↗</b>
                   <Tag tone={v.lang === 'vi' ? 'good' : 'info'}>{v.lang === 'vi' ? 'VI' : 'EN'}</Tag>
                 </div>
                 <div className="small muted">
@@ -52,7 +51,7 @@ export default function Videos() {
                 <p className="small" style={{ margin: '6px 0 0' }}>
                   {v.note}
                 </p>
-              </Card>
+              </a>
             ))}
           </div>
         );
