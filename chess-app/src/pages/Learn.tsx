@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import Board from '../components/Board';
 import PuzzleBoard, { type PuzzleOutcome } from '../components/PuzzleBoard';
 import { Button, Card, Spinner, Tag } from '../components/ui';
-import { LESSONS, STAGES, lessonById, type Block, type Lesson, type PuzzleSetBlock, type TaskBlock, type LichessBlock } from '../data/lessons';
+import { LESSONS, STAGES, lessonById, type Block, type Lesson, type PuzzleSetBlock, type TaskBlock, type LichessBlock, type ExampleBlock } from '../data/lessons';
+import MethodDemo from '../components/MethodDemo';
 import { renderMd } from '../lib/markdown';
 import { loadPuzzles, type Puzzle } from '../lib/puzzles';
 import { loadLessonProgress, saveLessonProgress, setLessonStatus, loadSettings, type LessonProgress, type Settings } from '../lib/storage';
@@ -316,6 +317,11 @@ function buildSlides(lesson: Lesson): Slide[] {
   lesson.blocks.forEach((b, i) => {
     if (b.kind === 'text') {
       chunksOf(b.md).forEach((c, k) => slides.push({ kind: 'text', title: c.title, block: i, chunk: k, diagrams: [] }));
+    } else if (b.kind === 'example') {
+      // the example takes over the slide of the text section right before it
+      const last = slides[slides.length - 1];
+      if (last?.kind === 'text' && last.block === i - 1) slides.pop();
+      slides.push({ kind: 'diagram', block: i });
     } else if (b.kind === 'diagram') {
       // a diagram belongs with the text right before it
       const last = slides[slides.length - 1];
@@ -436,6 +442,19 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
       );
     if (sl.kind === 'diagram') {
       const b = lesson.blocks[sl.block];
+      if (b.kind === 'example') {
+        // the text it illustrates goes on the same slide
+        const prev = lesson.blocks[sl.block - 1];
+        const chunks = prev?.kind === 'text' ? chunksOf(prev.md) : [];
+        const last = chunks[chunks.length - 1];
+        return (
+          <div className="slide-text">
+            {last?.title && <h2 className="slide-title">{last.title}</h2>}
+            {last && renderMd(last.md, (t) => renderRich(t, { onShow: setPreview, seqStart: START_FEN }))}
+            <ExampleView block={b} />
+          </div>
+        );
+      }
       return b.kind === 'diagram' ? <Diagram block={b} onShow={setPreview} /> : null;
     }
     if (sl.kind === 'exercise') {
@@ -580,12 +599,21 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
 
 function Diagram({ block, onShow }: { block: Extract<Block, { kind: 'diagram' }>; onShow: (p: Preview) => void }) {
   const chess = useMemo(() => new Chess(block.fen), [block.fen]);
-  const shapes: DrawShape[] = (block.marks ?? []).map((m) =>
-    m.length >= 4 ? { orig: m.slice(0, 2) as Key, dest: m.slice(2, 4) as Key, brush: 'green' } : { orig: m as Key, brush: 'green' },
-  );
+  const shapes: DrawShape[] = (block.marks ?? []).map((raw) => {
+    const [m, brush = 'green'] = raw.split(':');
+    return m.length >= 4 ? { orig: m.slice(0, 2) as Key, dest: m.slice(2, 4) as Key, brush } : { orig: m as Key, brush };
+  });
   return (
     <Card>
-      <Board fen={block.fen} orientation={block.orientation ?? 'white'} turnColor={chess.turn() === 'w' ? 'white' : 'black'} viewOnly shapes={shapes} check={chess.inCheck() ? (chess.turn() === 'w' ? 'white' : 'black') : false} />
+      <Board
+        fen={block.fen}
+        orientation={block.orientation ?? 'white'}
+        turnColor={chess.turn() === 'w' ? 'white' : 'black'}
+        lastMove={block.lastMove ? [block.lastMove.slice(0, 2) as Key, block.lastMove.slice(2, 4) as Key] : undefined}
+        viewOnly
+        shapes={shapes}
+        check={chess.inCheck() ? (chess.turn() === 'w' ? 'white' : 'black') : false}
+      />
       <p className="small mt" style={{ margin: '8px 0 0' }}>
         {renderRich(block.caption, { onShow, seqStart: block.fen, squareFen: block.fen, braces: { before: block.fen, after: block.fen } })}
       </p>
@@ -630,6 +658,33 @@ function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: num
 }
 
 /** A fixed puzzle from the Lichess database (a real game): passes when the student finds the moves. */
+/** A Lichess puzzle played out as a worked example with one note per move. */
+function ExampleView({ block }: { block: ExampleBlock }) {
+  const [p, setP] = useState<Puzzle | null | undefined>(undefined);
+  useEffect(() => {
+    loadPuzzles().then((all) => setP(all.find((x) => x.id === block.id) ?? null));
+  }, [block.id]);
+  const data = useMemo(() => {
+    if (!p) return null;
+    const c = new Chess(p.fen);
+    c.move({ from: p.moves[0].slice(0, 2), to: p.moves[0].slice(2, 4), promotion: p.moves[0][4] as 'q' | undefined });
+    const fen = c.fen();
+    const me = c.turn();
+    const demo: [string, string?][] = [];
+    p.moves.slice(1).forEach((u, k) => demo.push([c.move({ from: u.slice(0, 2), to: u.slice(2, 4), promotion: u[4] as 'q' | undefined }).san, block.notes[k]]));
+    return { pos: { id: block.id, group: 'Chiếu hết cơ bản' as const, title: '', fen, me, goal: 'win' as const, brief: '', hint: '', level: 1 as const }, method: { steps: [], demo } };
+  }, [p, block]);
+  if (p === undefined) return <Spinner label="Đang tải ví dụ..." />;
+  if (!data) return null;
+  return (
+    <Card>
+      <div className="tiny muted">VÍ DỤ · {data.pos.me === 'w' ? 'TRẮNG' : 'ĐEN'} ĐI</div>
+      <p className="small" style={{ margin: '4px 0 0' }}>{block.caption}</p>
+      <MethodDemo pos={data.pos} method={data.method} />
+    </Card>
+  );
+}
+
 function LichessTask({ block, n, done, onDone }: { block: LichessBlock; n: number; done: boolean; onDone: () => void }) {
   const [p, setP] = useState<Puzzle | null | undefined>(undefined);
   const [finished, setFinished] = useState<PuzzleOutcome | null>(null);
@@ -700,7 +755,8 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
     }
   }, [storeKey]);
   const [round, setRound] = useState(saved?.round ?? 0);
-  const [i, setI] = useState(saved?.i ?? 0);
+  // results are recorded the moment a puzzle ends; a puzzle answered before leaving counts as done
+  const [i, setI] = useState(Math.max(saved?.i ?? 0, saved?.results?.length ?? 0));
   const [results, setResults] = useState<boolean[]>(saved?.results ?? []);
   const [cur, setCur] = useState<boolean | null>(null);
   useEffect(() => {
@@ -736,9 +792,10 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
   if (!all) return <Spinner label="Đang tải bài tập..." />;
   if (!set.length) return null;
   const p = set[Math.min(i, set.length - 1)];
-  const finishedAll = results.length >= set.length;
+  const finishedAll = i >= set.length;
   const need = Math.ceil(set.length * 0.6);
   const right = results.filter(Boolean).length;
+  const left = set.length - results.length;
   const retry = () => {
     setResults([]);
     setI(0);
@@ -756,20 +813,35 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
         </span>
       </div>
       {block.intro && <p className="small muted">{block.intro}</p>}
-      {!done && !finishedAll && <p className="tiny muted">Để qua: đúng ngay lần đầu ít nhất {need}/{set.length} bài.</p>}
+      {!finishedAll && (
+        <p className="tiny muted">
+          Để qua: đúng ngay lần đầu ít nhất {need}/{set.length} bài. Đang đúng {right}/{results.length}.
+          {right >= need ? ' Đã đủ để qua!' : right + left < need ? ' Bộ này không còn đủ câu để qua, làm hết rồi làm bộ khác.' : ''}
+        </p>
+      )}
       {!finishedAll && (
         <>
-          <PuzzleBoard key={`${round}-${p.id}`} fen={p.fen} moves={p.moves} playerFirst={p.playerFirst} prompt={puzzlePrompt(p)} onFinish={(ok) => setCur(ok)} />
+          <PuzzleBoard
+            key={`${round}-${p.id}`}
+            fen={p.fen}
+            moves={p.moves}
+            playerFirst={p.playerFirst}
+            prompt={puzzlePrompt(p)}
+            onFinish={(ok) => {
+              setCur(ok);
+              const r = [...results, ok];
+              setResults(r);
+              // pass as soon as enough puzzles are right, no need to finish the set first
+              if (r.filter(Boolean).length >= need) onDone();
+            }}
+          />
           {cur !== null && (
             <div className="row mt">
               <Button
                 kind="primary"
                 onClick={() => {
-                  const r = [...results, cur];
-                  setResults(r);
                   setCur(null);
                   setI(i + 1);
-                  if (r.length >= set.length && r.filter(Boolean).length >= need) onDone();
                 }}
               >
                 {i + 1 >= set.length ? 'Xem kết quả' : `Câu tiếp (${i + 2}/${set.length}) →`}

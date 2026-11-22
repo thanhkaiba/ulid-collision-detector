@@ -27,8 +27,10 @@ export interface DiagramBlock {
   kind: 'diagram';
   fen: string;
   caption: string;
-  /** arrows / circles as UCI squares: "e2e4" arrow, "e4" circle */
+  /** arrows / circles as UCI squares: "e2e4" arrow, "e4" circle; ":red", ":blue", ":yellow" picks the colour */
   marks?: string[];
+  /** highlight the move that led to the position (UCI) */
+  lastMove?: string;
   /** the verifier checks this is a checkmate position */
   mate?: boolean;
   orientation?: 'white' | 'black';
@@ -65,7 +67,16 @@ export interface LichessBlock {
   explain?: string;
 }
 
-export type Block = TaskBlock | PuzzleSetBlock | DiagramBlock | TextBlock | SquaresBlock | PracticeBlock | LichessBlock;
+/** A Lichess puzzle shown as a worked example: the board plays the solution by itself, one note per move. */
+export interface ExampleBlock {
+  kind: 'example';
+  id: string;
+  caption: string;
+  /** one note per solution half-move (after the opponent's setup move) */
+  notes: string[];
+}
+
+export type Block = TaskBlock | PuzzleSetBlock | DiagramBlock | TextBlock | SquaresBlock | PracticeBlock | LichessBlock | ExampleBlock;
 
 export interface Resource {
   label: string;

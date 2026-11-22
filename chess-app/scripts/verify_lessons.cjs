@@ -82,6 +82,12 @@ const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -10
   for (const lesson of LESSONS) {
     if (only && lesson.id !== only) continue;
     lesson.blocks.forEach((b, i) => {
+      if (b.kind === 'example') {
+        const row = PUZZLES.find((r) => r[0] === b.id);
+        if (!row) return fail(lesson, i, `example puzzle ${b.id} is not in src/data/puzzles.json`);
+        if (row[2].split(' ').length - 1 !== b.notes.length) fail(lesson, i, `example ${b.id}: ${b.notes.length} notes for ${row[2].split(' ').length - 1} moves`);
+        return;
+      }
       if (b.kind === 'lichess') {
         checks++;
         const row = PUZZLES.find((r) => r[0] === b.id);
@@ -109,7 +115,7 @@ const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -10
           } catch {
             /* chess.js refuses some flipped positions; the original FEN was valid */
           }
-          for (const m of b.kind === 'diagram' ? b.marks ?? [] : []) if (!/^([a-h][1-8]){1,2}$/.test(m)) fail(lesson, i, `bad mark ${m}`);
+          for (const m of b.kind === 'diagram' ? b.marks ?? [] : []) if (!/^([a-h][1-8]){1,2}(:(green|red|blue|yellow))?$/.test(m)) fail(lesson, i, `bad mark ${m}`);
         } catch (e) {
           fail(lesson, i, `invalid FEN ${b.fen}: ${e.message}`);
         }

@@ -501,10 +501,15 @@ Khó hơn, cần khoảng 15 đến 20 nước. Xe cắt vua đối phương tro
       {
         kind: 'text',
         md: `### Đòn đôi (fork)
-Một quân tấn công **hai mục tiêu cùng lúc**; đối phương chỉ cứu được một. Mã là vua của đòn đôi vì tấn công theo cách không quân nào chặn được. Đòn đôi có chiếu là mạnh nhất vì đối phương bắt buộc phải lo cho vua.
-
-### Ghim (pin)
-Quân đứng giữa bị "dính" vì phía sau nó là quân giá trị hơn (hoặc vua). Ghim vào vua là **ghim tuyệt đối**: quân bị ghim không được phép rời khỏi đường ghim. Cách khai thác: **tấn công thêm quân bị ghim** bằng tốt hoặc quân khác.`,
+Một quân tấn công **hai mục tiêu cùng lúc**; đối phương chỉ cứu được một. Mã là vua của đòn đôi vì tấn công theo cách không quân nào chặn được. Đòn đôi có chiếu là mạnh nhất vì đối phương bắt buộc phải lo cho vua.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '8/5ppk/1P4rp/2n5/K3Q3/6P1/8/8 w - - 3 61',
+        lastMove: 'b7c5',
+        marks: ['c5a4:red', 'c5e4:red'],
+        orientation: 'black',
+        caption: 'Đen đi Nc5+. Mã c5 cùng lúc tấn công Vua a4 và Hậu e4 (mũi tên đỏ). Trắng chỉ cứu được một.',
       },
       {
         kind: 'lichess',
@@ -523,6 +528,19 @@ Quân đứng giữa bị "dính" vì phía sau nó là quân giá trị hơn (h
         id: 'IoVwY',
         prompt: 'Tốt cũng biết đòn đôi. Tìm nước tốt vừa chiếu vua vừa đánh tượng.',
         explain: 'Tốt c6 chiếu vua d7 và tấn công tượng b7. Tốt c6 có tốt d5 bảo vệ, nên tượng ăn tốt thì tốt d5 ăn lại tượng (cũng là chiếu). Đòn đôi bằng tốt chỉ ăn quân được khi tốt đó có quân bảo vệ.',
+      },
+      {
+        kind: 'text',
+        md: `### Ghim (pin)
+Quân đứng giữa bị "dính" vì phía sau nó là quân giá trị hơn (hoặc vua). Ghim vào vua là **ghim tuyệt đối**: quân bị ghim không được phép rời khỏi đường ghim. Cách khai thác: **tấn công thêm quân bị ghim** bằng tốt hoặc quân khác.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '3r2k1/pp3ppp/4p3/8/5PR1/2P3P1/PP4P1/3rQ1K1 w - - 1 27',
+        lastMove: 'd4d1',
+        marks: ['d1g1:red', 'e1:yellow'],
+        orientation: 'black',
+        caption: 'Đen đi Rd1. Xe d1 tấn công Hậu e1 (vòng tròn), và ngay sau nó trên cùng đường là Vua g1. Hậu bị ghim: rời khỏi đường thẳng đó là để Vua bị chiếu, luật không cho.',
       },
       {
         kind: 'lichess',
@@ -550,13 +568,15 @@ Quân đứng giữa bị "dính" vì phía sau nó là quân giá trị hơn (h
       {
         kind: 'text',
         md: `### Xiên (skewer)
-Ngược với ghim: quân **giá trị cao đứng trước**, khi nó buộc phải đi thì quân phía sau bị bắt. Thường là chiếu vua rồi lấy hậu/xe đứng sau.
-
-### Tấn công mở (discovered attack)
-Di chuyển một quân để **mở đường** cho quân phía sau tấn công. Quân di chuyển nên tạo đe dọa riêng (chiếu, bắt quân) để thành **hai đe dọa cùng lúc**. Chiếu mở (discovered check) là dạng mạnh nhất.
-
-### Chiếu hết hàng cuối (back rank)
-Sau khi nhập thành, ba tốt f-g-h che vua nhưng cũng nhốt nó. Nếu hàng cuối không có xe/hậu canh, một xe xuống là hết. Phòng ngừa: đi h3 (hoặc h6) tạo "lỗ thở" khi trung cuộc đã ổn định.`,
+Ngược với ghim: quân **giá trị cao đứng trước**, khi nó buộc phải đi thì quân phía sau bị bắt. Thường là chiếu vua rồi lấy hậu/xe đứng sau.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '8/5p2/2r2k1R/8/5P2/5K2/5P2/8 b - - 0 53',
+        lastMove: 'h5h6',
+        marks: ['h6c6:red', 'f6:yellow'],
+        orientation: 'white',
+        caption: 'Trắng đi Rxh6+. Xe h6 chiếu Vua f6 (vòng tròn). Vua phải tránh, và Xe c6 đứng ngay sau nó trên cùng đường bị ăn. Đó là xiên.',
       },
       {
         kind: 'lichess',
@@ -565,10 +585,36 @@ Sau khi nhập thành, ba tốt f-g-h che vua nhưng cũng nhốt nó. Nếu hà
         explain: 'Tượng chiếu vua e3 dọc đường chéo c1-h6. Vua tránh đi, tượng ăn tượng f4 đứng sau lưng vua trên cùng đường chéo.',
       },
       {
+        kind: 'text',
+        md: `### Tấn công mở (discovered attack)
+Di chuyển một quân để **mở đường** cho quân phía sau tấn công. Quân di chuyển nên tạo đe dọa riêng (chiếu, bắt quân) để thành **hai đe dọa cùng lúc**. Chiếu mở (discovered check) là dạng mạnh nhất.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '3r4/pp2kpp1/6p1/8/4nP2/1P4P1/P2R1KBP/8 w - - 5 34',
+        lastMove: 'd6e4',
+        marks: ['d8d2:red', 'e4f2:blue'],
+        orientation: 'black',
+        caption: 'Đen đi Ne4+. Mã vừa rời d6, mở đường cho Xe d8 đánh Xe d2 (mũi tên đỏ). Cùng lúc Mã e4 chiếu Vua (mũi tên xanh). Hai đe dọa một lúc, Trắng chỉ đỡ được một.',
+      },
+      {
         kind: 'lichess',
         id: 'Vq7Es',
         prompt: 'Mã d3 đang chắn giữa xe d2 và xe đen d8. Tìm tấn công mở.',
         explain: 'Mã ăn tốt e5 kèm chiếu. Mã vừa rời d3 thì xe d2 nhìn thẳng tới xe d8. Đen phải lo chiếu, Trắng ăn xe d8.',
+      },
+      {
+        kind: 'text',
+        md: `### Chiếu hết hàng cuối (back rank)
+Sau khi nhập thành, ba tốt f-g-h che vua nhưng cũng nhốt nó. Nếu hàng cuối không có xe/hậu canh, một xe xuống là hết. Phòng ngừa: đi h3 (hoặc h6) tạo "lỗ thở" khi trung cuộc đã ổn định.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '2r2rk1/5pp1/p3p2p/1p2P3/7Q/PP4R1/1P4PP/4q2K w - - 0 32',
+        lastMove: 'c1e1',
+        marks: ['e1h1:red', 'g2:yellow', 'h2:yellow'],
+        orientation: 'black',
+        caption: 'Đen đi Qxe1#. Hậu chiếu Vua h1 dọc hàng cuối. Vua không lên được vì chính các Tốt g2, h2 của mình chắn (vòng tròn), không quân nào che được: chiếu hết.',
       },
       {
         kind: 'lichess',

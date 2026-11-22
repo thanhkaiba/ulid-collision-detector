@@ -169,19 +169,43 @@ Tượng tấn công mã d4; sau 5.Be3 Qf6 6.c3 Nge7 Đen thoải mái. Nếu 5.
       {
         kind: 'text',
         md: `### Tư duy chung
-Khi đòn của bạn bị **một quân duy nhất** cản trở, hãy hỏi: làm sao đẩy nó đi (đánh lạc hướng), kéo vua/hậu vào ô xấu (dụ), hay đơn giản đổi nó đi (diệt quân bảo vệ)?
-
-### Đánh lạc hướng (deflection)
-Ép quân phòng thủ rời khỏi vị trí, thường bằng cách thí quân. Ví dụ kinh điển: hậu đối phương canh hàng cuối, bạn thí xe để kéo hậu đi rồi chiếu hết.
-
-### Dụ (attraction / decoy)
-Kéo vua hoặc hậu đến một ô cụ thể để đòn đôi hoặc chiếu hết xuất hiện. Thí một quân kéo vua (hoặc hậu) vào ô mà mã đòn đôi được vua và hậu là mẫu rất hay gặp.
-
-### Diệt quân bảo vệ (removing the defender)
-Bắt hoặc đổi quân đang bảo vệ mục tiêu. Hãy nhìn xem mỗi quân đối phương đang "làm việc" gì; quân nào làm hai việc là quân quá tải (overloaded).`,
+Khi đòn của bạn bị **một quân duy nhất** cản trở, hãy hỏi: làm sao đẩy nó đi (đánh lạc hướng), kéo vua/hậu vào ô xấu (dụ), hay đơn giản đổi nó đi (diệt quân bảo vệ)?`,
+      },
+      {
+        kind: 'text',
+        md: `### Đánh lạc hướng (deflection)
+Ép quân phòng thủ rời khỏi vị trí, thường bằng cách thí quân: quân phòng thủ ăn quân thí thì bỏ mặc thứ nó đang giữ. Hay gặp: hậu đối phương canh hàng cuối, bạn thí xe kéo hậu đi rồi chiếu hết.`,
+      },
+      {
+        kind: 'example',
+        id: 'cZjMw',
+        caption: 'Xe f4 của Trắng chỉ có Vua e3 bảo vệ. Đen thí Xe để kéo Vua đi chỗ khác.',
+        notes: ['Thí Xe ở d3, chiếu Vua.', 'Vua ăn Xe, và rời khỏi e3, nơi nó đang bảo vệ Xe f4.', 'Xe f4 không còn ai bảo vệ: Vua đen ăn nó.'],
       },
       { kind: 'puzzles', themes: ['deflection'], rating: [1000, 1400], count: 6, intro: 'Đánh lạc hướng: 6 bài.' },
+      {
+        kind: 'text',
+        md: `### Dụ (attraction / decoy)
+Kéo vua hoặc hậu đến một ô cụ thể để đòn đôi hoặc chiếu hết xuất hiện. Thí một quân kéo vua (hoặc hậu) vào ô mà mã đòn đôi được vua và hậu là mẫu rất hay gặp.`,
+      },
+      {
+        kind: 'example',
+        id: 'fS5i6',
+        caption: 'Hàng cuối của Đen chỉ có Xe f8 canh. Trắng thí Hậu để kéo Vua về f8.',
+        notes: ['Thí Hậu, ăn Xe f8 kèm chiếu.', 'Vua buộc phải ăn lại, và bị kéo về f8.', 'Xe chiếu hết: Tốt h6 giữ ô g7, còn Tốt e7, f7 của chính Đen chắn đường.'],
+      },
       { kind: 'puzzles', themes: ['attraction'], rating: [1000, 1400], count: 6, intro: 'Dụ vua/hậu: 6 bài.' },
+      {
+        kind: 'text',
+        md: `### Diệt quân bảo vệ (removing the defender)
+Bắt hoặc đổi quân đang bảo vệ mục tiêu. Hãy nhìn xem mỗi quân đối phương đang "làm việc" gì; quân nào làm hai việc là quân quá tải (overloaded).`,
+      },
+      {
+        kind: 'example',
+        id: 'DbnYx',
+        caption: 'Tượng c4 của Trắng chỉ có Hậu d4 bảo vệ. Đen đổi đúng quân bảo vệ đó.',
+        notes: ['Đen đổi Hậu.', 'Trắng ăn lại bằng Tốt c3.', 'Tượng c4 mất người bảo vệ: Mã ăn không.'],
+      },
       { kind: 'puzzles', themes: ['capturingDefender'], rating: [1000, 1400], count: 6, intro: 'Diệt quân bảo vệ: 6 bài.' },
     ],
     resources: [
