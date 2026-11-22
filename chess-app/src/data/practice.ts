@@ -22,6 +22,34 @@ export interface PracticePosition {
   /** the method, shown on request */
   hint: string;
   level: 1 | 2 | 3;
+  /** the student plays the other side of the position (see swapPractice) */
+  swapped?: boolean;
+}
+
+/**
+ * The same position from the other side: the attacker's technique is played by the engine and the student tries to
+ * escape (a draw counts as escaping), or, for a defensive position, the student tries to beat the engine's defence.
+ */
+export function swapPractice(p: PracticePosition): PracticePosition {
+  const me = p.me === 'w' ? 'b' : 'w';
+  const side = me === 'w' ? 'Trắng' : 'Đen';
+  if (p.goal === 'draw')
+    return {
+      ...p,
+      me,
+      swapped: true,
+      goal: 'win',
+      hold: 25,
+      brief: `Đổi bên: bạn cầm ${side} và thử thắng máy. Máy phòng thủ đúng kỹ thuật bạn vừa học. Theo lý thuyết thế này hòa, hãy xem bạn có tìm ra kẽ hở không.`,
+    };
+  return {
+    ...p,
+    me,
+    swapped: true,
+    goal: 'draw',
+    hold: undefined,
+    brief: `Đổi bên: bạn cầm ${side} và bị tấn công. Máy dùng đúng kỹ thuật. Thử chạy trốn: nếu ván kết thúc hòa (ví dụ bạn ăn được quân của máy, hoặc máy làm pat) là bạn thắng thử thách.`,
+  };
 }
 
 export const PRACTICE: PracticePosition[] = [

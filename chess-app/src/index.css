@@ -404,3 +404,7 @@ input, select, textarea { border-radius: var(--r-md); padding: 8px 11px; }
 .demo-moves .mv.noted { color: var(--fg); font-weight: 600; }
 .demo-moves .mv.cur { background: var(--accent); color: var(--accent-fg); }
 .board-wrap cg-board square.box { background: rgba(217, 21, 21, 0.22); }
+
+.side-switch { margin: 0 0 8px; }
+.side-switch .seg { width: 100%; }
+.side-switch .seg-btn { flex: 1; }

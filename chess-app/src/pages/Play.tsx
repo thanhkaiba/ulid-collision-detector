@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Chess } from 'chess.js';
 import type { Key, Color } from 'chessground/types';
 import Board from '../components/Board';
@@ -11,7 +11,7 @@ import { fmtClock, gameEnd, playUci, turnColor, kingInCheckColor, toDests, needs
 import { upsertGames, type StoredGame } from '../lib/storage';
 import { navigate, type Route } from '../lib/router';
 import { logActivity } from '../lib/activity';
-import { PRACTICE, practiceById, loadPracticeDone, markPracticeDone, type PracticePosition } from '../data/practice';
+import { PRACTICE, practiceById, loadPracticeDone, markPracticeDone, swapPractice, type PracticePosition } from '../data/practice';
 import { METHODS } from '../data/practiceMethods';
 import MethodDemo from '../components/MethodDemo';
 
@@ -40,23 +40,46 @@ export default function Play({ route }: { route: Route }) {
   return <PlaySetup />;
 }
 
+/** Choose which side of a practice position to play: apply the technique, or face it. */
+function SideSwitch({ pos, swap, onChange }: { pos: PracticePosition; swap: boolean; onChange: (v: boolean) => void }) {
+  const labels = pos.goal === 'draw' ? ['Thủ hòa (đúng bài)', 'Đổi bên: thử thắng máy'] : ['Áp dụng kỹ thuật', 'Đổi bên: thử chạy trốn'];
+  return (
+    <div className="side-switch">
+      <Seg
+        value={swap ? 'b' : 'a'}
+        onChange={(v) => onChange(v === 'b')}
+        options={[
+          { value: 'a', label: labels[0] },
+          { value: 'b', label: labels[1] },
+        ]}
+      />
+    </div>
+  );
+}
+
 function PracticeRun({ pos, back }: { pos: PracticePosition; back: string }) {
   const [attempt, setAttempt] = useState(0);
+  const [swap, setSwap] = useState(false);
+  const shown = swap ? swapPractice(pos) : pos;
   return (
-    <GameView
-      key={attempt}
-      me={pos.me}
-      level={PRACTICE_LEVEL}
-      tc={NO_CLOCK}
-      practice={pos}
-      onExit={() => navigate(back)}
-      onRematch={() => setAttempt((a) => a + 1)}
-    />
+    <>
+      <GameView
+        key={`${attempt}-${swap}`}
+        me={shown.me}
+        level={PRACTICE_LEVEL}
+        tc={NO_CLOCK}
+        practice={shown}
+        onExit={() => navigate(back)}
+        onRematch={() => setAttempt((a) => a + 1)}
+        switcher={<SideSwitch pos={pos} swap={swap} onChange={setSwap} />}
+      />
+    </>
   );
 }
 
 /** Steps of the method plus the animated model solution, in a sheet over the game. */
-function MethodSheet({ pos, onClose }: { pos: PracticePosition; onClose: () => void }) {
+function MethodSheet({ pos: shownPos, onClose }: { pos: PracticePosition; onClose: () => void }) {
+  const pos = practiceById(shownPos.id) ?? shownPos;
   const method = METHODS[pos.id];
   return (
     <div className="sheet-backdrop" onClick={onClose}>
@@ -92,13 +115,16 @@ function MethodSheet({ pos, onClose }: { pos: PracticePosition; onClose: () => v
 /** A practice position played right inside a lesson slide: the game starts as soon as the slide is shown. */
 export function PracticeInline({ pos, onGoal }: { pos: PracticePosition; onGoal?: () => void }) {
   const [attempt, setAttempt] = useState(0);
+  const [swap, setSwap] = useState(false);
+  const shown = swap ? swapPractice(pos) : pos;
   return (
     <GameView
-      key={attempt}
-      me={pos.me}
+      key={`${attempt}-${swap}`}
+      me={shown.me}
       level={PRACTICE_LEVEL}
       tc={NO_CLOCK}
-      practice={pos}
+      practice={shown}
+      switcher={<SideSwitch pos={pos} swap={swap} onChange={setSwap} />}
       embedded
       onGoal={onGoal}
       onExit={() => setAttempt((a) => a + 1)}
@@ -245,6 +271,7 @@ function GameView({
   practice,
   embedded,
   onGoal,
+  switcher,
 }: {
   me: 'w' | 'b';
   level: Level;
@@ -257,6 +284,8 @@ function GameView({
   embedded?: boolean;
   /** practice: called when the goal is reached */
   onGoal?: () => void;
+  /** practice: control shown above the board to change sides */
+  switcher?: ReactNode;
 }) {
   const startFen = practice?.fen;
   /** a practice position where Black moves first: shift the move list by one cell */
@@ -267,6 +296,8 @@ function GameView({
   const [goalMet, setGoalMet] = useState(false);
   const [slipped, setSlipped] = useState(false);
   const [showHint, setShowHint] = useState(false);
+  /** practice: mate distance the engine sees for itself (shown when the student faces the technique) */
+  const [engineMate, setEngineMate] = useState<number | null>(null);
   const [version, setVersion] = useState(0);
   const [pending, setPending] = useState<{ from: Key; to: Key } | null>(null);
   const [clock, setClock] = useState({ w: tc.initial * 1000, b: tc.initial * 1000 });
@@ -291,8 +322,11 @@ function GameView({
         const ok = reached ?? (practice.goal === 'draw' ? drawn || won : won);
         if (ok) {
           setGoalMet(true);
-          markPracticeDone(practice.id);
-          onGoal?.();
+          // the swapped side is an experiment: it does not count as passing the exercise
+          if (!practice.swapped) {
+            markPracticeDone(practice.id);
+            onGoal?.();
+          }
         }
       }
       if (!logged.current) {
@@ -354,8 +388,15 @@ function GameView({
         // engine's own verdict (its point of view) tells whether the goal is still within reach
         const l = res.lines[0];
         const engineCp = l ? (l.mate !== undefined ? (l.mate > 0 ? 10000 : -10000) : (l.cp ?? 0)) : 0;
-        setSlipped(practice.goal === 'draw' ? engineCp >= 250 : engineCp > -150);
+        setEngineMate(l?.mate !== undefined && l.mate > 0 ? l.mate : null);
+        // in the swapped role the engine is expected to stay ahead: no "you slipped" warning there
+        setSlipped(practice.swapped ? false : practice.goal === 'draw' ? engineCp >= 250 : engineCp > -150);
         const myMoves = Math.ceil(chess.history().length / 2);
+        if (practice.goal === 'win' && practice.hold && myMoves >= practice.hold && engineCp > -150) {
+          finish('1/2-1/2', `Sau ${practice.hold} nước bạn vẫn chưa thắng được: máy giữ vững thế hòa.`, false);
+          setThinking(false);
+          return;
+        }
         if (practice.goal === 'draw' && practice.hold && myMoves >= practice.hold && engineCp < 150) {
           finish('1/2-1/2', `Bạn đã giữ vững ${practice.hold} nước, máy không tìm ra đường thắng.`, true);
           setThinking(false);
@@ -384,6 +425,22 @@ function GameView({
               }
             if ((queen && mine - theirs >= 4) || (theirs === 0 && mine >= 5))
               finish(me === 'w' ? '1-0' : '0-1', 'Bạn đã có ưu thế quyết định. Phần còn lại là chiếu hết cơ bản.', true);
+          }
+          if (practice?.swapped && practice.goal === 'draw' && !chess.isGameOver()) {
+            // facing a winning technique: stop once the engine has queened with a decisive lead
+            let mine = 0;
+            let theirs = 0;
+            let queen = false;
+            for (const row of chess.board())
+              for (const sq of row) {
+                if (!sq) continue;
+                if (sq.color === me) mine += PIECE_VAL[sq.type];
+                else {
+                  theirs += PIECE_VAL[sq.type];
+                  if (sq.type === 'q') queen = true;
+                }
+              }
+            if (queen && theirs - mine >= 4) finish(me === 'w' ? '0-1' : '1-0', 'Máy đã phong Hậu, phần còn lại chỉ là chiếu hết.', false);
           }
         }
       }
@@ -490,9 +547,17 @@ function GameView({
   );
 
   const resultText = practice && over
-    ? goalMet
-      ? 'Đạt mục tiêu!'
-      : 'Chưa đạt mục tiêu'
+    ? practice.swapped
+      ? practice.goal === 'draw'
+        ? goalMet
+          ? 'Bạn đã thoát được!'
+          : 'Không thoát được'
+        : goalMet
+          ? 'Bạn đã thắng máy!'
+          : 'Máy giữ được hòa'
+      : goalMet
+        ? 'Đạt mục tiêu!'
+        : 'Chưa đạt mục tiêu'
     : over
     ? over.result === '1/2-1/2'
       ? 'Hòa'
@@ -511,6 +576,7 @@ function GameView({
           <h2 style={{ margin: 0 }}>{practice ? practice.title : 'Ván đấu'}</h2>
         </div>
       )}
+      {practice && switcher}
       <div className="board-layout">
         <div>
           {bar(top)}
@@ -529,8 +595,21 @@ function GameView({
         <div>
           {practice && !over && (
             <Card>
-              <div className="tiny muted">{practice.goal === 'draw' ? 'MỤC TIÊU: THỦ HÒA' : practice.goal === 'mate' ? 'MỤC TIÊU: CHIẾU HẾT' : 'MỤC TIÊU: PHONG HẬU HOẶC THẮNG QUÂN'}</div>
-              {!embedded && <p className="small" style={{ margin: '4px 0' }}>{practice.brief}</p>}
+              <div className="tiny muted">
+                {practice.swapped
+                  ? practice.goal === 'draw'
+                    ? 'THỬ THÁCH: THOÁT KHỎI THẾ THUA'
+                    : 'THỬ THÁCH: THẮNG MÁY'
+                  : practice.goal === 'draw'
+                    ? 'MỤC TIÊU: THỦ HÒA'
+                    : practice.goal === 'mate'
+                      ? 'MỤC TIÊU: CHIẾU HẾT'
+                      : 'MỤC TIÊU: PHONG HẬU HOẶC THẮNG QUÂN'}
+              </div>
+              {(!embedded || practice.swapped) && <p className="small" style={{ margin: '4px 0' }}>{practice.brief}</p>}
+              {practice.swapped && engineMate !== null && (
+                <div className="feedback info small">Máy thấy chiếu hết bạn sau {engineMate} nước. Đi khéo thì con số này giảm chậm hơn, nhưng không thoát được.</div>
+              )}
               <Button kind="default" className="mt" onClick={() => setShowHint(true)}>
                 ▶ Cách làm và lời giải mẫu
               </Button>
@@ -545,6 +624,13 @@ function GameView({
             <Card>
               <h3>{resultText}</h3>
               <p className="muted small">{over.reason}</p>
+              {practice.swapped && !goalMet && (
+                <p className="small">
+                  {practice.goal === 'draw'
+                    ? 'Đúng như lý thuyết: khi bên tấn công đi đúng kỹ thuật thì bên phòng thủ không thoát được, đi kiểu gì cũng vậy. Hòa chỉ xảy ra khi bên tấn công đi sai: để mất quân, hoặc dồn Vua hết nước đi mà không chiếu (pat).'
+                    : 'Đúng như lý thuyết: bên phòng thủ đi đúng thì thế này hòa, dù bên tấn công thử cách nào.'}
+                </p>
+              )}
               {!goalMet && (
                 <Button kind="default" onClick={() => setShowHint(true)}>
                   ▶ Xem cách làm và lời giải mẫu
