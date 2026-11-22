@@ -201,10 +201,10 @@ function Overview({ progress, setProgress }: { progress: LessonProgress; setProg
       <h1>Lộ trình học cờ</h1>
       <Card>
         <div className="row-between">
-          <span>
+          <span style={{ whiteSpace: 'nowrap' }}>
             Hoàn thành <b>{doneCount}</b>/{total} bài{skippedCount > 0 && <span className="muted small"> · bỏ qua {skippedCount}</span>}
           </span>
-          <button className="chip" onClick={() => setPicking(true)}>
+          <button className="chip chip-trim" onClick={() => setPicking(true)} title={level.label}>
             {level.label} · đổi
           </button>
         </div>

@@ -4,10 +4,12 @@ import { loadSettings, saveSettings, type Settings as S } from '../lib/storage';
 import type { Route } from '../lib/router';
 import { clear } from 'idb-keyval';
 import { LEVELS_INFO, chooseLevel } from '../lib/level';
+import { BOARD_THEMES, applyBoardTheme, currentBoardTheme, type BoardThemeId } from '../lib/boardTheme';
 
 export default function Settings(_: { route: Route }) {
   const [s, setS] = useState<S | null>(null);
   const [saved, setSaved] = useState(false);
+  const [board, setBoard] = useState<BoardThemeId>(currentBoardTheme);
   useEffect(() => {
     loadSettings().then(setS);
   }, []);
@@ -47,6 +49,24 @@ export default function Settings(_: { route: Route }) {
           ))}
         </select>
         <p className="small muted mt">Quyết định bài bắt đầu, mục tiêu mỗi ngày và cấp độ máy mặc định. Rating bài tập chỉ được đặt lại khi bạn giải chưa tới 10 bài.</p>
+      </Card>
+      <Card>
+        <h3>Màu bàn cờ</h3>
+        <div className="theme-grid">
+          {BOARD_THEMES.map((t) => (
+            <button
+              key={t.id}
+              className={`theme-swatch ${board === t.id ? 'active' : ''}`}
+              onClick={() => {
+                applyBoardTheme(t.id);
+                setBoard(t.id);
+              }}
+            >
+              <span className="swatch" style={{ ['--l' as string]: t.light, ['--d' as string]: t.dark }} />
+              <span>{t.label}</span>
+            </button>
+          ))}
+        </div>
       </Card>
       <Card>
         <h3>Độ sâu phân tích ván</h3>
