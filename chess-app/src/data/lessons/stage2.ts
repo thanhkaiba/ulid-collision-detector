@@ -35,15 +35,15 @@ Tấn công vào **chân chuỗi** (d4 bằng ...c5, ...Nc6, ...Qb6). Bên có k
       },
       {
         kind: 'diagram',
-        fen: 'r1bq1rk1/pp2bppp/2n2n2/2pp4/3P4/2N1PN2/PP2BPPP/R2Q1RK1 b - - 0 1',
-        caption: 'Đen có tốt treo c5-d5: hai tốt đứng cạnh nhau, không có tốt bạn ở cột b và e (thường sinh ra sau khi đổi tốt ở c5 và d5). Trắng muốn ép ...c4 hoặc ...d4 rồi phong tỏa; Đen giữ hai tốt linh hoạt và chuẩn bị ...d4 đúng lúc. Ván Fischer – Spassky trong "Từng nước một" là ví dụ mẫu.',
+        fen: 'r2q1rk1/pb2bppp/5n2/2pp4/8/2N1PN2/PPQ1BPPP/2RR2K1 w - - 0 1',
+        caption: 'Đen có tốt treo c5-d5: hai tốt đứng cạnh nhau, không có tốt bạn ở cột b và e (thường sinh ra sau các trao đổi ở trung tâm, ví dụ ...exd5 rồi ...bxc5). Trắng muốn ép ...c4 hoặc ...d4 rồi phong tỏa; Đen giữ hai tốt linh hoạt và chuẩn bị ...d4 đúng lúc. Ván Fischer – Spassky trong "Từng nước một" là ví dụ mẫu.',
       },
       {
         kind: 'diagram',
         fen: 'r1bq1rk1/pp1nbppp/2p2n2/3p4/3P1B2/2NBP3/PPQ2PPP/R3K1NR w KQ - 0 1',
         caption: 'Carlsbad. Kế hoạch Trắng: Nf3, O-O, Rab1, b4-b5 (tấn công thiểu số). Kế hoạch Đen: ...Re8, ...Nf8, đổi tượng ô trắng bằng ...Bf5 (thường qua ...g6, ...Ne6-g7), hoặc đưa mã tới e4.',
       },
-      { kind: 'puzzles', themes: ['advancedPawn', 'promotion'], rating: [1500, 1900], count: 6, intro: 'Tốt thông và phong cấp trong trung cuộc: 6 bài.' },
+      { kind: 'puzzles', themes: ['advancedPawn', 'promotion'], rating: [1500, 1900], count: 6, intro: 'Tốt tiến xa, tốt thông và phong cấp: 6 bài.' },
     ],
     resources: [
       { label: 'Sách: Pawn Structure Chess (Andrew Soltis)', url: 'https://www.google.com/search?q=Pawn+Structure+Chess+Soltis', note: 'Chuẩn mực về chủ đề này.' },
@@ -78,8 +78,8 @@ Trị giá khoảng nửa tốt ở thế mở. Có cặp tượng: tránh đổ
       },
       {
         kind: 'diagram',
-        fen: '8/5pk1/4p1p1/3pP2p/3P1P2/6P1/4B1K1/3b4 w - - 0 1',
-        caption: 'Hai tượng cùng màu nhưng Trắng có tượng xấu (tốt d4, e5, f4 cùng màu ô), Đen có tượng tốt. Dù vật chất bằng nhau, Đen đứng tốt hơn rõ rệt.',
+        fen: '8/5pk1/1b2p1p1/3pP2p/3P1P1P/4B1P1/6K1/8 w - - 0 1',
+        caption: 'Hai tượng cùng màu (ô đen) nhưng Trắng có tượng xấu (tốt d4, e5, f4, g3, h4 cùng màu ô với tượng), Đen có tượng tốt (tốt Đen đều ở ô trắng, tượng b6 lại nhắm vào tốt Trắng). Dù vật chất bằng nhau, Đen đứng tốt hơn rõ rệt.',
       },
       {
         kind: 'diagram',
