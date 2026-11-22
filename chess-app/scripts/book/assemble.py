@@ -103,3 +103,6 @@ nsec = sum(len(c['sections']) for p in out['parts'] for c in p['chapters'])
 left = sum(len(re.findall(r'\[\?', json.dumps(b, ensure_ascii=False))) for p in out['parts'] for c in p['chapters'] for s in c['sections'] for b in s['blocks'])
 print(f'wrote {dst}: {nsec} sections ({merged} move-line headings merged), {fixed} proofread units applied, {len(missing)} untranslated units, {left} placeholders left')
 if missing: print('untranslated:', missing[:20])
+# last step: hand fixes for the remaining table cells, and positions for the hand-corrected (loose) moves
+import subprocess, os
+subprocess.run(['node', os.path.join(os.path.dirname(os.path.abspath(__file__)), 'resolve_loose.cjs'), dst], check=True)

@@ -7,3 +7,4 @@
 5. `resync.py`: khi sửa bộ chuyển đổi hay hình, id nước đi thay đổi; script này mang bản dịch cũ sang kết quả mới (`translations/synced.json`) và liệt kê các đoạn cần hiệu đính (`in_R*.json`). `pos.cjs <id>` in hình, thế cờ và nguyên văn quanh một đoạn để người hiệu đính đối chiếu.
 6. Dịch theo lô `tr/in_*.json` → `tr/out_*.json` theo `TRANSLATION_GUIDE.md` (token ⟦id|nước⟧ phải giữ nguyên).
 7. `assemble.py` → `src/data/book.json`.
+8. `resolve_loose.cjs` (được `assemble.py` gọi ở cuối): điền 5 ô bảng sửa tay của mục 25, rồi gán vị trí cho các nước đã hiệu đính tay `⟦-|SAN⟧` bằng cách thử lần lượt trên thế cờ sau nước liền trước, trước nước liền trước, cùng thế cờ nhưng đổi lượt (nước đe dọa) và hình gần nhất. Khớp số nước hoặc nối liền nước trước thì coi là chắc chắn; còn lại được đánh dấu “suy ra” (phần tử thứ 5 của nước đi = 1, hiển thị viền đứt). `--report` in danh sách từng nước.

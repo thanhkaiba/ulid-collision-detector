@@ -264,3 +264,5 @@ label.field > span { display: block; font-size: 0.85rem; color: var(--fg-2); mar
 .wk-bar { margin: 8px 0; }
 .wk-bar .progress { margin-top: 3px; }
 .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.mv-chip.inferred { background: transparent; outline: 1px dashed color-mix(in srgb, var(--info) 60%, transparent); outline-offset: -1px; }
+.mv-chip.inferred.active { background: var(--accent); outline: 0; }

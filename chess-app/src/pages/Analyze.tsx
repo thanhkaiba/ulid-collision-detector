@@ -656,7 +656,7 @@ function Bar({ label, value, max, note, tone = 'accent' }: { label: string; valu
         <span className="muted">{note ?? value}</span>
       </div>
       <div className="progress">
-        <div style={{ width: `${max > 0 ? Math.max(2, (100 * value) / max) : 0}%`, background: tone === 'bad' ? 'var(--bad)' : undefined }} />
+        <div style={{ width: `${max > 0 && value > 0 ? Math.max(2, (100 * value) / max) : 0}%`, background: tone === 'bad' ? 'var(--bad)' : undefined }} />
       </div>
     </div>
   );

@@ -10,8 +10,8 @@ import MarkBar from '../components/MarkBar';
 import { logActivity } from '../lib/activity';
 
 /* ---------- data shape produced by scripts/book (Capablanca, Chess Fundamentals, public domain) ---------- */
-type BookMoveRow = [number, string, string, string]; // id, san, uci, fen
-interface BookMove { id: number; san: string; uci: string; fen: string }
+type BookMoveRow = [number, string, string, string, 1?]; // id, san, uci, fen, inferred position
+interface BookMove { id: number; san: string; uci: string; fen: string; inferred?: boolean }
 type BookBlock =
   | { t: 'p' | 'h'; text: string }
   | { t: 'fig'; n: number; fen?: string; displayOnly?: boolean }
@@ -108,7 +108,7 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
   const ch = book.parts[pi]?.chapters[ci];
   const sec = ch?.sections[si];
   const [active, setActive] = useState<{ fen: string; lastMove?: Key[]; label?: string; squares?: Key[] } | null>(null);
-  const moveById = useMemo(() => new Map<number, BookMove>((sec?.moves ?? []).map((m) => [m[0], { id: m[0], san: m[1], uci: m[2], fen: m[3] }])), [sec]);
+  const moveById = useMemo(() => new Map<number, BookMove>((sec?.moves ?? []).map((m) => [m[0], { id: m[0], san: m[1], uci: m[2], fen: m[3], inferred: !!m[4] }])), [sec]);
   const boardRef = useRef<HTMLDivElement>(null);
   const statusKey = `book:${pi}.${ci}.${si}`;
   const [status, setStatus] = useState<'done' | 'skipped' | undefined>(undefined);
@@ -186,7 +186,11 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
       const label = m[2];
       if (id !== null && moveById.has(id)) {
         out.push(
-          <button key={k++} className={`mv-chip ${active?.label === label && active?.fen === moveById.get(id)!.fen ? 'active' : ''}`} onClick={() => onMove(id, label)}>
+          <button
+            key={k++}
+            className={`mv-chip ${moveById.get(id)!.inferred ? 'inferred' : ''} ${active?.label === label && active?.fen === moveById.get(id)!.fen ? 'active' : ''}`}
+            onClick={() => onMove(id, label)}
+          >
             {label}
           </button>,
         );
