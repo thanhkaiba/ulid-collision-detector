@@ -608,7 +608,7 @@ function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: num
       )}
       {showExplain && (
         <div className="task-box small">
-          <b>{finished !== null ? 'Giải thích:' : 'Gợi ý lời giải:'}</b> {renderRich(block.explain, { onShow, seqStart: block.fen, squareFen: block.fen })}
+          <b>{finished !== null ? 'Giải thích:' : 'Gợi ý lời giải:'}</b> {renderRich(block.explain, { onShow, seqStart: block.fen, squareFen: block.fen, braces: { before: block.fen, after: block.fen } })}
         </div>
       )}
     </Card>

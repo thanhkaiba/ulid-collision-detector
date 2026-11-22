@@ -139,7 +139,14 @@ const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -10
         }
         continue;
       }
-      // 'best': solution must be as good as the engine's best (within 30cp), and the engine's best must be accepted
+      // 'best': the solution must actually work: after it the student must not stand worse.
+      // (Being the engine's top move is not enough: in a lost position the top move can still lose,
+      // e.g. a "fork" whose pawn is simply taken.)
+      {
+        const sol = await go(b.fen, ` searchmoves ${first}`);
+        if (toWin(sol) < -100) fail(lesson, i, `${first} leaves the student worse (${JSON.stringify(sol)}): the idea does not work`);
+      }
+      // and it must be as good as the engine's best (within 30cp), and the engine's best must be accepted
       if (!accepted.includes(overall.best)) {
         const mine = await go(b.fen, ` searchmoves ${first}`);
         const diff = toWin(overall) - toWin(mine);

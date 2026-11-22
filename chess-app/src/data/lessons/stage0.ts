@@ -526,18 +526,18 @@ Quân đứng giữa bị "dính" vì phía sau nó là quân giá trị hơn (h
       },
       {
         kind: 'task',
-        fen: '7k/8/8/2n1b3/8/3P4/8/4K3 w - - 0 1',
+        fen: '7k/8/8/2n1b3/8/2PP4/6K1/8 w - - 0 1',
         moves: ['d3d4'],
         prompt: 'Tốt cũng biết đòn đôi. Trắng đi.',
-        explain: 'd4! tấn công cả mã c5 lẫn tượng e5. Đen chỉ cứu được một quân.',
+        explain: 'd4! tấn công cả mã c5 lẫn tượng e5. Tốt d4 có tốt c3 bảo vệ, nên nếu tượng ăn {d4 Bxd4 cxd4} thì Đen mất tượng đổi lấy một tốt. Đen chỉ cứu được một trong hai quân. Lưu ý: đòn đôi bằng tốt chỉ ăn được khi tốt đó được bảo vệ, nếu không đối phương ăn luôn tốt.',
         verify: 'best',
       },
       {
         kind: 'task',
-        fen: '4k3/8/8/4n3/8/8/5P2/4RK2 w - - 0 1',
+        fen: '4k3/8/3p4/4n3/8/8/5P2/4RK2 w - - 0 1',
         moves: ['f2f4'],
-        prompt: 'Mã e5 bị ghim vào vua bởi xe e1. Khai thác ghim.',
-        explain: 'f4! Mã không được di chuyển (ghim tuyệt đối) nên tốt sẽ bắt nó nước sau.',
+        prompt: 'Mã e5 bị ghim vào vua bởi xe e1, và có tốt d6 bảo vệ. Khai thác ghim.',
+        explain: 'f4! Mã bị ghim vào vua nên không được chạy, tốt f4 sẽ ăn mã ở nước sau: Trắng đổi một tốt lấy một mã. Ăn ngay bằng xe {^Rxe5+ dxe5} thì lỗ, vì tốt d6 ăn lại xe. Tấn công quân bị ghim bằng quân rẻ nhất là cách khai thác ghim.',
         verify: 'best',
       },
       {
