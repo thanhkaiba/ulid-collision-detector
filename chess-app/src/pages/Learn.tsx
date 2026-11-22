@@ -863,6 +863,8 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
     setRound(round + 1);
   };
   const missedHere = missed === i && results.length === i;
+  // say why only when coming back to it: right after the wrong move the board already says so
+  const resumedMiss = missedHere && saved?.missed === i && (saved?.results?.length ?? 0) === i;
   return (
     <Card>
       <div className="row-between">
@@ -876,10 +878,12 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
       {block.intro && <p className="small muted">{block.intro}</p>}
       {!finishedAll && (
         <p className="tiny muted">
-          Để qua: đúng ngay lần đầu ít nhất {need}/{set.length} bài. Đang đúng {right}/{results.length}.
+          Để qua: đúng ngay lần đầu ít nhất {need}/{set.length} bài.
+          {results.length > 0 && ` Đang đúng ${right}/${results.length}.`}
           {right >= need ? ' Đã đủ để qua!' : right + left < need ? ' Bộ này không còn đủ câu để qua, làm hết rồi làm bộ khác.' : ''}
         </p>
       )}
+      {!finishedAll && missedHere && cur === null && <p className="tiny muted">Câu này đã đi sai một lần nên không tính là đúng ngay lần đầu, nhưng vẫn cần giải xong.</p>}
       {!finishedAll && (
         <>
           <PuzzleBoard
@@ -888,7 +892,9 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
             moves={p.moves}
             playerFirst={p.playerFirst}
             prompt={puzzlePrompt(p)}
-            onFinish={(ok) => {
+            onWrong={() => setMissed(i)}
+            onFinish={(solved) => {
+              const ok = solved && !missedHere;
               setCur(ok);
               const r = [...results, ok];
               setResults(r);
