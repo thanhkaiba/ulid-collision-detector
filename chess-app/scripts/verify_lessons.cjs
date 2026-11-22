@@ -85,6 +85,16 @@ const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -10
         try {
           const c = new Chess(b.fen);
           if (b.kind === 'diagram' && b.mate && !c.isCheckmate()) fail(lesson, i, 'diagram flagged mate is not checkmate');
+          // the side that just moved may not be in check (an impossible position)
+          const t = b.fen.split(' ');
+          t[1] = t[1] === 'w' ? 'b' : 'w';
+          t[3] = '-';
+          try {
+            if (new Chess(t.join(' ')).inCheck()) fail(lesson, i, 'impossible position: the side not to move is in check');
+          } catch {
+            /* chess.js refuses some flipped positions; the original FEN was valid */
+          }
+          for (const m of b.kind === 'diagram' ? b.marks ?? [] : []) if (!/^([a-h][1-8]){1,2}$/.test(m)) fail(lesson, i, `bad mark ${m}`);
         } catch (e) {
           fail(lesson, i, `invalid FEN ${b.fen}: ${e.message}`);
         }
@@ -120,7 +130,23 @@ const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -10
         }
       }
       if (!ok) continue;
-      if (b.verify === 'line') continue;
+      if (b.verify === 'line') {
+        // a guided line still must not ask for a clearly bad move: each student move within 2 pawns of the best
+        // (a hanging piece next to the demonstrated rule was missed this way once)
+        const cl = new Chess(b.fen);
+        for (let k = 0; k < b.moves.length; k++) {
+          if (k % 2 === 0) {
+            const o = await go(cl.fen());
+            if (o.best !== b.moves[k]) {
+              const m = await go(cl.fen(), ` searchmoves ${b.moves[k]}`);
+              const d = toWin(o) - toWin(m);
+              if (d > 200) fail(lesson, i, `guided move #${k} ${b.moves[k]} is ${d}cp worse than ${o.best}`);
+            }
+          }
+          cl.move({ from: b.moves[k].slice(0, 2), to: b.moves[k].slice(2, 4), promotion: b.moves[k][4] });
+        }
+        continue;
+      }
       const first = b.moves[0];
       const accepted = [first, ...(b.alternatives ?? [])];
       const overall = await go(b.fen);

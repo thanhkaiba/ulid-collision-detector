@@ -175,7 +175,7 @@ Khi đòn của bạn bị **một quân duy nhất** cản trở, hãy hỏi: l
 Ép quân phòng thủ rời khỏi vị trí, thường bằng cách thí quân. Ví dụ kinh điển: hậu đối phương canh hàng cuối, bạn thí xe để kéo hậu đi rồi chiếu hết.
 
 ### Dụ (attraction / decoy)
-Kéo vua hoặc hậu đến một ô cụ thể để đòn đôi hoặc chiếu hết xuất hiện. Thí hậu kéo vua rồi mã đòn đôi là mẫu rất hay gặp.
+Kéo vua hoặc hậu đến một ô cụ thể để đòn đôi hoặc chiếu hết xuất hiện. Thí một quân kéo vua (hoặc hậu) vào ô mà mã đòn đôi được vua và hậu là mẫu rất hay gặp.
 
 ### Diệt quân bảo vệ (removing the defender)
 Bắt hoặc đổi quân đang bảo vệ mục tiêu. Hãy nhìn xem mỗi quân đối phương đang "làm việc" gì; quân nào làm hai việc là quân quá tải (overloaded).`,
@@ -185,7 +185,7 @@ Bắt hoặc đổi quân đang bảo vệ mục tiêu. Hãy nhìn xem mỗi qu�
       { kind: 'puzzles', themes: ['capturingDefender'], rating: [1000, 1400], count: 6, intro: 'Diệt quân bảo vệ: 6 bài.' },
     ],
     resources: [
-      { label: 'Sách: Chess Tactics for Students (John Bain)', url: 'https://www.google.com/search?q=Chess+Tactics+for+Students+John+Bain', note: 'Có bản tiếng Anh dễ đọc, mỗi chủ đề 25 bài.' },
+      { label: 'Sách: Chess Tactics for Students (John Bain)', url: 'https://www.google.com/search?q=Chess+Tactics+for+Students+John+Bain', note: 'Có bản tiếng Anh dễ đọc, chia theo từng chủ đề chiến thuật.' },
     ],
   },
 
@@ -226,8 +226,8 @@ Bắt hoặc đổi quân đang bảo vệ mục tiêu. Hãy nhìn xem mỗi qu�
       },
       {
         kind: 'diagram',
-        fen: '5rk1/5p1p/8/8/8/8/8/5RQK b - - 0 1',
-        caption: 'Hậu dọc cột g: nhưng Đen đi được f6 hay Kh8 nên đây CHƯA phải mate. Ở ví dụ này Trắng còn thiếu quân khóa cột f. Kiểm tra kỹ các ô thoát trước khi thí quân.',
+        fen: '5rk1/5p1p/8/8/8/8/8/6QK b - - 0 1',
+        caption: 'Hậu chiếu dọc cột g nhưng vua Đen còn chạy được sang h8 nên đây CHƯA phải mate. Trắng còn thiếu một quân khống chế h8. Kiểm tra kỹ các ô thoát trước khi thí quân.',
       },
       { kind: 'puzzles', themes: ['smotheredMate', 'arabianMate', 'anastasiaMate'], rating: [1000, 1500], count: 6, intro: 'Mẫu ngạt, Ả Rập, Anastasia: 6 bài.' },
       { kind: 'puzzles', themes: ['bodenMate', 'hookMate', 'dovetailMate', 'doubleBishopMate'], rating: [1000, 1500], count: 6, intro: 'Boden, móc, đuôi én, hai tượng: 6 bài.' },
@@ -391,7 +391,7 @@ Hai tượng ở thế cờ mở thường mạnh hơn tượng + mã hay hai m�
 
 ### Phân loại lỗi
 - Lỗi chiến thuật (bỏ quân, không thấy đòn): tăng bài tập.
-- Lỗi khai cuộc (thua ngay 10 nước đầu): xem lại bài khai cuộc, tra Opening Explorer.
+- Lỗi khai cuộc (thế cờ đã kém sau 10 nước đầu): xem lại bài khai cuộc, tra Opening Explorer.
 - Lỗi cờ tàn (không thắng được thế thắng): học cờ tàn.
 - Lỗi thời gian: tập quản lý thời gian.
 
@@ -416,7 +416,7 @@ Ghi lại lỗi lặp lại. Sau 20 ván, bạn sẽ thấy rõ 2-3 kiểu lỗi
 - Quy tắc: nếu đã nghĩ 5 phút mà không chọn được giữa hai nước, chọn nước đơn giản hơn.
 
 ### Tâm lý
-- **Sau khi bỏ quân**: dừng 30 giây, thở, đánh giá lại thế cờ như mới. Đa số ván thua là do sai lầm thứ hai ngay sau sai lầm thứ nhất.
+- **Sau khi bỏ quân**: dừng 30 giây, thở, đánh giá lại thế cờ như mới. Rất nhiều ván thua là do sai lầm thứ hai ngay sau sai lầm thứ nhất.
 - **Khi đang thắng**: nguy hiểm nhất. Đổi quân, đơn giản hóa, tránh biến phức tạp.
 - **Khi đang thua**: làm thế cờ phức tạp, tạo vấn đề thực tế cho đối phương.
 - Không chơi khi mệt hay tức giận: "tilt" phá hỏng rating nhanh hơn mọi thứ. Thua 2 ván liên tiếp: nghỉ.`,
