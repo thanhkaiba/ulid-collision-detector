@@ -7,7 +7,7 @@ for f in sorted(glob.glob('fens_*.jsonl')):
         if not line: continue
         d = json.loads(line)
         board = [['' for _ in range(8)] for _ in range(8)]
-        fixes = {50: {'d8': 'q'}}
+        fixes = {50: {'d8': 'q'}, 31: {'f4': '', 'f3': 'P'}, 67: {'b2': 'P'}}
         for color, arr in (('w', d['white']), ('b', d['black'])):
             for p in arr:
                 t, sq = p[0], p[1:]

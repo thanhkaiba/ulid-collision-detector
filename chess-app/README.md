@@ -4,7 +4,7 @@
 
 ## Tính năng
 
-- **Học**: lộ trình 4 giai đoạn (0–1000, 1000–1500, 1500–2000, 2000+), 30 bài học tiếng Việt. Mỗi bài có phần đọc, vị trí tương tác phải đi đúng nước, bài tập từ ván thật và link tới sách/trang gốc.
+- **Học**: lần đầu mở app chọn trình độ (5 mức), app đặt bài bắt đầu, độ khó bài tập và cấp độ máy. Lộ trình 4 giai đoạn (0–1000, 1000–1500, 1500–2000, 2000+), 33 bài học tiếng Việt, bắt đầu từ bàn cờ và tên ô cho người chưa biết gì. Thẻ "Hôm nay" với ba việc mỗi ngày và chuỗi ngày học. Mỗi bài có phần đọc, vị trí tương tác phải đi đúng nước, bài tập từ ván thật và link tới sách/trang gốc.
 - **Từng nước một**: 12 ván kinh điển (Morphy 1858 đến Karpov–Kasparov 1985), mọi nước đi của cả hai bên đều có lời bình tiếng Việt do ứng dụng tự biên soạn (khoảng 35.000 từ, 550 biến phụ), đối chiếu với Stockfish. Bấm vào nước đi, biến phụ hoặc tên ô để xem trên bàn cờ; có chế độ "Tự đoán nước".
 - **Sách**: bản dịch tiếng Việt trọn vẹn "Chess Fundamentals" của Capablanca (1921, public domain): 6 chương lý thuyết + 14 ván đấu có bình luận, 150 hình chép lại từ bản in, hơn 3.300 nước đi chuyển từ ký hiệu mô tả cũ sang ký hiệu đại số và kiểm chứng bằng chess.js; bấm vào nước đi trong văn bản để xem thế cờ.
 - **Thư viện video**: kênh YouTube tiếng Việt và các series tiếng Anh kinh điển (Bartholomew, ChessNetwork, Naroditsky), mọi link đã kiểm tra, kèm hướng dẫn bật phụ đề dịch tự động.
@@ -50,7 +50,7 @@ python3 -I scripts/build_puzzles.py lichess_db_puzzle.csv.zst src/data/puzzles.j
 
 ## Dựng lại bản dịch sách
 
-Pipeline nằm trong thư mục `scripts/book/` (xem README ở đó): tải bản Gutenberg từ archive.org, parse HTML, chép hình bằng mô hình thị giác, chuyển ký hiệu bằng `convert.cjs` (chess.js + Stockfish để khử nhập nhằng), dịch theo lô với bảng thuật ngữ, rồi `assemble.py` tạo `src/data/book.json`.
+Pipeline nằm trong thư mục `scripts/book/` (xem README ở đó): tải bản Gutenberg từ archive.org, parse HTML, chép hình bằng mô hình thị giác, chuyển ký hiệu bằng `convert.cjs` (chess.js + Stockfish để khử nhập nhằng), dịch theo lô với bảng thuật ngữ, `resync.py` mang bản dịch sang kết quả chuyển đổi mới, lượt hiệu đính có công cụ `pos.cjs` để đối chiếu thế cờ, rồi `assemble.py` tạo `src/data/book.json`.
 
 ## Nguồn và giấy phép
 

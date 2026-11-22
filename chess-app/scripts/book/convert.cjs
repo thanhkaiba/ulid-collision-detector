@@ -26,6 +26,8 @@ function parseDesc(raw) {
   const pm = /[=(](Q|R|B|KT)\)?$/.exec(s);
   if (pm) { out.promo = PIECE[pm[1]]; s = s.slice(0, pm.index); }
   if (/^CASTLES|^O-O/.test(s)) { out.castle = /QR|O-O-O/.test(s) ? 'q' : /KR|^O-O$/.test(s) ? 'k' : 'any'; return out; }
+  // misprints such as "P K 4" (missing hyphen)
+  if (!/[-X]/.test(s)) s = s.replace(/^(P|KT|[KQRB])((?:Q|K)?(?:KT|[KQRB])\d)$/, '$1-$2');
   if (!/[-X]/.test(s)) return null;
   const m = /^((?:Q|K)?(?:R|KT|B|Q|K)?P|(?:Q|K)?(?:R|KT|B)|Q|K)(?:\((.+?)\))?([-X])(.+)$/.exec(s);
   if (!m) return null;
@@ -74,7 +76,12 @@ function resolve(p, chess) {
     const o = /^((?:Q|K)?(?:R|KT|B|Q|K))(\d)$/.exec(p.origin);
     if (o) { const sqs = descSquare(o[1], Number(o[2]), color); moves = moves.filter((m) => sqs.includes(m.from)); }
   }
-  if (p.moverPrefix) { const side = p.moverPrefix === 'Q' ? ['a', 'b', 'c', 'd'] : ['e', 'f', 'g', 'h']; moves = soft(moves, (m) => side.includes(m.from[0])); }
+  if (p.moverPrefix) {
+    const side = p.moverPrefix === 'Q' ? ['a', 'b', 'c', 'd'] : ['e', 'f', 'g', 'h'];
+    const bySide = moves.filter((m) => side.includes(m.from[0]));
+    if (bySide.length) moves = bySide;
+    p._prefix = p.moverPrefix;
+  }
   if (p.piece === 'p' && p.pawnFile) moves = moves.filter((m) => p.pawnFile.includes(m.from[0]));
   if (!p.capture) {
     const sqs = descSquare(p.destFile, p.destRank, color);
@@ -88,6 +95,12 @@ function resolve(p, chess) {
   else if (moves.some((m) => m.promotion)) moves = moves.filter((m) => !m.promotion || m.promotion === 'q');
   if (moves.length > 1 && (p.check || p.mate)) moves = soft(moves, (m) => m.san.includes('+') || m.san.includes('#'));
   if (moves.length > 1 && !p.check && !p.mate) moves = soft(moves, (m) => !m.san.includes('+') && !m.san.includes('#'));
+  // "KR"/"QR" (also KKt/QB...) name the piece that started on that wing. When both are now on the same wing,
+  // take the one standing further towards the named side.
+  if (moves.length > 1 && p._prefix) {
+    const files = [...new Set(moves.map((m) => m.from[0]))].sort();
+    if (files.length > 1) { const want = p._prefix === 'K' ? files[files.length - 1] : files[0]; moves = moves.filter((m) => m.from[0] === want); }
+  }
   return finish(moves);
   function finish(ms) { return ms.length === 1 ? { move: ms[0] } : { candidates: ms }; }
 }
@@ -118,7 +131,7 @@ async function pickByEngine(cands, pos, ctx, tok) {
 
 /* ---------------- tracker ---------------- */
 class Tracker {
-  constructor(fen) { this.main = [new Chess(fen)]; this.cur = null; this.stack = []; this.curSource = null; }
+  constructor(fen) { this.main = [new Chess(fen)]; this.src = []; this.cur = null; this.stack = []; this.curSource = null; }
   pushLine() { this.stack.push({ cur: this.cur, curSource: this.curSource }); }
   popLine() { if (this.stack.length) { const s = this.stack.pop(); this.cur = s.cur; this.curSource = s.curSource; return true; } return false; }
   current() { return this.cur ? this.cur[this.cur.length - 1] : this.main[this.main.length - 1]; }
@@ -135,22 +148,24 @@ class Tracker {
     const start0 = this.main[0];
     if (restart && parseInt(start0.fen().split(' ')[5]) === n && start0.turn() !== color) {
       const f = start0.fen().split(' '); f[1] = color; f[3] = '-';
-      try { this.main = [new Chess(f.join(' '))]; this.cur = null; return true; } catch { /* fall through */ }
+      try { this.main = [new Chess(f.join(' '))]; this.src = []; this.cur = null; return true; } catch { /* fall through */ }
     }
     if (this.cur) { const i = Tracker.plyIndex(this.cur, n, color); if (i > 0 && i < this.cur.length) { this.cur = this.cur.slice(0, i + 1); return true; } }
     const i = Tracker.plyIndex(this.main, n, color);
-    if (i === 0 && restart) { this.main = [this.main[0]]; this.cur = null; return true; }
+    if (i === 0 && restart) { this.main = [this.main[0]]; this.src = []; this.cur = null; return true; }
     if (i >= 0 && i < this.main.length) { this.cur = [new Chess(this.main[i].fen())]; this.curSource = 'prose'; return true; }
     // "1. ........ P-Kt3": same start position but the other side moves first
     const start = this.main[0];
     if (parseInt(start.fen().split(' ')[5]) === n && start.turn() !== color) {
       const f = start.fen().split(' '); f[1] = color; f[3] = '-';
-      try { const c = new Chess(f.join(' ')); if (restart) { this.main = [c]; this.cur = null; } else { this.cur = [c]; this.curSource = 'prose'; } return true; } catch { return false; }
+      try { const c = new Chess(f.join(' ')); if (restart) { this.main = [c]; this.src = []; this.cur = null; } else { this.cur = [c]; this.curSource = 'prose'; } return true; } catch { return false; }
     }
     return false;
   }
   forkFrom(pos) { this.cur = [new Chess(pos.fen())]; this.curSource = 'prose'; }
-  play(move) { const c = new Chess(this.current().fen()); c.move(move.san); if (this.cur) this.cur.push(c); else this.main.push(c); return c; }
+  /** source: 'table' for the book's move columns, 'prose' for moves quoted inside running text */
+  play(move, source = 'prose') { const c = new Chess(this.current().fen()); c.move(move.san); if (this.cur) this.cur.push(c); else { this.main.push(c); this.src.push(source); } return c; }
+  pushNull(pos, source = 'prose') { if (this.cur) this.cur.push(pos); else { this.main.push(pos); this.src.push(source); } }
   backToMain() { this.cur = null; }
 }
 
@@ -243,7 +258,7 @@ async function convertText(text, tracker, ctx, forkOnly, isGame) {
           report.push({ ctx, text: tok, fen: pos.fen(), reason: `chain ${r.error}`, key: r.key });
           parts.push(`[?${tok}]`);
           const f = flip(pos); const nxt = tokens[i + 1] ? parseDesc(tokens[i + 1]) : null;
-          if (f && nxt) { const nr = resolve(nxt, f); if (nr.move || (nr.candidates && nr.candidates.length)) { if (tracker.cur) tracker.cur.push(f); else tracker.main.push(f); continue; } }
+          if (f && nxt) { const nr = resolve(nxt, f); if (nr.move || (nr.candidates && nr.candidates.length)) { tracker.pushNull(f); continue; } }
           break;
         }
         const after = tracker.play(r.move);
@@ -301,7 +316,7 @@ async function convertText(text, tracker, ctx, forkOnly, isGame) {
     }
     if (!found && firstAmb) found = { pos: firstAmb.pos, move: await pickByEngine(firstAmb.cands, firstAmb.pos, ctx, tok) };
     if (!found) {
-      const naive = naiveSan(p, cur);
+      const naive = naiveSan(p, cur, colorHint);
       report.push({ ctx, text: tok, fen: cur.fen(), reason: `lone unresolved -> naive ${naive}`, key, naive: true });
       repls.push({ start: s, end: e, repl: naive ? `⟦-|${naive}⟧` : `[?${tok}]` });
       hypo = null;
@@ -323,8 +338,8 @@ async function convertText(text, tracker, ctx, forkOnly, isGame) {
   return { text: out, moves: movesOut, hypo, hypoEnd };
 }
 
-function naiveSan(p, pos) {
-  const color = pos.turn();
+function naiveSan(p, pos, hint) {
+  const color = hint || pos.turn();
   if (p.castle) return p.castle === 'q' ? 'O-O-O' : 'O-O';
   if (!p.piece) return null;
   const letter = p.piece === 'p' ? '' : p.piece.toUpperCase();
@@ -334,7 +349,7 @@ function naiveSan(p, pos) {
   const pick = (sqs, col) => { const mine = pieces.filter((x) => x.color === col); if (!mine.length) return sqs[0]; return sqs.map((sq) => ({ sq, d: Math.min(...mine.map((x) => dist(x.sq, sq))) })).sort((a, b) => a.d - b.d)[0].sq; };
   if (!p.capture) {
     const opts = [];
-    for (const col of [color, color === 'w' ? 'b' : 'w']) { const sqs = descSquare(p.destFile, p.destRank, col); if (sqs.length) { const sq = pick(sqs, col); const mine = pieces.filter((x) => x.color === col); opts.push({ col, sq, d: mine.length ? Math.min(...mine.map((x) => dist(x.sq, sq))) : 99 }); } }
+    for (const col of hint ? [hint] : [color, color === 'w' ? 'b' : 'w']) { const sqs = descSquare(p.destFile, p.destRank, col); if (sqs.length) { const sq = pick(sqs, col); const mine = pieces.filter((x) => x.color === col); opts.push({ col, sq, d: mine.length ? Math.min(...mine.map((x) => dist(x.sq, sq))) : 99 }); } }
     opts.sort((a, b) => a.d - b.d);
     if (!opts.length) return null;
     return `${letter}${opts[0].sq}${p.check ? '+' : ''}${p.mate ? '#' : ''}`;
@@ -383,13 +398,19 @@ const result = JSON.parse(JSON.stringify(book));
               stm = nm[2] === '...' ? 'b' : 'w'; num = Number(nm[1]);
               // "If Kt-B4, P-K7!; 39 KtxP": unnumbered chain moves right before the number shift the start back
               let k = 0; let head = nb.text.slice(0, nm.index);
-              const tail = new RegExp('(' + MOVE_RE + ')[!?]*\\s*[,;]\\s*$');
+              const tail = new RegExp('(' + MOVE_RE + ')\\s*[!?]*\\s*[,;]\\s*$');
               while (true) { const t = tail.exec(head); if (!t) break; k++; head = head.slice(0, t.index); }
               if (k) { const p = 2 * num + (stm === 'b' ? 1 : 0) - k; num = Math.floor(p / 2); stm = p % 2 ? 'b' : 'w'; }
               if (!firstTok) firstTok = (lm && lm.index < nm.index) ? lm[0] : nm[3]; break; }
             if (lm && !firstTok) firstTok = lm[0];
           }
           if (nb.t === 'moves' && nb.rows.length) { const tstm = /^\s*\d+\.?\s*\.{3,}/.test(nb.rows[0].n) ? 'b' : 'w'; const mm = /(\d+)/.exec(nb.rows[0].n); if (mm) num = Number(mm[1]); if (!firstTok) { stm = tstm; firstTok = (stm === 'b' ? nb.rows[0].b : nb.rows[0].n.replace(/^\s*\d+\.?\s*/, '')); } else if (firstTok && !nm_found) { /* a lone move came first: the table's side is the OTHER side if the lone move is the student's reply... keep stm from the lone-move probe below */ } break; }
+        }
+        if (tracker && !isGame && tracker.current().fen().split(' ')[0] === placement) {
+          // a figure in the middle of an example that shows exactly the tracked position: keep the line going,
+          // unless the text restarts its move numbering at the diagram
+          const e = tracker.expectedNum();
+          if (!firstTok || (e.n === num && e.color === stm)) { b.fen = tracker.current().fen(); continue; }
         }
         const rows = placement.split('/');
         const at = (sq) => { const f = sq.charCodeAt(0) - 97, r = 8 - Number(sq[1]); let i = 0; for (const c of rows[r]) { if (/\d/.test(c)) i += Number(c); else { if (i === f) return c; i++; } if (i > f) break; } return ''; };
@@ -429,6 +450,14 @@ const result = JSON.parse(JSON.stringify(book));
         tracker = new Tracker(fen);
         continue;
       }
+      // an opening discussed from move 1 without a diagram starts from the initial position
+      if (b.t === 'moves' && b.rows.length && /^\s*1\.?\s/.test(b.rows[0].n + ' ') && !isGame) {
+        const first = b.rows[0].n.replace(/^\s*\d+\.?\s*/, '').trim();
+        const p1 = parseDesc(first);
+        const fits = (pos) => { if (!p1) return false; const r = resolve(p1, pos); return !!(r.move || (r.candidates && r.candidates.length)); };
+        const here = tracker ? fits(tracker.main[0]) || fits(tracker.current()) : false;
+        if (!here && fits(new Chess())) tracker = new Tracker(undefined);
+      }
       if (!tracker) continue;
       if (b.t === 'p' || b.t === 'h') {
         const r = await convertText(b.text, tracker, ctx, forkOnly, isGame);
@@ -439,8 +468,8 @@ const result = JSON.parse(JSON.stringify(book));
           const row = b.rows[ri];
           const nm = /^\s*(\d+)\.?\s*(.*)$/.exec(row.n);
           const num = nm ? Number(nm[1]) : null;
-          const wtxt = nm ? nm[2].trim() : row.n.trim();
-          const btxt = (row.b || '').trim();
+          const wtxt = (nm ? nm[2].trim() : row.n.trim()).replace(/[;,]$/, '');
+          const btxt = (row.b || '').trim().replace(/[;,]$/, '');
           const cells = [];
           const colsTxt = [['w', wtxt], ['b', btxt]];
           for (let ci = 0; ci < 2; ci++) {
@@ -450,8 +479,13 @@ const result = JSON.parse(JSON.stringify(book));
             if (!p0) {
               cells.push(txt);
               // "K moves", "any", "K to R 1 or R 2": the side did move; keep the line in sync with a null move
-              if (/moves|any|or/i.test(txt) && !/resign|draw|wins|mate|abandon/i.test(txt)) { const cur = tracker.current(); if (cur.turn() === col) { const f = flip(cur); if (f) { if (tracker.cur) tracker.cur.push(f); else tracker.main.push(f); } } }
+              if (/moves|any|or/i.test(txt) && !/resign|draw|wins|mate|abandon/i.test(txt)) { const cur = tracker.current(); if (cur.turn() === col) { const f = flip(cur); if (f) { tracker.pushNull(f); } } }
               continue;
+            }
+            if (num && !isGame) {
+              // moves the prose appended to the main line were only hypothetical if the move columns now go back before them
+              const i = Tracker.plyIndex(tracker.main, num, col);
+              if (i >= 0 && i < tracker.main.length - 1 && tracker.src.slice(i).every((x) => x === 'prose')) { tracker.main = tracker.main.slice(0, i + 1); tracker.src = tracker.src.slice(0, i); tracker.cur = null; }
             }
             if (num) {
               const mainExp = tracker.mainExpects(num, col);
@@ -474,10 +508,10 @@ const result = JSON.parse(JSON.stringify(book));
               cells.push(`[?${txt}]`);
               // keep the line in sync if the following cell resolves after a null move
               const f = flip(pos); const nxt = next[0] ? parseDesc(next[0]) : null;
-              if (f && nxt) { const nr = resolve(nxt, f); if (nr.move || (nr.candidates && nr.candidates.length)) { if (tracker.cur) tracker.cur.push(f); else tracker.main.push(f); } }
+              if (f && nxt) { const nr = resolve(nxt, f); if (nr.move || (nr.candidates && nr.candidates.length)) { tracker.pushNull(f); } }
               continue;
             }
-            const after = tracker.play(r.move);
+            const after = tracker.play(r.move, 'table');
             const id = moveId++;
             sec.moves.push({ id, san: r.move.san, uci: r.move.from + r.move.to + (r.move.promotion || ''), fen: after.fen(), color: r.move.color });
             cells.push(`⟦${id}|${r.move.san}⟧`);
