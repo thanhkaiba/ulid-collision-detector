@@ -1,0 +1,362 @@
+[
+ {
+  "id": "0.0.11.h",
+  "vi": "2. Ke5, Kf7; 3. g5, Ke7."
+ },
+ {
+  "id": "0.0.11.0",
+  "vi": "Nếu 3...g6 thì 4.f6; còn nếu 3...h6 thì 4.g6+; trong cả hai trường hợp ta có một cờ tàn tương tự với những cờ tàn đã trình bày ở trên."
+ },
+ {
+  "id": "0.0.12.h",
+  "vi": "4. h5,"
+ },
+ {
+  "id": "0.0.12.0",
+  "vi": "và tiếp theo bằng g6, ta lại có cờ tàn đã trình bày trước đó. Nếu Đen chơi 4...g6 thì hxg6, hxg6; f6+ với kết quả tương tự."
+ },
+ {
+  "id": "0.0.12.1",
+  "vi": "Đến đây ta đã xem xét các trường hợp mọi Tốt đều nằm cùng một bên bàn cờ; bây giờ ta sẽ xét một trường hợp có Tốt ở cả hai bên bàn cờ."
+ },
+ {
+  "id": "0.0.12.2",
+  "vi": "**Ví dụ 10.**—Trong những trường hợp này, quy tắc chung là *hành động ngay lập tức ở bên mà bạn có lực lượng mạnh hơn*. Vậy ta có:"
+ },
+ {
+  "id": "0.0.13.h",
+  "vi": "1. g4."
+ },
+ {
+  "id": "0.0.13.0",
+  "vi": "Nói chung nên đẩy con Tốt không bị Tốt đối phương chặn trước mặt."
+ },
+ {
+  "id": "0.0.13.2",
+  "vi": "Đen tiến Tốt ở bên kia bàn cờ, và bây giờ Trắng phải cân nhắc có nên chặn bước tiến đó hay không. Trong trường hợp này đi cách nào cũng thắng, nhưng nói chung nên chặn bước tiến đó khi Vua đối phương ở xa."
+ },
+ {
+  "id": "0.0.14.h",
+  "vi": "2. a4, Kf6; 3. h4, Ke6."
+ },
+ {
+  "id": "0.0.14.0",
+  "vi": "Nếu 3...Kg6 thì chỉ cần tính đơn giản cũng thấy Trắng đưa Vua sang bên kia, thắng Tốt ở a5, rồi phong Hậu cho con Tốt duy nhất của mình từ rất lâu trước khi Đen có thể làm điều tương tự."
+ },
+ {
+  "id": "0.0.15.h",
+  "vi": "4. g5, Kf7; 5. Kf5, Kg7; 6. h5, Kf7."
+ },
+ {
+  "id": "0.0.15.0",
+  "vi": "Nếu 6...h6 thì 7.g6, và khi đó hai Tốt tự bảo vệ nhau, Trắng có thể đưa Vua sang bên kia để thắng con Tốt còn lại."
+ },
+ {
+  "id": "0.0.16.h",
+  "vi": "7. Ke5."
+ },
+ {
+  "id": "0.0.16.0",
+  "vi": "Bây giờ là lúc đưa Vua sang bên kia, thắng Tốt Đen và phong Hậu cho con Tốt duy nhất. Đây là dạng điển hình của mọi cờ tàn kiểu này; người học nên tự tính kỹ trường hợp này cũng như những trường hợp tương tự mà mình có thể tự bày ra."
+ },
+ {
+  "id": "0.0.17.h",
+  "vi": "4. MỘT SỐ THẾ CỜ THẮNG TRONG TRUNG CUỘC"
+ },
+ {
+  "id": "0.0.17.0",
+  "vi": "Khi đã tiêu hóa hết những điều được giải thích ở trên, người học hẳn đang sốt ruột muốn bước vào ván cờ thực sự và chơi với đầy đủ các quân. Tuy nhiên, trước khi bàn đến khai cuộc, chúng ta sẽ dành một ít thời gian cho một số đòn phối hợp thường nảy sinh trong ván cờ; chúng sẽ cho người đọc phần nào cảm nhận được vẻ đẹp của môn cờ, một khi đã quen thuộc hơn với nó."
+ },
+ {
+  "id": "0.0.17.1",
+  "vi": "**Ví dụ 11.**"
+ },
+ {
+  "id": "0.0.17.3",
+  "vi": "Đến lượt Đen đi, và nghĩ rằng Trắng chỉ dọa chơi ⟦207|Qh6⟧ rồi chiếu hết ở g7, Đen chơi ⟦208|1...Re8⟧, dọa chiếu hết bằng ⟦209|Re1+⟧. Lúc này Trắng mới bộc lộ mối đe dọa thật sự và hiệu quả nhất của mình, đó là:"
+ },
+ {
+  "id": "0.0.17.4",
+  "vi": "⟦210|1...Re8⟧; ⟦211|2.Qxh7+⟧ ⟦212|Kxh7⟧; ⟦213|3.Rh3+⟧ ⟦214|Kg8⟧; ⟦215|4.Rh8#⟧."
+ },
+ {
+  "id": "0.0.17.5",
+  "vi": "Cùng dạng đòn phối hợp này có thể nảy sinh từ một thế cờ phức tạp hơn một chút."
+ },
+ {
+  "id": "0.0.17.6",
+  "vi": "**Ví dụ 12.**"
+ },
+ {
+  "id": "0.0.17.8",
+  "vi": "Trắng đang kém một quân, và nếu không thắng lại được quân đó nhanh thì sẽ thua; vì vậy Trắng chơi:"
+ },
+ {
+  "id": "0.0.17.10",
+  "vi": "Đen không thể bắt Mã, vì Trắng dọa chiếu hết bằng ⟦218|Qxh2+⟧ rồi tiếp theo là ⟦-|Rh6+⟧."
+ },
+ {
+  "id": "0.0.17.12",
+  "vi": "Lại nữa, nếu ⟦221|Bxe7⟧; ⟦222|Qxh7+⟧, ⟦223|Kxh7⟧; ⟦224|Rh3+⟧, Vua đi; ⟦-|Ra8#⟧."
+ },
+ {
+  "id": "0.0.17.14",
+  "vi": "và Trắng thắng một trong hai Tượng, còn lại Hậu và Tượng chống Xe và Tượng, do đó hẳn phải thắng dễ dàng. Hai ví dụ này cho thấy mối nguy của việc đẩy Tốt cột g (Tốt Mã cánh Vua) lên một ô sau khi đã nhập thành về phía đó."
+ },
+ {
+  "id": "0.0.17.15",
+  "vi": "**Ví dụ 13.**"
+ },
+ {
+  "id": "0.0.17.17",
+  "vi": "Đây là một dạng đòn phối hợp khác rất thú vị. Đen có Xe đổi lấy Mã, tức là hơn chất, nên lẽ ra phải thắng, trừ phi Trắng có thể lập tức giành được sự bù đắp nào đó. Thực tế, Trắng chiếu hết trong vài nước như sau:"
+ },
+ {
+  "id": "0.0.17.19",
+  "vi": "Bắt buộc, nếu không Hậu bắt Tốt chiếu hết."
+ },
+ {
+  "id": "0.0.17.21",
+  "vi": "**Ví dụ 14.**—Cùng dạng đòn phối hợp đó xuất hiện dưới hình thức phức tạp hơn trong thế cờ sau."
+ },
+ {
+  "id": "0.0.17.24",
+  "vi": "Nếu ...⟦235|Bxe4⟧; ⟦236|Qc3⟧ dọa chiếu hết, và do đó thắng Hậu vốn đang bị tấn công."
+ },
+ {
+  "id": "0.0.17.26",
+  "vi": "**Ví dụ 15.**—Một dạng đòn phối hợp rất thường gặp được trình bày trong thế cờ sau."
+ },
+ {
+  "id": "0.0.17.28",
+  "vi": "Ở đây Trắng kém chất và kém một Tốt, nhưng có thể thắng nhanh như sau: ⟦242|1.Bxh7+⟧ ⟦243|Kxh7⟧. (Nếu ⟦244|1...Kh8⟧; ⟦245|2.Qh5⟧ ⟦246|g6⟧; ⟦247|3.Qh6⟧ và thắng.)"
+ },
+ {
+  "id": "0.0.17.29",
+  "vi": "⟦248|2.Qh5+⟧ ⟦249|Kg8⟧; ⟦250|3.Ng5⟧, và Đen không thể ngăn chiếu hết ở h7, trừ phi thí Hậu bằng ⟦251|Qe4⟧, khi đó Trắng còn lại Hậu đổi lấy Xe."
+ },
+ {
+  "id": "0.0.17.30",
+  "vi": "**Ví dụ 16.**—Cùng dạng đòn phối hợp này được thấy dưới hình thức phức tạp hơn trong thế cờ sau."
+ },
+ {
+  "id": "0.0.17.32",
+  "vi": "Trắng tiến hành như sau: ⟦252|1.Nxe7+⟧ (nước này mở đường cho Tượng); ⟦253|Bxe7⟧ (để ngăn Mã nhảy lên g5 sau khi Trắng thí Tượng); ⟦254|2.Rxe7⟧ ⟦255|Nxe7⟧ tốt nhất; ⟦256|3.Bxh7+⟧ ⟦257|Kxh7⟧. (Nếu 3..⟦258|Kh1⟧; ⟦259|4.Qh5+⟧ [?P - K Kt 3]; 5.Bxg6+, Kg7; 6.Qh7+, Kf6; 7.g5+, Ke6; 8.Tượng bắt Tốt chiếu, Xe bắt Tượng; 9.Qe4 chiếu hết.) ⟦260|4.Qh5+⟧ ⟦261|Kg8⟧; ⟦262|5.Ng5⟧ ⟦263|Rc8⟧; ⟦264|6.Qh7+⟧ ⟦265|Kf8⟧; ⟦266|7.Qh8+⟧ ⟦267|Ng8⟧; ⟦268|8.Nh7+⟧ ⟦269|Ke7⟧; ⟦270|9.Re1+⟧ ⟦271|Kd8⟧; ⟦272|10.Qxg8#⟧."
+ },
+ {
+  "id": "0.0.17.33",
+  "vi": "Đòn phối hợp này khá dài và có nhiều biến, do đó người mới khó mà lường hết được; nhưng khi đã biết dạng đòn phối hợp này, trong những hoàn cảnh tương tự họ có thể dám tiến hành và thực hiện một đợt tấn công xuất sắc mà nếu không thì chẳng bao giờ nghĩ tới. Có thể thấy rằng mọi đòn phối hợp đã trình bày đều dựa trên nền tảng là sự phối hợp hợp lý giữa các quân, tất cả đều được huy động nhắm vào một điểm yếu."
+ },
+ {
+  "id": "0.0.18.h",
+  "vi": "5. GIÁ TRỊ TƯƠNG ĐỐI CỦA CÁC QUÂN"
+ },
+ {
+  "id": "0.0.18.0",
+  "vi": "Trước khi đi vào các nguyên tắc chung của khai cuộc, nên cho người học một khái niệm đúng về giá trị tương đối của các quân. Không có bảng giá trị nào đầy đủ và chính xác cho tất cả các quân; điều duy nhất có thể làm là so sánh từng quân riêng rẽ."
+ },
+ {
+  "id": "0.0.18.1",
+  "vi": "Về mặt lý thuyết chung, Tượng và Mã phải được xem là có giá trị ngang nhau, dù theo ý tôi, trong hầu hết các trường hợp Tượng sẽ chứng tỏ là quân có giá trị hơn; và ai cũng biết rằng hai Tượng hầu như luôn mạnh hơn hai Mã."
+ },
+ {
+  "id": "0.0.18.2",
+  "vi": "Tượng sẽ mạnh hơn Mã khi chống lại các Tốt, và khi kết hợp với Tốt, Tượng cũng mạnh hơn Mã khi chống lại Xe."
+ },
+ {
+  "id": "0.0.18.3",
+  "vi": "Tượng cộng Xe cũng mạnh hơn Mã cộng Xe, nhưng Hậu cộng Mã có thể mạnh hơn Hậu cộng Tượng."
+ },
+ {
+  "id": "0.0.18.4",
+  "vi": "Tượng thường đáng giá hơn ba Tốt, nhưng Mã thì rất hiếm khi được như vậy, thậm chí có thể không đáng giá đến thế."
+ },
+ {
+  "id": "0.0.18.5",
+  "vi": "Xe đáng giá bằng Mã cộng hai Tốt, hoặc Tượng cộng hai Tốt; nhưng như đã nói ở trên, Tượng là quân chống Xe tốt hơn."
+ },
+ {
+  "id": "0.0.18.6",
+  "vi": "Hai Xe mạnh hơn Hậu một chút. Hai Xe yếu hơn một chút so với hai Mã cộng một Tượng, và còn yếu hơn thêm một chút nữa so với hai Tượng cộng một Mã. Sức mạnh của Mã giảm đi khi các quân được đổi bớt. Ngược lại, sức mạnh của Xe lại tăng lên."
+ },
+ {
+  "id": "0.0.18.7",
+  "vi": "Vua, một quân thuần túy *phòng thủ* trong suốt trung cuộc, trở thành một quân *tấn công* khi mọi quân khác đã rời khỏi bàn cờ, và đôi khi ngay cả khi còn lại một hai quân nhẹ. Việc sử dụng Vua trở nên tối quan trọng một khi ván cờ bước vào giai đoạn cờ tàn."
+ },
+ {
+  "id": "0.0.19.h",
+  "vi": "6. CHIẾN LƯỢC CHUNG TRONG KHAI CUỘC"
+ },
+ {
+  "id": "0.0.19.0",
+  "vi": "Điều chủ yếu là *phát triển quân thật nhanh*. Hãy đưa quân vào trận càng nhanh càng tốt."
+ },
+ {
+  "id": "0.0.19.1",
+  "vi": "Ngay từ đầu, hai nước 1.e4 hoặc 1.d4 mở đường cho Hậu và một Tượng. Do đó, về lý thuyết, một trong hai nước này phải là nước tốt nhất, vì không có nước đi đầu nào khác đạt được nhiều đến vậy."
+ },
+ {
+  "id": "0.0.19.2",
+  "vi": "**Ví dụ 17.**—Giả sử ta bắt đầu:"
+ },
+ {
+  "id": "0.0.19.4",
+  "vi": "Đây vừa là nước tấn công vừa là nước phát triển quân. Đen bây giờ có thể đáp lại bằng nước y hệt, hoặc chơi"
+ },
+ {
+  "id": "0.0.19.6",
+  "vi": "Nước phát triển quân này đồng thời bảo vệ Tốt Vua (Tốt cột e)."
+ },
+ {
+  "id": "0.0.19.8",
+  "vi": "Những nước này thuần túy mang tính phát triển quân."
+ },
+ {
+  "id": "0.0.19.10",
+  "vi": "*Nói chung không nên đưa Tượng này ra trước khi đã ra một Mã*, tốt nhất là Mã cánh Vua. Tượng cũng có thể đi lên c4, nhưng khi nào có thể thì nên kết hợp phát triển quân với tấn công."
+ },
+ {
+  "id": "0.0.19.12",
+  "vi": "Đen đáp lại theo cùng cách, dọa có thể đổi Tượng lấy Mã rồi tiếp theo là Mã bắt Tốt."
+ },
+ {
+  "id": "0.0.19.14",
+  "vi": "một cách gián tiếp ngăn 5...Bxc3, nước mà khi có thêm kinh nghiệm hoặc nghiên cứu, ta sẽ thấy là dở. Đồng thời *Xe được đưa vào hoạt động ở trung tâm, một điểm rất quan trọng*."
+ },
+ {
+  "id": "0.0.19.16",
+  "vi": "Đen theo đúng lối suy luận ấy."
+ },
+ {
+  "id": "0.0.19.18",
+  "vi": "Những nước này có hai mục đích, đó là: bảo vệ Tốt Vua (Tốt cột e) và mở đường chéo để phát triển Tượng cánh Hậu."
+ },
+ {
+  "id": "0.0.19.21",
+  "vi": "Một nước rất mạnh, đưa chúng ta vào giai đoạn trung cuộc, vì đã thấy trước một đòn phối hợp để thắng nhanh bằng ⟦273|Nd4⟧. Mối đe dọa này khiến Đen không thể tiếp tục đi theo cùng lối nữa. (Có một phân tích dài cho thấy Đen sẽ thua nếu cũng chơi ⟦274|Bg4⟧.) Giờ Đen buộc phải chơi ⟦275|7...Bxc3⟧, như kinh nghiệm đã cho thấy; qua đó ta rút ra ba điều đáng chú ý."
+ },
+ {
+  "id": "0.0.19.22",
+  "vi": "Thứ nhất, việc phát triển quân hoàn chỉnh trong khai cuộc chỉ mất bảy nước. (Con số này có thể lên tới mười hoặc mười hai nước trong một số trường hợp rất ngoại lệ. Theo quy tắc, tám nước là đủ.) Thứ hai, Đen đã bị buộc phải đổi Tượng lấy Mã, nhưng để bù lại, Đen đã làm Tốt cột a của Trắng bị cô lập và tạo ra Tốt chồng. (Ở giai đoạn sớm như vậy của ván cờ, điều này lại khá có lợi cho Trắng, vì Tốt được chồng về phía trung tâm bàn cờ.) Thứ ba, qua việc đổi quân, Trắng đưa một Tốt lên kiểm soát ô d4, đặt Đen vào thế phòng thủ như kinh nghiệm sẽ cho thấy, và nhờ đó giữ được *thế chủ động*, một lợi thế không thể chối cãi.[1]"
+ },
+ {
+  "id": "0.0.19.23",
+  "vi": "Các nguyên tắc chiến lược trình bày ở trên là chung cho mọi khai cuộc; chỉ có cách vận dụng chiến thuật của chúng là thay đổi tùy hoàn cảnh."
+ },
+ {
+  "id": "0.0.19.24",
+  "vi": "Trước khi đi tiếp, tôi muốn nhấn mạnh điểm sau đây mà người học cần ghi nhớ."
+ },
+ {
+  "id": "0.0.19.25",
+  "vi": "*Trước khi hoàn tất việc phát triển quân, không quân nào nên được đi quá một lần, trừ phi điều đó là thiết yếu để giành lợi thế vật chất hoặc để bảo đảm sự tự do hành động.*"
+ },
+ {
+  "id": "0.0.19.26",
+  "vi": "Người mới nên nhớ kỹ điều này, cùng với điều đã nêu ở trên, đó là: *đưa Mã ra trước khi đưa Tượng ra*."
+ },
+ {
+  "id": "0.0.20.h",
+  "vi": "7. KIỂM SOÁT TRUNG TÂM"
+ },
+ {
+  "id": "0.0.20.0",
+  "vi": "Bốn ô e4, d4, e5 và d5 (ô thứ tư trước Vua và trước Hậu của mỗi bên) là các ô trung tâm, và việc kiểm soát các ô này được gọi là kiểm soát trung tâm. *Kiểm soát trung tâm có tầm quan trọng rất lớn.* Không một đợt tấn công mãnh liệt nào có thể thành công nếu không kiểm soát được ít nhất hai trong các ô này, và có thể là ba. Nhiều thao tác trong khai cuộc có mục đích duy nhất là kiểm soát trung tâm, điều luôn bảo đảm thế chủ động. Nên luôn ghi nhớ điều này, vì nó thường là lý do của một loạt nước đi mà nếu không thì khó hiểu đúng được. Khi cuốn sách này tiến triển, tôi sẽ đi sâu hơn vào những điểm khác nhau này. Hiện tại, tôi sẽ dành một ít thời gian cho những khai cuộc được chọn ngẫu nhiên và giải thích các nước đi theo các nguyên tắc chung. Bằng cách đó người học sẽ rèn luyện tư duy theo đúng hướng, và nhờ vậy sẽ ít gặp khó khăn hơn trong việc tìm lối thoát khi đối mặt với một tình huống mới và khó."
+ },
+ {
+  "id": "0.0.20.1",
+  "vi": "**Ví dụ 18.**"
+ },
+ {
+  "id": "0.0.20.3",
+  "vi": "Một nước nhút nhát. Đen lập tức chọn thái độ phòng thủ. Về nguyên tắc, nước này sai. Trong khai cuộc, khi nào có thể, *nên đi quân thay vì đi Tốt*."
+ },
+ {
+  "id": "0.0.20.5",
+  "vi": "Trắng lập tức giành thế tấn công và cố kiểm soát trung tâm để có đủ chỗ triển khai lực lượng."
+ },
+ {
+  "id": "0.0.20.7",
+  "vi": "Đen không muốn nhường trung tâm, và cũng ưa nước đi trong ván hơn là Nc6, vốn là ô tự nhiên hơn cho Mã. Nhưng về nguyên tắc nước này sai, vì nó chặn đường hoạt động của Tượng cánh Hậu, và thay vì tạo thuận lợi cho hoạt động của các quân Đen, nó lại có khuynh hướng làm chúng bị gò bó."
+ },
+ {
+  "id": "0.0.20.9",
+  "vi": "Đen buộc phải trả giá cho nước đi trước đó của mình. Một nước đi như thế từ phía Đen tự nó đã lên án bất kỳ dạng khai cuộc nào khiến nó trở thành cần thiết. Trắng dọa Ng5, và Đen không thể ngăn bằng 4...Be7, vì 5.dxe5, Nxe5 (nếu 5...dxe5 thì 6.Qd5); 6.Nxe5, dxe5; 7.Qh5, và Trắng thắng một Tốt, ngoài ra còn có một thế cờ hoàn toàn an toàn."
+ },
+ {
+  "id": "0.0.20.11",
+  "vi": "Cần lưu ý rằng Trắng vẫn chưa nhập thành. Lý do là Trắng muốn triển khai lực lượng trước, và bằng nước vừa đi, buộc Đen phải chơi c6 để dọn chỗ cho Hậu, vì Trắng dọa Rd1 rồi tiếp theo là dxe5. Các lựa chọn khác của Đen rốt cuộc sẽ buộc Đen phải chơi ...exd4, nghĩa là nhường trung tâm cho Trắng."
+ },
+ {
+  "id": "0.0.20.13",
+  "vi": "Với nước cuối này, Trắng hoàn tất việc phát triển quân, trong khi Đen rõ ràng có phần bị kìm hãm. Chỉ cần xem xét sơ qua cũng đủ thấy thế cờ của Trắng là không thể công phá. Không có điểm yếu nào trong bộ giáp của Trắng, và các quân của Trắng đã sẵn sàng cho bất kỳ thao tác nào mà Trắng muốn thực hiện để bắt đầu tấn công thế trận đối phương. Người học nên nghiên cứu kỹ ví dụ này. Nó cho thấy đôi khi trì hoãn nhập thành là điều có lợi. Tôi đưa ra các nước đi theo những gì nảy ra trong đầu mình mà không theo một sách khai cuộc chuẩn nào. Những nước đi tôi đưa ra có khớp với các sách chuẩn hay không, tôi không biết; nhưng ở giai đoạn này của cuốn sách, không tiện đi vào tranh luận những chi tiết kỹ thuật thuần túy mà người học sẽ hiểu được khi đã thành thạo hơn."
+ },
+ {
+  "id": "0.0.20.14",
+  "vi": "**Ví dụ 19.**"
+ },
+ {
+  "id": "0.0.20.16",
+  "vi": "Một nước dở, vi phạm một trong các nguyên tắc đã nêu, theo đó phải phát triển ít nhất một Mã trước khi đưa Tượng ra; nước này còn dở vì nó đổi Tượng lấy Mã, điều mà trong khai cuộc nói chung là bất lợi, trừ phi có sự bù đắp nào đó."
+ },
+ {
+  "id": "0.0.20.18",
+  "vi": "4...dxe5 sẽ mất một Tốt."
+ },
+ {
+  "id": "0.0.20.20",
+  "vi": "Nếu Nf6 thì Qb3 thắng một Tốt."
+ },
+ {
+  "id": "0.0.20.22",
+  "vi": "Để ngăn Nd5."
+ },
+ {
+  "id": "0.0.20.24",
+  "vi": "Tuy nhiên, Đen chưa ra được quân nào ngoài Hậu, còn Trắng, với một Tượng và một Mã đã phát triển, có cơ hội giành lợi thế nhanh chóng bằng cách cứ chơi ⟦276|Nd5⟧. Người học tự tính các biến phong phú nảy sinh từ thế cờ này."
+ },
+ {
+  "id": "0.0.20.25",
+  "vi": "Những ví dụ này cho thấy cách vận dụng thực tế các nguyên tắc đã nêu. Người học được cảnh báo không nên đi Tốt thay vì đi quân ở đầu ván cờ, nhất là ⟦277|h3⟧ và ⟦278|a6⟧, những nước mà người mới rất thường ham chơi."
+ },
+ {
+  "id": "0.0.21.h",
+  "vi": "8. CÁC BẪY"
+ },
+ {
+  "id": "0.0.21.0",
+  "vi": "Bây giờ tôi sẽ đưa ra một vài thế cờ, hay là những cái bẫy cần tránh trong khai cuộc, mà (thực tế đã cho thấy) người mới thường mắc phải."
+ },
+ {
+  "id": "0.0.21.1",
+  "vi": "**Ví dụ 20.**"
+ },
+ {
+  "id": "0.0.21.3",
+  "vi": "Trắng chơi:"
+ },
+ {
+  "id": "0.0.21.5",
+  "vi": "Đen lẽ ra phải bắt lại bằng Tốt."
+ },
+ {
+  "id": "0.0.21.7",
+  "vi": "**Ví dụ 21.**"
+ },
+ {
+  "id": "0.0.21.9",
+  "vi": "Đen, đến lượt đi, nên chơi ⟦286|e6⟧. Nhưng giả sử Đen lại chơi ⟦287|Nf6⟧, thì tiếp theo là—"
+ },
+ {
+  "id": "0.0.21.11",
+  "vi": "⟦289|Ne5⟧ cũng cho Trắng lợi thế, với mối đe dọa dĩ nhiên là nếu ⟦290|Bxd1⟧ thì ⟦291|2.Bxf7#⟧. ⟦292|Bh5+⟧ cũng không cứu vãn được gì, vì sau 2.Qxh5, [?B - K 3] để Đen lại ở thế cờ kém hơn. Nhưng nước đi trong ván của Trắng bảo đảm ngay một lợi thế vật chất, và người mới, ít ra là họ, không bao giờ nên bỏ lỡ cơ hội như vậy vì một lợi thế thế trận còn mang tính phỏng đoán."
+ },
+ {
+  "id": "0.0.21.13",
+  "vi": "và Trắng đã thắng một Tốt, ngoài ra còn có thế cờ tốt hơn."
+ },
+ {
+  "id": "0.0.21.14",
+  "vi": "Còn khá nhiều bẫy khác—thực tế, có hẳn một cuốn sách viết về các bẫy trên bàn cờ; nhưng dạng vừa nêu trên là phổ biến nhất trong tất cả."
+ }
+]

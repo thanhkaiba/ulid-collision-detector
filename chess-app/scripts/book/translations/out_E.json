@@ -1,0 +1,654 @@
+[
+{
+"id": "0.4.h",
+"vi": "Chiến lược cờ tàn"
+},
+{
+"id": "0.4.0.h",
+"vi": ""
+},
+{
+"id": "0.4.0.0",
+"vi": "Bây giờ chúng ta phải quay lại với cờ tàn một lần nữa. Tầm quan trọng của cờ tàn hẳn đã trở nên rõ ràng với người học nào đã chịu khó nghiên cứu ván tôi đấu với Janowski (Ví dụ 53). Sau một khai cuộc không có gì đặc biệt—một ván Ruy Lopez (Ván cờ Tây Ban Nha)—theo một trong các biến thông thường, đối thủ của tôi bất ngờ làm ván cờ trở nên thú vị bằng cách đề nghị thí chất; một đề nghị mà dĩ nhiên tôi chấp nhận. Tiếp đó là một cuộc chiến rất khó khăn, gian khổ, trong đó tôi phải tự vệ trước một đợt tấn công rất nguy hiểm, có được nhờ lối điều quân xuất sắc của đối thủ. Cuối cùng, đến lúc tôi có thể trả lại vật chất, đổi đi phần lớn các quân và đi vào một thế cờ tàn mà tôi rõ ràng chiếm ưu thế. Thế nhưng cờ tàn ấy không hề đơn giản như thoạt nhìn, và cuối cùng—có lẽ vì một nước yếu của tôi—việc tìm ra đường thắng trở nên rất khó. Nếu tôi là một người chơi cờ tàn yếu, ván cờ hẳn đã kết thúc hòa, và mọi nỗ lực trước đó của tôi đã trở thành vô ích. Đáng tiếc, đó lại là trường hợp rất thường gặp ở đại đa số người chơi: họ yếu ở cờ tàn; một nhược điểm mà ngay cả các kỳ thủ bậc thầy hàng đầu cũng không phải lúc nào cũng tránh được. Nhân đây, tôi muốn lưu ý rằng tất cả các nhà vô địch thế giới trong sáu mươi năm qua đều cực kỳ mạnh ở cờ tàn: Morphy, Steinitz và Tiến sĩ Lasker không có ai vượt trội hơn họ trong lĩnh vực này của ván cờ khi họ còn giữ danh hiệu."
+},
+{
+"id": "0.4.1.h",
+"vi": "26. ĐÒN TẤN CÔNG BẤT NGỜ TỪ CÁNH KHÁC"
+},
+{
+"id": "0.4.1.0",
+"vi": "Trước đây, khi nói về lý thuyết tổng quát, tôi đã nêu rằng có lúc cách để thắng là tấn công trước ở một cánh, rồi, nhờ các quân có độ linh hoạt lớn hơn, nhanh chóng chuyển đòn tấn công từ cánh này sang cánh kia, đột phá trước khi đối thủ kịp đưa đủ lực lượng tới chống đỡ. Nguyên tắc này của trung cuộc đôi khi cũng có thể áp dụng trong cờ tàn theo cách tương tự."
+},
+{
+"id": "0.4.1.1",
+"vi": "**Ví dụ 56.**"
+},
+{
+"id": "0.4.1.3",
+"vi": "Trong thế cờ trên, tôi cầm quân Đen và đi:"
+},
+{
+"id": "0.4.1.5",
+"vi": "Ý đồ, như sẽ thấy ngay sau đây, là đi ⟦1095|h4⟧ để cố định các Tốt cánh Vua của Trắng, chuẩn bị cho về sau. Đen thấy rõ Trắng muốn đưa Vua tới b3 để bảo vệ hai Tốt cô lập yếu của mình, nhờ đó giải phóng các Xe. Vì vậy Đen lập kế hoạch chuyển đòn tấn công sang cánh Vua vào đúng thời điểm, nhằm thu lợi từ việc các Xe của mình linh hoạt hơn."
+},
+{
+"id": "0.4.1.7",
+"vi": "để buộc Xe phải lui về ô xuất phát của nó ở cột Xe, giữ cho cả hai Xe bị trói chặt."
+},
+{
+"id": "0.4.1.9",
+"vi": "Đen bắt đầu chuyển đòn tấn công sang cánh Vua."
+},
+{
+"id": "0.4.1.11",
+"vi": "Một sai lầm nghiêm trọng, dẫn tới thua nhanh. Trắng nên đi ⟦1105|8.Kb3⟧, khi đó Đen sẽ trả lời ⟦1106|8...Raa5⟧; ⟦1107|9.f3⟧, và Đen sẽ mở được một lối vào ở g3 cho Vua của mình, điều cuối cùng có thể mang lại chiến thắng cho Đen."
+},
+{
+"id": "0.4.1.13",
+"vi": "Bây giờ Vua không thể đi tới b3, vì có ⟦1109|Rb5⟧."
+},
+{
+"id": "0.4.1.15",
+"vi": "Nếu ⟦1113|gxf3⟧, ⟦1114|Rxg1⟧; tiếp theo là ⟦1115|Rh1⟧ thắng,"
+},
+{
+"id": "0.4.1.17",
+"vi": "và Đen thắng sau vài nước."
+},
+{
+"id": "0.4.1.18",
+"vi": "**Ví dụ 57.**—Một ví dụ hay khác cho thấy lợi thế của việc các quân linh hoạt hơn trong cờ tàn là thế cờ sau đây, lấy từ ván Capablanca-Kupchick tại Giải các kỳ thủ bậc thầy Havana, 1913. Toàn bộ biên bản và lời bình của ván cờ có thể tìm thấy trong cuốn sách về giải đấu."
+},
+{
+"id": "0.4.1.20",
+"vi": "Lợi thế duy nhất của Trắng trong thế cờ trên là nắm giữ cột mở và được quyền đi trước, điều sẽ bảo đảm cho Trắng thế chủ động. Ngoài ra còn một lợi thế nhỏ là các Tốt cánh Hậu của Trắng liên kết với nhau, trong khi Đen có một Tốt a cô lập. Đường đi đúng, giống như trong cờ tàn trước, là đưa các Xe tiến lên, sao cho ít nhất một Xe có thể chuyển từ cánh này sang cánh kia của bàn cờ, nhờ đó ngăn các Xe của Đen di chuyển tự do. Điều này có ý nghĩa gì trong lý thuyết tổng quát thì đã được nói đến rồi; thực chất nó có nghĩa là: *liên tục quấy rối đối thủ; buộc đối thủ phải dùng các quân lớn để bảo vệ Tốt. Nếu đối thủ có một điểm yếu, hãy cố làm nó yếu hơn, hoặc tạo ra một điểm yếu khác ở nơi nào đó, và sớm muộn thế cờ của đối thủ sẽ sụp đổ. Nếu đối thủ có một điểm yếu và có thể khắc phục được nó, hãy bảo đảm rằng bạn tạo ra một điểm yếu khác ở nơi khác*."
+},
+{
+"id": "0.4.1.21",
+"vi": "Từ thế cờ đang xét, ván cờ tiếp diễn như sau:"
+},
+{
+"id": "0.4.1.23",
+"vi": "với mục đích lặp lại thủ pháp của Trắng, đồng thời không cho Trắng kiểm soát cột mở."
+},
+{
+"id": "0.4.1.25",
+"vi": "Đen muốn đưa Vua ra trung tâm bàn cờ để ở gần hơn bất kỳ điểm nào mà Trắng quyết định tấn công. Nước đi này ít ra cũng được biện minh bởi quy tắc chung rằng trong những thế cờ tàn như vậy, Vua nên đứng ở giữa bàn cờ. Xét cho cùng, Đen chẳng làm gì khác ngoài việc đi theo bước của Trắng. Hơn nữa, cũng khó chỉ ra điều gì tốt hơn. Nếu ⟦1125|4...d5⟧; ⟦1126|5.Rg4+⟧, tiếp theo là ⟦1127|Ke2⟧, sẽ đưa Đen vào một thế cờ rất khó chịu. Nếu ⟦1128|4...f5⟧; ⟦1129|5.Rd4⟧ ⟦1130|Rxe3⟧ ⟦1131|6.fxe3⟧ ⟦1132|Rxe3⟧; ⟦1133|7.Kf2⟧ ⟦1134|Re7⟧; ⟦1135|8.Ra4⟧, thắng Tốt a, điều trên thực tế sẽ cho Trắng hơn một Tốt thông ở cánh Hậu, vì ba Tốt của Đen ở cánh Vua sẽ bị hai Tốt của Trắng kìm giữ."
+},
+{
+"id": "0.4.1.27",
+"vi": "Người học nên lưu ý rằng qua cùng một thủ pháp, Đen bị buộc vào một thế cờ tương tự thế đã thấy trong cờ tàn trước."
+},
+{
+"id": "0.4.1.29",
+"vi": "Nước đi này có nhiều mục đích. Nó thực tế cố định tất cả các Tốt của Đen trừ Tốt d, Tốt duy nhất còn có thể tiến hai ô. Nó đặc biệt ngăn các Tốt f của Đen tiến lên, đồng thời đe dọa đẩy các Tốt f của Trắng lên f4 và f5. Bằng lời đe dọa này, nó thực tế buộc Đen phải đi ⟦1141|d5⟧, đúng điều Trắng mong muốn, vì những lý do sẽ sớm trở nên rõ ràng."
+},
+{
+"id": "0.4.1.31",
+"vi": "Rõ ràng là bị buộc, vì nước đi duy nhất khác để cứu một Tốt là ⟦1145|dxc4⟧, nước sẽ khiến tất cả các Tốt của Đen bị cô lập và yếu. Nếu ⟦1146|8...d4⟧; ⟦1147|9.Re4⟧ ⟦1148|Kd6⟧; ⟦1149|10.b4⟧ ⟦1150|Re5⟧; ⟦1151|11.Ra6⟧, và ván cờ của Đen hết hy vọng."
+},
+{
+"id": "0.4.1.33",
+"vi": "Bề ngoài rất mạnh, vì nó buộc đổi Xe do mối đe dọa ⟦1156|Ra3⟧; nhưng thực ra nó chẳng dẫn tới điều gì. Cơ hội tốt nhất là đi [?R - K K 1]."
+},
+{
+"id": "0.4.1.35",
+"vi": "Cho tới lúc này Trắng đã chơi rất tinh tế, nhưng nước cuối cùng này thì yếu. ⟦1160|Ra6⟧ mới là cách tiếp tục đúng, để buộc Đen phải bỏ Tốt a hoặc Tốt c."
+},
+{
+"id": "0.4.1.37",
+"vi": "Lại một nước đi tồi. ⟦1163|13.Ra3⟧ mới là cách tiếp tục đúng, và nếu khi đó ⟦1164|13...Rb8⟧; ⟦1165|14.b3⟧ ⟦1166|Kb7⟧; ⟦1167|15.b4⟧ ⟦1168|Ka8⟧; ⟦1169|16.Rb3⟧, với những cơ hội thắng tuyệt vời; thực tế, tôi tin đó là một ván thắng."
+},
+{
+"id": "0.4.1.40",
+"vi": "Đen bỏ lỡ cơ hội duy nhất của mình. ⟦1171|Rb8⟧ hẳn đã hòa."
+},
+{
+"id": "0.4.1.42",
+"vi": "Đen đưa Vua quay về để bảo vệ Tốt e, nhờ đó có thể sử dụng Xe. Tuy nhiên, điều đó vô ích, và chỉ nhờ lối chơi yếu của Trắng về sau Đen mới có thêm cơ hội hòa."
+},
+{
+"id": "0.4.1.44",
+"vi": "Để ngăn Xe Đen kiểm soát cột mở"
+},
+{
+"id": "0.4.1.46",
+"vi": "Đen phải giữ Vua ở cánh đó vì Trắng đe dọa đưa Vua tiến lên a6 qua b4."
+},
+{
+"id": "0.4.1.48",
+"vi": "Đen chẳng thể làm gì ngoài việc chờ Trắng. Nước đi trong ván ngăn Trắng di chuyển Xe, nhưng chỉ được một nước."
+},
+{
+"id": "0.4.1.50",
+"vi": "Nước đi duy nhất khác là ⟦1200|Ka7⟧; khi đó Trắng có thể đi ⟦1201|Rg7⟧, hoặc thậm chí ⟦1202|b5⟧."
+},
+{
+"id": "0.4.1.53",
+"vi": "Một nước yếu, cho Đen một cơ hội để chiến đấu. Trong cờ tàn này, như thường thấy ở phần lớn người chơi, Trắng đi những nước hay nhất mỗi khi tình thế khó khăn và đòi hỏi xử lý cẩn thận, nhưng một khi thế cờ của mình dường như đã áp đảo thì lại lơi lỏng, và kết quả chẳng có gì đáng tự hào. Nước đúng là ⟦1204|28.Rg7⟧."
+},
+{
+"id": "0.4.1.55",
+"vi": "Đen bỏ lỡ cơ hội cuối cùng: ⟦1222|Rb2+⟧, buộc Vua phải đi tới c3 để tránh chiếu vĩnh viễn, có lẽ đã hòa được. Bạn đọc cần nhớ rằng đối thủ của tôi lúc đó là một kỳ thủ rất trẻ và thiếu kinh nghiệm, vì vậy rất đáng khen ngợi vì cuộc chiến đấu mà anh đã thể hiện."
+},
+{
+"id": "0.4.1.57",
+"vi": "⟦1225|Rg7⟧; tiếp theo là ⟦1226|Rh7⟧, cho những cơ hội tốt hơn."
+},
+{
+"id": "0.4.1.59",
+"vi": "Cờ tàn này cho thấy mắc những nước yếu dễ đến thế nào, và ngay cả trong lối chơi của các bậc thầy, sai lầm vẫn thường xảy ra và cơ hội vẫn thường bị bỏ lỡ. Nó cho thấy rằng, chừng nào chưa có lợi thế lớn về vật chất, thì dù có thế cờ tốt, một người chơi, dẫu mạnh đến đâu, cũng không thể cho phép mình lơi lỏng sự chú ý dù chỉ một nước."
+},
+{
+"id": "0.4.2.h",
+"vi": "27. MỐI NGUY CỦA MỘT THẾ CỜ AN TOÀN"
+},
+{
+"id": "0.4.2.0",
+"vi": "**Ví dụ 58.**—Một bằng chứng tốt cho nhận định trên được thể hiện trong cờ tàn sau đây giữa Marshall và Kupchick, ở một trong hai ván của họ tại cùng Giải đấu đó (Havana, 1913)."
+},
+{
+"id": "0.4.2.2",
+"vi": "Rõ ràng Marshall (Trắng) đang gặp khó khăn lớn trong thế cờ trên. Không chỉ chắc chắn mất một Tốt, mà thế cờ của Trắng cũng khá kém. Điều tốt nhất Trắng có thể hy vọng là hòa, trừ phi có chuyện hoàn toàn bất ngờ xảy ra, và chuyện đó đã xảy ra thật. Không thể đưa ra lý do nào cho việc Đen thua ván này, ngoài việc Đen quá chắc chắn rằng mình đang nắm ưu thế với hơn một Tốt và một thế cờ mà Đen coi là an toàn, đến nỗi trở nên hết sức bất cẩn và không xét đến mối nguy thực sự đang tồn tại. Hãy xem chuyện đó xảy ra thế nào."
+},
+{
+"id": "0.4.2.4",
+"vi": "Các sai lầm bắt đầu. Đây là sai lầm thứ nhất. Đen thấy có thể ăn một Tốt mà không gặp nguy hiểm gì, và không dừng lại để suy nghĩ xem có gì tốt hơn không. ⟦1254|Rc7⟧ mới là nước đúng. Nếu khi đó ⟦1255|Kg6⟧, thì ⟦1256|Rxg4+⟧. Còn nếu Trắng đi ⟦1257|Ke4⟧, thì ⟦1258|Re5+⟧ tiếp theo là ⟦1259|Rxa2⟧."
+},
+{
+"id": "0.4.2.6",
+"vi": "Sai lầm thứ hai, và lần này nghiêm trọng đến mức gần như làm thua ván cờ. Nước đúng là đi ⟦1262|f5⟧ để phá vỡ các Tốt của Trắng, đồng thời mở đường cho Vua Đen, quân thực sự đang gặp nguy hiểm, như sẽ thấy ngay sau đây."
+},
+{
+"id": "0.4.2.8",
+"vi": "Sai lầm thứ ba, và lần này là chí tử. Nước hay nhất của Đen là ⟦1265|Rh5⟧. Sau nước đi trong ván, không còn cách phòng thủ nào. Ván cờ của Đen đã thua. Điều này cho thấy ngay cả một cờ tàn trông đơn giản cũng phải được chơi cẩn thận. Từ một thế cờ coi như đã thắng, Đen rơi vào một ván cờ thua, và chỉ mất ba nước."
+},
+{
+"id": "0.4.2.10",
+"vi": "Nếu ⟦1268|4...f5⟧; ⟦1269|5.Rh8+⟧ ⟦1270|Kg6⟧; ⟦1271|6.Rcg8+⟧ ⟦1272|Kf6⟧; ⟦1273|7.Rxh6+⟧ ⟦1274|Rg6⟧; ⟦1275|8.g5+⟧ ⟦1276|Ke7⟧; ⟦1277|9.Rhxg6⟧ ⟦1278|fxg6⟧; ⟦1279|10.Rg7+⟧ ⟦1280|Ke8⟧; ⟦1281|11.Rxg6⟧, và thắng dễ dàng."
+},
+{
+"id": "0.4.2.12",
+"vi": "Lý do rất rõ. Nếu ⟦1285|6...Kg6⟧; ⟦1286|7.gxh5+⟧ ⟦1287|Rxh5⟧; ⟦1288|8.Rxh5⟧ ⟦1289|Kxh5⟧; ⟦1290|9.Rh8+⟧ ⟦1291|Kg6⟧; ⟦1292|10.h5#⟧."
+},
+{
+"id": "0.4.3.h",
+"vi": "28. CỜ TÀN MỘT XE VÀ TỐT"
+},
+{
+"id": "0.4.3.0",
+"vi": "Đến lúc này bạn đọc hẳn đã nhận ra rằng cờ tàn hai Xe và Tốt rất khó, và điều đó cũng đúng với cờ tàn một Xe và Tốt. Cờ tàn hai Xe và Tốt không thường gặp lắm trong thực chiến; nhưng cờ tàn một Xe và Tốt là loại cờ tàn phổ biến nhất xuất hiện trên bàn cờ. Thế nhưng, dù chúng xảy ra thường xuyên đến vậy, ít người nắm vững chúng một cách thấu đáo. Chúng thường có tính chất rất khó, và có khi bề ngoài rất đơn giản nhưng thực ra lại cực kỳ phức tạp. Đây là một ví dụ lấy từ ván giữa Marshall và Rosenthal tại Giải vô địch Câu lạc bộ cờ Manhattan 1909-1910."
+},
+{
+"id": "0.4.3.1",
+"vi": "**Ví dụ 59.**"
+},
+{
+"id": "0.4.3.3",
+"vi": "Trong thế cờ này Marshall có một đường thắng đơn giản bằng ⟦1293|Rc7+⟧, nhưng lại đi ⟦1294|f6+⟧, và vì thế cho Đen một cơ hội hòa. May cho Marshall, Đen không nhìn ra nước hòa, chơi kém và thua. Nếu Đen nắm được tình thế, Đen đã hòa được bằng cách đi ⟦1295|Rd6⟧."
+},
+{
+"id": "0.4.3.5",
+"vi": "Bây giờ Trắng có hai cách tiếp tục, hoặc (*a*)⟦1298|f7⟧, hoặc (*b*) ⟦1299|Rc7+⟧. Do đó ta có:"
+},
+{
+"id": "0.4.3.7",
+"vi": "và cuối cùng Trắng sẽ phải thí Xe đổi lấy Tốt của Đen. Hoặc—"
+},
+{
+"id": "0.4.3.9",
+"vi": "một nước rất quan trọng, vì nếu ⟦1308|Rf6⟧ thì ⟦1309|Re7⟧ thắng."
+},
+{
+"id": "0.4.3.11",
+"vi": "và cuối cùng Trắng sẽ phải thí Xe đổi lấy Tốt, hoặc hòa bằng chiếu vĩnh viễn."
+},
+{
+"id": "0.4.3.12",
+"vi": "Nếu cờ tàn này không còn gì khác nữa thì nó cũng chẳng có giá trị gì lớn, nhưng nó còn những điểm rất thú vị khác. Bây giờ giả sử sau ⟦1314|1.f6⟧ ⟦1315|Rd6⟧; ⟦1316|2.f7⟧, Đen không nhận ra rằng ⟦1317|Rd8⟧ là nước duy nhất để hòa. Khi đó ta sẽ có thế cờ sau:"
+},
+{
+"id": "0.4.3.14",
+"vi": "Bây giờ sẽ có hai nước khác để thử: hoặc (*a*) ⟦1318|Rg6+⟧, hoặc (*b*) ⟦1319|Rf6⟧. Hãy xét chúng."
+},
+{
+"id": "0.4.3.16",
+"vi": "Nếu ⟦1325|b3⟧; ⟦1326|Rh5+⟧ thắng, vì nếu Vua lui về thì ⟦1327|Rh6⟧, còn nếu Vua tiến lên thì ⟦1328|Rh4⟧, tiếp theo là ⟦1329|Rf5⟧ thắng."
+},
+{
+"id": "0.4.3.18",
+"vi": "Nếu ⟦1332|Rd6+⟧; ⟦1333|Ke4⟧ thắng."
+},
+{
+"id": "0.4.3.21",
+"vi": "Nếu ⟦1339|b3⟧; ⟦1340|Rg3⟧, và Trắng sẽ hoặc ăn Tốt hoặc đưa Xe tới f3, rồi đi vào một cờ tàn thắng."
+},
+{
+"id": "0.4.3.23",
+"vi": "và Trắng sẽ hoặc ăn Tốt hoặc đi ⟦1345|Rf3⟧, tùy tình huống, rồi đi vào một cờ tàn thắng."
+},
+{
+"id": "0.4.3.24",
+"vi": "Bây giờ, quay lại thế cờ ở trang 122, giả sử sau [?P - B 6]; [?R - B 7 ch], Đen không nhận ra rằng ⟦1346|Kd4⟧ là nước duy nhất để hòa, và vì thế đi ⟦1347|Kg3⟧ thay vào đó, khi ấy ta sẽ có thế cờ sau:"
+},
+{
+"id": "0.4.3.26",
+"vi": "Bây giờ cách tiếp tục hay nhất sẽ là:"
+},
+{
+"id": "0.4.3.28",
+"vi": "Trắng đe dọa chiếu bằng Xe ở ô e6 (theo Trắng)."
+},
+{
+"id": "0.4.3.30",
+"vi": "Hay nhất. Nếu ⟦1356|Kc4⟧; cả ⟦1357|h4⟧ lẫn ⟦1358|Ke3⟧ đều thắng; đặc biệt nước sau cùng sẽ thắng dễ dàng."
+},
+{
+"id": "0.4.3.33",
+"vi": "Thế cờ mà ta đi tới đây là thắng cho Trắng, vì có hai cột nằm giữa Vua đối phương và Tốt, Vua bị Xe cắt khỏi Tốt, và hơn nữa, Tốt có thể tiến tới hàng bốn trước khi Xe đối phương kịp bắt đầu chiếu dọc cột. Điều kiện sau cùng này rất quan trọng, vì nếu thay cho thế cờ trên hình, Xe Đen đứng ở h8 và Đen được đi, Đen có thể hòa bằng cách ngăn Tốt tiến lên, hoặc bằng cách chiếu liên tục, hoặc bằng cách đi ⟦-|Rf1⟧ vào đúng thời điểm."
+},
+{
+"id": "0.4.3.34",
+"vi": "Giờ đây, khi đã giải thích lý do vì sao thế cờ này thắng, chúng tôi để người học tự tìm ra lời giải đúng."
+},
+{
+"id": "0.4.3.35",
+"vi": "Việc từ một cờ tàn bề ngoài đơn giản mà ta đã có thể rút ra nhiều cờ tàn hết sức bất thường và khó khăn hẳn đủ để khắc sâu vào tâm trí người học sự cần thiết phải làm quen kỹ với mọi loại cờ tàn, nhất là cờ tàn Xe và Tốt."
+},
+{
+"id": "0.4.4.h",
+"vi": "29. MỘT CỜ TÀN KHÓ: HAI XE VÀ TỐT"
+},
+{
+"id": "0.4.4.0",
+"vi": "Theo quan điểm của chúng tôi rằng cách tốt nhất để học cờ tàn cũng như khai cuộc là nghiên cứu các ván cờ của các bậc thầy, chúng tôi đưa ra thêm hai cờ tàn hai Xe và Tốt. Như đã nói, những cờ tàn này không thường gặp lắm, và tác giả may mắn là bản thân đã chơi nhiều cờ tàn loại này hơn mức thông thường. Bằng cách so sánh và nghiên cứu cẩn thận các cờ tàn đã nêu (Ví dụ 56 và 57) với những cờ tàn sau đây, người học chắc chắn có thể hình dung được phương pháp đúng cần theo trong những trường hợp như vậy. Cách tiến hành trong tất cả các cờ tàn này đều khá giống nhau."
+},
+{
+"id": "0.4.4.1",
+"vi": "**Ví dụ 60.**—Từ ván Capablanca-Kreymborg, tại Giải vô địch bang New York năm 1910."
+},
+{
+"id": "0.4.4.3",
+"vi": "Đến lượt Đen đi, và chắc hẳn nghĩ rằng hòa một thế cờ như vậy (đó là tất cả những gì Đen nhắm tới) sẽ dễ dàng, Đen bằng lòng với một chính sách chờ đợi. Cách hành xử như vậy luôn đáng bị phê phán. Nó thường dẫn tới thảm họa. *Cách phòng thủ tốt nhất trong những thế cờ như vậy là giành thế chủ động và buộc đối thủ phải phòng thủ.*"
+},
+{
+"id": "0.4.4.5",
+"vi": "Nước đầu tiên đã sai rồi. Nước này chẳng được lợi gì. Đen nên đi ⟦1369|a5⟧; tiếp theo là ⟦1370|a4⟧; trừ phi Trắng đi ⟦1371|b3⟧. Điều đó sẽ *cố định* cánh Hậu. Sau đó Đen có thể quyết định sẽ dùng các Xe của mình phô diễn thế nào để giữ các Xe đối phương ở xa."
+},
+{
+"id": "0.4.4.7",
+"vi": "Nước này không chỉ ngăn ⟦1373|f4⟧ mà Đen định đi, mà còn đe dọa ⟦1374|b3⟧, rồi sau ⟦1375|cxb3+⟧ là đòn tấn công bằng một hoặc cả hai Xe vào Tốt a của Đen."
+},
+{
+"id": "0.4.4.9",
+"vi": "có lẽ với ý định phô diễn ở cánh Vua bằng ⟦1377|Rg6⟧ rồi đưa Xe xuống g2."
+},
+{
+"id": "0.4.4.11",
+"vi": "Lúc này nên đi ⟦1383|Ra8⟧, để buộc Đen phải phòng thủ bằng ⟦1384|Re7⟧. Tuy nhiên, Trắng không muốn lộ kế hoạch ngay, khiến Đen tỉnh ngộ trước mối nguy của thế cờ, vì vậy mới có nước này, trông như nhằm phá vỡ các Tốt cánh Hậu của Đen."
+},
+{
+"id": "0.4.4.13",
+"vi": "Đây là một sai lầm. Đen không ý thức được mối nguy của thế cờ mình. Đen nên đi ⟦1388|g5⟧; đe dọa ⟦1389|Ra3⟧, và bằng cuộc phô diễn này nhắm vào Tốt h của Trắng, ngăn chặn đòn tấn công vào các Tốt cánh Hậu của mình, đòn tấn công giờ đây sẽ triển khai."
+},
+{
+"id": "0.4.4.15",
+"vi": "Đen không thể đi ⟦1392|Kd6⟧, vì ⟦1393|c4⟧ sẽ thắng ít nhất một Tốt. Riêng điều này đã đủ kết tội nước đi trước đó của Đen, ⟦1394|Ke6⟧, nước chẳng làm được gì ngoài việc khiến tình thế của Đen gần như hết hy vọng."
+},
+{
+"id": "0.4.4.17",
+"vi": "Giờ thì bị buộc, nhưng đã hơi muộn. Đen không thể đi ⟦1397|8...Rff7⟧, vì ⟦1398|f4⟧ sẽ làm ván cờ của Đen hoàn toàn tê liệt. Đến lúc này Đen cuối cùng mới tỉnh ngộ trước mối nguy, và cố cứu vãn bằng cuộc phản công phô diễn ở cánh Vua, điều mà Đen lẽ ra phải bắt đầu từ trước. Dĩ nhiên Trắng không thể đi ⟦1399|Rxa7⟧, vì ⟦1400|Rxa7⟧, tiếp theo là ⟦1401|Ra3⟧, lấy lại Tốt với lợi thế."
+},
+{
+"id": "0.4.4.19",
+"vi": "Đen giờ ở trong một thế cờ rất khó chịu. Nếu Đen đi ⟦1404|9...gxh4⟧; ⟦1405|10.Rxh4⟧ sẽ đặt Đen vào tình thế rất lúng túng, vì Đen không thể lui Vua về, cũng không làm được gì nhiều với cả hai Xe. Thực tế Đen sẽ phải đi ⟦1406|10...h6⟧, khi đó Trắng trả lời ⟦1407|11.b4⟧, đe dọa thắng một Tốt bằng ⟦1408|b5⟧, hoặc nếu thế chưa đủ, Trắng có thể đi ⟦1409|Kd4⟧, để rồi cuối cùng đưa Vua vào c5 hoặc e5."
+},
+{
+"id": "0.4.4.23",
+"vi": "Đen lại không thể đi ⟦1412|h5⟧, vì ⟦1413|f4⟧ sẽ khiến Đen bị tê liệt. Việc đẩy Tốt h của Đen sẽ làm Tốt h của Trắng an toàn, và do đó Xe cánh Vua của Đen sẽ phải lui về f7 để bảo vệ Tốt a. Điều đó khiến Vua Đen không thể đi tới d7, vì Tốt a, và Đen cũng không thể tiến bất kỳ Tốt nào của mình. Trong khi đó, Trắng sẽ đi ⟦-|b4⟧, đe dọa thắng một Tốt bằng ⟦-|g5⟧, hoặc Trắng có thể đi ⟦-|Kd5⟧ trước, rồi vào đúng thời điểm đi ⟦-|g5⟧, nếu không có gì tốt hơn. Trong lúc đó Đen thực sự chẳng làm được gì ngoài việc đi qua đi lại một trong hai Xe. Hãy so sánh hệ thống dồn ép này với cờ tàn trong Ví dụ 57, và sẽ thấy chúng rất giống nhau."
+},
+{
+"id": "0.4.4.25",
+"vi": "Có lẽ sai.⟦1417|b4⟧ ngay lập tức mới là nước đúng. Nước đi trong ván cho Đen những cơ hội hòa tốt."
+},
+{
+"id": "0.4.4.27",
+"vi": "Điều này không bao giờ xảy ra được nếu Trắng đi ⟦1421|12.b4⟧, vì Trắng có thể tiếp tục bằng ⟦1422|b5⟧ sau nước ⟦1423|Kd6⟧ của Đen."
+},
+{
+"id": "0.4.4.29",
+"vi": "Không hay.⟦1425|f4⟧ cho những cơ hội tốt nhất để thắng bằng sức mạnh. Nếu khi đó ⟦1426|14...Rg7⟧; ⟦1427|15.h5⟧ ⟦1428|Rg2+⟧; ⟦1429|16.Kd3⟧ ⟦1430|Rh2⟧; ⟦1431|17.Rxa7⟧ ⟦1432|Rxa7⟧; ⟦1433|18.Rxa7⟧ ⟦1434|Rxh5⟧; ⟦1435|19.Ra6⟧, với những cơ hội thắng."
+},
+{
+"id": "0.4.4.32",
+"vi": "Đen bỏ lỡ cơ hội cuối cùng.⟦1437|f4⟧ sẽ hòa. Nếu khi đó ⟦1438|15.exf4⟧ ⟦1439|Rbe7+⟧ !; ⟦1440|16.Kf1⟧ ⟦1441|Rxf4⟧; ⟦1442|17.Rxa7⟧ ⟦1443|Re3⟧ !"
+},
+{
+"id": "0.4.4.34",
+"vi": "⟦1454|Rgg7⟧ hẳn đã kháng cự mạnh hơn, nhưng dù sao thế cờ cũng đã thua. (Tôi để người học tự phân tích điều này.)"
+},
+{
+"id": "0.4.4.36",
+"vi": "Chẳng gì cứu vãn được. Nếu ⟦1459|21...Rg1⟧; ⟦1460|22.Ra6⟧ ! ⟦1461|Rd1+⟧; ⟦1462|23.Kc2⟧ ⟦1463|Rh1⟧; ⟦1464|24.b5⟧ ⟦1465|Rxh5⟧; ⟦1466|25.Rxc6+⟧ ⟦1467|Kd7⟧; ⟦1468|26.Ra6⟧, và Trắng sẽ thắng dễ dàng."
+},
+{
+"id": "0.4.4.38",
+"vi": "Đen đã tuyệt vọng. Đen thấy mình không còn bảo vệ được các Tốt nữa."
+},
+{
+"id": "0.4.4.40",
+"vi": "**Ví dụ 61.**—Từ ván Capablanca-Janowski, Giải Quốc gia New York năm 1913."
+},
+{
+"id": "0.4.4.42",
+"vi": "Ván cờ của Đen có nhược điểm là cặp Tốt c chồng, và tệ hơn nữa, Đen không thể đẩy chúng lên, vì ngay khi Đen đi ⟦1484|b6⟧, Trắng trả lời ⟦1485|b4⟧. Trắng xây dựng kế hoạch của mình dựa trên thực tế này. Trắng sẽ ngăn các Tốt cánh Hậu của Đen tiến lên, rồi đưa Vua của mình tới e3. Sau đó, vào lúc thích hợp, Trắng sẽ đi ⟦1486|d4⟧, và cuối cùng ⟦1487|e5⟧ hoặc ⟦-|g4⟧, buộc đổi Tốt và bằng cách đó có được một Tốt thông rõ ràng trên cột e. Ta sẽ thấy kế hoạch này đã được thực hiện trong diễn biến ván cờ, và Trắng giành được lợi thế thắng theo cách đó. Toàn bộ lối chơi đều dựa trên cơ hội có được một Tốt thông trên cột e, mà Trắng trông đợi sẽ dùng để thắng."
+},
+{
+"id": "0.4.4.44",
+"vi": "đã chuẩn bị sẵn để đi ⟦1489|g5⟧ khi thời cơ đến."
+},
+{
+"id": "0.4.4.46",
+"vi": "Đen muốn đi ⟦1491|c5⟧, nhưng dĩ nhiên Trắng ngăn lại."
+},
+{
+"id": "0.4.4.48",
+"vi": "Vua này nên sang cánh Vua, nơi mối nguy đang rình rập."
+},
+{
+"id": "0.4.4.50",
+"vi": "Với mục đích đi ⟦1496|Kg3⟧ và ⟦1497|a5⟧, tiếp theo là ⟦1498|bxa5⟧, nhờ đó có một cột mở cho Xe và có thể phản công phô diễn ở cánh Hậu để chặn bước tiến của Trắng ở bên phải. Tuy nhiên, Trắng cũng ngăn cả điều này."
+},
+{
+"id": "0.4.4.52",
+"vi": "Dĩ nhiên nếu ⟦1501|bxa4⟧; tất cả các Tốt cánh Hậu của Đen sẽ bị phá vỡ và cô lập, và Trắng có thể dễ dàng lấy lại Tốt đã mất bằng cách đưa một trong hai Xe lên cột a."
+},
+{
+"id": "0.4.4.54",
+"vi": "Đen vẫn muốn đi ⟦1504|c4⟧, nhưng vì dễ thấy trước rằng Trắng sẽ lại ngăn điều đó, nước đi trong ván thực sự là một sự mất thời gian nghiêm trọng. Đen nên đưa Vua sang cánh bên kia ngay lập tức."
+},
+{
+"id": "0.4.4.56",
+"vi": "Phần thứ nhất của kế hoạch chiến lược của Trắng đã hoàn thành. Các Tốt cánh Hậu của Đen đã bị *cố định* trên thực tế."
+},
+{
+"id": "0.4.4.58",
+"vi": "Nếu ⟦1509|Rxf5⟧; ⟦1510|gxf5⟧ sẽ cho Trắng một trung tâm rất mạnh. Dù vậy, đó có thể là cơ hội tốt nhất cho Đen."
+},
+{
+"id": "0.4.4.61",
+"vi": "Phần thứ hai của kế hoạch chiến lược của Trắng đã hoàn thành. Còn phải xem lợi thế thu được có đủ để thắng hay không. Trắng không chỉ có một Tốt thông, mà Vua Trắng còn ở một vị trí khống chế ngay trung tâm bàn cờ, sẵn sàng hỗ trợ các Tốt Trắng tiến lên, hoặc, nếu cần, đi tới c5, hoặc chuyển sang cánh phải nếu có nguy hiểm. Hơn nữa, Trắng nắm cột mở với một trong hai Xe. Tổng thể, thế cờ của Trắng vượt trội và cơ hội thắng của Trắng rất tốt."
+},
+{
+"id": "0.4.4.63",
+"vi": "để ngăn ⟦1519|d4⟧. Ngoài ra Đen cũng ngại giữ Xe đứng trước hai Tốt cánh Vua của mình, những Tốt mà Đen có thể muốn sử dụng về sau."
+},
+{
+"id": "0.4.4.65",
+"vi": "Trắng đe dọa ⟦1524|h5⟧, nước cuối cùng sẽ buộc Đen phải ăn, và khi đó Trắng sẽ chồng Xe tấn công Tốt cô lập và thắng nó, hoặc trói chặt hoàn toàn các Xe của Đen. Tuy nhiên, nước đi trong ván chỉ giúp cho Trắng; vì vậy Đen không có gì tốt hơn là giữ chặt và chờ đợi. ⟦1525|Re5⟧ cũng không giúp được nhiều, vì Trắng chỉ cần trả lời ⟦1526|Rf8⟧, ⟦1527|Re8⟧; ⟦1528|Rxe5⟧, và dù Đen ăn Xe nào, Trắng cũng sẽ có một ván cờ dễ dàng. (Người học nên nghiên cứu cẩn thận các biến này.)"
+},
+{
+"id": "0.4.4.67",
+"vi": "⟦1535|Kd2⟧ cũng không giúp được nhiều, nhưng một khi đã đi nước trước đó thì giờ Đen nên nhất quán mà đi nước này."
+},
+{
+"id": "0.4.4.69",
+"vi": "Chiến thuật thắng trong tất cả những cờ tàn này chỉ đơn giản là giữ các Xe của đối thủ bị trói vào việc bảo vệ một hoặc nhiều Tốt, trong khi các Xe của tôi được tự do hành động. Đây là một nguyên tắc chung có thể áp dụng như nhau cho bất kỳ giai đoạn nào của ván cờ. Nói một cách tổng quát, nó có nghĩa là—"
+},
+{
+"id": "0.4.4.70",
+"vi": "*Giữ sự tự do điều quân trong khi cản trở đối thủ.*"
+},
+{
+"id": "0.4.4.71",
+"vi": "Còn một điều nữa rất quan trọng, đó là bên thắng luôn có một kế hoạch chiến lược tổng thể có thể thực hiện được bằng các phương tiện trong tay, trong khi bên thua thường chẳng có kế hoạch gì, mà chỉ đi theo nhu cầu của từng thời điểm."
+},
+{
+"id": "0.4.5.h",
+"vi": "30. XE, TƯỢNG VÀ TỐT *chống* XE, MÃ VÀ TỐT"
+},
+{
+"id": "0.4.5.0",
+"vi": "Bây giờ chúng ta sẽ xét một cờ tàn Xe, Tượng và Tốt chống Xe, Mã và Tốt, trong đó sẽ thấy Xe có lúc được dùng theo cùng cách như trong các cờ tàn đã nêu."
+},
+{
+"id": "0.4.5.1",
+"vi": "**Ví dụ 62.**—Từ ván đầu tiên của trận tranh ngôi vô địch Lasker-Marshall năm 1907."
+},
+{
+"id": "0.4.5.3",
+"vi": "Trong thế cờ này, đến lượt Đen đi. Với người mới, thế cờ có thể trông như hòa, nhưng người chơi trình độ cao sẽ nhận ra ngay rằng Đen có nhiều khả năng thắng, không chỉ vì Đen có thế chủ động, mà còn vì cánh Hậu của Trắng chưa phát triển và vì trong một thế cờ như vậy, Tượng tốt hơn Mã (xem Mục 14). Trắng sẽ cần một thời gian để đưa Xe và Mã vào cuộc, và Đen có thể tận dụng điều đó để giành lợi thế. Đen có hai đường đi. Đường rõ ràng nhất, và cũng là đường mà phần lớn người chơi sẽ chọn, là đẩy ngay Tốt lên c5 rồi c4, kết hợp với nước Tượng chiếu ở a6 và bất kỳ nước nào khác cần thiết của Xe Đen. Đường thứ hai, tinh tế hơn, là đường Đen đã chọn. Nó gồm việc sử dụng Xe theo cùng cách như đã thấy trong các cờ tàn trước, buộc Trắng lúc nào cũng phải bảo vệ một cái gì đó, hạn chế hoạt động của Mã Trắng và Xe Trắng, đồng thời giữ tự do hành động cho Xe và Tượng của mình."
+},
+{
+"id": "0.4.5.5",
+"vi": "Nước này buộc ⟦1560|b3⟧, nước chặn mất ô đó của Mã Trắng."
+},
+{
+"id": "0.4.5.7",
+"vi": "đưa Xe tới tấn công các Tốt cánh Vua để buộc Vua phải sang cánh đó bảo vệ chúng, và như vậy gián tiếp làm cho vị trí các Tốt cánh Hậu của Đen vững chắc hơn."
+},
+{
+"id": "0.4.5.9",
+"vi": "Lưu ý rằng phạm vi hoạt động của Mã Trắng rất hạn chế, và sau ⟦1567|Nd2⟧ chính các Tốt của Trắng lại cản đường nó."
+},
+{
+"id": "0.4.5.11",
+"vi": "Nước chiếu này chẳng đạt được gì. Nó chỉ đẩy Vua Đen tới nơi mà Vua muốn đến. Do đó đây là một nước rất tồi.⟦1571|a3⟧ ngay lập tức mới là nước hay nhất."
+},
+{
+"id": "0.4.5.13",
+"vi": "Chuẩn bị chuyển đòn tấn công sang cánh Hậu, nơi Đen có lợi thế về vật chất và vị trí."
+},
+{
+"id": "0.4.5.15",
+"vi": "Hãy để ý các thủ pháp với Xe này giống đến thế nào với những gì đã thấy trong các cờ tàn trước."
+},
+{
+"id": "0.4.5.17",
+"vi": "Làm tê liệt hoạt động của Mã và *cố định* toàn bộ cánh Vua."
+},
+{
+"id": "0.4.5.19",
+"vi": "Trắng không thể trả lời ⟦1581|Nf3⟧, vì ⟦1582|Bxf3⟧ tiếp theo là ⟦1583|Ke5⟧ sẽ thắng một Tốt, do nước chiếu ở f6 không thể ngăn được."
+},
+{
+"id": "0.4.5.21",
+"vi": "Bây giờ Vua tấn công các Tốt của Trắng và mọi chuyện sẽ sớm kết thúc."
+},
+{
+"id": "0.4.5.23",
+"vi": "Chỉ để làm Trắng hết nước đi, điều cuối cùng sẽ buộc Trắng phải di chuyển hoặc Vua hoặc Mã."
+},
+{
+"id": "0.4.5.25",
+"vi": "Cách thắng nhanh nhất. Trắng nên xin thua."
+},
+{
+"id": "0.4.5.27",
+"vi": "Một ví dụ rất hay về phía Đen cho thấy cách điều khiển một cờ tàn như vậy."
+},
+{
+"id": "0.5.h",
+"vi": "Khai cuộc và trung cuộc (tiếp theo)"
+},
+{
+"id": "0.5.0.h",
+"vi": "31. MỘT SỐ ĐIỂM NỔI BẬT VỀ TỐT"
+},
+{
+"id": "0.5.0.0",
+"vi": "Trước khi trở lại bàn về khai cuộc và các thế cờ trung cuộc, có lẽ nên ghi nhớ một vài điều về cấu trúc Tốt, những điều chắc chắn sẽ giúp hiểu được một số nước đi, và đôi khi cả mục đích của một số biến trong khai cuộc cũng như của một số thủ pháp trong trung cuộc."
+},
+{
+"id": "0.5.0.2",
+"vi": "**Ví dụ 63.**—Trong thế cờ trên hình, ta có một cấu trúc Tốt cực kỳ xấu bên phía Đen. Tốt c của Đen hoàn toàn lạc hậu, và Trắng có thể dùng cột mở để tập trung lực lượng vào điểm yếu đó. Ngoài ra còn có ô c5 của Trắng, do Trắng kiểm soát, nơi một quân Trắng một khi đã đứng vững thì không thể bị đuổi đi. Để loại bỏ nó, Đen sẽ phải đổi quân đó, điều không phải lúc nào cũng dễ, và nhiều khi dù làm được cũng chẳng hề thuận lợi. Điều tương tự cũng đúng với các Tốt e, f và g của Đen, chúng tạo ra cái gọi là một \"lỗ hổng\" ở ô f6 của Đen. Những cấu trúc Tốt như vậy luôn dẫn tới thảm họa, và do đó phải tránh."
+},
+{
+"id": "0.5.0.4",
+"vi": "**Ví dụ 64.**—Trong thế cờ này ta có thể nói các Tốt trung tâm của Trắng ở thế tấn công, trong khi các Tốt trung tâm của Đen ở thế phòng thủ. Cấu trúc Tốt như vậy xuất hiện trong Phòng thủ Pháp. Trong những thế cờ này, Trắng thường cố gắng, bằng cách đẩy Tốt f4 rồi f5, giành một đòn tấn công nghiền nát vào Vua Đen, thường đã nhập thành ở cánh Vua. Để ngăn điều đó, đồng thời giành thế chủ động hoặc lợi thế vật chất, Đen phản công phô diễn bằng Tốt c5, tiếp theo là Tốt ăn Tốt (khi Trắng bảo vệ Tốt bằng Tốt c3), rồi tập trung các quân Đen vào Tốt Trắng ở d4. Về thực chất, có thể nói đây là một đòn tấn công kiên quyết vào trung tâm của Trắng nhằm làm tê liệt đòn tấn công trực tiếp của Trắng vào Vua Đen. Cần nhớ rằng ở đầu sách đã nêu *kiểm soát trung tâm là điều kiện thiết yếu để tấn công thành công vào Vua*."
+},
+{
+"id": "0.5.0.5",
+"vi": "Một cách trừu tượng, ta có thể nói hai hay nhiều Tốt mạnh nhất khi chúng đứng cạnh nhau trên cùng một hàng. Như vậy các Tốt trung tâm, có thể nói, tự thân mạnh nhất khi đứng ở e4 và d4, vì thế câu hỏi có nên đẩy Tốt này hay Tốt kia lên hàng năm là điều phải được cân nhắc hết sức cẩn thận. Việc đẩy một trong hai Tốt này thường quyết định hướng đi của ván cờ."
+},
+{
+"id": "0.5.0.6",
+"vi": "Một điều khác cần xem xét là vấn đề một hay nhiều Tốt thông khi chúng bị cô lập, đơn lẻ hoặc thành cặp. Ta có thể nói một Tốt thông hoặc rất yếu hoặc rất mạnh, và điểm yếu hay điểm mạnh của nó, tùy trường hợp đang xét, tăng lên khi nó tiến lên, đồng thời có quan hệ trực tiếp với số quân trên bàn cờ. Về điểm sau cùng này, nói chung có thể khẳng định rằng *Tốt thông càng mạnh khi số quân trên bàn cờ càng giảm*."
+},
+{
+"id": "0.5.0.7",
+"vi": "Khi đã nắm rõ tất cả những điều này, bây giờ ta trở lại với khai cuộc và trung cuộc. Ta sẽ phân tích các ván cờ cẩn thận từ đầu đến cuối theo các nguyên tắc chung. Khi nào có thể, tôi sẽ dùng các ván cờ của chính mình, không phải vì chúng minh họa vấn đề tốt hơn, mà vì hiểu chúng thấu đáo, tôi sẽ có thể giải thích chúng một cách có thẩm quyền hơn so với các ván cờ của người khác."
+},
+{
+"id": "0.5.1.h",
+"vi": "32. MỘT SỐ HƯỚNG PHÁT TRIỂN CÓ THỂ TỪ VÁN RUY LOPEZ"
+},
+{
+"id": "0.5.1.0",
+"vi": "Việc một số biến trong khai cuộc và các thủ pháp trong trung cuộc thường dựa trên một số nguyên tắc cơ bản vừa trình bày có thể thấy dễ dàng trong trường hợp sau:"
+},
+{
+"id": "0.5.1.1",
+"vi": "**Ví dụ 65.**"
+},
+{
+"id": "0.5.1.3",
+"vi": "Đến đây là một biến rất quen thuộc của Ruy Lopez (Ván cờ Tây Ban Nha). Thực ra, đó là các nước của ván Janowski-Lasker tại Paris, 1912."
+},
+{
+"id": "0.5.1.5",
+"vi": "Giả sử ván cờ tiếp diễn, và bằng cách nào đó Trắng, khi đưa một trong hai Mã tới d4 vào đúng lúc, buộc đổi cả hai Mã, rồi sau đó cả hai Tượng cũng được đổi, và ta đi tới một thế cờ đại loại như trên hình sau. (Tôi từng có một thế cờ như vậy theo cách rất tương tự tại Lodz, Ba Lan. Tôi cầm quân Trắng đấu với một nhóm hội ý do Salwe dẫn đầu.)"
+},
+{
+"id": "0.5.1.7",
+"vi": "Bây giờ ở đây ta có trường hợp Tốt c lạc hậu, không cách nào tiến được lên c5. Một thế cờ như vậy có thể nói là thua về lý thuyết, và trong thực tế một bậc thầy hàng đầu luôn thắng được Đen. (Nếu được phép nhắc tới, tôi xin nói rằng tôi đã thắng ván cờ vừa đề cập ở trên.)"
+},
+{
+"id": "0.5.1.8",
+"vi": "Sau vài nước, thế cờ có thể dễ dàng trở thành thế này:"
+},
+{
+"id": "0.5.1.10",
+"vi": "Các quân Đen có thể nói là đã bị *cố định*. Nếu Trắng đi ⟦1628|Qc3⟧, Đen phải trả lời ⟦1629|Qd7⟧, nếu không sẽ mất một Tốt, và nếu Trắng đưa Hậu quay lại a3, Đen sẽ lại phải đưa Hậu về b7, nếu không thì mất Tốt. Như vậy Đen chỉ có thể đi theo sự dẫn dắt của Trắng, và trong điều kiện đó Trắng có thể dễ dàng đẩy các Tốt lên f4 và g4, cho tới khi Đen buộc phải ngăn ⟦-|c5⟧ bằng cách đi ⟦1630|f4⟧, và cuối cùng ta có thể có một thế cờ đại loại như thế này:"
+},
+{
+"id": "0.5.1.11",
+"vi": "**Ví dụ 66.**"
+},
+{
+"id": "0.5.1.13",
+"vi": "Trong tình thế này, ván cờ có thể tiếp diễn như sau:"
+},
+{
+"id": "0.5.2.h",
+"vi": "1. Tốt ăn Tốt, Tốt ăn Tốt; 2. Hậu f3, Hậu d7"
+},
+{
+"id": "0.5.2.0",
+"vi": "Trắng đe dọa thắng một Tốt bằng Hậu ăn Tốt, và Đen không thể đi 2...Xe f8, vì 3. Xe ăn Tốt c cũng sẽ thắng ít nhất một Tốt."
+},
+{
+"id": "0.5.2.2",
+"vi": "Bây giờ giả sử trong thế cờ ở hình trước đến lượt Đen đi, và Đen đi Xe f8. Khi đó Trắng chỉ cần bảo vệ Tốt f bằng một nước đại loại như Hậu f3, đe dọa Xe ăn Tốt c, rồi đưa Vua lên g3, và khi thời cơ đến thì đột phá, như trong trường hợp trước. Trắng thậm chí có thể đạt được thế cờ sau:"
+},
+{
+"id": "0.5.2.4",
+"vi": "Đen khi đó sẽ bị buộc phải đi ⟦1631|Rc8⟧, và Trắng có thể đi ⟦1632|Qc2⟧, rồi tiếp tục bằng Vua f3, như vậy buộc Đen phải đi ⟦1633|fxg4⟧, điều sẽ cho Trắng một lợi thế lớn hơn."
+},
+{
+"id": "0.5.2.5",
+"vi": "Xem xét cẩn thận tất cả các thế cờ này sẽ thấy rằng, ngoài lợi thế tự do điều quân về phía Trắng, sức mạnh của Tốt ở e5 là rất lớn, và chính vị trí khống chế của Tốt này, cùng với việc nó được tự do tiến lên một khi tất cả các quân đã được đổi, là trục xoay của mọi thủ pháp của Trắng."
+},
+{
+"id": "0.5.2.6",
+"vi": "Tôi đã cố ý đưa ra các thế cờ mà không kèm những nước đi dẫn tới chúng, để người học quen với việc tự xây dựng trong đầu những thế cờ có thể nảy sinh (từ bất kỳ tình huống cho trước nào). Như vậy người học sẽ học được cách lập kế hoạch chiến lược và tiến trên con đường đến trình độ bậc thầy. Người học có thể thu được lợi ích to lớn khi tiếp tục luyện tập theo cách này."
+},
+{
+"id": "0.5.3.h",
+"vi": "33. ẢNH HƯỞNG CỦA MỘT \"LỖ HỔNG\""
+},
+{
+"id": "0.5.3.0",
+"vi": "Ảnh hưởng của cái gọi là \"lỗ hổng\" trong một ván cờ đã được minh họa trong ván tôi đấu với Blanco (trang 81), nơi đã cho thấy ảnh hưởng của các quân khác nhau khi được đặt vào lỗ hổng tạo ra ở ô e5 của Trắng."
+},
+{
+"id": "0.5.3.1",
+"vi": "**Ví dụ 67.**—Để minh họa thêm điểm này, tôi đưa ra một ván cờ chơi tại Giải các kỳ thủ bậc thầy Quốc tế Havana năm 1913. (Gambit Hậu từ chối.) Trắng: D. Janowski. Đen: A. Kupchick."
+},
+{
+"id": "0.5.3.3",
+"vi": "Dĩ nhiên ý đồ là đặt một Mã ở d5, nhưng vì chính con Mã kia mới là con sẽ được đặt ở đó, thủ pháp này xem ra không hợp lý. Con Mã ở b6 chẳng làm gì ngoài việc cản trở sự phát triển Tượng cánh Hậu của chính mình. Đường đi thông thường là nhập thành, tiếp theo là Tốt c5, hợp lý hơn. Để có một minh họa tuyệt đẹp về cách chơi bên Trắng trong biến đó, hãy xem ván Janowski-Rubinstein tại Giải St. Petersburg năm 1914."
+},
+{
+"id": "0.5.3.5",
+"vi": "Tượng b3 có một số điểm lợi trong thế cờ này, quan trọng nhất là khả năng đẩy Tốt e ngay sau 8. ... Mã f-d5; 9. Tượng ăn Tượng, Hậu ăn Tượng."
+},
+{
+"id": "0.5.3.7",
+"vi": "Nếu Tượng Trắng đứng ở b3, giờ Trắng đã có thể đi Tốt e4 như đã nêu trong lời bình trước, một nước mà Trắng không thể đi trong thế cờ hiện tại, vì Mã f4 sẽ đe dọa không chỉ Tốt g mà cả Mã ăn Tượng chiếu. Vì trong khai cuộc này Tượng cánh Vua của Trắng không bao giờ nên bị đổi nếu không có lý do thật xác đáng, nên Trắng không thể đi Tốt e4."
+},
+{
+"id": "0.5.3.10",
+"vi": "Trắng đã phát triển quân hoàn hảo, và giờ đe dọa thắng một Tốt như sau: ⟦1634|Nxd5⟧, ⟦1635|Nxd5⟧;⟦1636|e4⟧, tiếp theo là ⟦1637|Rxc7⟧."
+},
+{
+"id": "0.5.3.12",
+"vi": "Việc Đen thực tế bị buộc phải đi nước này để tránh mất Tốt tự nó đã đủ lý do để kết tội toàn bộ hệ thống phát triển quân của Đen. Thực tế, Đen đi ⟦-|Bd7⟧ và giờ phải tự chặn hoạt động của Tượng mình, con Tượng vì thế trong một thời gian chẳng hơn một con Tốt là mấy. Thật vậy, khó thấy con Tượng này bao giờ mới có thể tấn công được điều gì. Hơn nữa, dễ thấy Trắng sẽ sớm đặt hai Mã ở e5 và c5, và Đen sẽ không thể đuổi chúng đi mà không làm yếu nghiêm trọng ván cờ của mình, nếu như còn làm được. Từ tất cả những lý do này có thể thấy rằng với Đen, có lẽ tốt hơn là đi ⟦1639|Nxc3⟧ để loại bỏ một trong hai Mã Trắng trước khi đi vào một thế phòng thủ như vậy. Trong những trường hợp như thế, số quân trên bàn cờ càng ít thì cơ hội thoát càng lớn."
+},
+{
+"id": "0.5.3.14",
+"vi": "Nước này thực tế chẳng khác gì tự sát, vì nó tạo ra một lỗ hổng ở e5 cho Mã Trắng, nơi mà hầu như không thể đuổi nó đi được. Nếu Đen định đi một nước như vậy thì nên đi từ trước, khi ít ra còn có mục đích ngăn Mã Trắng tới c5."
+},
+{
+"id": "0.5.3.16",
+"vi": "Vị trí của các Mã Trắng, nhất là con ở e5, có thể nói là lý tưởng, và chỉ cần nhìn qua cũng thấy chúng khống chế thế cờ như thế nào. Câu hỏi từ đây trở đi là Trắng sẽ khai thác trọn vẹn lợi ích từ một tình thế thuận lợi như vậy bằng cách nào. Điều này ta sẽ sớm thấy."
+},
+{
+"id": "0.5.3.19",
+"vi": "Nước này không có mục đích gì, trừ phi tiếp theo là ⟦1646|Nd7⟧. Vì không phải vậy, Đen có thể đưa Xe tới c8 luôn, như Đen làm về sau."
+},
+{
+"id": "0.5.3.21",
+"vi": "Trắng đe dọa thắng chất bằng cách đi ⟦1653|Nf7⟧ hoặc ⟦1654|Ng4⟧."
+},
+{
+"id": "0.5.3.23",
+"vi": "Có lẽ tất cả những đề phòng này là không cần thiết, nhưng Trắng cảm thấy mình có thừa thời gian để chuẩn bị tấn công, và muốn bảo đảm an toàn về mọi mặt trước khi bắt đầu."
+},
+{
+"id": "0.5.3.25",
+"vi": "Đen nên đi ⟦1665|Nf6⟧ hơn; rồi về sau cố loại bỏ các Mã Trắng bằng ⟦1666|Nd7⟧."
+},
+{
+"id": "0.5.3.28",
+"vi": "với đòn thí Xe đổi lấy Mã và Tốt này, Trắng có được một thế cờ áp đảo."
+},
+{
+"id": "0.5.3.30",
+"vi": "⟦1671|Nd7⟧ hay hơn, để loại bỏ một trong hai Mã Trắng. Tuy nhiên, có vô số cách trả lời tốt cho nước đó, trong đó có cách sau: ⟦-|NxN⟧, ⟦-|BxN⟧; ⟦1672|Qxg5⟧, ⟦1673|Qxg5⟧; ⟦1674|Nf7+⟧, ⟦1675|Kg7⟧; ⟦1676|Nxg5⟧, và với hai Tốt đổi lấy chất, cùng thế cờ thuận lợi đến vậy, Trắng sẽ không gặp khó khăn gì để thắng."
+},
+{
+"id": "0.5.3.32",
+"vi": "Tất cả các nước này thực tế đều bị buộc, và dễ thấy chúng trói chặt thế cờ của Đen ngày càng hơn. Các thủ pháp của Trắng từ nước 24 trở đi rất đáng học hỏi."
+},
+{
+"id": "0.5.3.34",
+"vi": "Con Mã lang thang này chẳng làm được gì trong suốt ván cờ."
+},
+{
+"id": "0.5.3.36",
+"vi": "Nếu ⟦1693|hxg5⟧; ⟦1694|Kf2⟧, và Đen sẽ bất lực."
+},
+{
+"id": "0.5.3.38",
+"vi": "Không còn gì để làm. Nếu ⟦1700|Bg8⟧; ⟦1701|Qh2+⟧, ⟦1702|Kg7⟧; ⟦1703|Bxe6⟧."
+},
+{
+"id": "0.5.3.39",
+"vi": "Người học nên để ý rằng, ngoài những điều khác, Trắng trong suốt ván cờ đã kiểm soát các ô đen, chủ yếu là các ô e5 và c5."
+},
+{
+"id": "0.5.3.40",
+"vi": "Từ đây đến cuối sách, tôi sẽ đưa ra một tuyển tập các ván cờ của mình, cả thắng lẫn thua, được chọn để minh họa cho các nguyên tắc chung đã trình bày ở những trang trước."
+}
+]

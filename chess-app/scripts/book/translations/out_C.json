@@ -1,0 +1,614 @@
+[
+ {
+  "id": "0.1.h",
+  "vi": "Những nguyên tắc tiếp theo trong chơi cờ tàn"
+ },
+ {
+  "id": "0.1.0.h",
+  "vi": ""
+ },
+ {
+  "id": "0.1.0.0",
+  "vi": "Bây giờ chúng ta sẽ quay lại với cờ tàn để tìm thêm vài nguyên tắc nữa, rồi trở lại trung cuộc, và cuối cùng là khai cuộc một lần nữa, để sự tiến bộ không chỉ diễn ra từng bước mà còn đồng đều. Bằng cách này, nền móng mà chúng ta dự định xây dựng công trình trên đó sẽ chắc chắn và vững vàng."
+ },
+ {
+  "id": "0.1.1.h",
+  "vi": "9. MỘT NGUYÊN TẮC CĂN BẢN"
+ },
+ {
+  "id": "0.1.1.1",
+  "vi": "Trong thế cờ trên, Trắng có thể hòa bằng cách chơi ⟦296|b4⟧ theo quy tắc chung chi phối những trường hợp như vậy, tức là *đẩy con Tốt không bị Tốt đối phương cản*. Nhưng giả sử Trắng, hoặc vì không biết nguyên tắc này, hoặc vì trong trường hợp này không đánh giá đúng giá trị của việc áp dụng nó; giả sử, như chúng ta nói, Trắng chơi ⟦297|1.a4⟧. Khi đó Đen có thể thắng bằng ⟦298|1...a5⟧, áp dụng một trong những nguyên tắc căn bản của chiến lược cao cấp trong cờ vua—"
+ },
+ {
+  "id": "0.1.1.2",
+  "vi": "*Một đơn vị kìm giữ hai đơn vị.*"
+ },
+ {
+  "id": "0.1.1.3",
+  "vi": "Trong trường hợp này, một Tốt sẽ kìm giữ hai Tốt của đối phương. Người học không thể nào nhấn mạnh quá mức nguyên tắc này. Nó có thể được áp dụng theo nhiều cách, và là một trong những vũ khí chủ yếu trong tay một kiện tướng."
+ },
+ {
+  "id": "0.1.1.4",
+  "vi": "**Ví dụ 22.**—Ví dụ đã nêu hẳn là đủ để chứng minh. Chúng tôi đưa ra vài nước đi của biến chính:—"
+ },
+ {
+  "id": "0.1.1.6",
+  "vi": "Điều này đưa ván cờ đến một thế cờ mà Đen thắng, và là một trong những thế cờ tàn Vua và Tốt kinh điển. Tôi sẽ cố giải thích ý tưởng chỉ đạo của nó cho những ai chưa quen."
+ },
+ {
+  "id": "0.1.2.h",
+  "vi": "10. MỘT THẾ CỜ TÀN KINH ĐIỂN"
+ },
+ {
+  "id": "0.1.2.1",
+  "vi": "**Ví dụ 23.**—Trong thế cờ này, cách phòng thủ tốt nhất của Trắng là giữ nguyên Tốt tại chỗ, ở ô h2. Một khi Tốt này tiến lên, Đen sẽ thắng dễ hơn. Về phía mình, kế hoạch thắng của Đen (giả sử Trắng không đẩy Tốt) có thể chia làm ba phần. Phần thứ nhất là đưa Vua đến ô h3, đồng thời giữ nguyên vị trí các Tốt của mình. (Điều này hết sức quan trọng, vì để thắng ván cờ, ở giai đoạn cuối Đen nhất thiết phải có khả năng đẩy con Tốt ở phía sau lên một hoặc hai ô tùy theo vị trí Vua Trắng.)"
+ },
+ {
+  "id": "0.1.2.3",
+  "vi": "Nếu ⟦318|2.Kg4⟧ ⟦319|Kf2⟧; ⟦320|3.h4⟧ ⟦321|g6⟧ sẽ thắng."
+ },
+ {
+  "id": "0.1.2.5",
+  "vi": "Phần thứ nhất đã hoàn thành."
+ },
+ {
+  "id": "0.1.2.7",
+  "vi": "Phần thứ hai sẽ ngắn, gồm việc đẩy Tốt cột h lên sát Vua."
+ },
+ {
+  "id": "0.1.2.9",
+  "vi": "Đến đây kết thúc phần thứ hai."
+ },
+ {
+  "id": "0.1.2.11",
+  "vi": "Phần thứ ba là tính toán thời điểm đẩy Tốt cột g sao cho chơi được ⟦-|g3⟧ đúng khi Vua Trắng đang ở h1. Giờ đã rõ vì sao cần có khả năng đẩy Tốt cột g lên một hoặc hai ô tùy theo vị trí Vua Trắng, như đã chỉ ra ở trên.[2] Trong trường hợp này, vì đến lượt Trắng đi, Tốt sẽ được đẩy lên hai ô bởi Vua Trắng sẽ ở trong góc; nhưng nếu lúc này đến lượt Đen đi, Tốt cột g chỉ nên đẩy lên một ô vì Vua Trắng đang ở g1."
+ },
+ {
+  "id": "0.1.2.13",
+  "vi": "Nếu ⟦340|Kg1⟧,⟦341|g2⟧."
+ },
+ {
+  "id": "0.1.2.15",
+  "vi": "và thắng."
+ },
+ {
+  "id": "0.1.2.16",
+  "vi": "Người học nên cố gắng học theo cách phân tích như thế. Nhờ vậy anh ta sẽ rèn cho trí óc đi theo một trình tự lô-gích khi suy luận về bất kỳ thế cờ nào. Ví dụ này là bài tập rất tốt, vì dễ chia thành ba giai đoạn và giải thích điểm chính của mỗi phần."
+ },
+ {
+  "id": "0.1.2.17",
+  "vi": "Chủ đề tiếp theo chúng ta nghiên cứu là thế đối vua đơn giản, nhưng trước khi dành thời gian cho nó, tôi muốn lưu ý hai điều."
+ },
+ {
+  "id": "0.1.3.h",
+  "vi": "11. TẠO TỐT THÔNG"
+ },
+ {
+  "id": "0.1.3.0",
+  "vi": "Khi có ba Tốt trở lên đối diện nhau trong một thế cờ tương tự như Ví dụ 24, luôn có cơ hội cho bên này hoặc bên kia tạo được một Tốt thông."
+ },
+ {
+  "id": "0.1.3.2",
+  "vi": "**Ví dụ 24.**—Trong thế cờ trên, cách tạo Tốt thông là đẩy con Tốt ở giữa."
+ },
+ {
+  "id": "0.1.3.4",
+  "vi": "và vì trong trường hợp này Tốt Trắng gần ô phong Hậu hơn bất kỳ Tốt Đen nào, Trắng sẽ thắng. Còn nếu đến lượt Đen đi, Đen có thể chơi"
+ },
+ {
+  "id": "0.1.3.6",
+  "vi": "Sẽ không nên cố tạo Tốt thông, vì các Tốt Trắng sẽ gần ô phong Hậu hơn con Tốt Đen đơn độc."
+ },
+ {
+  "id": "0.1.3.8",
+  "vi": "và nếu chơi đúng, ván cờ sẽ hòa. Người học nên tự mình nghiên cứu điều này."
+ },
+ {
+  "id": "0.1.4.h",
+  "vi": "12. CÁCH XÁC ĐỊNH TỐT NÀO SẼ PHONG HẬU TRƯỚC"
+ },
+ {
+  "id": "0.1.4.0",
+  "vi": "Khi hai Tốt được tự do, hoặc sắp được tự do, tiến lên phong Hậu, bạn có thể tìm ra, bằng cách đếm, Tốt nào sẽ về đích trước."
+ },
+ {
+  "id": "0.1.4.1",
+  "vi": "**Ví dụ 25.**—Trong thế cờ này, bên nào đi trước sẽ thắng."
+ },
+ {
+  "id": "0.1.4.3",
+  "vi": "Việc đầu tiên là xác định, bằng cách đếm, xem Vua đối phương có kịp ngăn Tốt thông phong Hậu hay không. Khi không thể ngăn được, như trong trường hợp này, vấn đề là đếm xem Tốt nào về trước. Ở đây thời gian là bằng nhau, nhưng con Tốt nào đến ô cuối trước và trở thành Hậu sẽ ở vị trí bắt được Hậu của đối phương khi đối phương phong Hậu. Như sau:"
+ },
+ {
+  "id": "0.1.4.5",
+  "vi": "Bây giờ cần một chút tính toán. Trắng có thể bắt Tốt, nhưng nếu làm vậy, khi phong Hậu Trắng sẽ không kiểm soát được ô mà Đen cũng sẽ phong Hậu. Vì thế, thay vì bắt, Trắng chơi:"
+ },
+ {
+  "id": "0.1.4.7",
+  "vi": "Người học nên làm quen với nhiều thế cờ tàn đơn giản kiểu này, để có thói quen đếm, và nhờ đó dễ dàng biết khi nào mình có thể hoặc không thể về đích trước. Một lần nữa tôi phải lưu ý rằng sách tự nó không thể dạy cách chơi cờ. Sách chỉ có thể làm người dẫn đường, phần còn lại phải học qua kinh nghiệm; và nếu đồng thời có được một người thầy, người học sẽ tiến bộ nhanh hơn nhiều."
+ },
+ {
+  "id": "0.1.5.h",
+  "vi": "13. THẾ ĐỐI VUA"
+ },
+ {
+  "id": "0.1.5.0",
+  "vi": "Khi hai Vua buộc phải di chuyển, và một bên có thể, bằng cách cưỡng bức, đưa Vua mình vào một thế tương tự như hình dưới đây, khiến đối phương buộc phải đi và nhường đường cho mình, thì bên giành được lợi thế đó được gọi là *giành được đối vua*."
+ },
+ {
+  "id": "0.1.5.2",
+  "vi": "**Ví dụ 26.**—Giả sử trong thế cờ trên Trắng chơi"
+ },
+ {
+  "id": "0.1.5.4",
+  "vi": "Bây giờ Đen có quyền chọn: hoặc ngăn đường đi của Vua Trắng bằng ⟦368|Kd3⟧, hoặc, nếu muốn, *vượt qua* bằng chính Vua mình với ⟦369|Kf5⟧. Hãy chú ý rằng hai Vua đối diện trực tiếp nhau, và số ô nằm giữa hai Vua là số lẻ—ở đây là một ô."
+ },
+ {
+  "id": "0.1.5.5",
+  "vi": "Thế đối vua có thể ở dạng trên, có thể gọi là đối vua trực diện gần (hay thực sự); hoặc ở dạng này:"
+ },
+ {
+  "id": "0.1.5.7",
+  "vi": "có thể gọi là đối vua chéo gần (hay thực sự), hay lại ở dạng này:"
+ },
+ {
+  "id": "0.1.5.9",
+  "vi": "có thể gọi là đối vua ngang gần (hay thực sự)."
+ },
+ {
+  "id": "0.1.5.10",
+  "vi": "Trong thực tế, tất cả đều là một. Hai Vua luôn đứng trên các ô cùng màu, chỉ có một ô nằm giữa hai Vua, và bên vừa đi nước cuối là bên \"*giành được đối vua*.\""
+ },
+ {
+  "id": "0.1.5.11",
+  "vi": "Bây giờ, nếu người học chịu khó lùi mỗi Vua lại, như trong một ván cờ, theo cùng đường trực diện, chéo hoặc ngang tương ứng như trong các hình, ta sẽ có cái có thể gọi là đối vua *xa* theo trực diện, theo đường chéo và theo hàng ngang tương ứng."
+ },
+ {
+  "id": "0.1.5.12",
+  "vi": "Vấn đề đối vua rất quan trọng, và đôi khi mang những dạng khá phức tạp, tất cả đều có thể giải bằng toán học; nhưng hiện tại, người học chỉ nên xem xét những dạng đơn giản nhất. (Xem lại một số ví dụ cờ tàn Vua và Tốt đã nêu sẽ thấy nhiều trường hợp đối vua gần.)"
+ },
+ {
+  "id": "0.1.5.13",
+  "vi": "Trong mọi dạng đối vua đơn giản,"
+ },
+ {
+  "id": "0.1.5.14",
+  "vi": "*khi hai Vua ở trên cùng một đường và số ô nằm giữa hai Vua là số chẵn, bên có lượt đi là bên giành được đối vua*."
+ },
+ {
+  "id": "0.1.5.16",
+  "vi": "**Ví dụ 27.**—Thế cờ trên cho thấy rõ giá trị to lớn của thế đối vua. Thế cờ rất đơn giản. Trên bàn còn lại rất ít quân, và với người mới, thế cờ có lẽ trông hoàn toàn cân bằng. Nhưng không phải vậy. *Bên nào có lượt đi sẽ thắng.* Hãy chú ý rằng hai Vua đối diện trực tiếp nhau, và số ô nằm giữa là số *chẵn*."
+ },
+ {
+  "id": "0.1.5.17",
+  "vi": "Bây giờ nói về cách thắng một thế cờ như vậy. Cách bắt đầu đúng là đi thẳng lên. Như sau:"
+ },
+ {
+  "id": "0.1.5.19",
+  "vi": "Bây giờ Trắng có quyền chọn: hoặc chơi ⟦376|Kd5⟧ để Vua vượt qua, hoặc chơi ⟦377|Kf5⟧ ngăn Vua Đen vượt qua, nhờ đó giữ được đối vua. Chỉ cần đếm là thấy cách thứ nhất chỉ dẫn đến hòa, vì thế Trắng chọn cách thứ hai và chơi:"
+ },
+ {
+  "id": "0.1.5.21",
+  "vi": "Nếu ⟦380|4...Ke6⟧; ⟦381|5.Kg5⟧ sẽ thắng."
+ },
+ {
+  "id": "0.1.5.23",
+  "vi": "Bây giờ bằng cách đếm sẽ thấy Trắng thắng nhờ bắt được Tốt cột g của Đen."
+ },
+ {
+  "id": "0.1.5.24",
+  "vi": "Quá trình trong biến trên tương đối đơn giản, nhưng Đen còn có những cách phòng thủ khác khó vượt qua hơn. Ta hãy bắt đầu lại từ đầu."
+ },
+ {
+  "id": "0.1.5.26",
+  "vi": "Bây giờ nếu ⟦386|2.Kd3⟧ ⟦387|Kd7⟧, hoặc nếu ⟦388|2.Ke3⟧ ⟦389|Ke7⟧, thì Đen giành được đối vua trong cả hai trường hợp. (Khi hai Vua đối diện trực tiếp nhau và số ô nằm giữa hai Vua là số *lẻ*, bên vừa đi nước cuối là bên giành được đối vua.)"
+ },
+ {
+  "id": "0.1.5.27",
+  "vi": "Bây giờ, để thắng, Vua Trắng phải tiến lên. Chỉ còn một ô khác mà Vua có thể đến, đó là f3, và đó chính là ô đúng. Vì vậy ta thấy trong những trường hợp như thế, khi đối phương đi một nước gọi là nước chờ, bạn phải tiến lên, để trống một hàng hoặc một cột giữa hai Vua. Do đó ta có—"
+ },
+ {
+  "id": "0.1.5.29",
+  "vi": "Bây giờ tiến lên sẽ là sai, vì khi đó Đen, bằng cách đưa Vua lên đối diện Vua bạn, sẽ giành được đối vua. Đến lượt Trắng đi một nước tương tự nước đi đầu tiên của Đen, tức là:"
+ },
+ {
+  "id": "0.1.5.31",
+  "vi": "đưa thế cờ trở về biến thứ nhất đã nêu. Người học nên làm quen với cách điều khiển Vua trong mọi ví dụ về đối vua. Điều đó thường quyết định thắng hay thua một ván cờ."
+ },
+ {
+  "id": "0.1.5.32",
+  "vi": "**Ví dụ 28.**—Thế cờ sau đây là một minh chứng tuyệt vời cho giá trị của thế đối vua làm phương tiện phòng thủ."
+ },
+ {
+  "id": "0.1.5.34",
+  "vi": "Trắng kém một Tốt và xem như đã thua, thế nhưng Trắng vẫn có thể hòa như sau:"
+ },
+ {
+  "id": "0.1.5.36",
+  "vi": "Vị trí các Tốt không cho phép Trắng hòa bằng đối vua gần (thực sự), nên Trắng dùng đối vua xa: thực vậy, nếu ⟦394|1.Kf1⟧ (đối vua gần), ⟦395|Kd2⟧; ⟦396|2.Kf2⟧ ⟦397|Kd3⟧ và Trắng không thể tiếp tục giữ thế đối vua ngang thiết yếu cho sự an toàn của mình, vì vướng Tốt của chính mình ở f3. Ngược lại, sau nước đi trong ván, nếu"
+ },
+ {
+  "id": "0.1.5.38",
+  "vi": "tấn công Tốt và buộc Đen phải chơi ⟦408|6...Ke3⟧, khi đó Trắng có thể quay về g3 như đã chỉ ra, và luôn giữ được đối vua."
+ },
+ {
+  "id": "0.1.5.39",
+  "vi": "Trở lại thế cờ ban đầu, nếu"
+ },
+ {
+  "id": "0.1.5.41",
+  "vi": "Trắng không chơi ⟦411|fxe5⟧, vì ⟦412|e4⟧ sẽ thắng, mà chơi:"
+ },
+ {
+  "id": "0.1.5.43",
+  "vi": "Nếu ⟦415|2...exf4⟧; [?K x P], tiếp theo là ⟦-|Ke4⟧, sẽ hòa."
+ },
+ {
+  "id": "0.1.5.45",
+  "vi": "và chỉ cần đếm là thấy cả hai bên đều phong Hậu, ván cờ hòa."
+ },
+ {
+  "id": "0.1.5.46",
+  "vi": "Nếu người học chịu khó xem lại các ví dụ Vua và Tốt mà tôi đã đưa ra trong sách này,[3] anh ta sẽ nhận ra rằng trong tất cả các ví dụ đó, vấn đề đối vua có tầm quan trọng hàng đầu; và thực tế là như vậy trong gần như mọi thế cờ tàn Vua và Tốt, trừ những trường hợp mà tự vị trí các Tốt đã bảo đảm thắng lợi."
+ },
+ {
+  "id": "0.1.6.h",
+  "vi": "14. GIÁ TRỊ TƯƠNG ĐỐI CỦA MÃ VÀ TƯỢNG"
+ },
+ {
+  "id": "0.1.6.0",
+  "vi": "Trước khi chuyển sang vấn đề này, cần nói ngay rằng *hai Mã đơn thuần không thể chiếu hết*, nhưng, dĩ nhiên trong một số điều kiện nhất định, chúng có thể làm được nếu đối phương còn một hoặc nhiều Tốt."
+ },
+ {
+  "id": "0.1.6.2",
+  "vi": "**Ví dụ 29.**—Trong thế cờ trên Trắng không thể thắng, dù Vua Đen đã bị dồn vào góc; nhưng trong thế cờ sau, khi Đen có một Tốt,"
+ },
+ {
+  "id": "0.1.6.4",
+  "vi": "Trắng thắng dù có lượt đi hay không. Như sau:"
+ },
+ {
+  "id": "0.1.6.6",
+  "vi": "Trắng không thể bắt Tốt vì ván cờ sẽ hòa, như đã giải thích ở trên."
+ },
+ {
+  "id": "0.1.6.8",
+  "vi": "Lý do của điều đặc biệt này trong cờ vua rất rõ."
+ },
+ {
+  "id": "0.1.6.9",
+  "vi": "*Trắng với hai Mã chỉ có thể làm Vua đối phương bị pat (hết nước đi), trừ khi Đen có một Tốt còn đi được.*"
+ },
+ {
+  "id": "0.1.6.10",
+  "vi": "**Ví dụ 30.**—Dù hơn một Tượng và một Tốt, Trắng không thể thắng thế cờ sau."
+ },
+ {
+  "id": "0.1.6.12",
+  "vi": "Điểm yếu lớn nhất của Tượng là: khi Tốt cột xe phong Hậu trên ô khác màu với Tượng và Vua đối phương đứng chặn trước Tốt, thì Tượng hoàn toàn vô dụng. Đen chỉ cần giữ Vua luôn di chuyển gần ô góc."
+ },
+ {
+  "id": "0.1.6.14",
+  "vi": "**Ví dụ 31.**—Trong thế cờ trên, Trắng dù có lượt đi hay không đều thắng. Hãy xét biến khó nhất."
+ },
+ {
+  "id": "0.1.6.16",
+  "vi": "Sau khi đã xem những trường hợp ngoại lệ này, chúng ta có thể phân tích các ưu điểm khác nhau và giá trị tương đối của Mã và Tượng."
+ },
+ {
+  "id": "0.1.6.17",
+  "vi": "Người chơi nghiệp dư thường cho rằng Mã là quân có giá trị hơn trong hai quân, lý do chính là, khác với Tượng, Mã có thể kiểm soát cả ô đen và ô trắng. Tuy nhiên, người ta thường bỏ qua một thực tế là tại mỗi thời điểm, Mã chỉ có thể chọn một màu ô mà thôi. Đưa Mã từ cánh này sang cánh kia tốn nhiều thời gian hơn hẳn. Hơn nữa, như Ví dụ sau cho thấy, một Tượng có thể khóa chết một Mã (làm Mã hết nước đi); một điều mà Mã không thể làm lại với Tượng."
+ },
+ {
+  "id": "0.1.6.18",
+  "vi": "**Ví dụ 32.**"
+ },
+ {
+  "id": "0.1.6.20",
+  "vi": "Người chơi càng yếu thì Mã càng đáng sợ đối với anh ta, nhưng khi trình độ tăng lên, giá trị của Tượng càng trở nên rõ ràng với anh ta, và dĩ nhiên sự đánh giá của anh ta về giá trị của Mã so với Tượng cũng giảm đi tương ứng, hoặc nên như thế. Về mặt này, cũng như nhiều mặt khác, các kiện tướng ngày nay vượt xa các kiện tướng của những thế hệ trước. Trong khi cách đây không lâu, một số người xuất sắc nhất trong số họ, như Pillsbury và Tchigorin, thích Mã hơn Tượng, thì ngày nay hầu như không có kiện tướng nào không hoàn toàn đồng ý với những nhận định nêu trên."
+ },
+ {
+  "id": "0.1.6.21",
+  "vi": "**Ví dụ 33.**—Đây gần như là trường hợp duy nhất mà Mã có giá trị hơn Tượng."
+ },
+ {
+  "id": "0.1.6.23",
+  "vi": "Đây là cái gọi là \"*thế cờ bị khóa*,\" và tất cả các Tốt đều ở một bên bàn cờ. (Nếu có Tốt ở cả hai bên bàn cờ thì có Mã sẽ không phải là lợi thế.) Trong thế cờ như vậy Đen có cơ hội thắng rất lớn. Dĩ nhiên, Trắng còn có thêm một điểm yếu nữa là các Tốt của mình nằm trên những ô cùng màu với Tượng của mình. Đây là sai lầm mà người chơi thường mắc phải. Nói chung, trong cờ tàn, cách đúng là đặt Tốt của bạn trên các ô khác màu với Tượng của chính bạn. Khi Tốt của bạn nằm trên các ô cùng màu, hoạt động của Tượng bị chính chúng hạn chế, và do đó giá trị của Tượng bị giảm, bởi giá trị của một quân thường có thể đo bằng số ô mà nó kiểm soát. Nhân nói về chủ đề này, tôi cũng xin lưu ý rằng nói chung nên giữ Tốt của bạn trên các ô cùng màu với Tượng của đối phương, nhất là khi đó là những Tốt thông được Vua hỗ trợ. Các nguyên tắc có thể phát biểu như sau:"
+ },
+ {
+  "id": "0.1.6.24",
+  "vi": "*Khi đối phương có Tượng, hãy giữ Tốt của bạn trên các ô cùng màu với Tượng của đối phương.*"
+ },
+ {
+  "id": "0.1.6.25",
+  "vi": "*Khi bạn có Tượng, bất kể đối phương có Tượng hay không, hãy giữ Tốt của bạn trên các ô khác màu với Tượng của chính bạn.*"
+ },
+ {
+  "id": "0.1.6.26",
+  "vi": "Dĩ nhiên, đôi khi các nguyên tắc này phải được điều chỉnh cho phù hợp với yêu cầu của thế cờ."
+ },
+ {
+  "id": "0.1.6.27",
+  "vi": "**Ví dụ 34.**—Trong thế cờ sau, các Tốt đều ở một bên bàn cờ, và có Mã hay có Tượng đều không phải lợi thế. Ván cờ chắc chắn sẽ kết thúc hòa."
+ },
+ {
+  "id": "0.1.6.29",
+  "vi": "**Ví dụ 35.**—Bây giờ ta thêm ba Tốt cho mỗi bên vào thế cờ trên, để có Tốt ở cả hai bên bàn cờ."
+ },
+ {
+  "id": "0.1.6.31",
+  "vi": "Giờ thì có Tượng là tốt hơn, mặc dù thế cờ, nếu chơi đúng, vẫn sẽ kết thúc hòa. Lợi thế của việc có Tượng nằm ở khả năng của nó kiểm soát từ xa cả hai bên bàn cờ từ một vị trí trung tâm, cũng như khả năng di chuyển nhanh từ bên này sang bên kia bàn cờ."
+ },
+ {
+  "id": "0.1.6.33",
+  "vi": "**Ví dụ 36.**—Trong thế cờ trên, có Tượng chắc chắn là một lợi thế, bởi dù mỗi bên có số Tốt bằng nhau, chúng không cân bằng ở mỗi bên bàn cờ. Cụ thể, ở cánh Vua, Trắng có ba Tốt chống hai, trong khi ở cánh Hậu, Đen lại có ba chống hai. Tuy vậy, nếu chơi đúng, ván cờ sẽ kết thúc hòa, dù Trắng có cơ hội tốt hơn một chút."
+ },
+ {
+  "id": "0.1.6.35",
+  "vi": "**Ví dụ 37.**—Đây là một thế cờ mà có Tượng là lợi thế rõ rệt, vì không chỉ có Tốt ở cả hai bên bàn cờ mà còn có Tốt thông (Tốt cột h của Trắng, Tốt cột a của Đen). Đen sẽ cực kỳ khó cầm hòa thế cờ này, nếu như còn có thể hòa được."
+ },
+ {
+  "id": "0.1.6.36",
+  "vi": "**Ví dụ 38.**—Thế cờ này Đen cũng sẽ rất khó cầm hòa."
+ },
+ {
+  "id": "0.1.6.38",
+  "vi": "Người học nên xem xét kỹ những thế cờ này. Tôi hy vọng nhiều ví dụ sẽ giúp anh ta hiểu đúng giá trị thực của Mã và Tượng so với nhau. Về phương pháp tiến hành chung, một người thầy hoặc kinh nghiệm thực tế sẽ là tốt nhất. Tuy vậy, nói chung tôi có thể nói rằng cách đúng trong những thế cờ tàn này, cũng như trong mọi thế cờ tàn tương tự, là: đưa Vua về trung tâm bàn cờ hoặc về phía các Tốt thông, hoặc các Tốt có thể bị tấn công, và nhanh chóng đẩy Tốt thông (hoặc các Tốt thông) lên xa hết mức mà vẫn bảo đảm an toàn cho chúng."
+ },
+ {
+  "id": "0.1.6.39",
+  "vi": "Đưa ra một đường lối chơi cố định sẽ là điên rồ. Mỗi thế cờ tàn đều khác nhau và đòi hỏi cách xử lý khác nhau, tùy theo đối phương định làm gì. Điều quyết định là tính toán bằng cách hình dung ra các thế cờ trong tương lai."
+ },
+ {
+  "id": "0.1.7.h",
+  "vi": "15. CÁCH CHIẾU HẾT BẰNG MÃ VÀ TƯỢNG"
+ },
+ {
+  "id": "0.1.7.0",
+  "vi": "Bây giờ, trước khi trở lại trung cuộc và khai cuộc, chúng ta hãy xem cách chiếu hết bằng Mã và Tượng, rồi sau đó là cách thắng với Hậu chống Xe."
+ },
+ {
+  "id": "0.1.7.1",
+  "vi": "Với Mã và Tượng, *chỉ có thể chiếu hết ở các góc cùng màu với Tượng*."
+ },
+ {
+  "id": "0.1.7.3",
+  "vi": "**Ví dụ 39.**—Trong ví dụ này ta phải chiếu hết ở a1 hoặc h8. Thế cờ tàn này có thể chia làm hai phần. Phần một là dồn Vua Đen về hàng cuối. Ta có thể bắt đầu, như thường làm trong mọi trường hợp như vậy, bằng cách đưa Vua lên trung tâm bàn cờ:"
+ },
+ {
+  "id": "0.1.7.5",
+  "vi": "Đen, để gây khó khăn hơn, chạy về góc ô trắng:"
+ },
+ {
+  "id": "0.1.7.7",
+  "vi": "Phần thứ nhất đến đây kết thúc; Vua Đen đã ở trong góc ô trắng."
+ },
+ {
+  "id": "0.1.7.9",
+  "vi": "Phần thứ hai và cũng là phần cuối là dồn Vua Đen từ a8 về a1 hoặc h8 để chiếu hết. Trong thế cờ này, a1 sẽ là nhanh nhất."
+ },
+ {
+  "id": "0.1.7.11",
+  "vi": "Đen cố đưa Vua chạy về h1. Trắng có hai cách ngăn điều đó: một là ⟦464|14.Be5⟧ ⟦465|Kb3⟧; ⟦466|15.Ne3⟧, và cách kia là nước tôi đưa vào ván, mà tôi cho là tốt hơn cho người học, vì nó có phương pháp hơn và phù hợp hơn với tinh thần của tất cả các thế cờ tàn loại này, *tức là dùng Vua càng nhiều càng tốt*."
+ },
+ {
+  "id": "0.1.7.13",
+  "vi": "Có thể thấy thế cờ tàn này khá vất vả. Có hai điểm nổi bật: Vua bám sát theo, và việc kiểm soát các ô khác màu với Tượng bằng hành động phối hợp của Mã và Vua. Người học nên luyện tập thế cờ tàn này một cách có phương pháp, vì nó cho một hình dung rất rõ về sức mạnh thực sự của các quân, và đòi hỏi phải nhìn xa để chiếu hết được trong vòng năm mươi nước mà luật cho phép."
+ },
+ {
+  "id": "0.1.8.h",
+  "vi": "16. HẬU CHỐNG XE"
+ },
+ {
+  "id": "0.1.8.0",
+  "vi": "Đây là một trong những thế cờ tàn không Tốt khó nhất. Bên phòng thủ có nhiều nguồn lực, và khi được sử dụng khéo léo, chỉ một người chơi rất giỏi mới thắng được trong giới hạn năm mươi nước mà luật cho phép. (Luật quy định rằng bất cứ lúc nào bạn cũng có thể yêu cầu đối phương chiếu hết bạn trong vòng năm mươi nước. Tuy nhiên, mỗi lần có một quân bị đổi hoặc một Tốt tiến lên, việc đếm phải bắt đầu lại từ đầu.)"
+ },
+ {
+  "id": "0.1.8.2",
+  "vi": "**Ví dụ 40.**—Đây là một trong những thế cờ tiêu chuẩn mà Đen thường có thể tạo ra. Lúc này đến lượt Trắng đi. Nếu đến lượt Đen thì sẽ đơn giản, vì Đen buộc phải đưa Xe rời xa Vua (hãy tìm hiểu vì sao), và khi đó thắng Xe sẽ tương đối dễ. Từ đó ta suy ra rằng mục tiêu chính là buộc Xe Đen phải rời xa Vua đang phòng thủ, và để ép Đen làm điều đó, ta phải tạo ra thế cờ trong hình với *Đen* đi. Một khi biết mình cần gì, cách tiến hành sẽ dễ tìm hơn. Như sau:"
+ },
+ {
+  "id": "0.1.8.4",
+  "vi": "Không chơi ⟦499|1.Qa6⟧, vì ⟦500|Rc7+⟧; ⟦501|2.Kb6⟧ ⟦502|Rc6+⟧; ⟦503|3.Kxc6⟧. Pat (hết nước đi, hòa). (Người mới hầu như luôn sa vào cái bẫy này.)"
+ },
+ {
+  "id": "0.1.8.6",
+  "vi": "Chỉ trong vài nước ta đã đạt được mục tiêu. Phần thứ nhất kết thúc. Giờ đến phần thứ hai. Xe chỉ có thể đi đến một ô trắng, nếu không, nước chiếu đầu tiên bằng Hậu sẽ thắng Xe. Do đó"
+ },
+ {
+  "id": "0.1.8.8",
+  "vi": "(Người học nên tự tìm cách thắng khi ⟦518|3...Rb1⟧; ⟦519|4.Qe5+⟧ ⟦520|Ka7⟧.)"
+ },
+ {
+  "id": "0.1.8.10",
+  "vi": "**Ví dụ 41.**—Cách tiến hành ở đây rất giống. Những điều cần nhớ là phải ngăn Xe chắn vào ô b8 vì sẽ bị chiếu hết ngay, và cũng vậy, phải ngăn Vua đi đến a6 hoặc c8 (các ô tính theo phía Đen)."
+ },
+ {
+  "id": "0.1.8.11",
+  "vi": "**Ví dụ 42.**—Bây giờ ta xét một thế cờ khó hơn."
+ },
+ {
+  "id": "0.1.8.13",
+  "vi": "Nhiều người chơi sẽ bị thế cờ này đánh lừa. Nước đi trông có vẻ hợp lý nhất lại không phải nước tốt nhất. Giả sử ta bắt đầu bằng"
+ },
+ {
+  "id": "0.1.8.15",
+  "vi": "Cách phòng thủ duy nhất, nhưng tiếc thay lại rất hiệu quả, khiến Trắng rất khó khăn, vì Trắng không thể chơi ⟦525|3.Qe6⟧ bởi ⟦526|3...Rg7+⟧; ⟦527|4.Kf6⟧ ⟦528|Rg6+⟧ hòa. Trắng cũng không thể thắng nhanh bằng ⟦529|3.Qc5+⟧ vì ⟦530|3...Ke8⟧, ⟦531|4.Kf6⟧ ⟦532|Rd6+⟧ ! đẩy lùi Vua Trắng."
+ },
+ {
+  "id": "0.1.8.16",
+  "vi": "Sau khi đã thấy những khó khăn của tình thế, ta hãy quay lại. Nước tốt nhất là"
+ },
+ {
+  "id": "0.1.8.18",
+  "vi": "Nếu ⟦535|Kh7⟧; ⟦536|2.Qg6+⟧ ⟦537|Kh8⟧; ⟦538|3.Kh6⟧ !"
+ },
+ {
+  "id": "0.1.8.20",
+  "vi": "Nếu ⟦543|3...Rg7+⟧; ⟦544|4.Kf6⟧ dẫn đến một thế cờ tương tự các thế trong Ví dụ 40 và 41."
+ },
+ {
+  "id": "0.1.8.22",
+  "vi": "và ta có thế cờ của Ví dụ 40 với Đen đi."
+ },
+ {
+  "id": "0.1.8.23",
+  "vi": "Ta lại quay về lần nữa."
+ },
+ {
+  "id": "0.1.8.25",
+  "vi": "Vị trí tốt nhất cho Xe khi phải rời xa Vua. ⟦560|3...Kh7⟧; ⟦561|4.Qd4⟧ ⟦562|Rg7+⟧; ⟦563|5.Kf6⟧ sẽ dẫn đến những thế cờ tương tự các thế đã xem."
+ },
+ {
+  "id": "0.1.8.27",
+  "vi": "⟦567|5.Qd6+⟧ ⟦568|Kg7⟧; ⟦569|6.Qe5+⟧ ⟦570|Kf8⟧; ⟦571|7.Kg6⟧ cũng sẽ thắng Xe. Tuy nhiên, nước đi trong ván được đưa ra để cho thấy sự tinh tế của những thế cờ tàn loại này. Trắng giờ đe dọa chiếu hết ở d8."
+ },
+ {
+  "id": "0.1.8.29",
+  "vi": "Trắng đã đe dọa chiếu hết ở h8."
+ },
+ {
+  "id": "0.1.8.31",
+  "vi": "và Xe bị mất."
+ },
+ {
+  "id": "0.1.8.32",
+  "vi": "Hãy lưu ý, trong các ví dụ này, những nước chiếu từ xa theo đường chéo thường là chìa khóa của mọi thao tác giành thắng lợi. Cũng lưu ý rằng Hậu và Vua thường được giữ trên những đường khác nhau. Người học nên xem kỹ lại các thế cờ này và cân nhắc mọi khả năng chưa được nêu trong bài."
+ },
+ {
+  "id": "0.1.8.33",
+  "vi": "Anh ta nên ôn lại một lần nữa toàn bộ những gì đã viết trước khi đọc tiếp cuốn sách."
+ },
+ {
+  "id": "0.2.h",
+  "vi": "Lập kế hoạch giành thắng lợi trong trung cuộc"
+ },
+ {
+  "id": "0.2.0.h",
+  "vi": ""
+ },
+ {
+  "id": "0.2.0.0",
+  "vi": "Bây giờ tôi sẽ đưa ra vài thế cờ thắng lấy từ chính các ván đấu của tôi. Tôi đã chọn những thế mà tôi tin có thể coi là *điển hình*, tức là những thế cờ dễ xuất hiện trở lại dưới dạng khá tương tự. Hiểu biết về những thế cờ như vậy rất có ích; thực ra, biết bao nhiêu cũng không thừa. Nó thường giúp người chơi tìm ra nước đi đúng mà không mất nhiều công sức, nước đi mà nếu không có hiểu biết đó có lẽ anh ta hoàn toàn không tìm ra được."
+ },
+ {
+  "id": "0.2.1.h",
+  "vi": "17. TẤN CÔNG KHÔNG CÓ SỰ TRỢ GIÚP CỦA MÃ"
+ },
+ {
+  "id": "0.2.1.1",
+  "vi": "**Ví dụ 43.**—Đến lượt Đen đi, và vì đang kém một Mã và một Tốt, Đen phải thắng nhanh, nếu còn có thể thắng. Đen chơi:"
+ },
+ {
+  "id": "0.2.1.3",
+  "vi": "Nếu ⟦580|Qxe7⟧, ⟦581|Rxg2+⟧; ⟦582|Kh1⟧, ⟦583|Bd5⟧ và chiếu hết sau vài nước."
+ },
+ {
+  "id": "0.2.1.6",
+  "vi": "**Ví dụ 44.**—Nước vừa rồi của Đen là ⟦-|e3⟧, chơi với mục đích ngăn cái mà Đen cho là đe dọa của Trắng, tức ⟦589|Ra5⟧, mà Đen định đáp lại bằng ⟦590|Qf4+⟧ và hòa ván cờ nhờ chiếu vĩnh viễn. Tuy nhiên, Trắng có một nước mạnh hơn, và chiếu hết trong ba nước như sau:"
+ },
+ {
+  "id": "0.2.1.9",
+  "vi": "**Ví dụ 45.**—Trắng có thế cờ đẹp, nhưng vẫn nên giành thêm chút vật chất, nếu có thể, trước khi Đen củng cố được thế phòng thủ. Vì vậy Trắng chơi:"
+ },
+ {
+  "id": "0.2.1.11",
+  "vi": "Nếu ⟦598|Nxh6⟧; ⟦599|Rxh6⟧ và Đen sẽ bất lực."
+ },
+ {
+  "id": "0.2.1.13",
+  "vi": "Trong vài ví dụ này, việc tấn công do Xe và Tượng phối hợp với Hậu thực hiện. Không có Mã tham gia tấn công. Bây giờ chúng ta sẽ đưa ra vài ví dụ trong đó Mã đóng vai trò nổi bật như một lực lượng tấn công."
+ },
+ {
+  "id": "0.2.2.h",
+  "vi": "18. TẤN CÔNG VỚI MÃ LÀM LỰC LƯỢNG NỔI BẬT"
+ },
+ {
+  "id": "0.2.2.1",
+  "vi": "**Ví dụ 46.**—Trắng kém hai Tốt. Vì vậy Trắng phải dồn ép tấn công. Ván cờ tiếp tục:"
+ },
+ {
+  "id": "0.2.2.3",
+  "vi": "Rõ ràng là một sai lầm khiến Trắng thắng dễ hơn, vì Trắng chỉ cần dùng Mã bắt Xe và tiếp tục tấn công. Đen nên chơi: ⟦613|1...Nxg7⟧. Khi đó sẽ tiếp theo: ⟦614|2.Nf6+⟧ ⟦615|Kg6⟧; ⟦616|3.Nxd7⟧ ⟦617|f6⟧ (tốt nhất); ⟦618|4.e5⟧ ⟦619|Kf7⟧; ⟦620|5.Nxf6⟧ ⟦621|Re7⟧; ⟦622|6.Ne4⟧, và Đen sẽ thua.[4]"
+ },
+ {
+  "id": "0.2.2.5",
+  "vi": "**Ví dụ 47.**—Người học nên xem xét kỹ thế cờ, vì đòn thí Tượng trong những tình huống tương tự là điển hình, và cơ hội thực hiện nó thường xuyên xuất hiện trong thực chiến. Ván cờ tiếp tục:"
+ },
+ {
+  "id": "0.2.2.7",
+  "vi": "Tốt nhất. Nếu ⟦627|2...Kh6⟧; ⟦628|3.Nxf7+⟧ thắng Hậu, và nếu ⟦629|2...Kg8⟧; ⟦630|3.Qh5⟧, với đòn tấn công không thể cưỡng lại."
+ },
+ {
+  "id": "0.2.2.9",
+  "vi": "Cuối cùng Trắng thắng.[5]"
+ },
+ {
+  "id": "0.2.3.h",
+  "vi": "19. THẮNG BẰNG TẤN CÔNG GIÁN TIẾP"
+ },
+ {
+  "id": "0.2.3.0",
+  "vi": "Cho đến giờ chúng ta đã đưa ra những thế cờ mà các đòn tấn công mang tính dữ dội và nhắm vào vị trí Vua. Tuy nhiên, trong trung cuộc, rất thường có những đòn tấn công nhắm vào một thế cờ, vào các quân, hoặc thậm chí vào Tốt."
+ },
+ {
+  "id": "0.2.3.1",
+  "vi": "*Giữa những người chơi giỏi ngang sức nhau, thắng một Tốt thường có nghĩa là thắng ván cờ.*"
+ },
+ {
+  "id": "0.2.3.2",
+  "vi": "Vì vậy việc nghiên cứu những thế cờ như thế rất quan trọng. Dưới đây chúng tôi đưa ra hai thế cờ trong đó đòn tấn công nhằm giành chỉ một Tốt, làm phương tiện để cuối cùng thắng ván cờ."
+ },
+ {
+  "id": "0.2.3.4",
+  "vi": "**Ví dụ 48.**—Đen kém một Tốt, và không có đòn tấn công trực tiếp dữ dội nào vào Vua Trắng. Tuy nhiên, các quân của Đen được bố trí rất tốt và tự do hoạt động, và bằng cách phối hợp hành động của tất cả các quân, Đen chẳng mấy chốc không chỉ lấy lại được Tốt mà còn giành được thế cờ tốt hơn. Người học nên xem xét kỹ thế cờ này và các nước đi tiếp theo. Đây là một ví dụ rất tốt về sự phối hợp đúng đắn trong việc điều quân. Ván cờ tiếp tục:"
+ },
+ {
+  "id": "0.2.3.6",
+  "vi": "Nước tốt nhất của Trắng là ⟦637|b3⟧, khi đó sẽ tiếp theo ⟦638|Nxd2⟧; ⟦639|3.Qxd2⟧ ⟦640|Ra3⟧ và Đen cuối cùng sẽ thắng Tốt cột a, đồng thời luôn giữ được chút lợi thế về thế cờ. Nước đi trong ván làm mọi việc dễ hơn."
+ },
+ {
+  "id": "0.2.3.8",
+  "vi": "Đen có thể lấy lại Tốt bằng ⟦646|Bxc3⟧, nhưng Đen thấy còn có thể giành được nhiều hơn, nên tăng sức ép lên cánh Hậu của Trắng. Giờ Đen đe dọa, cùng với những thứ khác, ⟦647|Rxb2⟧."
+ },
+ {
+  "id": "0.2.3.10",
+  "vi": "Đe dọa thắng chất bằng ⟦650|Bd4⟧."
+ },
+ {
+  "id": "0.2.3.12",
+  "vi": "Nước này đe dọa thắng Mã, và do đó buộc Trắng phải chịu mất chất."
+ },
+ {
+  "id": "0.2.3.14",
+  "vi": "Bây giờ Đen sẽ lấy lại Tốt."
+ },
+ {
+  "id": "0.2.3.16",
+  "vi": "**Ví dụ 49.**—Xem xét thế cờ này sẽ thấy điểm yếu chính của Đen nằm ở vị trí hở của Vua, và ở việc Xe cánh Hậu (Xe a8) của Đen chưa tham gia ván cờ. Thực ra, nếu đến lượt Đen đi, ta có thể kết luận rằng Đen sẽ có thế cờ tốt hơn, nhờ có ba Tốt chống hai ở cánh Hậu và Tượng kiểm soát đường chéo lớn."
+ },
+ {
+  "id": "0.2.3.17",
+  "vi": "Tuy nhiên, đến lượt Trắng đi, và Trắng có hai lựa chọn. Nước hiển nhiên, ⟦659|Bc4⟧, có thể là đủ tốt, vì sau ⟦660|1.Bc4⟧ ⟦661|Rad8⟧; ⟦662|2.b4⟧ sẽ gây khó khăn cho Đen. Nhưng có một nước khác làm đảo lộn hoàn toàn thế cờ của Đen và thắng một Tốt, bên cạnh việc giành được thế cờ tốt hơn. Nước đó là ⟦663|Nd4⟧ ! Ván cờ tiếp tục như sau:"
+ },
+ {
+  "id": "0.2.3.19",
+  "vi": "Không có gì tốt hơn, vì Trắng đe dọa ⟦668|Bc4+⟧."
+ },
+ {
+  "id": "0.2.3.21",
+  "vi": "Và Trắng, với thế cờ tốt hơn, đang hơn một Tốt."
+ },
+ {
+  "id": "0.2.3.22",
+  "vi": "Những thế cờ này được đưa ra với ý định giúp người học làm quen với các loại đòn phối hợp khác nhau. Tôi hy vọng chúng cũng giúp phát triển trí tưởng tượng của anh ta, một phẩm chất rất cần thiết của người chơi giỏi. Người học nên lưu ý, trong tất cả các thế cờ trung cuộc này, rằng—"
+ },
+ {
+  "id": "0.2.3.23",
+  "vi": "*một khi cơ hội xuất hiện, tất cả các quân được tung vào trận \"ồ ạt\" (en masse) khi cần;* và rằng *tất cả các quân phối hợp hành động với nhau trôi chảy, chính xác như máy.*"
+ },
+ {
+  "id": "0.2.3.24",
+  "vi": "Ít ra, đó là điều mà lối chơi trung cuộc lý tưởng phải đạt đến, nếu như trong các ví dụ này chưa hoàn toàn được như vậy."
+ }
+]
