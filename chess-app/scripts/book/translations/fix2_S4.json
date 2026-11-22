@@ -1,0 +1,131 @@
+[
+ {
+  "id": "1.0.8.31",
+  "vi": "Đen muốn buộc ⟦2977|Bg3⟧. ⟦-|g3⟧ sẽ là nước xấu, vì ⟦2979|d4⟧; nước này đưa được Tượng Đen vào cuộc, dù Trắng có thể đáp lại bằng ⟦2980|e4⟧. Tuy nhiên, nước đi trong ván là nước yếu, như sẽ thấy ngay sau đây. Cơ hội tốt nhất của Đen là chơi ⟦2981|b4⟧; rồi tiếp theo ⟦-|a5⟧ và ⟦-|Ba6⟧. Trong khi đó Trắng có thể chơi ⟦-|g4⟧ và h5, tạo được một Tốt thông, mà với lối chơi đúng sẽ dẫn đến thắng lợi.",
+  "replaced": [
+   "⟦2978|3.g3⟧ -> ⟦-|g3⟧",
+   "⟦2982|a4⟧ -> ⟦-|a5⟧",
+   "⟦2983|Bh3⟧ -> ⟦-|Ba6⟧",
+   "⟦2984|g5⟧ -> ⟦-|g4⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.9.9",
+  "vi": "Về phía Đen, điều đầu tiên ta nhận thấy là Đen còn giữ được cả hai Tượng, chắc chắn là một lợi thế; nhưng mặt khác, ta thấy các quân của Đen tụ lại quá chen chúc, và Hậu có nguy cơ bị tấn công mà không có ô tốt nào để đi. Con Tượng ở e7 không có chút tự do nào và chặn đường Hậu, còn Hậu đến lượt mình lại chặn đường Tượng. Ngoài ra, Đen không thể nhập thành cánh Vua vì ⟦-|Qxb7⟧, ⟦-|Rab8⟧; ⟦3032|Qe4⟧ đe dọa chiếu hết, thắng một Tốt. Đen cũng không thể nhập thành cánh Hậu vì ⟦-|Qa5⟧ sẽ đặt thế cờ của Đen vào nguy hiểm cận kề, do Đen không thể chơi ⟦3034|a6⟧ vì ⟦-|Bxa6⟧; cũng không thể chơi ⟦-|Kb8⟧ vì ⟦-|Nb5⟧. Do đó, ta phải kết luận rằng khai cuộc hoàn toàn có lợi cho Trắng.",
+  "replaced": [
+   "⟦3030|Qxd4⟧ -> ⟦-|Qxb7⟧",
+   "⟦3031|Rg8⟧ -> ⟦-|Rab8⟧",
+   "⟦3033|Qh4⟧ -> ⟦-|Qa5⟧",
+   "⟦3035|Bxa2⟧ -> ⟦-|Bxa6⟧",
+   "⟦3036|O-O⟧ -> ⟦-|Kb8⟧",
+   "⟦3037|Ng5⟧ -> ⟦-|Nb5⟧"
+  ],
+  "unsure": [
+   "⟦3031|Rg8⟧ -> Rab8: nguyên văn chỉ ghi R - Kt 1; chọn Xe a vì chỉ khi Xe f8 còn tại chỗ thì Qe4 mới dọa chiếu hết ở h7"
+  ]
+ },
+ {
+  "id": "1.0.10.12",
+  "vi": "Bài toán của Trắng lúc này là đẩy Tốt b lên b5 càng nhanh càng tốt. Nếu chơi ngay ⟦-|b4⟧, Đen chỉ cần ăn Tốt. Nếu chơi ⟦3164|a3⟧ trước rồi ⟦-|b4⟧, Trắng vẫn phải bảo vệ Tốt b trước khi có thể tiếp tục với ⟦3166|a4⟧ và ⟦-|b5⟧. Thực tế Trắng đã chơi một nước khá bất thường, nhưng trong hoàn cảnh này đó là nước tốt nhất, vì sau đó Trắng có thể lập tức chơi ⟦3168|b4⟧ rồi ⟦-|a4⟧ và ⟦3170|b5⟧.",
+  "replaced": [
+   "⟦3163|b5⟧ -> ⟦-|b4⟧",
+   "⟦3165|b5⟧ -> ⟦-|b4⟧",
+   "⟦3167|b4⟧ -> ⟦-|b5⟧",
+   "⟦3169|a5⟧ -> ⟦-|a4⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.10.23",
+  "vi": "Nếu ở nước 19 Trắng chơi ⟦3194|Rf1⟧ thay cho ⟦3195|Rf2⟧, thì bây giờ Đen có thể chơi, thay cho nước đi trong ván, ⟦3196|Rxd5⟧; ⟦3197|exd5⟧, ⟦-|Qxe3+⟧; tiếp theo là ⟦-|Nc5⟧ với thế thắng.",
+  "replaced": [
+   "⟦3198|Qxa5⟧ -> ⟦-|Qxe3+⟧",
+   "⟦3199|Nf4⟧ -> ⟦-|Nc5⟧"
+  ],
+  "unsure": [
+   "⟦3199|Nf4⟧ -> Nc5: Kt - B 4 của Đen; từ e6 Mã chỉ tới được c5 (f5 không tới được)"
+  ]
+ },
+ {
+  "id": "1.0.11.25",
+  "vi": "Sau nước vừa rồi của Đen, con Tốt này cần được bảo vệ, vì sau ⟦3288|Bxe5⟧; ⟦3289|Nxe5⟧, ⟦3290|Qxe5⟧; ⟦-|Re3⟧, bây giờ Đen có thể chơi ⟦3292|Qb8⟧ bảo vệ Xe.",
+  "replaced": [
+   "⟦3291|Re6⟧ -> ⟦-|Re3⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.11.42",
+  "vi": "Đen bỏ qua sức mạnh của ⟦3341|42.Rd7⟧. Cách phòng thủ tốt nhất của Đen là ⟦-|Rd8⟧; đáp lại, Trắng có thể hoặc tiến Vua, hoặc chơi ⟦3343|Nh4⟧ đe dọa ⟦-|Ng6+⟧.",
+  "replaced": [
+   "⟦3342|Rd1⟧ -> ⟦-|Rd8⟧",
+   "⟦3344|Ng6⟧ -> ⟦-|Ng6+⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.12.7",
+  "vi": "Một sai lầm trong đánh giá. Trắng muốn giữ con Mã bị ghim, nhưng quan trọng hơn là phải ngăn Đen nhập thành ngay. ⟦-|Bf4⟧ sẽ làm được điều đó.",
+  "replaced": [
+   "⟦3375|Bf5⟧ -> ⟦-|Bf4⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.12.12",
+  "vi": "Trắng muốn giữ Xe cánh Hậu trên cột mở, nên đưa con Xe kia về trung tâm để bảo vệ Tốt e, con Tốt mà Đen đe dọa thắng bằng ⟦3380|g5⟧ rồi ⟦-|Nxe4⟧.",
+  "replaced": [
+   "⟦3381|Nxg5⟧ -> ⟦-|Nxe4⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.12.39",
+  "vi": "Trắng không chỉ cố tạo đất chơi cho Tượng mà còn muốn phá vỡ các Tốt Đen để phản công. Lựa chọn khác là ⟦3408|23.Nxf6+⟧ ⟦3409|Qxf6⟧; và Đen sẽ đe dọa ⟦3410|Ra5⟧, cũng như ⟦-|Qe6⟧. Người học nên để ý rằng điểm bất lợi của Đen trong tất cả những diễn biến này là Đen đang chơi mà thiếu sự góp sức của Xe cánh Hậu. Chính điều đó cho phép Trắng cầm cự lâu hơn.",
+  "replaced": [
+   "⟦3411|Qe3⟧ -> ⟦-|Qe6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.13.17",
+  "vi": "Dĩ nhiên, nếu ⟦3496|18...Qxa2⟧; ⟦3497|19.Ra1⟧ sẽ thắng Hậu. Nước đi trong ván có lẽ là nước thỏa đáng duy nhất trong thế cờ này. Nước hiển nhiên là ⟦-|Qd7⟧ để bảo vệ Tốt c, và khi đó sẽ tiếp diễn ⟦3499|19.Nf5⟧ ⟦3500|f6⟧; ⟦3501|20.Qg3⟧ (đe dọa ⟦3502|Rcd1⟧), ⟦3503|Kh8⟧; ⟦3504|21.Rcd1⟧ ⟦3505|Qf7⟧; ⟦3506|22.h4⟧, với lợi thế khủng khiếp về thế cờ. Ngược lại, nước đi trong ván bảo đảm cho Đen ít nhất một thế cờ cân bằng, như sẽ thấy ngay sau đây.",
+  "replaced": [
+   "⟦3498|Qd2⟧ -> ⟦-|Qd7⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.13.19",
+  "vi": "Một sai lầm rất nghiêm trọng trong đánh giá. Trắng nghĩ rằng mình đang ưu thế vì hơn một Tốt, nhưng không phải vậy. Vị trí mạnh mẽ của Xe Đen ở d2 bù đắp hoàn toàn cho con Tốt kém của Đen. Hơn nữa, khi còn Xe trên bàn thì Tượng mạnh hơn Mã (xem các trang 48-56, nơi so sánh giá trị tương đối của Mã và Tượng), và như đã nói, khi Tốt nằm ở cả hai cánh bàn cờ thì Tượng ưu hơn nhờ tầm hoạt động xa. Nhân đây, cờ tàn này sẽ cho thấy sức mạnh to lớn của Tượng. Cơ hội tốt nhất của Trắng là cầm hòa ngay, như sau: ⟦3512|21.Ne7+⟧ ⟦3513|Kf8⟧; ⟦3514|22.Rc7⟧ ⟦3515|Re8⟧ (không chơi ⟦3516|Bxe4⟧; vì ⟦3517|f3⟧ sẽ cho Trắng thế ưu); ⟦3518|23.Rxb7⟧ (tốt nhất; không chơi ⟦3519|Ng6+⟧, vì ⟦3520|fxg6⟧; tiếp theo là ⟦-|Rxe4⟧), ⟦3522|Rxe7⟧; ⟦3523|24.Rb8+⟧ ⟦3524|Re8⟧; ⟦3525|25.Rxe8+⟧ ⟦3526|Kxe8⟧, và nếu chơi đúng, Trắng sẽ hòa.",
+  "replaced": [
+   "⟦3521|Rxg7⟧ -> ⟦-|Rxe4⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.13.33",
+  "vi": "Tốt hơn nhiều so với ăn Tốt. Nước này buộc Trắng phải bảo vệ Mã bằng Xe ở e1, vì mối đe dọa ⟦-|Rg6⟧.",
+  "replaced": [
+   "⟦3542|Rb3⟧ -> ⟦-|Rg6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.13.35",
+  "vi": "Chuẩn bị cho ⟦-|Rg6⟧. Ván cờ sẽ được định đoạt ở cánh Vua, và chính con Tốt chồng cô lập sẽ tung ra đòn kết liễu.",
+  "replaced": [
+   "⟦3545|Rb3⟧ -> ⟦-|Rg6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.13.45",
+  "vi": "Ngay cả bây giờ Trắng cũng không thể đi Mã vì ⟦3559|h2+⟧; ⟦3560|Kxh2⟧, ⟦3561|Rh6+⟧; ⟦3562|Kg1⟧, ⟦-|Rh1#⟧.",
+  "replaced": [
+   "⟦3563|Rh1+⟧ -> ⟦-|Rh1#⟧"
+  ],
+  "unsure": []
+ }
+]

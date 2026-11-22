@@ -1,0 +1,106 @@
+[
+ {
+  "id": "1.0.1.5",
+  "vi": "Tiếp tục theo ý tưởng thay đổi diễn tiến bình thường của biến này, nhưng với kết quả rất kém. Về lý thuyết, nước này hẳn là không vững, vì Mã cánh Vua của Đen còn chưa phát triển. Lúc đó tôi chưa biết đến đòn tấn công dựa trên ⟦-|Ng5⟧ và việc đổi Tượng ở e6. Đúng ra phải đi ⟦2042|Nf6⟧ hoặc ⟦-|h6⟧, để ngăn Tượng hoặc Mã của Trắng nhảy lên ⟦-|Ng5⟧.",
+  "replaced": [
+   "⟦2041|Nb4⟧ -> ⟦-|Ng5⟧",
+   "⟦2043|h3⟧ -> ⟦-|h6⟧",
+   "⟦2044|Ng4⟧ -> ⟦-|Ng5⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.2.16",
+  "vi": "Nước này chuẩn bị cho ⟦-|g6⟧, nước sẽ làm thế cờ của Đen vững chắc. Không may cho Đen, anh ta đã không thực hiện kế hoạch ban đầu của mình.",
+  "replaced": [
+   "⟦2217|g3⟧ -> ⟦-|g6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.2.18",
+  "vi": "⟦-|g6⟧ hẳn đã để lại cho Đen một thế cờ hoàn toàn an toàn.",
+  "replaced": [
+   "⟦2220|g3⟧ -> ⟦-|g6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.2.20",
+  "vi": "Một sai lầm rất nghiêm trọng, làm mất một Tốt. ⟦-|g6⟧ là nước đúng, và hẳn đã để lại cho Đen một thế cờ rất tốt. Thực ra, nếu đi tới một cờ tàn đơn giản, vị trí của Vua Đen sẽ là một lợi thế.",
+  "replaced": [
+   "⟦2223|g3⟧ -> ⟦-|g6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.3.28",
+  "vi": "⟦-|Ne4⟧ hoặc ⟦-|Nb3⟧ hẳn đã dẫn đến một cờ tàn có lợi cho Trắng.",
+  "replaced": [
+   "⟦2310|Ne5⟧ -> ⟦-|Ne4⟧",
+   "⟦2311|Ng6⟧ -> ⟦-|Nb3⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.3.37",
+  "vi": "Thế cờ hết sức thú vị. Tôi tin rằng ở đây tôi đã bỏ lỡ cơ hội cuối cùng để thắng ván cờ, và nếu đúng vậy thì điều đó biện minh cho nhận định của tôi khi ở nước 28 tôi đi ⟦2339|c4⟧. Người học có thể tự tìm hiểu điều gì xảy ra nếu Trắng đi ngay ⟦2340|Qd4⟧ !. Tôi đã xem qua các biến sau: ⟦2341|35.Qd4⟧ ⟦2342|Rxh2⟧ (dĩ nhiên nếu ⟦2343|Rxc5⟧ thì ⟦2344|d8=Q⟧ thắng); ⟦2345|36.Qxd3⟧ ! ⟦2346|Rd8⟧; ⟦2347|37.Qa6⟧ ⟦2348|Kb8⟧ tốt nhất (nếu ⟦-|Qe4+⟧; ⟦2350|Ka1⟧, ⟦2351|Kb8⟧; ⟦2352|Rb1⟧ thắng); ⟦2353|38.Qxc6⟧ và Trắng ít nhất sẽ có hòa.",
+  "replaced": [
+   "⟦2349|Qd5⟧ -> ⟦-|Qe4+⟧"
+  ],
+  "unsure": [
+   "⟦2349|Qd5⟧: 1921 in 'Q - Q 5 ch' (không bên nào đi được); nước chiếu Hậu duy nhất của Đen sau 37.Qa6 là Qe4+ (Q - K 5 ch, có lẽ lỗi in) nên đã thay bằng ⟦-|Qe4+⟧"
+  ]
+ },
+ {
+  "id": "1.0.4.11",
+  "vi": "Tốt nhất. Nó đe dọa ⟦-|Bc5⟧; ⟦-|Be3⟧, ⟦2391|Nd5⟧. Nó cũng ngăn ⟦2392|Be3⟧ vì có ⟦2393|Nd5⟧ hoặc Mã f5.",
+  "replaced": [
+   "⟦2389|Bf4⟧ -> ⟦-|Bc5⟧",
+   "⟦2390|Be6⟧ -> ⟦-|Be3⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.5.9",
+  "vi": "Đe dọa ⟦-|Qa5⟧ và qua đó ngăn chặn ý đồ ⟦2532|Ba3⟧ của Trắng. Điều này cho thấy nước đi vừa rồi của Trắng hoàn toàn mất thời gian và chỉ làm thế cờ của mình yếu đi.",
+  "replaced": [
+   "⟦2531|Qh4⟧ -> ⟦-|Qa5⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.6.5",
+  "vi": "Trong biến này còn có cách khác là phát triển con Tượng này qua ô g7, sau ⟦-|g6⟧.",
+  "replaced": [
+   "⟦2681|g3⟧ -> ⟦-|g6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.6.16",
+  "vi": "Vì không có cách nào ngăn việc mất Tốt, Đen nên bỏ con Tốt ngay tại chỗ và chơi ⟦-|Nbd7⟧ để củng cố thế cờ. Nước đi trong ván không chỉ mất một Tốt mà còn làm thế cờ của Đen suy yếu rất nhiều.",
+  "replaced": [
+   "⟦2705|Nd2⟧ -> ⟦-|Nbd7⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.6.21",
+  "vi": "Nước này thực tế là bắt buộc. Đen không thể chơi ⟦2716|g6⟧ vì ⟦2717|Bxg6⟧, và trong khi đó Trắng đe dọa ⟦2718|Qh8+⟧ rồi tiếp theo ⟦2719|Nf5+⟧ và ⟦-|Qxg7⟧.",
+  "replaced": [
+   "⟦2720|Qxg7+⟧ -> ⟦-|Qxg7⟧"
+  ],
+  "unsure": [
+   "⟦2720|Qxg7+⟧: ô và quân đúng, chỉ bỏ dấu chiếu vì sau Qh8+ Ke7, Nf5+ Kd7 thì Qxg7 không chiếu"
+  ]
+ },
+ {
+  "id": "1.0.7.34",
+  "vi": "đe dọa ⟦-|b4⟧; nước này sẽ mở đường hoạt động cho Tượng và đồng thời tạo được một Tốt thông.",
+  "replaced": [
+   "⟦2863|g5⟧ -> ⟦-|b4⟧"
+  ],
+  "unsure": []
+ }
+]

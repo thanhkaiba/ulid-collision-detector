@@ -1,0 +1,112 @@
+[
+ {
+  "id": "0.1.5.4",
+  "vi": "Bây giờ Đen có quyền chọn: hoặc ngăn đường đi của Vua Trắng bằng ⟦-|Kd6⟧, hoặc, nếu muốn, *vượt qua* bằng chính Vua mình với ⟦435|Kf5⟧. Hãy chú ý rằng hai Vua đối diện trực tiếp nhau, và số ô nằm giữa hai Vua là số lẻ—ở đây là một ô.",
+  "replaced": [
+   "⟦434|Kd3⟧ -> ⟦-|Kd6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.1.5.19",
+  "vi": "Bây giờ Trắng có quyền chọn: hoặc chơi ⟦442|Kd5⟧ để Vua vượt qua, hoặc chơi ⟦-|Kf4⟧ ngăn Vua Đen vượt qua, nhờ đó giữ được đối vua. Chỉ cần đếm là thấy cách thứ nhất chỉ dẫn đến hòa, vì thế Trắng chọn cách thứ hai và chơi:",
+  "replaced": [
+   "⟦443|Kf5⟧ -> ⟦-|Kf4⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.3.3.10",
+  "vi": "⟦-|c5⟧ mới là nước đúng. Nó sẽ dẫn đến những phức tạp mà trong đó Đen có thể đứng vững; ít ra, Trắng sẽ chơi rất khó. Nước đi trong ván không đạt được gì, và đặt Đen vào một thế hoàn toàn phòng thủ. Đe dọa ngầm ⟦854|Bxe5⟧; tiếp theo là ⟦855|Qa5+⟧; dễ dàng bị hóa giải.",
+  "replaced": [
+   "⟦853|c4⟧ -> ⟦-|c5⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.3.3.14",
+  "vi": "Nước thay thế là ⟦862|Nd5⟧. Nếu không, Trắng sẽ chơi ⟦863|Qh3⟧, và Đen sẽ buộc phải đi ⟦864|g6⟧ (không phải ⟦865|h6⟧, vì đòn thí ⟦-|Bxh6⟧), làm suy yếu nghiêm trọng cánh Vua của mình.",
+  "replaced": [
+   "⟦866|Bxh7+⟧ -> ⟦-|Bxh6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.3.3.25",
+  "vi": "Bắt buộc, vì Trắng đe dọa ⟦907|dxe6⟧, và cả ⟦-|Qxa7⟧",
+  "replaced": [
+   "⟦908|Qxe6⟧ -> ⟦-|Qxa7⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.3.4.20",
+  "vi": "Đen không thể chơi ⟦1002|Re8⟧ vì ⟦1003|Rxd4⟧. Ngoài ra, Đen muốn sẵn sàng chơi ⟦1004|e4⟧. Hiện tại Trắng chưa thể chơi ⟦1005|Rxe5⟧ một cách an toàn, nhưng sẽ sớm chuẩn bị đường cho nước đó. Rồi bằng cách bỏ một Xe lấy Tượng và Tốt, Trắng sẽ phá tan hoàn toàn đòn tấn công của Đen và vươn lên hơn một Tốt. Toàn bộ thủ pháp phòng thủ của Trắng được xây dựng trên cơ sở này.",
+  "replaced": [],
+  "unsure": []
+ },
+ {
+  "id": "0.3.5.15",
+  "vi": "Sau nước này, Trắng đã thua. Trắng không thể chơi ⟦1086|Nxg5⟧, vì ⟦1087|Nxd5⟧ sẽ thắng một quân. Do đó Trắng phải chơi ⟦1088|Bg3⟧, hoặc trước hoặc sau ⟦-|Nxf6+⟧, với hậu quả tai hại trong cả hai trường hợp, như ta sẽ thấy.",
+  "replaced": [
+   "⟦1089|Nxd5⟧ -> ⟦-|Nxf6+⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.3.6.4",
+  "vi": "(Một trong những mục đích của cách phòng thủ của Đen là tấn công đôi vào Mã cánh Hậu của Trắng bằng ⟦-|Ne4⟧, tiếp theo là ⟦1142|dxc4⟧. Nhưng ⟦1143|7.Nd2⟧ có lẽ là cách mạnh để đối phó với đe dọa này.) Ngoài ra còn có hai lý do tốt cho cách phòng thủ này; thứ nhất, nó không được chơi nhiều bằng một số cách phòng thủ khác và do đó không được biết rõ bằng; thứ hai, nó để lại cho Đen hai Tượng chống Tượng và Mã, điều mà nói chung là một lợi thế.",
+  "replaced": [
+   "⟦1141|Ne5⟧ -> ⟦-|Ne4⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.3.6.8",
+  "vi": "(Tôi không muốn Mã Trắng đến e5, nơi tôi không thể đuổi nó bằng ⟦1156|f6⟧ mà không làm yếu Tốt e của mình.) Kết quả tương tự có thể đạt được bằng ⟦-|Bd6⟧. Tình cờ, điều này xác nhận nhận định trước đây của tôi rằng Tượng lẽ ra ngay từ đầu nên được đưa đến d6.",
+  "replaced": [
+   "⟦1157|Bd3⟧ -> ⟦-|Bd6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.3.6.20",
+  "vi": "(Có lẽ tốt hơn là chơi ⟦1190|20...Rfe8⟧, với ý định ⟦1191|f5⟧ ngay sau đó.) Lối chơi của Đen quanh đoạn này yếu; nó thiếu sức mạnh, và dường như không có một kế hoạch tấn công rõ ràng. Đúng là đây là những thế cờ khó xử lý nhất trong một ván cờ. Trong những trường hợp như vậy, người chơi phải hình thành một kế hoạch quy mô lớn, hứa hẹn cơ hội thành công, nhưng đồng thời phải là một kế hoạch có thể thực hiện được với những phương tiện sẵn có. Nhìn vào thế cờ, có vẻ cơ hội tốt nhất của Đen là tập trung lực lượng tấn công vào trung tâm của Trắng, tiếp theo là đòn tấn công trực diện vào Vua. Do đó Đen nên chơi ⟦-|Rae8⟧, đe dọa ⟦1193|f5⟧. Nếu Trắng có thể phá được kế hoạch này, hay đúng hơn là ngăn được nó, thì khi đã ghìm chặt một số quân Trắng ở cánh Vua, Đen nên nhanh chóng chuyển hướng tấn công sang cánh Hậu, và mở cột cho các Xe, một khi tham chiến hẳn sẽ tạo ra lợi thế nhờ sức mạnh lớn của cặp Tượng.",
+  "replaced": [
+   "⟦1192|Re1⟧ -> ⟦-|Rae8⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.3.6.24",
+  "vi": "(Để đưa Hậu sang sau ⟦1201|Nh4⟧ và ⟦-|Be2⟧.)",
+  "replaced": [
+   "⟦1202|Be7⟧ -> ⟦-|Be2⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.3.6.28",
+  "vi": "(Tôi cho rằng việc đổi quân này là cần thiết ở đây, vì Trắng đang đe dọa đưa Tượng qua g4 đến e6. Nếu Trắng bắt lại bằng Tốt c, tôi định đổi Tượng và dựa vào hai Tốt chống một ở cánh Hậu. Tôi không ngờ Trắng bắt lại bằng Tốt e, điều dường như khiến Trắng phơi mình trước một đòn tấn công dữ dội vào cánh Vua.) Tôi tin rằng phán đoán của Đen ở đây là sai. Nếu Trắng bắt lại bằng Tốt c như Đen dự đoán, Đen sẽ chịu bất lợi về cấu trúc Tốt, vì Trắng sẽ có một Tốt thông được yểm trợ tốt ở cánh Hậu. Lợi thế duy nhất của Đen sẽ là có một Tượng đặt rất tốt chống một Mã đặt kém, và ở chỗ trong những thế cờ như trên, Tượng luôn mạnh hơn Mã. Đen có thể và lẽ ra phải ngăn tất cả những điều đó bằng cách chơi ⟦-|Bc8⟧, vì nếu Trắng khi ấy đáp lại bằng ⟦1209|Qg3⟧, Đen có thể chơi ⟦1210|cxd5⟧, và Trắng sẽ không thể bắt lại bằng Tốt c vì ⟦1211|Bxf2+⟧ thắng chất.",
+  "replaced": [
+   "⟦1208|Bf1⟧ -> ⟦-|Bc8⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.3.6.34",
+  "vi": "⟦1237|Rh6⟧ là nước thay thế. Nước duy nhất của Trắng khi đó sẽ là ⟦-|Kh1⟧. Thế cờ giờ rõ ràng đã thắng cho Đen, và chỉ còn là vấn đề tìm đúng đường đi. Đòn tấn công cuối cùng được Sir George Thomas tiến hành một cách không thể chê trách.",
+  "replaced": [
+   "⟦1238|Kh8⟧ -> ⟦-|Kh1⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.4.1.13",
+  "vi": "Bây giờ Vua không thể đi tới b3, vì có ⟦-|Rb5+⟧.",
+  "replaced": [
+   "⟦1292|Rb5⟧ -> ⟦-|Rb5+⟧"
+  ],
+  "unsure": []
+ }
+]

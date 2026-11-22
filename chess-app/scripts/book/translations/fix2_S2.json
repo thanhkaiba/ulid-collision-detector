@@ -1,0 +1,95 @@
+[
+ {
+  "id": "0.4.1.57",
+  "vi": "⟦-|Rb2+⟧; tiếp theo là ⟦-|Rh2⟧, cho những cơ hội tốt hơn.",
+  "replaced": [
+   "⟦1408|Rg7⟧ -> ⟦-|Rb2+⟧",
+   "⟦1409|Rh7⟧ -> ⟦-|Rh2⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.4.2.4",
+  "vi": "Các sai lầm bắt đầu. Đây là sai lầm thứ nhất. Đen thấy có thể ăn một Tốt mà không gặp nguy hiểm gì, và không dừng lại để suy nghĩ xem có gì tốt hơn không. ⟦-|Rf2+⟧ mới là nước đúng. Nếu khi đó ⟦-|Kg3⟧, thì ⟦-|Rxa2⟧. Còn nếu Trắng đi ⟦1440|Ke4⟧, thì ⟦1441|Re5+⟧ tiếp theo là ⟦1442|Rxa2⟧.",
+  "replaced": [
+   "⟦1437|Rc7⟧ -> ⟦-|Rf2+⟧",
+   "⟦1438|Kg6⟧ -> ⟦-|Kg3⟧",
+   "⟦1439|Rxg4+⟧ -> ⟦-|Rxa2⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.4.3.3",
+  "vi": "Trong thế cờ này Marshall có một đường thắng đơn giản bằng ⟦1476|Rc7+⟧, nhưng lại đi ⟦-|f6⟧, và vì thế cho Đen một cơ hội hòa. May cho Marshall, Đen không nhìn ra nước hòa, chơi kém và thua. Nếu Đen nắm được tình thế, Đen đã hòa được bằng cách đi ⟦1478|Rd6⟧.",
+  "replaced": [
+   "⟦1477|f6+⟧ -> ⟦-|f6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.4.3.16",
+  "vi": "Nếu ⟦1508|b3⟧; ⟦1509|Rh5+⟧ thắng, vì nếu Vua lui về thì ⟦1510|Rh6⟧, còn nếu Vua tiến lên thì ⟦-|Rh4+⟧, tiếp theo là ⟦-|Rf4⟧ thắng.",
+  "replaced": [
+   "⟦1511|Rh4⟧ -> ⟦-|Rh4+⟧",
+   "⟦1512|Rf5⟧ -> ⟦-|Rf4⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.4.4.11",
+  "vi": "Lúc này nên đi ⟦-|Ra1⟧, để buộc Đen phải phòng thủ bằng ⟦1567|Re7⟧. Tuy nhiên, Trắng không muốn lộ kế hoạch ngay, khiến Đen tỉnh ngộ trước mối nguy của thế cờ, vì vậy mới có nước này, trông như nhằm phá vỡ các Tốt cánh Hậu của Đen.",
+  "replaced": [
+   "⟦1566|Ra8⟧ -> ⟦-|Ra1⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.4.4.13",
+  "vi": "Đây là một sai lầm. Đen không ý thức được mối nguy của thế cờ mình. Đen nên đi ⟦1571|g5⟧; đe dọa ⟦-|Rh6⟧, và bằng cuộc phô diễn này nhắm vào Tốt h của Trắng, ngăn chặn đòn tấn công vào các Tốt cánh Hậu của mình, đòn tấn công giờ đây sẽ triển khai.",
+  "replaced": [
+   "⟦1572|Ra3⟧ -> ⟦-|Rh6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.4.4.17",
+  "vi": "Giờ thì bị buộc, nhưng đã hơi muộn. Đen không thể đi ⟦1580|8...Rff7⟧, vì ⟦1581|f4⟧ sẽ làm ván cờ của Đen hoàn toàn tê liệt. Đến lúc này Đen cuối cùng mới tỉnh ngộ trước mối nguy, và cố cứu vãn bằng cuộc phản công phô diễn ở cánh Vua, điều mà Đen lẽ ra phải bắt đầu từ trước. Dĩ nhiên Trắng không thể đi ⟦1582|Rxa7⟧, vì ⟦1583|Rxa7⟧, tiếp theo là ⟦-|Rh6⟧, lấy lại Tốt với lợi thế.",
+  "replaced": [
+   "⟦1584|Ra3⟧ -> ⟦-|Rh6⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.4.4.50",
+  "vi": "Với mục đích đi ⟦-|Kb6⟧ và ⟦1684|a5⟧, tiếp theo là ⟦-|axb4⟧, nhờ đó có một cột mở cho Xe và có thể phản công phô diễn ở cánh Hậu để chặn bước tiến của Trắng ở bên phải. Tuy nhiên, Trắng cũng ngăn cả điều này.",
+  "replaced": [
+   "⟦1683|Kg3⟧ -> ⟦-|Kb6⟧",
+   "⟦1685|bxa5⟧ -> ⟦-|axb4⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.4.4.54",
+  "vi": "Đen vẫn muốn đi ⟦-|c5⟧, nhưng vì dễ thấy trước rằng Trắng sẽ lại ngăn điều đó, nước đi trong ván thực sự là một sự mất thời gian nghiêm trọng. Đen nên đưa Vua sang cánh bên kia ngay lập tức.",
+  "replaced": [
+   "⟦1691|c4⟧ -> ⟦-|c5⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "0.4.4.67",
+  "vi": "⟦-|Kd7⟧ cũng không giúp được nhiều, nhưng một khi đã đi nước trước đó thì giờ Đen nên nhất quán mà đi nước này.",
+  "replaced": [
+   "⟦1722|Kd2⟧ -> ⟦-|Kd7⟧"
+  ],
+  "unsure": []
+ },
+ {
+  "id": "1.0.0.4",
+  "vi": "⟦-|cxd5⟧ đáng ưu tiên hơn, vì những lý do chúng ta sẽ sớm thấy.",
+  "replaced": [
+   "⟦1965|dxc4⟧ -> ⟦-|cxd5⟧"
+  ],
+  "unsure": []
+ }
+]
