@@ -5,7 +5,8 @@ import { Button, Card, Spinner, Tag } from '../components/ui';
 import { LESSONS, STAGES, lessonById, type Block, type Lesson, type PuzzleSetBlock, type TaskBlock } from '../data/lessons';
 import { renderMd } from '../lib/markdown';
 import { loadPuzzles, type Puzzle } from '../lib/puzzles';
-import { loadLessonProgress, saveLessonProgress, loadPuzzleProgress, type LessonProgress } from '../lib/storage';
+import { loadLessonProgress, saveLessonProgress, setLessonStatus, loadPuzzleProgress, type LessonProgress } from '../lib/storage';
+import MarkBar from '../components/MarkBar';
 import { navigate, type Route } from '../lib/router';
 import Videos from './Videos';
 import Book from './Book';
@@ -35,10 +36,13 @@ function taskCount(l: Lesson) {
   return l.blocks.filter((b) => b.kind === 'task' || b.kind === 'puzzles').length;
 }
 function lessonDone(l: Lesson, p: LessonProgress) {
+  if (p.status[l.id] === 'done') return true;
+  if (p.status[l.id] === 'skipped') return false;
   const n = taskCount(l);
   const done = p.done[l.id]?.length ?? 0;
-  return n === 0 ? !!p.read[l.id] : done >= n;
+  return n > 0 && done >= n;
 }
+const lessonSkipped = (l: Lesson, p: LessonProgress) => p.status[l.id] === 'skipped';
 
 function Overview({ progress }: { progress: LessonProgress }) {
   const [puzzleRating, setPuzzleRating] = useState<number | null>(null);
@@ -47,14 +51,15 @@ function Overview({ progress }: { progress: LessonProgress }) {
   }, []);
   const total = LESSONS.length;
   const doneCount = LESSONS.filter((l) => lessonDone(l, progress)).length;
-  const next = LESSONS.find((l) => !lessonDone(l, progress));
+  const skippedCount = LESSONS.filter((l) => lessonSkipped(l, progress)).length;
+  const next = LESSONS.find((l) => !lessonDone(l, progress) && !lessonSkipped(l, progress));
   return (
     <div>
       <h1>Lộ trình học cờ</h1>
       <Card>
         <div className="row-between">
           <span>
-            Hoàn thành <b>{doneCount}</b>/{total} bài
+            Hoàn thành <b>{doneCount}</b>/{total} bài{skippedCount > 0 && <span className="muted small"> · bỏ qua {skippedCount}</span>}
           </span>
           {puzzleRating !== null && <span className="muted small">Rating bài tập: {puzzleRating}</span>}
         </div>
@@ -114,7 +119,7 @@ function Overview({ progress }: { progress: LessonProgress }) {
                       {l.summary} · {l.minutes} phút
                     </div>
                   </div>
-                  {done ? <Tag tone="good">✓</Tag> : started ? <Tag tone="warn">đang học</Tag> : <span className="muted">›</span>}
+                  {done ? <Tag tone="good">✓</Tag> : lessonSkipped(l, progress) ? <Tag>bỏ qua</Tag> : started ? <Tag tone="warn">đang học</Tag> : <span className="muted">›</span>}
                 </div>
               );
             })}
@@ -186,6 +191,14 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
           ))}
         </Card>
       )}
+      <MarkBar
+        status={progress.status[lesson.id]}
+        onMark={async (v) => {
+          setProgress(await setLessonStatus(lesson.id, v));
+          if (v && next) navigate(`learn/lesson/${next.id}`);
+          else if (v) navigate('learn');
+        }}
+      />
       <div className="row-between mt">
         {prev ? (
           <Button kind="ghost" onClick={() => navigate(`learn/lesson/${prev.id}`)}>

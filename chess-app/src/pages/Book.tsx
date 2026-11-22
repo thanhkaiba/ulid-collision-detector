@@ -4,7 +4,8 @@ import type { Key } from 'chessground/types';
 import Board from '../components/Board';
 import { Button, Card, Spinner } from '../components/ui';
 import { navigate, type Route } from '../lib/router';
-import { loadLessonProgress, saveLessonProgress } from '../lib/storage';
+import { loadLessonProgress, saveLessonProgress, setLessonStatus, type LessonProgress } from '../lib/storage';
+import MarkBar from '../components/MarkBar';
 
 /* ---------- data shape produced by scripts/book (Capablanca, Chess Fundamentals, public domain) ---------- */
 type BookMoveRow = [number, string, string, string]; // id, san, uci, fen
@@ -39,10 +40,16 @@ export default function Book({ route }: { route: Route }) {
 }
 
 function Toc({ book }: { book: BookData }) {
-  const [read, setRead] = useState<Record<string, 1>>({});
+  const [lp, setLp] = useState<LessonProgress | null>(null);
   useEffect(() => {
-    loadLessonProgress().then((lp) => setRead(lp.read));
+    loadLessonProgress().then(setLp);
   }, []);
+  const keys: string[] = [];
+  book.parts.forEach((part, pi) => part.chapters.forEach((ch, ci) => ch.sections.forEach((_, si) => keys.push(`${pi}/${ci}/${si}`))));
+  const st = (k: string) => lp?.status[`book:${k.replace(/\//g, '.')}`];
+  const doneCount = keys.filter((k) => st(k) === 'done').length;
+  const skippedCount = keys.filter((k) => st(k) === 'skipped').length;
+  const nextKey = keys.find((k) => !st(k));
   return (
     <div>
       <div className="topbar">
@@ -55,6 +62,19 @@ function Toc({ book }: { book: BookData }) {
         <p className="small" style={{ margin: 0 }}>
           <b>{book.meta?.author ?? 'José Raúl Capablanca'}</b> (1921). {book.meta?.note ?? ''} Mỗi hình đều tương tác: bấm vào một nước trong văn bản để xem thế cờ trên bàn.
         </p>
+        <div className="row-between mt small">
+          <span>
+            Đã học <b>{doneCount}</b>/{keys.length} mục{skippedCount > 0 && <span className="muted"> · bỏ qua {skippedCount}</span>}
+          </span>
+        </div>
+        <div className="progress mt">
+          <div style={{ width: `${(100 * doneCount) / Math.max(1, keys.length)}%` }} />
+        </div>
+        {nextKey && (
+          <Button kind="primary" className="mt" onClick={() => navigate(`learn/book/${nextKey}`)}>
+            {doneCount + skippedCount > 0 ? 'Đọc tiếp' : 'Bắt đầu đọc'}
+          </Button>
+        )}
       </Card>
       {book.parts.map((part, pi) => (
         <div key={pi}>
@@ -67,7 +87,9 @@ function Toc({ book }: { book: BookData }) {
               {ch.sections.map((sec, si) => (
                 <div key={si} className="list-item" onClick={() => navigate(`learn/book/${pi}/${ci}/${si}`)}>
                   <span>{sec.heading}</span>
-                  <span className="muted">{read[`book:${pi}.${ci}.${si}`] ? '✓' : '›'}</span>
+                  <span className="muted">
+                    {st(`${pi}/${ci}/${si}`) === 'done' ? '✓' : st(`${pi}/${ci}/${si}`) === 'skipped' ? 'bỏ qua' : lp?.read[`book:${pi}.${ci}.${si}`] ? 'đang đọc' : '›'}
+                  </span>
                 </div>
               ))}
             </div>
@@ -86,12 +108,15 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
   const [active, setActive] = useState<{ fen: string; lastMove?: Key[]; label?: string } | null>(null);
   const moveById = useMemo(() => new Map<number, BookMove>((sec?.moves ?? []).map((m) => [m[0], { id: m[0], san: m[1], uci: m[2], fen: m[3] }])), [sec]);
   const boardRef = useRef<HTMLDivElement>(null);
+  const statusKey = `book:${pi}.${ci}.${si}`;
+  const [status, setStatus] = useState<'done' | 'skipped' | undefined>(undefined);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
     setActive(null);
     loadLessonProgress().then((lp) => {
       const key = `book:${pi}.${ci}.${si}`;
+      setStatus(lp.status[key]);
       if (!lp.read[key]) saveLessonProgress({ ...lp, read: { ...lp.read, [key]: 1 } });
     });
   }, [pi, ci, si]);
@@ -213,6 +238,14 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
         </div>
       </div>
 
+      <MarkBar
+        status={status}
+        onMark={async (v) => {
+          const lp = await setLessonStatus(statusKey, v);
+          setStatus(lp.status[statusKey]);
+          if (v) navigate(next ?? 'learn/book');
+        }}
+      />
       <div className="row-between mt">
         {prev ? (
           <Button kind="ghost" onClick={() => navigate(prev)}>

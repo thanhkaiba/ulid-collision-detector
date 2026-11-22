@@ -50,9 +50,21 @@ export interface LessonProgress {
   /** lessonId -> set of completed task indices */
   done: Record<string, number[]>;
   read: Record<string, 1>;
+  /** manual marks: lesson id or `book:p.c.s` -> done / skipped */
+  status: Record<string, 'done' | 'skipped'>;
 }
 export async function loadLessonProgress(): Promise<LessonProgress> {
-  return { done: {}, read: {}, ...((await get<Partial<LessonProgress>>('lessons')) ?? {}) };
+  return { done: {}, read: {}, status: {}, ...((await get<Partial<LessonProgress>>('lessons')) ?? {}) };
+}
+/** Set or clear (undefined) a manual mark. Returns the updated progress. */
+export async function setLessonStatus(key: string, value: 'done' | 'skipped' | undefined): Promise<LessonProgress> {
+  const p = await loadLessonProgress();
+  const status = { ...p.status };
+  if (value) status[key] = value;
+  else delete status[key];
+  const next = { ...p, status };
+  await saveLessonProgress(next);
+  return next;
 }
 export async function saveLessonProgress(p: LessonProgress) {
   await set('lessons', p);
