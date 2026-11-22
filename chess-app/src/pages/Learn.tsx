@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import Board from '../components/Board';
-import PuzzleBoard from '../components/PuzzleBoard';
+import PuzzleBoard, { type PuzzleOutcome } from '../components/PuzzleBoard';
 import { Button, Card, Spinner, Tag } from '../components/ui';
 import { LESSONS, STAGES, lessonById, type Block, type Lesson, type PuzzleSetBlock, type TaskBlock } from '../data/lessons';
 import { renderMd } from '../lib/markdown';
@@ -17,7 +17,7 @@ import PreviewSheet from '../components/PreviewSheet';
 import SquareQuiz from '../components/SquareQuiz';
 import { renderRich, type Preview } from '../lib/richtext';
 import { START_FEN } from '../lib/chess-utils';
-import { practiceById } from '../data/practice';
+import { practiceById, loadPracticeDone } from '../data/practice';
 import { PracticeInline } from './Play';
 import { Chess } from 'chess.js';
 import type { Key } from 'chessground/types';
@@ -48,6 +48,7 @@ function taskCount(l: Lesson) {
 function lessonDone(l: Lesson, p: LessonProgress) {
   if (p.status[l.id] === 'done') return true;
   if (p.status[l.id] === 'skipped') return false;
+  if (l.blocks.some((b) => b.kind === 'practice')) return false;
   const n = taskCount(l);
   const done = p.done[l.id]?.length ?? 0;
   return n > 0 && done >= n;
@@ -288,6 +289,23 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
   const next = LESSONS[idx + 1];
   const doneSet = new Set(progress.done[lesson.id] ?? []);
   const [preview, setPreview] = useState<Preview | null>(null);
+  const [practiceDone, setPracticeDone] = useState<Record<string, 1>>(loadPracticeDone);
+  /** what must be passed before the lesson can be marked as learned (engine practice marked ★★★ is optional) */
+  const missing: string[] = [];
+  {
+    let n = 0;
+    lesson.blocks.forEach((b, i) => {
+      if (b.kind === 'task' || b.kind === 'squares' || b.kind === 'puzzles') {
+        n++;
+        if (!doneSet.has(i)) missing.push(b.kind === 'puzzles' ? `Bài ${n} (luyện tập)` : `Bài ${n}`);
+      }
+      if (b.kind === 'practice')
+        for (const id of b.ids) {
+          const p = practiceById(id);
+          if (p && p.level < 3 && !practiceDone[id]) missing.push(`Đánh với máy: ${p.title}`);
+        }
+    });
+  }
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -354,7 +372,8 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
                 <div className="tiny muted">TỰ TAY ĐÁNH VỚI MÁY · {p.goal === 'draw' ? 'THỦ HÒA' : p.goal === 'mate' ? 'CHIẾU HẾT' : 'PHONG HẬU HOẶC THẮNG QUÂN'}</div>
                 <h3 style={{ margin: '2px 0 4px' }}>{p.title}</h3>
                 <p className="small" style={{ marginTop: 0 }}>{b.ids.length === 1 && b.intro ? b.intro : p.brief}</p>
-                <PracticeInline pos={p} />
+                {p.level >= 3 && <p className="tiny muted">Bài khó, không bắt buộc để qua bài học.</p>}
+                <PracticeInline pos={p} onGoal={() => setPracticeDone(loadPracticeDone())} />
               </Card>
             );
           });
@@ -377,6 +396,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
       <PreviewSheet preview={preview} onClose={() => setPreview(null)} />
       <MarkBar
         status={progress.status[lesson.id]}
+        missing={missing}
         onMark={async (v) => {
           setProgress(await setLessonStatus(lesson.id, v));
           if (v === 'done') logActivity('lessons', 1, lesson.title);
@@ -418,14 +438,14 @@ function Diagram({ block, onShow }: { block: Extract<Block, { kind: 'diagram' }>
 }
 
 function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: number; done: boolean; onDone: () => void; onShow: (p: Preview) => void }) {
-  const [finished, setFinished] = useState<boolean | null>(null);
+  const [finished, setFinished] = useState<PuzzleOutcome | null>(null);
   const [misses, setMisses] = useState(0);
   const showExplain = finished !== null || misses >= 2;
   return (
     <Card>
       <div className="row-between">
         <h3 style={{ margin: 0 }}>
-          Bài {n} {done && <Tag tone="good">✓</Tag>}
+          Bài {n} {done && <Tag tone="good">✓ đã qua</Tag>}
         </h3>
         {block.verify === 'line' && <Tag tone="info">đi theo hướng dẫn</Tag>}
       </div>
@@ -436,11 +456,14 @@ function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: num
         playerFirst
         prompt={block.prompt}
         onWrong={setMisses}
-        onFinish={(ok) => {
-          setFinished(ok);
-          onDone();
+        onFinish={(_, how) => {
+          setFinished(how);
+          if (how !== 'shown') onDone();
         }}
       />
+      {finished === 'shown' && !done && (
+        <div className="feedback bad small">Chưa tính là qua vì bạn đã xem nước đi. Đọc giải thích, rồi bấm “Làm lại” và tự đi.</div>
+      )}
       {showExplain && (
         <div className="task-box small">
           <b>{finished !== null ? 'Giải thích:' : 'Gợi ý lời giải:'}</b> {renderRich(block.explain, { onShow, seqStart: block.fen, squareFen: block.fen })}
@@ -452,6 +475,7 @@ function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: num
 
 function PuzzleSet({ block, n, done, onDone }: { block: PuzzleSetBlock; n: number; done: boolean; onDone: () => void }) {
   const [all, setAll] = useState<Puzzle[] | null>(null);
+  const [round, setRound] = useState(0);
   const [i, setI] = useState(0);
   const [results, setResults] = useState<boolean[]>([]);
   const [cur, setCur] = useState<boolean | null>(null);
@@ -464,38 +488,48 @@ function PuzzleSet({ block, n, done, onDone }: { block: PuzzleSetBlock; n: numbe
     const cands = all.filter((p) => p.rating >= lo && p.rating <= hi && block.themes.some((t) => p.themes.includes(t)));
     // deterministic order: short puzzles first, then by id
     cands.sort((a, b) => (a.moves.length - b.moves.length) || (a.id < b.id ? -1 : 1));
-    // spread across themes so a set is not all one theme
-    const out: Puzzle[] = [];
+    // spread across themes so a set is not all one theme; each retry round deals the next puzzles
     const perTheme = Math.ceil(block.count / block.themes.length);
-    for (const t of block.themes) out.push(...cands.filter((p) => p.themes.includes(t) && !out.includes(p)).slice(0, perTheme));
-    return out.slice(0, block.count);
-  }, [all, block]);
+    const pick = (r: number) => {
+      const out: Puzzle[] = [];
+      for (const t of block.themes) {
+        const ofTheme = cands.filter((p) => p.themes.includes(t));
+        const from = (r * perTheme) % Math.max(1, ofTheme.length);
+        out.push(...[...ofTheme.slice(from), ...ofTheme.slice(0, from)].filter((p) => !out.includes(p)).slice(0, perTheme));
+      }
+      return out.slice(0, block.count);
+    };
+    return pick(round);
+  }, [all, block, round]);
 
   if (!all) return <Spinner label="Đang tải bài tập..." />;
   if (!set.length) return null;
   const p = set[Math.min(i, set.length - 1)];
   const finishedAll = results.length >= set.length;
+  const need = Math.ceil(set.length * 0.6);
+  const right = results.filter(Boolean).length;
+  const retry = () => {
+    setResults([]);
+    setI(0);
+    setCur(null);
+    setRound(round + 1);
+  };
   return (
     <Card>
       <div className="row-between">
         <h3 style={{ margin: 0 }}>
-          Bài {n}: luyện tập {done && <Tag tone="good">✓</Tag>}
+          Bài {n}: luyện tập {done && <Tag tone="good">✓ đã qua</Tag>}
         </h3>
         <span className="muted small">
           {Math.min(i + 1, set.length)}/{set.length}
         </span>
       </div>
       {block.intro && <p className="small muted">{block.intro}</p>}
+      {!done && !finishedAll && <p className="tiny muted">Để qua: đúng ngay lần đầu ít nhất {need}/{set.length} bài.</p>}
       {!finishedAll && (
         <>
           <p className="tiny muted">Rating bài: {p.rating}</p>
-          <PuzzleBoard
-            key={p.id}
-            fen={p.fen}
-            moves={p.moves}
-            playerFirst={p.playerFirst}
-            onFinish={(ok) => setCur(ok)}
-          />
+          <PuzzleBoard key={`${round}-${p.id}`} fen={p.fen} moves={p.moves} playerFirst={p.playerFirst} onFinish={(ok) => setCur(ok)} />
           {cur !== null && (
             <div className="row mt">
               <Button
@@ -505,28 +539,31 @@ function PuzzleSet({ block, n, done, onDone }: { block: PuzzleSetBlock; n: numbe
                   setResults(r);
                   setCur(null);
                   setI(i + 1);
-                  if (r.length >= set.length) onDone();
+                  if (r.length >= set.length && r.filter(Boolean).length >= need) onDone();
                 }}
               >
                 {i + 1 >= set.length ? 'Hoàn thành' : 'Bài tiếp →'}
               </Button>
-              {p.url && (
-                <a className="small" href={p.url} target="_blank" rel="noreferrer">
-                  Lichess
-                </a>
-              )}
             </div>
           )}
         </>
       )}
-      {finishedAll && (
-        <div className="feedback ok">
-          Xong: {results.filter(Boolean).length}/{set.length} đúng ngay lần đầu.{' '}
-          <button className="chip" onClick={() => { setResults([]); setI(0); setCur(null); }}>
-            làm lại
-          </button>
-        </div>
-      )}
+      {finishedAll &&
+        (right >= need ? (
+          <div className="feedback ok">
+            Qua! {right}/{set.length} đúng ngay lần đầu.{' '}
+            <button className="chip" onClick={retry}>
+              làm thêm bộ khác
+            </button>
+          </div>
+        ) : (
+          <div className="feedback bad">
+            {right}/{set.length} đúng ngay lần đầu, cần ít nhất {need}. Làm bộ khác cùng chủ đề để qua.{' '}
+            <button className="chip" onClick={retry}>
+              làm bộ khác
+            </button>
+          </div>
+        ))}
     </Card>
   );
 }

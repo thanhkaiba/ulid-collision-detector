@@ -57,7 +57,7 @@ function PracticeRun({ pos, back }: { pos: PracticePosition; back: string }) {
  * A practice position played right inside a lesson. The board is static until the student presses start,
  * so several of these can sit on one page without the engine moving on all of them.
  */
-export function PracticeInline({ pos }: { pos: PracticePosition }) {
+export function PracticeInline({ pos, onGoal }: { pos: PracticePosition; onGoal?: () => void }) {
   const [attempt, setAttempt] = useState(0);
   const [started, setStarted] = useState(false);
   const [done, setDone] = useState(() => !!loadPracticeDone()[pos.id]);
@@ -89,6 +89,7 @@ export function PracticeInline({ pos }: { pos: PracticePosition }) {
       tc={NO_CLOCK}
       practice={pos}
       embedded
+      onGoal={onGoal}
       onExit={() => {
         setDone(!!loadPracticeDone()[pos.id]);
         setStarted(false);
@@ -235,6 +236,7 @@ function GameView({
   onRematch,
   practice,
   embedded,
+  onGoal,
 }: {
   me: 'w' | 'b';
   level: Level;
@@ -245,6 +247,8 @@ function GameView({
   practice?: PracticePosition;
   /** shown inside a lesson: no page header, no link to the practice list */
   embedded?: boolean;
+  /** practice: called when the goal is reached */
+  onGoal?: () => void;
 }) {
   const startFen = practice?.fen;
   /** a practice position where Black moves first: shift the move list by one cell */
@@ -280,6 +284,7 @@ function GameView({
         if (ok) {
           setGoalMet(true);
           markPracticeDone(practice.id);
+          onGoal?.();
         }
       }
       if (!logged.current) {
@@ -287,7 +292,7 @@ function GameView({
         logActivity('games');
       }
     },
-    [practice, me],
+    [practice, me, onGoal],
   );
 
   // clock

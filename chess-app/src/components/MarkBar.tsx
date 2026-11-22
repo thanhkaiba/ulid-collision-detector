@@ -4,9 +4,12 @@ import { Button, Tag } from './ui';
 export default function MarkBar({
   status,
   onMark,
+  missing = [],
 }: {
   status: 'done' | 'skipped' | undefined;
   onMark: (value: 'done' | 'skipped' | undefined) => void;
+  /** exercises still to pass: while any are left, "learned" is locked (skipping stays possible) */
+  missing?: string[];
 }) {
   if (status) {
     return (
@@ -15,7 +18,7 @@ export default function MarkBar({
         <button className="chip" onClick={() => onMark(undefined)}>
           Bỏ đánh dấu
         </button>
-        {status === 'skipped' && (
+        {status === 'skipped' && missing.length === 0 && (
           <button className="chip" onClick={() => onMark('done')}>
             Chuyển thành đã học
           </button>
@@ -23,14 +26,25 @@ export default function MarkBar({
       </div>
     );
   }
+  const locked = missing.length > 0;
   return (
-    <div className="markbar">
-      <Button kind="primary" onClick={() => onMark('done')}>
-        ✓ Đã học
-      </Button>
-      <Button kind="ghost" onClick={() => onMark('skipped')}>
-        ↷ Bỏ qua
-      </Button>
+    <div>
+      {locked && (
+        <div className="feedback info small">
+          Qua hết bài tập mới được đánh dấu đã học. Còn {missing.length}: {missing.join(', ')}.
+          <div className="tiny" style={{ fontWeight: 400, marginTop: 4 }}>
+            Đã biết bài này rồi thì bấm “Bỏ qua” để sang bài sau.
+          </div>
+        </div>
+      )}
+      <div className="markbar">
+        <Button kind="primary" onClick={() => onMark('done')} disabled={locked}>
+          {locked ? '🔒 Đã học' : '✓ Đã học'}
+        </Button>
+        <Button kind="ghost" onClick={() => onMark('skipped')}>
+          ↷ Bỏ qua
+        </Button>
+      </div>
     </div>
   );
 }

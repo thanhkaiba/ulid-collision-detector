@@ -8,6 +8,11 @@ import { Button } from './ui';
 import { getEngine } from '../lib/engine';
 import { playUci, toDests, turnColor, kingInCheckColor, needsPromotion, uciLineToSan } from '../lib/chess-utils';
 
+/**
+ * clean: solved first try without hints. solved: solved by the student after a mistake or a square hint.
+ * shown: finished, but the move was handed over (arrow hint or "show solution").
+ */
+export type PuzzleOutcome = 'clean' | 'solved' | 'shown';
 export type PuzzleStatus = 'intro' | 'solving' | 'checking' | 'wrong' | 'solved' | 'revealed';
 
 export interface PuzzleBoardProps {
@@ -18,7 +23,7 @@ export interface PuzzleBoardProps {
   /** extra accepted first moves for the player (UCI) */
   alternatives?: string[];
   /** called exactly once when the puzzle is finished: ok=false if the user failed or revealed */
-  onFinish?: (ok: boolean) => void;
+  onFinish?: (ok: boolean, how: PuzzleOutcome) => void;
   /** called on every wrong attempt with the running count */
   onWrong?: (count: number) => void;
   prompt?: string;
@@ -62,11 +67,13 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     return turnColor(c);
   }, [fen, moves, playerFirst]);
 
+  /** an arrow hint gives the move away: the puzzle no longer counts as passed */
+  const shown = useRef(false);
   const finish = useCallback(
-    (ok: boolean) => {
+    (ok: boolean, revealed = false) => {
       if (finished.current) return;
       finished.current = true;
-      props.onFinish?.(ok);
+      props.onFinish?.(ok, revealed || shown.current ? 'shown' : ok ? 'clean' : 'solved');
     },
     [props],
   );
@@ -234,7 +241,10 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     const orig = m.slice(0, 2) as Key;
     const dest = m.slice(2, 4) as Key;
     if (hintLevel === 0) setShapes([{ orig, brush: 'green' }]);
-    else setShapes([{ orig, dest, brush: 'green' }]);
+    else {
+      setShapes([{ orig, dest, brush: 'green' }]);
+      shown.current = true;
+    }
     setHintLevel(hintLevel + 1);
     setFailed(true); // a hinted solve does not count as clean
   };
@@ -245,7 +255,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     setStatus('revealed');
     setShapes([]);
     setWrongInfo(null);
-    finish(false);
+    finish(false, true);
     let i = idx;
     const step = () => {
       if (i >= moves.length) return;
@@ -263,6 +273,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     attempt.current++;
     chessRef.current = new Chess(fen);
     finished.current = false;
+    shown.current = false;
     undoPlies.current = 0;
     setFailed(false);
     setShapes([]);
