@@ -1,0 +1,89 @@
+# Anatoly Karpov – Wolfgang Unzicker, Olympiad Nice 1974 (1-0). Depth 17. Scores: pawns, White's point of view.
+# ply | move | eval after | engine preferred (if different) and its line | flag
+  1 | 1.e4 | +0.38 | engine agrees | 
+  2 | 1...e5 | +0.39 | engine agrees | 
+  3 | 2.Nf3 | +0.40 | engine agrees | 
+  4 | 2...Nc6 | +0.37 | best Nf6 (+0.40): Nf6 Nxe5 Nxe4 d4 d5 Bd3 | 
+  5 | 3.Bb5 | +0.47 | engine agrees | 
+  6 | 3...a6 | +0.46 | engine agrees | 
+  7 | 4.Ba4 | +0.32 | engine agrees | 
+  8 | 4...Nf6 | +0.36 | engine agrees | 
+  9 | 5.O-O | +0.43 | engine agrees | 
+ 10 | 5...Be7 | +0.36 | best Nxe4 (+0.43): Nxe4 d4 b5 Bb3 d5 dxe5 | 
+ 11 | 6.Re1 | +0.39 | engine agrees | 
+ 12 | 6...b5 | +0.35 | engine agrees | 
+ 13 | 7.Bb3 | +0.36 | engine agrees | 
+ 14 | 7...d6 | +0.54 | best O-O (+0.36): O-O c3 Na5 Bc2 d5 d4 | 
+ 15 | 8.c3 | +0.52 | engine agrees | 
+ 16 | 8...O-O | +0.49 | engine agrees | 
+ 17 | 9.h3 | +0.50 | engine agrees | 
+ 18 | 9...Na5 | +0.58 | best Be6 (+0.50): Be6 Bc2 d5 d4 exd4 e5 | 
+ 19 | 10.Bc2 | +0.51 | engine agrees | 
+ 20 | 10...c5 | +0.61 | best d5 (+0.51): d5 d4 dxe4 Nxe5 c5 Bf4 | 
+ 21 | 11.d4 | +0.63 | engine agrees | 
+ 22 | 11...Qc7 | +0.61 | engine agrees | 
+ 23 | 12.Nbd2 | +0.43 | best d5 (+0.61): d5 Nc4 a4 Nb6 b3 c4 | 
+ 24 | 12...Nc6 | +0.99 | best Bd7 (+0.43): Bd7 Nf1 Nc4 b3 Nb6 Bg5 | inaccuracy
+ 25 | 13.d5 | +0.88 | engine agrees | 
+ 26 | 13...Nd8 | +1.09 | best Na5 (+0.88): Na5 b3 Bd7 Nf1 c4 b4 | 
+ 27 | 14.a4 | +1.02 | engine agrees | 
+ 28 | 14...Rb8 | +0.95 | engine agrees | 
+ 29 | 15.axb5 | +1.00 | engine agrees | 
+ 30 | 15...axb5 | +0.98 | engine agrees | 
+ 31 | 16.b4 | +0.78 | best b3 (+0.98): b3 Bd7 Nf1 Nb7 Bd2 c4 | 
+ 32 | 16...Nb7 | +0.79 | best Bd7 (+0.78): Bd7 Nf1 Nb7 Be3 Rfc8 Bd3 | 
+ 33 | 17.Nf1 | +0.77 | engine agrees | 
+ 34 | 17...Bd7 | +0.77 | engine agrees | 
+ 35 | 18.Be3 | +0.72 | engine agrees | 
+ 36 | 18...Ra8 | +0.80 | engine agrees | 
+ 37 | 19.Qd2 | +0.63 | best Qe2 (+0.80): Qe2 Rfc8 Bd3 Rcb8 Bxb5 Nxe4 | 
+ 38 | 19...Rfc8 | +0.67 | best Rfb8 (+0.63): Rfb8 g4 Ne8 Ng3 g6 Kh2 | 
+ 39 | 20.Bd3 | +0.65 | engine agrees | 
+ 40 | 20...g6 | +0.78 | best Rcb8 (+0.65): Rcb8 Qb2 Qc8 Bc2 Ne8 Rac1 | 
+ 41 | 21.Ng3 | +0.85 | best Qb2 (+0.78): Qb2 c4 Bc2 Qd8 Ba7 Nh5 | 
+ 42 | 21...Bf8 | +1.04 | best c4 (+0.85): c4 Bc2 Rxa1 Rxa1 Rb8 Bb1 | 
+ 43 | 22.Ra2 | +0.95 | engine agrees | 
+ 44 | 22...c4 | +0.93 | best Rxa2 (+0.95): Rxa2 Qxa2 cxb4 cxb4 Qc3 Qb1 | 
+ 45 | 23.Bb1 | +0.41 | best Be2 (+0.93): Be2 Rxa2 Qxa2 Ne8 Nh2 h5 | inaccuracy
+ 46 | 23...Qd8 | +0.74 | best Ne8 (+0.41): Ne8 Qb2 Qd8 Bc2 Rxa2 Qxa2 | 
+ 47 | 24.Ba7 | +0.68 | engine agrees | 
+ 48 | 24...Ne8 | +0.77 | best Qc7 (+0.68): Qc7 Qe3 Nd8 Bc2 Ne8 Rea1 | 
+ 49 | 25.Bc2 | +0.72 | engine agrees | 
+ 50 | 25...Nc7 | +0.96 | best Qe7 (+0.72): Qe7 Rea1 f6 Qe2 Nd8 Ra5 | 
+ 51 | 26.Rea1 | +1.06 | engine agrees | 
+ 52 | 26...Qe7 | +1.19 | best Bg7 (+1.06): Bg7 Bb6 Rxa2 Rxa2 Rb8 Qe3 | 
+ 53 | 27.Bb1 | +0.84 | best Bd1 (+1.19): Bd1 Ne8 Bb6 Rxa2 Qxa2 Nc7 | 
+ 54 | 27...Be8 | +0.83 | best Nd8 (+0.84): Nd8 Bb6 Rxa2 Rxa2 Ne8 Ra6 | 
+ 55 | 28.Ne2 | +0.66 | best Nh2 (+0.83): Nh2 Nd8 Be3 f6 Ra7 Nf7 | 
+ 56 | 28...Nd8 | +0.67 | engine agrees | 
+ 57 | 29.Nh2 | +0.67 | best Be3 (+0.67): Be3 f6 h4 h5 Nh2 Nf7 | 
+ 58 | 29...Bg7 | +0.86 | best f6 (+0.67): f6 Ng4 h5 Ne3 Nf7 f4 | 
+ 59 | 30.f4 | +0.87 | engine agrees | 
+ 60 | 30...f6 | +1.00 | best exf4 (+0.87): exf4 Nxf4 f6 Bd4 Rxa2 Rxa2 | 
+ 61 | 31.f5 | +1.23 | engine agrees | 
+ 62 | 31...g5 | +1.69 | best Nf7 (+1.23): Nf7 Ng4 gxf5 exf5 h5 Ne3 | inaccuracy
+ 63 | 32.Bc2 | +1.80 | best Ng3 (+1.69): Ng3 Kh8 Bc2 h5 Bd1 h4 | 
+ 64 | 32...Bf7 | +2.02 | best h5 (+1.80): h5 Ng3 h4 Ngf1 Nf7 Bd1 | 
+ 65 | 33.Ng3 | +1.92 | engine agrees | 
+ 66 | 33...Nb7 | +2.23 | best Ne8 (+1.92): Ne8 Qf2 Qb7 Ra5 Kh8 Bd1 | 
+ 67 | 34.Bd1 | +2.38 | engine agrees | 
+ 68 | 34...h6 | +2.48 | best Be8 (+2.38): Be8 Bh5 Nd8 Qf2 Bxh5 Nxh5 | 
+ 69 | 35.Bh5 | +2.49 | engine agrees | 
+ 70 | 35...Qe8 | +2.57 | best Nd8 (+2.49): Nd8 Qf2 Qe8 Qe2 Bf8 Bxf7+ | 
+ 71 | 36.Qd1 | +2.52 | best Qe2 (+2.57): Qe2 Nd8 Ng4 Kf8 Ne3 Bxh5 | 
+ 72 | 36...Nd8 | +2.52 | best Bf8 (+2.52): Bf8 Ng4 Kg7 Ne3 Be7 Bxf7 | 
+ 73 | 37.Ra3 | +2.47 | best Qg4 (+2.52): Qg4 Bf8 h4 Be7 hxg5 hxg5 | 
+ 74 | 37...Kf8 | +2.44 | best Bxh5 (+2.47): Bxh5 Nxh5 Qe7 Ra5 Nf7 Ng4 | 
+ 75 | 38.R1a2 | +2.35 | best Qf3 (+2.44): Qf3 Bxh5 Nxh5 Qe7 Ra5 Nb7 | 
+ 76 | 38...Kg8 | +2.50 | best Bxh5 (+2.35): Bxh5 Nxh5 Qd7 Bb6 Rxa3 Rxa3 | 
+ 77 | 39.Ng4 | +2.39 | best Ra1 (+2.50): Ra1 Bxh5 Nxh5 Kf8 Ra5 Nb7 | 
+ 78 | 39...Kf8 | +2.59 | best Kh8 (+2.39): Kh8 Nf2 Kg8 Kh2 Qe7 Qf3 | 
+ 79 | 40.Ne3 | +2.47 | best Bxf7 (+2.59): Bxf7 Qxf7 Bb6 Rxa3 Rxa3 Na8 | 
+ 80 | 40...Kg8 | +2.67 | engine agrees | 
+ 81 | 41.Bxf7+ | +2.56 | best Bg6 (+2.67): Bg6 Qe7 Nh5 Be8 Ng4 Nf7 | 
+ 82 | 41...Nxf7 | +2.90 | engine agrees | 
+ 83 | 42.Qh5 | +2.92 | best Nh5 (+2.90): Nh5 Kf8 Ng4 Nh8 Ngxf6 Bxf6 | 
+ 84 | 42...Nd8 | +3.77 | best Qe7 (+2.92): Qe7 Ng4 Nh8 Ra5 Qf7 Bb6 | inaccuracy
+ 85 | 43.Qg6 | +3.57 | best Qxe8+ (+3.77): Qxe8+ Nxe8 Ra5 Bf8 Kf2 Nc7 | 
+ 86 | 43...Kh8 | +4.34 | best Nb7 (+3.57): Nb7 Nh5 Qf7 g4 Kf8 Kg2 | inaccuracy
+ 87 | 44.Nh5 | +4.40 | best Bb6 (+4.34): Bb6 Qxg6 fxg6 Rxa3 Rxa3 Na8 | 

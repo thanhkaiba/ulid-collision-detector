@@ -1,0 +1,52 @@
+# Friedrich Sämisch – Aron Nimzowitsch, Copenhagen 1923 (0-1). Depth 17. Scores: pawns, White's point of view.
+# ply | move | eval after | engine preferred (if different) and its line | flag
+  1 | 1.d4 | +0.10 | best e4 (+0.29): e4 e6 d4 d5 Nc3 Nf6 | 
+  2 | 1...Nf6 | +0.21 | best d5 (+0.10): d5 c4 e6 Nc3 Be7 Nf3 | 
+  3 | 2.c4 | +0.29 | engine agrees | 
+  4 | 2...e6 | +0.39 | engine agrees | 
+  5 | 3.Nf3 | +0.37 | best Nc3 (+0.39): Nc3 d5 cxd5 exd5 Bg5 c6 | 
+  6 | 3...b6 | +0.45 | best d5 (+0.37): d5 g3 dxc4 Bg2 c5 Qa4+ | 
+  7 | 4.g3 | +0.52 | engine agrees | 
+  8 | 4...Bb7 | +0.43 | best Bb4+ (+0.52): Bb4+ Bd2 a5 Bg2 O-O a3 | 
+  9 | 5.Bg2 | +0.42 | engine agrees | 
+ 10 | 5...Be7 | +0.50 | best Bb4+ (+0.42): Bb4+ Bd2 Bxd2+ Qxd2 O-O O-O | 
+ 11 | 6.Nc3 | +0.41 | best O-O (+0.50): O-O O-O Nc3 d5 Ne5 Nbd7 | 
+ 12 | 6...O-O | +0.35 | best d5 (+0.41): d5 cxd5 Nxd5 Nxd5 exd5 O-O | 
+ 13 | 7.O-O | +0.38 | engine agrees | 
+ 14 | 7...d5 | +0.35 | engine agrees | 
+ 15 | 8.Ne5 | +0.32 | best cxd5 (+0.35): cxd5 Nxd5 Qc2 Nd7 Rd1 Re8 | 
+ 16 | 8...c6 | +0.79 | best Nbd7 (+0.32): Nbd7 Bf4 c5 dxc5 Nxc5 Rc1 | inaccuracy
+ 17 | 9.cxd5 | +0.22 | best e4 (+0.79): e4 dxc4 Nxc4 b5 Ne3 Nbd7 | inaccuracy
+ 18 | 9...cxd5 | +0.24 | engine agrees | 
+ 19 | 10.Bf4 | +0.24 | engine agrees | 
+ 20 | 10...a6 | +0.50 | best Nbd7 (+0.24): Nbd7 Rc1 Rc8 Qb3 Nxe5 dxe5 | 
+ 21 | 11.Rc1 | +0.41 | engine agrees | 
+ 22 | 11...b5 | +0.47 | engine agrees | 
+ 23 | 12.Qb3 | +0.20 | best Nd3 (+0.47): Nd3 Nh5 Be3 Nc6 Nb1 Nf6 | 
+ 24 | 12...Nc6 | +0.17 | engine agrees | 
+ 25 | 13.Nxc6 | +0.15 | best Nxd5 (+0.17): Nxd5 Nxd4 Nxe7+ Qxe7 Qe3 Bxg2 | 
+ 26 | 13...Bxc6 | +0.12 | engine agrees | 
+ 27 | 14.h3 | -0.44 | best Ne4 (+0.12): Ne4 dxe4 Rxc6 Qxd4 Rd1 Qb4 | inaccuracy
+ 28 | 14...Qd7 | -0.55 | engine agrees | 
+ 29 | 15.Kh2 | -0.82 | best Bg5 (-0.55): Bg5 Rfc8 a3 h6 Bxf6 Bxf6 | 
+ 30 | 15...Nh5 | -0.93 | best b4 (-0.82): b4 Nb1 Nh5 Qf3 Nxf4 Qxf4 | 
+ 31 | 16.Bd2 | -1.00 | engine agrees | 
+ 32 | 16...f5 | -0.41 | best b4 (-1.00): b4 Nd1 Rfc8 a3 a5 axb4 | inaccuracy
+ 33 | 17.Qd1 | -1.06 | best a3 (-0.41): a3 a5 Na2 Nf6 Bg5 b4 | inaccuracy
+ 34 | 17...b4 | -1.12 | engine agrees | 
+ 35 | 18.Nb1 | -0.98 | engine agrees | 
+ 36 | 18...Bb5 | -0.91 | best Ba4 (-0.98): Ba4 Qe1 a5 Bf3 Nf6 a3 | 
+ 37 | 19.Rg1 | -1.11 | best Bf3 (-0.91): Bf3 Nf6 Bf4 Rfc8 Nd2 a5 | 
+ 38 | 19...Bd6 | -0.84 | best a5 (-1.11): a5 Bf3 Nf6 Bf4 Ne4 Rc7 | 
+ 39 | 20.e4 | -1.83 | best Bf3 (-0.84): Bf3 Nf6 Bf4 Ne4 Bxd6 Qxd6 | MISTAKE
+ 40 | 20...fxe4 | -2.00 | engine agrees | 
+ 41 | 21.Qxh5 | -2.03 | engine agrees | 
+ 42 | 21...Rxf2 | -2.15 | engine agrees | 
+ 43 | 22.Qg5 | -2.63 | best Qg4 (-2.15): Qg4 Raf8 Be3 Re2 Rge1 Rf3 | inaccuracy
+ 44 | 22...Raf8 | -2.79 | engine agrees | 
+ 45 | 23.Kh1 | -3.06 | best Qh4 (-2.79): Qh4 R8f3 Be1 Rxb2 Nd2 Ra3 | 
+ 46 | 23...R8f5 | -3.74 | engine agrees | 
+ 47 | 24.Qe3 | -4.11 | best Qh4 (-3.74): Qh4 Be7 Rc8+ Kf7 Rf8+ Bxf8 | 
+ 48 | 24...Bd3 | -3.20 | best Re2 (-4.11): Re2 Qb3 Ba4 Nc3 Bxb3 Nxe2 | MISTAKE
+ 49 | 25.Rce1 | -3.81 | best Rgd1 (-3.20): Rgd1 Re2 Qg1 Bxg3 Be3 h6 | inaccuracy
+ 50 | 25...h6 | -3.79 | engine agrees | 

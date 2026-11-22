@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Chess } from 'chess.js';
 import type { Key } from 'chessground/types';
+import type { DrawShape } from 'chessground/draw';
 import Board from '../components/Board';
 import { Button, Card, Spinner } from '../components/ui';
 import { navigate, type Route } from '../lib/router';
@@ -105,7 +106,7 @@ const TOKEN = /⟦(-|\d+)\|([^⟧]*)⟧/g;
 function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: number; si: number }) {
   const ch = book.parts[pi]?.chapters[ci];
   const sec = ch?.sections[si];
-  const [active, setActive] = useState<{ fen: string; lastMove?: Key[]; label?: string } | null>(null);
+  const [active, setActive] = useState<{ fen: string; lastMove?: Key[]; label?: string; squares?: Key[] } | null>(null);
   const moveById = useMemo(() => new Map<number, BookMove>((sec?.moves ?? []).map((m) => [m[0], { id: m[0], san: m[1], uci: m[2], fen: m[3] }])), [sec]);
   const boardRef = useRef<HTMLDivElement>(null);
   const statusKey = `book:${pi}.${ci}.${si}`;
@@ -141,6 +142,37 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
     if (window.innerWidth < 640) boardRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
   };
 
+  const firstFigFen = (sec.blocks.find((b) => b.t === 'fig' && b.fen) as { fen?: string } | undefined)?.fen;
+  const boardFen = active?.fen ?? (pi === 1 ? undefined : firstFigFen) ?? 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  const showSquare = (sq: Key) => setActive({ fen: boardFen, lastMove: active?.lastMove, label: active?.label, squares: [sq] });
+  /** a move the converter could not place: try it on the board as it stands, else just point at its square */
+  const tryLoose = (label: string) => {
+    try {
+      const c = new Chess(boardFen);
+      const m = c.move(label.replace(/^\d+\.+/, ''));
+      setActive({ fen: c.fen(), lastMove: [m.from as Key, m.to as Key], label });
+    } catch {
+      const sq = /[a-h][1-8]/.exec(label);
+      if (sq) showSquare(sq[0] as Key);
+    }
+  };
+  const withSquares = (s: string, key: number): ReactNode => {
+    const parts = s.split(/(?<![\w/])([a-h][1-8])(?![\w/])/g);
+    return (
+      <span key={key}>
+        {parts.map((part, i) =>
+          i % 2 === 1 ? (
+            <button key={i} className="sq-chip" onClick={() => showSquare(part as Key)}>
+              {part}
+            </button>
+          ) : (
+            <span key={i}>{inline(part)}</span>
+          ),
+        )}
+      </span>
+    );
+  };
+
   const renderText = (text: string): ReactNode[] => {
     const out: ReactNode[] = [];
     let last = 0;
@@ -148,7 +180,7 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
     TOKEN.lastIndex = 0;
     let k = 0;
     while ((m = TOKEN.exec(text))) {
-      if (m.index > last) out.push(<span key={k++}>{inline(text.slice(last, m.index))}</span>);
+      if (m.index > last) out.push(withSquares(text.slice(last, m.index), k++));
       const id = m[1] === '-' ? null : Number(m[1]);
       const label = m[2];
       if (id !== null && moveById.has(id)) {
@@ -157,10 +189,15 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
             {label}
           </button>,
         );
-      } else out.push(<span key={k++} className="mv-plain">{label}</span>);
+      } else
+        out.push(
+          <button key={k++} className="mv-chip loose" onClick={() => tryLoose(label)}>
+            {label}
+          </button>,
+        );
       last = m.index + m[0].length;
     }
-    if (last < text.length) out.push(<span key={k++}>{inline(text.slice(last))}</span>);
+    if (last < text.length) out.push(withSquares(text.slice(last), k++));
     return out;
   };
 
@@ -194,6 +231,7 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
             check={chess && chess.inCheck() ? (chess.turn() === 'w' ? 'white' : 'black') : false}
             viewOnly
             coordinates
+            shapes={(active?.squares ?? []).map((sq): DrawShape => ({ orig: sq, brush: 'yellow' }))}
           />
           <div className="row-between small mt">
             <span className="muted">{active ? `Sau ${active.label}` : 'Bấm vào một nước đi trong bài'}</span>

@@ -1,0 +1,82 @@
+# Anatoly Karpov – Garry Kasparov, Tranh ngôi vô địch thế giới, ván 16, Moskva 1985 (0-1). Depth 17. Scores: pawns, White's point of view.
+# ply | move | eval after | engine preferred (if different) and its line | flag
+  1 | 1.e4 | +0.38 | engine agrees | 
+  2 | 1...c5 | +0.35 | best e5 (+0.38): e5 Nf3 Nf6 d4 Nxe4 Nxe5 | 
+  3 | 2.Nf3 | +0.42 | engine agrees | 
+  4 | 2...e6 | +0.53 | best Nc6 (+0.42): Nc6 c3 d5 exd5 Qxd5 d4 | 
+  5 | 3.d4 | +0.50 | engine agrees | 
+  6 | 3...cxd4 | +0.49 | engine agrees | 
+  7 | 4.Nxd4 | +0.34 | engine agrees | 
+  8 | 4...Nc6 | +0.47 | engine agrees | 
+  9 | 5.Nb5 | +0.34 | best Nc3 (+0.47): Nc3 a6 Be3 Nf6 f4 d5 | 
+ 10 | 5...d6 | +0.29 | engine agrees | 
+ 11 | 6.c4 | +0.33 | engine agrees | 
+ 12 | 6...Nf6 | +0.25 | engine agrees | 
+ 13 | 7.N1c3 | +0.22 | engine agrees | 
+ 14 | 7...a6 | +0.24 | engine agrees | 
+ 15 | 8.Na3 | +0.27 | best Nd4 (+0.24): Nd4 Be7 Be2 O-O O-O d5 | 
+ 16 | 8...d5 | +0.54 | best Be7 (+0.27): Be7 Be2 b6 O-O Bb7 Be3 | 
+ 17 | 9.cxd5 | +0.39 | engine agrees | 
+ 18 | 9...exd5 | +0.50 | engine agrees | 
+ 19 | 10.exd5 | +0.46 | engine agrees | 
+ 20 | 10...Nb4 | +0.31 | engine agrees | 
+ 21 | 11.Be2 | +0.41 | engine agrees | 
+ 22 | 11...Bc5 | +0.56 | best Nbxd5 (+0.41): Nbxd5 O-O Be6 Nxd5 Bxd5 Be3 | 
+ 23 | 12.O-O | +0.14 | best Be3 (+0.56): Be3 Bxe3 Qa4+ Bd7 Qxb4 Qb6 | inaccuracy
+ 24 | 12...O-O | +0.16 | engine agrees | 
+ 25 | 13.Bf3 | +0.27 | best Nc2 (+0.16): Nc2 Nbxd5 Nxd5 Nxd5 Bf3 Be6 | 
+ 26 | 13...Bf5 | +0.23 | engine agrees | 
+ 27 | 14.Bg5 | -0.02 | best Nc4 (+0.23): Nc4 Bc2 Qd2 Bd3 Na4 Bxc4 | 
+ 28 | 14...Re8 | +0.45 | best h6 (-0.02): h6 Bxf6 Qxf6 Be4 Rfe8 Qf3 | inaccuracy
+ 29 | 15.Qd2 | +0.28 | best Nc4 (+0.45): Nc4 Rc8 Qd2 h6 Be3 Nc2 | 
+ 30 | 15...b5 | -0.39 | best h6 (+0.28): h6 Qf4 g6 Bxh6 Nd3 Qd2 | 
+ 31 | 16.Rad1 | -0.48 | best d6 (-0.39): d6 Ra7 Qf4 Bg6 Ne4 Bxe4 | 
+ 32 | 16...Nd3 | -0.27 | engine agrees | 
+ 33 | 17.Nab1 | -1.32 | best d6 (-0.27): d6 Qxd6 Bxa8 Ng4 Bf4 Qd8 | MISTAKE
+ 34 | 17...h6 | -1.37 | engine agrees | 
+ 35 | 18.Bh4 | -1.38 | engine agrees | 
+ 36 | 18...b4 | -1.43 | engine agrees | 
+ 37 | 19.Na4 | -1.23 | best Ne2 (-1.43): Ne2 Qb6 Nc1 Ne5 Nb3 Nxf3+ | 
+ 38 | 19...Bd6 | -1.30 | best Ba7 (-1.23): Ba7 b3 Rc8 d6 Qd7 Bg3 | 
+ 39 | 20.Bg3 | -1.30 | engine agrees | 
+ 40 | 20...Rc8 | -1.45 | engine agrees | 
+ 41 | 21.b3 | -1.45 | engine agrees | 
+ 42 | 21...g5 | -1.14 | best Be5 (-1.45): Be5 a3 a5 h3 g5 Bxe5 | 
+ 43 | 22.Bxd6 | -1.30 | engine agrees | 
+ 44 | 22...Qxd6 | -1.47 | engine agrees | 
+ 45 | 23.g3 | -1.54 | engine agrees | 
+ 46 | 23...Nd7 | -1.04 | best g4 (-1.54): g4 Bh1 Nxd5 a3 a5 Bg2 | inaccuracy
+ 47 | 24.Bg2 | -2.04 | best Nb2 (-1.04): Nb2 N7e5 Bg2 Qf6 Nxd3 Bxd3 | MISTAKE
+ 48 | 24...Qf6 | -1.99 | engine agrees | 
+ 49 | 25.a3 | -2.04 | engine agrees | 
+ 50 | 25...a5 | -2.21 | engine agrees | 
+ 51 | 26.axb4 | -2.12 | best h3 (-2.21): h3 h5 axb4 axb4 d6 Re6 | 
+ 52 | 26...axb4 | -2.29 | engine agrees | 
+ 53 | 27.Qa2 | -2.53 | best h3 (-2.29): h3 h5 Kh1 h4 d6 Re6 | 
+ 54 | 27...Bg6 | -1.88 | best g4 (-2.53): g4 d6 Re6 Bd5 Rxd6 Bc4 | inaccuracy
+ 55 | 28.d6 | -2.16 | best Bh3 (-1.88): Bh3 Rcd8 Nd2 Re2 Bxd7 Rxd7 | 
+ 56 | 28...g4 | -2.08 | best Kg7 (-2.16): Kg7 Bb7 Rcd8 Bg2 h5 Nd2 | 
+ 57 | 29.Qd2 | -2.44 | best h3 (-2.08): h3 h5 h4 Re6 Qd2 Qd4 | 
+ 58 | 29...Kg7 | -1.94 | best Bf5 (-2.44): Bf5 Bb7 Rb8 Bg2 Kg7 Bc6 | inaccuracy
+ 59 | 30.f3 | -3.20 | best h3 (-1.94): h3 N7e5 d7 Nxd7 hxg4 Re6 | MISTAKE
+ 60 | 30...Qxd6 | -3.00 | best gxf3 (-3.20): gxf3 Bxf3 Qd4+ Kh1 Re3 Bg2 | 
+ 61 | 31.fxg4 | -3.87 | best Qb2+ (-3.00): Qb2+ Kh7 fxg4 Re3 Qd2 Qd4 | inaccuracy
+ 62 | 31...Qd4+ | -3.66 | engine agrees | 
+ 63 | 32.Kh1 | -3.87 | engine agrees | 
+ 64 | 32...Nf6 | -4.01 | engine agrees | 
+ 65 | 33.Rf4 | -4.30 | engine agrees | 
+ 66 | 33...Ne4 | -4.74 | best Qa7 (-4.30): Qa7 Rdf1 Nxf4 Qxf4 Ne4 h4 | 
+ 67 | 34.Qxd3 | -4.89 | best h3 (-4.74): h3 Nxg3+ Kh2 Qxf4 Qxf4 Nxf4 | 
+ 68 | 34...Nf2+ | -5.19 | engine agrees | 
+ 69 | 35.Rxf2 | -5.14 | engine agrees | 
+ 70 | 35...Bxd3 | -5.40 | engine agrees | 
+ 71 | 36.Rfd2 | -4.99 | engine agrees | 
+ 72 | 36...Qe3 | -5.34 | engine agrees | 
+ 73 | 37.Rxd3 | -5.34 | engine agrees | 
+ 74 | 37...Rc1 | -5.40 | engine agrees | 
+ 75 | 38.Nb2 | -16.43 | best Rxe3 (-5.40): Rxe3 Rxd1+ Bf1 Rxe3 Kg2 Rxb3 | BLUNDER
+ 76 | 38...Qf2 | #-4 | engine agrees | 
+ 77 | 39.Nd2 | #-2 | best Bf1 (#-4): Bf1 Re1 Rxe1 Rxe1 Nd2 Rxf1+ | 
+ 78 | 39...Rxd1+ | #-3 | best Re2 (#-2): Re2 Rxc1 Qxg2# | 
+ 79 | 40.Nxd1 | #-3 | engine agrees | 
+ 80 | 40...Re1+ | #-2 | engine agrees | 

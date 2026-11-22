@@ -1,0 +1,83 @@
+# Mikhail Botvinnik – José Raúl Capablanca, AVRO, Hà Lan 1938 (1-0). Depth 17. Scores: pawns, White's point of view.
+# ply | move | eval after | engine preferred (if different) and its line | flag
+  1 | 1.d4 | +0.10 | best e4 (+0.29): e4 e6 d4 d5 Nc3 Nf6 | 
+  2 | 1...Nf6 | +0.21 | best d5 (+0.10): d5 c4 e6 Nc3 Be7 Nf3 | 
+  3 | 2.c4 | +0.29 | engine agrees | 
+  4 | 2...e6 | +0.39 | engine agrees | 
+  5 | 3.Nc3 | +0.27 | engine agrees | 
+  6 | 3...Bb4 | +0.31 | best d5 (+0.27): d5 Bg5 Bb4 e3 c5 Nf3 | 
+  7 | 4.e3 | +0.21 | best g3 (+0.31): g3 d5 Bg2 Nc6 Nf3 dxc4 | 
+  8 | 4...d5 | +0.23 | best O-O (+0.21): O-O Nf3 d5 Bd3 b6 cxd5 | 
+  9 | 5.a3 | +0.16 | best Qa4+ (+0.23): Qa4+ Nc6 Nf3 O-O Bd2 Re8 | 
+ 10 | 5...Bxc3+ | +0.26 | engine agrees | 
+ 11 | 6.bxc3 | +0.22 | engine agrees | 
+ 12 | 6...c5 | +0.23 | best b6 (+0.22): b6 Bd3 O-O cxd5 exd5 Ne2 | 
+ 13 | 7.cxd5 | +0.19 | engine agrees | 
+ 14 | 7...exd5 | +0.20 | engine agrees | 
+ 15 | 8.Bd3 | +0.13 | engine agrees | 
+ 16 | 8...O-O | +0.24 | engine agrees | 
+ 17 | 9.Ne2 | +0.29 | engine agrees | 
+ 18 | 9...b6 | +0.26 | engine agrees | 
+ 19 | 10.O-O | +0.14 | engine agrees | 
+ 20 | 10...Ba6 | +0.21 | engine agrees | 
+ 21 | 11.Bxa6 | +0.04 | best dxc5 (+0.21): dxc5 bxc5 Bxa6 Nxa6 c4 dxc4 | 
+ 22 | 11...Nxa6 | +0.28 | engine agrees | 
+ 23 | 12.Bb2 | -0.30 | best Qd3 (+0.28): Qd3 c4 Qf5 Re8 f3 g6 | inaccuracy
+ 24 | 12...Qd7 | -0.08 | best c4 (-0.30): c4 Ng3 Re8 Qe2 Re6 f3 | 
+ 25 | 13.a4 | -0.25 | best Ng3 (-0.08): Ng3 Rfe8 Qe2 c4 f3 h5 | 
+ 26 | 13...Rfe8 | +0.11 | best Rac8 (-0.25): Rac8 Qb3 Qg4 Qb5 Nc7 Qd3 | 
+ 27 | 14.Qd3 | -0.50 | best c4 (+0.11): c4 dxc4 Qc1 Nb4 Qxc4 Qd5 | inaccuracy
+ 28 | 14...c4 | -0.68 | engine agrees | 
+ 29 | 15.Qc2 | -0.50 | engine agrees | 
+ 30 | 15...Nb8 | +0.04 | best h5 (-0.50): h5 h3 Rac8 Ba3 Rc6 Bc1 | inaccuracy
+ 31 | 16.Rae1 | +0.17 | engine agrees | 
+ 32 | 16...Nc6 | +0.26 | engine agrees | 
+ 33 | 17.Ng3 | +0.17 | best Nf4 (+0.26): Nf4 a6 f3 b5 e4 Reb8 | 
+ 34 | 17...Na5 | +1.21 | best Ne4 (+0.17): Ne4 Ne2 Nf6 Nf4 b5 axb5 | MISTAKE
+ 35 | 18.f3 | +1.15 | engine agrees | 
+ 36 | 18...Nb3 | +1.17 | engine agrees | 
+ 37 | 19.e4 | +1.21 | engine agrees | 
+ 38 | 19...Qxa4 | +1.22 | engine agrees | 
+ 39 | 20.e5 | +1.24 | engine agrees | 
+ 40 | 20...Nd7 | +1.21 | engine agrees | 
+ 41 | 21.Qf2 | +0.99 | best Re3 (+1.21): Re3 a5 f4 b5 f5 b4 | 
+ 42 | 21...g6 | +0.93 | engine agrees | 
+ 43 | 22.f4 | +0.89 | best h4 (+0.93): h4 Qc6 h5 f6 f4 f5 | 
+ 44 | 22...f5 | +0.96 | engine agrees | 
+ 45 | 23.exf6 | +1.16 | best Nh1 (+0.96): Nh1 h5 h3 Kf7 g4 hxg4 | 
+ 46 | 23...Nxf6 | +1.30 | engine agrees | 
+ 47 | 24.f5 | +1.58 | engine agrees | 
+ 48 | 24...Rxe1 | +1.79 | engine agrees | 
+ 49 | 25.Rxe1 | +1.81 | engine agrees | 
+ 50 | 25...Re8 | +1.84 | best Qd7 (+1.81): Qd7 fxg6 Ng4 Qf4 Re8 gxh7+ | 
+ 51 | 26.Re6 | +2.25 | engine agrees | 
+ 52 | 26...Rxe6 | +2.70 | engine agrees | inaccuracy
+ 53 | 27.fxe6 | +2.93 | engine agrees | 
+ 54 | 27...Kg7 | +3.03 | engine agrees | 
+ 55 | 28.Qf4 | +3.14 | engine agrees | 
+ 56 | 28...Qe8 | +2.86 | engine agrees | 
+ 57 | 29.Qe5 | +1.50 | best Qc7+ (+2.86): Qc7+ Kg8 Qe5 Qe7 Ba3 Qxa3 | MISTAKE
+ 58 | 29...Qe7 | +4.15 | best h6 (+1.50): h6 Ba3 Na5 Qc7+ Kg8 Be7 | BLUNDER
+ 59 | 30.Ba3 | +4.02 | engine agrees | 
+ 60 | 30...Qxa3 | +5.88 | best Qe8 (+4.02): Qe8 Qc7+ Kh6 Be7 Kg7 Bd8+ | MISTAKE
+ 61 | 31.Nh5+ | +6.20 | engine agrees | 
+ 62 | 31...gxh5 | +6.99 | engine agrees | inaccuracy
+ 63 | 32.Qg5+ | +7.25 | engine agrees | 
+ 64 | 32...Kf8 | +7.25 | engine agrees | 
+ 65 | 33.Qxf6+ | +7.27 | engine agrees | 
+ 66 | 33...Kg8 | +7.27 | engine agrees | 
+ 67 | 34.e7 | +7.39 | engine agrees | 
+ 68 | 34...Qc1+ | +7.72 | best Qxe7 (+7.39): Qxe7 Qxe7 Na1 Qe8+ Kg7 Qe5+ | 
+ 69 | 35.Kf2 | +7.57 | engine agrees | 
+ 70 | 35...Qc2+ | +8.08 | best Qd2+ (+7.57): Qd2+ Kg3 Qe1+ Kh3 Qxe7 Qxe7 | inaccuracy
+ 71 | 36.Kg3 | +7.99 | engine agrees | 
+ 72 | 36...Qd3+ | +12.07 | best Qxc3+ (+7.99): Qxc3+ Kh4 Qxd4+ Qxd4 Nxd4 e8=Q+ | BLUNDER
+ 73 | 37.Kh4 | +14.69 | engine agrees | 
+ 74 | 37...Qe4+ | +10.79 | engine agrees | 
+ 75 | 38.Kxh5 | +11.91 | engine agrees | 
+ 76 | 38...Qe2+ | +13.85 | engine agrees | MISTAKE
+ 77 | 39.Kh4 | +15.54 | engine agrees | 
+ 78 | 39...Qe4+ | +11.25 | best Qe1+ (+15.54): Qe1+ g3 Qxe7 Qxe7 Na5 Kg5 | 
+ 79 | 40.g4 | #9 | best Kh5 (+11.25): Kh5 Qe2+ Kh4 Qe4+ g4 h6 | 
+ 80 | 40...Qe1+ | #7 | best h6 (#9): h6 Qf8+ Kh7 Qf7+ Kh8 Kh5 | 
+ 81 | 41.Kh5 | #6 | engine agrees | 

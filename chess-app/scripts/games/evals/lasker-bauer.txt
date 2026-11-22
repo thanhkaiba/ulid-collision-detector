@@ -1,0 +1,77 @@
+# Emanuel Lasker – Johann Bauer, Amsterdam 1889 (1-0). Depth 17. Scores: pawns, White's point of view.
+# ply | move | eval after | engine preferred (if different) and its line | flag
+  1 | 1.f4 | -0.38 | best e4 (+0.29): e4 e6 d4 d5 Nc3 Nf6 | inaccuracy
+  2 | 1...d5 | -0.29 | engine agrees | 
+  3 | 2.e3 | -0.33 | engine agrees | 
+  4 | 2...Nf6 | -0.30 | best c5 (-0.33): c5 Bb5+ Bd7 Bxd7+ Qxd7 d3 | 
+  5 | 3.b3 | -0.40 | best Nf3 (-0.30): Nf3 g6 c4 c5 cxd5 Nxd5 | 
+  6 | 3...e6 | -0.26 | best g6 (-0.40): g6 Bb2 c5 Bb5+ Bd7 a4 | 
+  7 | 4.Bb2 | -0.31 | best Nf3 (-0.26): Nf3 Bd6 Bb2 O-O Bd3 Nc6 | 
+  8 | 4...Be7 | -0.21 | engine agrees | 
+  9 | 5.Bd3 | -0.26 | best Nf3 (-0.21): Nf3 c5 Bb5+ Bd7 Bxd7+ Qxd7 | 
+ 10 | 5...b6 | +0.40 | best O-O (-0.26): O-O Nf3 c5 O-O b6 Ne5 | inaccuracy
+ 11 | 6.Nf3 | -0.10 | best g4 (+0.40): g4 h6 Qf3 Nc6 h4 e5 | inaccuracy
+ 12 | 6...Bb7 | -0.33 | engine agrees | 
+ 13 | 7.Nc3 | -0.33 | engine agrees | 
+ 14 | 7...Nbd7 | -0.25 | best c5 (-0.33): c5 Ne5 O-O Qf3 Nfd7 O-O | 
+ 15 | 8.O-O | -0.21 | best Qe2 (-0.25): Qe2 c5 a4 O-O O-O a6 | 
+ 16 | 8...O-O | -0.20 | engine agrees | 
+ 17 | 9.Ne2 | -0.53 | best Ne5 (-0.20): Ne5 a6 Rf3 Nc5 Bxh7+ Kxh7 | 
+ 18 | 9...c5 | -0.18 | best Nc5 (-0.53): Nc5 f5 Bd6 fxe6 fxe6 Nf4 | 
+ 19 | 10.Ng3 | -0.26 | best c4 (-0.18): c4 Ne4 cxd5 exd5 Qc2 Re8 | 
+ 20 | 10...Qc7 | -0.09 | best Ne4 (-0.26): Ne4 Qe1 Qc7 Be2 Bf6 Bxf6 | 
+ 21 | 11.Ne5 | -0.07 | best c4 (-0.09): c4 d4 Qc2 Rfd8 Rae1 Nf8 | 
+ 22 | 11...Nxe5 | +1.18 | best Rac8 (-0.07): Rac8 Qe2 Rfd8 c4 d4 Nxd7 | MISTAKE
+ 23 | 12.Bxe5 | +0.12 | best fxe5 (+1.18): fxe5 Ne8 Qg4 g6 Nh5 c4 | MISTAKE
+ 24 | 12...Qc6 | +0.26 | best Qd8 (+0.12): Qd8 Bb2 Bd6 Qe2 Qe7 c4 | 
+ 25 | 13.Qe2 | +0.07 | best Nh5 (+0.26): Nh5 d4 Rf2 dxe3 dxe3 Nxh5 | 
+ 26 | 13...a6 | +1.35 | best g6 (+0.07): g6 Bb2 Rac8 c4 Rcd8 Rf2 | MISTAKE
+ 27 | 14.Nh5 | +1.20 | engine agrees | 
+ 28 | 14...Nxh5 | +4.08 | best Rfd8 (+1.20): Rfd8 Nxf6+ Bxf6 Bxf6 gxf6 Rf3 | BLUNDER
+ 29 | 15.Bxh7+ | +4.80 | engine agrees | 
+ 30 | 15...Kxh7 | +4.81 | engine agrees | 
+ 31 | 16.Qxh5+ | +4.74 | engine agrees | 
+ 32 | 16...Kg8 | +4.66 | engine agrees | 
+ 33 | 17.Bxg7 | +4.76 | engine agrees | 
+ 34 | 17...Kxg7 | +4.82 | engine agrees | 
+ 35 | 18.Qg4+ | +4.72 | engine agrees | 
+ 36 | 18...Kh7 | +4.72 | engine agrees | 
+ 37 | 19.Rf3 | +4.69 | best Qh3+ (+4.72): Qh3+ Kg8 Qg4+ Kh7 Rf3 e5 | 
+ 38 | 19...e5 | +4.64 | engine agrees | 
+ 39 | 20.Rh3+ | +4.76 | engine agrees | 
+ 40 | 20...Qh6 | +4.65 | engine agrees | 
+ 41 | 21.Rxh6+ | +4.82 | engine agrees | 
+ 42 | 21...Kxh6 | +4.72 | engine agrees | 
+ 43 | 22.Qd7 | +4.74 | engine agrees | 
+ 44 | 22...Bf6 | +5.20 | best Rae8 (+4.74): Rae8 Qxb7 exf4 Qxb6+ Kg7 Qc7 | inaccuracy
+ 45 | 23.Qxb7 | +5.37 | engine agrees | 
+ 46 | 23...Kg7 | +5.42 | best exf4 (+5.37): exf4 Rf1 Be5 exf4 Bd4+ Kh1 | 
+ 47 | 24.Rf1 | +5.32 | best fxe5 (+5.42): fxe5 Bxe5 Rf1 Rae8 Qxd5 Kg8 | 
+ 48 | 24...Rab8 | +5.34 | best e4 (+5.32): e4 g4 Rab8 Qc6 Bh4 Kh1 | 
+ 49 | 25.Qd7 | +5.38 | best Qc6 (+5.34): Qc6 e4 g4 Rh8 g5 Bb2 | 
+ 50 | 25...Rfd8 | +6.50 | best e4 (+5.38): e4 g4 Rbd8 Qc6 Bh4 Qxb6 | MISTAKE
+ 51 | 26.Qg4+ | +6.60 | engine agrees | 
+ 52 | 26...Kf8 | +6.78 | engine agrees | 
+ 53 | 27.fxe5 | +6.95 | engine agrees | 
+ 54 | 27...Bg7 | +7.25 | best Bxe5 (+6.95): Bxe5 Qh5 Rb7 Qxe5 c4 Qh8+ | 
+ 55 | 28.e6 | +7.26 | engine agrees | 
+ 56 | 28...Rb7 | +7.22 | engine agrees | 
+ 57 | 29.Qg6 | +7.70 | engine agrees | 
+ 58 | 29...f6 | +7.75 | engine agrees | 
+ 59 | 30.Rxf6+ | +7.78 | engine agrees | 
+ 60 | 30...Bxf6 | +7.80 | engine agrees | 
+ 61 | 31.Qxf6+ | +7.86 | engine agrees | 
+ 62 | 31...Ke8 | +7.86 | engine agrees | 
+ 63 | 32.Qh8+ | +7.83 | engine agrees | 
+ 64 | 32...Ke7 | +7.84 | engine agrees | 
+ 65 | 33.Qg7+ | +7.90 | best Qh7+ (+7.84): Qh7+ Kxe6 Qxb7 Rd6 h4 c4 | 
+ 66 | 33...Kxe6 | +7.87 | engine agrees | 
+ 67 | 34.Qxb7 | +7.79 | engine agrees | 
+ 68 | 34...Rd6 | +7.93 | engine agrees | 
+ 69 | 35.Qxa6 | +7.54 | best h4 (+7.93): h4 d4 exd4 a5 Kh2 Rxd4 | 
+ 70 | 35...d4 | +7.65 | engine agrees | 
+ 71 | 36.exd4 | +7.73 | best h4 (+7.65): h4 dxe3 dxe3 Kf6 Qb7 Re6 | 
+ 72 | 36...cxd4 | +8.11 | best Kf7 (+7.73): Kf7 Qb7+ Kf8 Qb8+ Ke7 Qc7+ | 
+ 73 | 37.h4 | +8.25 | best Qd3 (+8.11): Qd3 Rd5 h4 Rc5 Kh2 Kf7 | 
+ 74 | 37...d3 | +8.34 | engine agrees | 
+ 75 | 38.Qxd3 | +6.96 | best c3 (+8.34): c3 Rc6 Kh2 Kf6 Qa4 Re6 | MISTAKE

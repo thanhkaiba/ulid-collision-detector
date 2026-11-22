@@ -10,6 +10,10 @@ import MarkBar from '../components/MarkBar';
 import { navigate, type Route } from '../lib/router';
 import Videos from './Videos';
 import Book from './Book';
+import Games from './Games';
+import PreviewSheet from '../components/PreviewSheet';
+import { renderRich, type Preview } from '../lib/richtext';
+import { START_FEN } from '../lib/chess-utils';
 import { Chess } from 'chess.js';
 import type { Key } from 'chessground/types';
 import type { DrawShape } from 'chessground/draw';
@@ -23,6 +27,7 @@ export default function Learn({ route }: { route: Route }) {
 
   if (route.parts[0] === 'videos') return <Videos />;
   if (route.parts[0] === 'book') return <Book route={route} />;
+  if (route.parts[0] === 'games') return <Games route={route} />;
   const lessonId = route.parts[0] === 'lesson' ? route.parts[1] : undefined;
   if (lessonId) {
     const lesson = lessonById(lessonId);
@@ -71,6 +76,17 @@ function Overview({ progress }: { progress: LessonProgress }) {
             Tiếp tục: {next.title}
           </Button>
         )}
+      </Card>
+      <Card onClick={() => navigate('learn/games')}>
+        <div className="row-between">
+          <div>
+            <h3 style={{ margin: 0 }}>♟ Từng nước một</h3>
+            <p className="small muted" style={{ margin: '4px 0 0' }}>
+              12 ván kinh điển, giải thích mọi nước đi bằng tiếng Việt. Cách học hiệu quả nhất để hiểu vì sao.
+            </p>
+          </div>
+          <span>›</span>
+        </div>
       </Card>
       <div className="grid-2">
         <Card onClick={() => navigate('learn/book')}>
@@ -135,9 +151,11 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
   const prev = LESSONS[idx - 1];
   const next = LESSONS[idx + 1];
   const doneSet = new Set(progress.done[lesson.id] ?? []);
+  const [preview, setPreview] = useState<Preview | null>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
+    setPreview(null);
     if (!progress.read[lesson.id]) {
       const p = { ...progress, read: { ...progress.read, [lesson.id]: 1 as const } };
       setProgress(p);
@@ -166,11 +184,14 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
         </div>
       </div>
       {lesson.blocks.map((b, i) => {
-        if (b.kind === 'text') return <div key={i}>{renderMd(b.md)}</div>;
-        if (b.kind === 'diagram') return <Diagram key={i} block={b} />;
+        if (b.kind === 'text') {
+          const seq = { line: [START_FEN] };
+          return <div key={i}>{renderMd(b.md, (t) => renderRich(t, { onShow: setPreview, seqStart: START_FEN, seq }))}</div>;
+        }
+        if (b.kind === 'diagram') return <Diagram key={i} block={b} onShow={setPreview} />;
         if (b.kind === 'task') {
           taskNo++;
-          return <TaskView key={i} block={b} n={taskNo} done={doneSet.has(i)} onDone={() => markDone(i)} />;
+          return <TaskView key={i} block={b} n={taskNo} done={doneSet.has(i)} onDone={() => markDone(i)} onShow={setPreview} />;
         }
         if (b.kind === 'puzzles') {
           taskNo++;
@@ -191,6 +212,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
           ))}
         </Card>
       )}
+      <PreviewSheet preview={preview} onClose={() => setPreview(null)} />
       <MarkBar
         status={progress.status[lesson.id]}
         onMark={async (v) => {
@@ -217,7 +239,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
   );
 }
 
-function Diagram({ block }: { block: Extract<Block, { kind: 'diagram' }> }) {
+function Diagram({ block, onShow }: { block: Extract<Block, { kind: 'diagram' }>; onShow: (p: Preview) => void }) {
   const chess = useMemo(() => new Chess(block.fen), [block.fen]);
   const shapes: DrawShape[] = (block.marks ?? []).map((m) =>
     m.length >= 4 ? { orig: m.slice(0, 2) as Key, dest: m.slice(2, 4) as Key, brush: 'green' } : { orig: m as Key, brush: 'green' },
@@ -226,13 +248,13 @@ function Diagram({ block }: { block: Extract<Block, { kind: 'diagram' }> }) {
     <Card>
       <Board fen={block.fen} orientation={block.orientation ?? 'white'} turnColor={chess.turn() === 'w' ? 'white' : 'black'} viewOnly shapes={shapes} check={chess.inCheck() ? (chess.turn() === 'w' ? 'white' : 'black') : false} />
       <p className="small mt" style={{ margin: '8px 0 0' }}>
-        {block.caption}
+        {renderRich(block.caption, { onShow, seqStart: block.fen, squareFen: block.fen })}
       </p>
     </Card>
   );
 }
 
-function TaskView({ block, n, done, onDone }: { block: TaskBlock; n: number; done: boolean; onDone: () => void }) {
+function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: number; done: boolean; onDone: () => void; onShow: (p: Preview) => void }) {
   const [finished, setFinished] = useState<boolean | null>(null);
   const [key, setKey] = useState(0);
   return (
@@ -257,7 +279,7 @@ function TaskView({ block, n, done, onDone }: { block: TaskBlock; n: number; don
       />
       {finished !== null && (
         <div className="task-box small">
-          <b>Giải thích:</b> {block.explain}
+          <b>Giải thích:</b> {renderRich(block.explain, { onShow, seqStart: block.fen, squareFen: block.fen })}
           <div className="row mt">
             <Button kind="ghost" onClick={() => { setFinished(null); setKey(key + 1); }}>
               Làm lại

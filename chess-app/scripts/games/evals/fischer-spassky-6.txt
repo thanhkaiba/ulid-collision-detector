@@ -1,0 +1,83 @@
+# Bobby Fischer – Boris Spassky, Tranh ngôi vô địch thế giới, ván 6, Reykjavik 1972 (1-0). Depth 17. Scores: pawns, White's point of view.
+# ply | move | eval after | engine preferred (if different) and its line | flag
+  1 | 1.c4 | +0.27 | best e4 (+0.29): e4 e6 d4 d5 Nc3 Nf6 | 
+  2 | 1...e6 | +0.24 | engine agrees | 
+  3 | 2.Nf3 | +0.30 | best d4 (+0.24): d4 Nf6 Nc3 Bb4 Nf3 d5 | 
+  4 | 2...d5 | +0.39 | best Nf6 (+0.30): Nf6 Nc3 c5 e4 d5 cxd5 | 
+  5 | 3.d4 | +0.32 | engine agrees | 
+  6 | 3...Nf6 | +0.41 | engine agrees | 
+  7 | 4.Nc3 | +0.29 | best g3 (+0.41): g3 Bb4+ Bd2 a5 a3 Bxd2+ | 
+  8 | 4...Be7 | +0.32 | best c5 (+0.29): c5 cxd5 cxd4 Nxd4 Nxd5 Ncb5 | 
+  9 | 5.Bg5 | +0.34 | best Bf4 (+0.32): Bf4 O-O e3 c5 dxc5 Bxc5 | 
+ 10 | 5...O-O | +0.29 | engine agrees | 
+ 11 | 6.e3 | +0.35 | engine agrees | 
+ 12 | 6...h6 | +0.21 | engine agrees | 
+ 13 | 7.Bh4 | +0.20 | engine agrees | 
+ 14 | 7...b6 | +0.18 | engine agrees | 
+ 15 | 8.cxd5 | +0.05 | best Bd3 (+0.18): Bd3 Bb7 O-O Ne4 Bg3 Nxc3 | 
+ 16 | 8...Nxd5 | +0.03 | engine agrees | 
+ 17 | 9.Bxe7 | +0.03 | engine agrees | 
+ 18 | 9...Qxe7 | +0.04 | engine agrees | 
+ 19 | 10.Nxd5 | +0.15 | engine agrees | 
+ 20 | 10...exd5 | +0.21 | engine agrees | 
+ 21 | 11.Rc1 | +0.15 | engine agrees | 
+ 22 | 11...Be6 | +0.17 | best Bb7 (+0.15): Bb7 Qb3 c5 Qa3 Nc6 dxc5 | 
+ 23 | 12.Qa4 | -0.13 | best Bd3 (+0.17): Bd3 c5 Bb1 Nd7 O-O Rfc8 | 
+ 24 | 12...c5 | -0.08 | engine agrees | 
+ 25 | 13.Qa3 | -0.04 | best dxc5 (-0.08): dxc5 bxc5 Bb5 d4 O-O dxe3 | 
+ 26 | 13...Rc8 | -0.06 | engine agrees | 
+ 27 | 14.Bb5 | -0.04 | best Be2 (-0.06): Be2 a5 O-O Na6 Bxa6 Rxa6 | 
+ 28 | 14...a6 | +0.03 | best a5 (-0.04): a5 O-O a4 dxc5 bxc5 Nd4 | 
+ 29 | 15.dxc5 | -0.06 | engine agrees | 
+ 30 | 15...bxc5 | -0.15 | engine agrees | 
+ 31 | 16.O-O | -0.06 | engine agrees | 
+ 32 | 16...Ra7 | +0.17 | best Qa7 (-0.06): Qa7 Be2 a5 Rfd1 a4 Ne1 | 
+ 33 | 17.Be2 | +0.23 | engine agrees | 
+ 34 | 17...Nd7 | +0.38 | best a5 (+0.23): a5 Rc3 c4 Qxe7 Rxe7 Nd4 | 
+ 35 | 18.Nd4 | +0.26 | engine agrees | 
+ 36 | 18...Qf8 | +0.57 | best a5 (+0.26): a5 Rc2 Nb6 Nb5 Raa8 Rfc1 | 
+ 37 | 19.Nxe6 | +0.46 | engine agrees | 
+ 38 | 19...fxe6 | +0.48 | engine agrees | 
+ 39 | 20.e4 | +0.54 | engine agrees | 
+ 40 | 20...d4 | +0.91 | best Qd6 (+0.54): Qd6 exd5 exd5 g3 Ne5 f4 | 
+ 41 | 21.f4 | +0.99 | engine agrees | 
+ 42 | 21...Qe7 | +1.24 | engine agrees | 
+ 43 | 22.e5 | +0.85 | best Qh3 (+1.24): Qh3 Nb6 f5 c4 f6 gxf6 | 
+ 44 | 22...Rb8 | +1.35 | best Nb6 (+0.85): Nb6 Qd3 Nd5 Qe4 Qe8 f5 | inaccuracy
+ 45 | 23.Bc4 | +1.48 | engine agrees | 
+ 46 | 23...Kh8 | +1.54 | engine agrees | 
+ 47 | 24.Qh3 | +1.57 | engine agrees | 
+ 48 | 24...Nf8 | +1.96 | best Rxb2 (+1.57): Rxb2 Bxe6 Rc7 Bd5 Qf8 Qa3 | 
+ 49 | 25.b3 | +1.95 | engine agrees | 
+ 50 | 25...a5 | +2.04 | engine agrees | 
+ 51 | 26.f5 | +1.78 | best a4 (+2.04): a4 Re8 Rce1 Rb7 Rf2 Ng6 | 
+ 52 | 26...exf5 | +2.10 | best Qg5 (+1.78): Qg5 fxe6 a4 Rce1 axb3 axb3 | 
+ 53 | 27.Rxf5 | +2.31 | engine agrees | 
+ 54 | 27...Nh7 | +2.50 | best Raa8 (+2.31): Raa8 e6 a4 Rcf1 axb3 axb3 | 
+ 55 | 28.Rcf1 | +2.19 | engine agrees | 
+ 56 | 28...Qd8 | +2.88 | best a4 (+2.19): a4 Qg3 axb3 axb3 Rf8 Rxf8+ | inaccuracy
+ 57 | 29.Qg3 | +2.74 | engine agrees | 
+ 58 | 29...Re7 | +3.14 | best a4 (+2.74): a4 e6 Rba8 Bd5 Rc8 Rf7 | 
+ 59 | 30.h4 | +2.88 | engine agrees | 
+ 60 | 30...Rbb7 | +2.83 | best d3 (+2.88): d3 Bxd3 Qd4+ Kh2 Rd8 Bc4 | 
+ 61 | 31.e6 | +3.49 | engine agrees | 
+ 62 | 31...Rbc7 | +3.61 | best a4 (+3.49): a4 bxa4 Nf6 Rxf6 gxf6 Rxf6 | 
+ 63 | 32.Qe5 | +3.22 | best a4 (+3.61): a4 Qa8 Qe5 Qe8 R5f3 Qd8 | 
+ 64 | 32...Qe8 | +3.59 | best a4 (+3.22): a4 Bd3 Qg8 R1f4 axb3 axb3 | 
+ 65 | 33.a4 | +3.69 | engine agrees | 
+ 66 | 33...Qd8 | +4.00 | engine agrees | 
+ 67 | 34.R1f2 | +3.48 | best Bd3 (+4.00): Bd3 c4 bxc4 Nf6 R1f4 Qe8 | inaccuracy
+ 68 | 34...Qe8 | +4.08 | best d3 (+3.48): d3 Rd2 Rcd7 Qxc5 Rd6 Qxa5 | inaccuracy
+ 69 | 35.R2f3 | +3.81 | best Rf1 (+4.08): Rf1 Qd8 R1f3 Qe8 R5f4 Qc8 | 
+ 70 | 35...Qd8 | +3.80 | best Ra7 (+3.81): Ra7 R5f4 d3 Rxd3 Nf8 Qxc5 | 
+ 71 | 36.Bd3 | +4.08 | best R5f4 (+3.80): R5f4 Qe8 Rf1 Qd8 R4f3 Qe8 | 
+ 72 | 36...Qe8 | +5.00 | best Qg8 (+4.08): Qg8 Rf1 Rb7 Bc4 d3 Rd1 | MISTAKE
+ 73 | 37.Qe4 | +4.86 | best Rf7 (+5.00): Rf7 Qg8 Bxh7 Kxh7 Qf5+ Kh8 | 
+ 74 | 37...Nf6 | +5.15 | engine agrees | 
+ 75 | 38.Rxf6 | +5.04 | engine agrees | 
+ 76 | 38...gxf6 | +5.34 | engine agrees | 
+ 77 | 39.Rxf6 | +6.20 | engine agrees | 
+ 78 | 39...Kg8 | +6.89 | engine agrees | inaccuracy
+ 79 | 40.Bc4 | +6.59 | best Rxh6 (+6.89): Rxh6 Qf8 Qg4+ Qg7 Rg6 c4 | 
+ 80 | 40...Kh8 | +7.58 | engine agrees | MISTAKE
+ 81 | 41.Qf4 | +8.56 | best Qe5 (+7.58): Qe5 Kh7 Bd3+ Kg8 Rxh6 Rh7 | 

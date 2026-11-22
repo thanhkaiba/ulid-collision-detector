@@ -14,7 +14,11 @@ export interface BoardProps {
   turnColor?: Color;
   lastMove?: Key[];
   check?: Color | boolean;
-  /** Which color the user may move; undefined = view only */
+  /**
+   * Which color the user may move; undefined = nothing can be moved.
+   * Note: chessground binds pointer events only at creation, so a board that may become interactive
+   * later must be created with viewOnly=false and controlled through movableColor instead.
+   */
   movableColor?: Color | 'both';
   dests?: Map<Key, Key[]>;
   onMove?: (from: Key, to: Key) => void;

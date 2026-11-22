@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 /** Tiny markdown renderer: ### headings, - bullets, 1. numbered, **bold**, blank-line paragraphs. */
-export function renderMd(md: string): ReactNode[] {
+export function renderMd(md: string, inlineFn: (s: string) => ReactNode[] = inline): ReactNode[] {
   const lines = md.split('\n');
   const out: ReactNode[] = [];
   let para: string[] = [];
@@ -9,13 +9,13 @@ export function renderMd(md: string): ReactNode[] {
   let key = 0;
   const flushPara = () => {
     if (para.length) {
-      out.push(<p key={key++}>{inline(para.join(' '))}</p>);
+      out.push(<p key={key++}>{inlineFn(para.join(' '))}</p>);
       para = [];
     }
   };
   const flushList = () => {
     if (list) {
-      const items = list.items.map((it, i) => <li key={i}>{inline(it)}</li>);
+      const items = list.items.map((it, i) => <li key={i}>{inlineFn(it)}</li>);
       out.push(list.ordered ? <ol key={key++}>{items}</ol> : <ul key={key++}>{items}</ul>);
       list = null;
     }
@@ -31,7 +31,7 @@ export function renderMd(md: string): ReactNode[] {
     if (h) {
       flushPara();
       flushList();
-      out.push(<h3 key={key++}>{inline(h[2])}</h3>);
+      out.push(<h3 key={key++}>{inlineFn(h[2])}</h3>);
       continue;
     }
     const ul = /^\s*[-*]\s+(.*)$/.exec(line);

@@ -1,0 +1,51 @@
+# Wilhelm Steinitz – Curt von Bardeleben, Hastings 1895 (1-0). Depth 17. Scores: pawns, White's point of view.
+# ply | move | eval after | engine preferred (if different) and its line | flag
+  1 | 1.e4 | +0.38 | engine agrees | 
+  2 | 1...e5 | +0.39 | engine agrees | 
+  3 | 2.Nf3 | +0.40 | engine agrees | 
+  4 | 2...Nc6 | +0.37 | best Nf6 (+0.40): Nf6 Nxe5 Nxe4 d4 d5 Bd3 | 
+  5 | 3.Bc4 | +0.17 | best Bb5 (+0.37): Bb5 a6 Ba4 Nf6 O-O b5 | 
+  6 | 3...Bc5 | +0.19 | best Nf6 (+0.17): Nf6 d3 Bc5 Nc3 d6 Nd5 | 
+  7 | 4.c3 | +0.29 | best d3 (+0.19): d3 Nf6 O-O d6 c3 O-O | 
+  8 | 4...Nf6 | +0.27 | engine agrees | 
+  9 | 5.d4 | +0.00 | best d3 (+0.27): d3 O-O O-O Bb6 a4 d6 | 
+ 10 | 5...exd4 | +0.00 | engine agrees | 
+ 11 | 6.cxd4 | +0.00 | engine agrees | 
+ 12 | 6...Bb4+ | +0.00 | engine agrees | 
+ 13 | 7.Nc3 | -0.35 | best Bd2 (+0.00): Bd2 Bxd2+ Nbxd2 d5 exd5 Nxd5 | 
+ 14 | 7...d5 | +0.85 | best Nxe4 (-0.35): Nxe4 O-O Bxc3 d5 Ne5 Qe2 | MISTAKE
+ 15 | 8.exd5 | +0.99 | engine agrees | 
+ 16 | 8...Nxd5 | +0.93 | engine agrees | 
+ 17 | 9.O-O | +0.90 | engine agrees | 
+ 18 | 9...Be6 | +1.28 | best Bxc3 (+0.90): Bxc3 bxc3 O-O Re1 b5 Bb3 | 
+ 19 | 10.Bg5 | +0.56 | best Re1 (+1.28): Re1 Bxc3 bxc3 O-O Ng5 Qd7 | inaccuracy
+ 20 | 10...Be7 | +0.75 | best Qd7 (+0.56): Qd7 Nxd5 Bxd5 Qb3 Bxf3 Qxf3 | 
+ 21 | 11.Bxd5 | +0.62 | best Nxd5 (+0.75): Nxd5 Bxd5 Bxd5 Qxd5 Bxe7 Nxe7 | 
+ 22 | 11...Bxd5 | +0.76 | engine agrees | 
+ 23 | 12.Nxd5 | +0.76 | best Bxe7 (+0.76): Bxe7 Nxe7 Nxd5 Qxd5 Re1 f6 | 
+ 24 | 12...Qxd5 | +0.79 | engine agrees | 
+ 25 | 13.Bxe7 | +0.60 | engine agrees | 
+ 26 | 13...Nxe7 | +1.18 | engine agrees | inaccuracy
+ 27 | 14.Re1 | +1.09 | engine agrees | 
+ 28 | 14...f6 | +1.06 | engine agrees | 
+ 29 | 15.Qe2 | +0.80 | best Qa4+ (+1.06): Qa4+ Kd8 Rac1 Qd7 Qb3 c6 | 
+ 30 | 15...Qd7 | +0.75 | engine agrees | 
+ 31 | 16.Rac1 | +0.12 | best Rad1 (+0.75): Rad1 Kf8 Nd2 c6 Qf3 Nd5 | inaccuracy
+ 32 | 16...c6 | +1.45 | best Kf7 (+0.12): Kf7 Nd2 Rhe8 Qd3 Kg8 Qb3+ | MISTAKE
+ 33 | 17.d5 | +1.84 | engine agrees | 
+ 34 | 17...cxd5 | +2.13 | engine agrees | 
+ 35 | 18.Nd4 | +2.09 | engine agrees | 
+ 36 | 18...Kf7 | +2.24 | engine agrees | 
+ 37 | 19.Ne6 | +2.27 | engine agrees | 
+ 38 | 19...Rhc8 | +4.27 | best Nc6 (+2.27): Nc6 Nc5 Qf5 Nxb7 Qd7 Nc5 | MISTAKE
+ 39 | 20.Qg4 | +4.47 | engine agrees | 
+ 40 | 20...g6 | +4.70 | best Qd6 (+4.47): Qd6 Qxg7+ Ke8 Rcd1 Kd7 Qf7 | 
+ 41 | 21.Ng5+ | +5.01 | engine agrees | 
+ 42 | 21...Ke8 | +5.05 | engine agrees | 
+ 43 | 22.Rxe7+ | +5.09 | engine agrees | 
+ 44 | 22...Kf8 | +5.10 | best Qxe7 (+5.09): Qxe7 Rxc8+ Rxc8 Qxc8+ Qd8 Qxd8+ | 
+ 45 | 23.Rf7+ | +5.07 | engine agrees | 
+ 46 | 23...Kg8 | +5.51 | engine agrees | inaccuracy
+ 47 | 24.Rg7+ | +5.51 | engine agrees | 
+ 48 | 24...Kh8 | +5.90 | best Qxg7 (+5.51): Qxg7 Rxc8+ Rxc8 Qe6+ Kh8 Qxc8+ | 
+ 49 | 25.Rxh7+ | +6.14 | engine agrees | 
