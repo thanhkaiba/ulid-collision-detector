@@ -107,20 +107,34 @@ function LessonGate({ lesson, progress, setProgress }: { lesson: Lesson; progres
 }
 const lessonSkipped = (l: Lesson, p: LessonProgress) => p.status[l.id] === 'skipped';
 
-function LevelPicker({ current, onPick }: { current?: string; onPick: (id: LevelId) => void }) {
+function LevelPicker({ current, onPick, onCancel }: { current?: string; onPick: (id: LevelId) => void; onCancel?: () => void }) {
   return (
     <Card>
       <h3>Bạn đang ở trình độ nào?</h3>
       <p className="small muted">Ứng dụng sẽ chọn bài bắt đầu, độ khó bài tập và cấp độ máy cho phù hợp. Đổi lại lúc nào cũng được.</p>
       {LEVELS_INFO.map((l) => (
-        <div key={l.id} className="list-item" onClick={() => onPick(l.id)}>
+        // the current level just closes the picker: picking it again would reset the puzzle rating and engine level
+        <div key={l.id} className="list-item" onClick={() => (current === l.id && onCancel ? onCancel() : onPick(l.id))}>
           <div>
             <b>{l.label}</b>
             <div className="small muted">{l.desc}</div>
           </div>
-          {current === l.id ? <Tag tone="good">đang chọn</Tag> : <span className="muted">›</span>}
+          {current === l.id ? (
+            <span style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
+              <Tag tone="good">đang chọn</Tag>
+            </span>
+          ) : (
+            <span className="muted">›</span>
+          )}
         </div>
       ))}
+      {onCancel && (
+        <div className="row mt">
+          <Button kind="ghost" onClick={onCancel}>
+            ‹ Giữ nguyên trình độ
+          </Button>
+        </div>
+      )}
     </Card>
   );
 }
@@ -199,7 +213,7 @@ function Overview({ progress, setProgress }: { progress: LessonProgress; setProg
     return (
       <div>
         <h1>Học cờ vua</h1>
-        <LevelPicker current={settings.level} onPick={pick} />
+        <LevelPicker current={settings.level} onPick={pick} onCancel={level ? () => setPicking(false) : undefined} />
       </div>
     );
   }

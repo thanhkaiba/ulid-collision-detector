@@ -1,17 +1,34 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Key } from 'chessground/types';
 import type { DrawShape } from 'chessground/draw';
 import Board from './Board';
 import { Button } from './ui';
 
 /** "Tap square e4": teaches square names before any notation is used. */
-export default function SquareQuiz({ targets, onDone }: { targets: string[]; onDone: () => void }) {
-  const [i, setI] = useState(0);
+export default function SquareQuiz({ targets, onDone, storeKey }: { targets: string[]; onDone: () => void; storeKey?: string }) {
+  // where the student got to survives leaving the slide or reloading the page
+  const [saved] = useState(() => {
+    try {
+      const v = storeKey ? (JSON.parse(localStorage.getItem(storeKey) ?? 'null') as { i: number; misses: number } | null) : null;
+      return v && v.i >= 0 && v.i <= targets.length ? v : null;
+    } catch {
+      return null;
+    }
+  });
+  const [i, setI] = useState(saved?.i ?? 0);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [shapes, setShapes] = useState<DrawShape[]>([]);
-  const [misses, setMisses] = useState(0);
+  const [misses, setMisses] = useState(saved?.misses ?? 0);
   const finished = i >= targets.length;
   const target = targets[i];
+  useEffect(() => {
+    if (!storeKey) return;
+    try {
+      localStorage.setItem(storeKey, JSON.stringify({ i, misses }));
+    } catch {
+      /* ignore */
+    }
+  }, [storeKey, i, misses]);
 
   const onSelect = (key: Key) => {
     if (finished) return;

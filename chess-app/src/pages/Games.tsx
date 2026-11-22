@@ -244,9 +244,9 @@ function GameView({ meta }: { meta: GameMeta }) {
           </div>
           <h2 style={{ margin: 0 }}>{game.title}</h2>
         </div>
-        <Button kind="ghost" className="small" onClick={() => setFlip(!flip)}>
+        <button type="button" className="btn btn-ghost small" onClick={() => setFlip(!flip)} aria-label="Lật bàn cờ" title="Lật bàn cờ">
           ⇅
-        </Button>
+        </button>
       </div>
 
       <div className="gm-layout">

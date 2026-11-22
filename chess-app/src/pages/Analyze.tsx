@@ -346,6 +346,7 @@ const JUDGE_VI: Record<Judgment, string> = {
 function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initialPly?: number; back: string }) {
   const [game, setGame] = useState<StoredGame | null | undefined>(undefined);
   const [analysis, setAnalysis] = useState<GameAnalysis | null>(null);
+  const [analysisLoaded, setAnalysisLoaded] = useState(false);
   const [ply, setPly] = useState<number>(initialPly ?? -1); // -1 = start position
   const [running, setRunning] = useState<{ done: number; total: number } | null>(null);
   const [live, setLive] = useState<EngineLine[]>([]);
@@ -365,7 +366,10 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
     // arriving from a scrolled list (games, report, trainer): start with the board in view
     window.scrollTo(0, 0);
     loadGames().then((gs) => setGame(gs.find((g) => g.id === gameId) ?? null));
-    loadAnalysis(gameId).then((a) => a && setAnalysis(a));
+    loadAnalysis(gameId).then((a) => {
+      if (a) setAnalysis(a);
+      setAnalysisLoaded(true);
+    });
     loadSettings().then(setSettings);
   }, [gameId]);
 
@@ -443,6 +447,16 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
   useEffect(() => () => {
     cancel.current.cancelled = true;
   }, []);
+
+  // Lichess games that carry the server's analysis take a second: show it right away, as the import screen promises
+  const autoRan = useRef(false);
+  useEffect(() => {
+    if (autoRan.current || !game || !settings || !analysisLoaded || analysis || running) return;
+    if (!game.serverEvals || game.serverEvals.length < game.moves.length - 1) return;
+    autoRan.current = true;
+    run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [game, settings, analysisLoaded, analysis, running]);
 
   if (game === undefined || !settings) return <Spinner label="Đang tải..." />;
   if (game === null)
@@ -745,11 +759,11 @@ function ReviewList({ analysis, me, onGo }: { analysis: GameAnalysis; me: 'w' | 
   const list = all ? mine : serious;
   return (
     <Card>
-      <div className="row-between">
+      <div className="row-between" style={{ flexWrap: 'wrap' }}>
         <h3 style={{ margin: 0 }}>Nước cần xem lại của bạn</h3>
         {mine.length > serious.length && (
-          <button className="chip" onClick={() => setAll(!all)}>
-            {all ? 'chỉ lỗi lớn' : `cả ${mine.length - serious.length} nước thiếu chính xác`}
+          <button className="chip" style={{ whiteSpace: 'nowrap' }} onClick={() => setAll(!all)}>
+            {all ? 'chỉ lỗi lớn' : `xem cả ${mine.length - serious.length} nước thiếu chính xác`}
           </button>
         )}
       </div>

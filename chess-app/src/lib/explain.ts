@@ -262,8 +262,12 @@ export function explainPly(p: PlyAnalysis, prev?: PlyAnalysis, mine = true): Exp
     if (r) why = `${O[0].toUpperCase()}${O.slice(1)} đáp ${r} và giành thế chủ động.`;
   }
   const scale =
-    myBefore >= 75 && myAfter < 60
+    myBefore >= 75 && myAfter < 40
+      ? 'Thế đang thắng rõ trở thành kém hơn đối phương.'
+      : myBefore >= 75 && myAfter < 60
       ? 'Thế đang thắng rõ trở thành gần cân bằng.'
+      : myBefore >= 55 && myAfter < 45
+        ? 'Thế đang hơn trở thành kém hơn đối phương.'
       : myBefore >= 40 && myAfter < 25
         ? 'Thế đang cân bằng trở thành kém rõ rệt.'
         : myAfter < 10
