@@ -76,12 +76,20 @@ function TodayCard({ level, log, nextLesson }: { level: LevelInfo; log: Activity
   const days = streak(log);
   // one plan for the day, in the order to do it: learn something new, drill it, then use it in a game
   const items: { done: boolean; label: string; why: string; go: string }[] = [
-    {
-      done: today.lessons >= 1,
-      label: nextLesson ? `Học bài: ${nextLesson.title}` : 'Học 1 bài hoặc 1 ván "Từng nước một"',
-      why: 'Kiến thức mới',
-      go: nextLesson ? `learn/lesson/${nextLesson.id}` : 'learn/games',
-    },
+    today.lessons >= 1
+      ? {
+          // show what was actually learned today, not the next lesson in the path
+          done: true,
+          label: today.learned?.length ? `Đã học: ${today.learned.join(', ')}` : `Đã học ${today.lessons} bài hôm nay`,
+          why: nextLesson ? `Còn sức thì học thêm: ${nextLesson.title}` : 'Kiến thức mới',
+          go: nextLesson ? `learn/lesson/${nextLesson.id}` : 'learn/games',
+        }
+      : {
+          done: false,
+          label: nextLesson ? `Học bài: ${nextLesson.title}` : 'Học 1 bài hoặc 1 ván "Từng nước một"',
+          why: 'Kiến thức mới. Học xong bấm “Đã học” ở cuối bài để tích việc này.',
+          go: nextLesson ? `learn/lesson/${nextLesson.id}` : 'learn/games',
+        },
     {
       done: today.puzzles >= level.dailyPuzzles,
       label: `Giải ${level.dailyPuzzles} bài tập chiến thuật (${Math.min(today.puzzles, level.dailyPuzzles)}/${level.dailyPuzzles})`,
@@ -378,7 +386,7 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
         status={progress.status[lesson.id]}
         onMark={async (v) => {
           setProgress(await setLessonStatus(lesson.id, v));
-          if (v === 'done') logActivity('lessons');
+          if (v === 'done') logActivity('lessons', 1, lesson.title);
           if (v && next) navigate(`learn/lesson/${next.id}`);
           else if (v) navigate('learn');
         }}

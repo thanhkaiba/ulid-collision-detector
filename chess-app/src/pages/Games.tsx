@@ -308,7 +308,7 @@ function GameView({ meta }: { meta: GameMeta }) {
                 status={status}
                 onMark={async (v) => {
                   const lp = await setLessonStatus(`game:${meta.id}`, v);
-                  if (v === 'done') logActivity('lessons');
+                  if (v === 'done') logActivity('lessons', 1, `Từng nước một: ${meta.white} – ${meta.black}`);
                   setStatus(lp.status[`game:${meta.id}`]);
                   if (v) {
                     const idx = GAMES.findIndex((g) => g.id === meta.id);

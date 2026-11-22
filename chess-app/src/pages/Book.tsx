@@ -285,7 +285,7 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
         status={status}
         onMark={async (v) => {
           const lp = await setLessonStatus(statusKey, v);
-          if (v === 'done') logActivity('lessons');
+          if (v === 'done') logActivity('lessons', 1, `Sách: ${sec.heading}`);
           setStatus(lp.status[statusKey]);
           if (v) navigate(next ?? 'learn/book');
         }}

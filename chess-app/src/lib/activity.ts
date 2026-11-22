@@ -1,7 +1,10 @@
 import { get, set } from 'idb-keyval';
 
 export type ActivityKind = 'puzzles' | 'games' | 'lessons';
-export type DayLog = Record<ActivityKind, number>;
+export type DayLog = Record<ActivityKind, number> & {
+  /** titles of the lessons / book sections / annotated games finished that day */
+  learned?: string[];
+};
 export type ActivityLog = Record<string, DayLog>; // key: YYYY-MM-DD (local)
 
 export function dayKey(d = new Date()): string {
@@ -13,11 +16,12 @@ export async function loadActivity(): Promise<ActivityLog> {
 }
 
 /** Record one unit of work today (a solved puzzle, a finished game, a lesson marked done). */
-export async function logActivity(kind: ActivityKind, n = 1): Promise<void> {
+export async function logActivity(kind: ActivityKind, n = 1, title?: string): Promise<void> {
   const log = await loadActivity();
   const k = dayKey();
-  const day = log[k] ?? { puzzles: 0, games: 0, lessons: 0 };
+  const day: DayLog = log[k] ?? { puzzles: 0, games: 0, lessons: 0 };
   day[kind] = (day[kind] ?? 0) + n;
+  if (title && !(day.learned ?? []).includes(title)) day.learned = [...(day.learned ?? []), title];
   log[k] = day;
   await set('activity', log);
 }
