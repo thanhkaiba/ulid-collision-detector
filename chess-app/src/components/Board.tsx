@@ -28,6 +28,8 @@ export interface BoardProps {
    */
   onSelect?: (key: Key) => void;
   shapes?: DrawShape[];
+  /** extra CSS class per square (chessground custom highlight), e.g. to shade a region */
+  squareClasses?: Map<Key, string>;
   viewOnly?: boolean;
   coordinates?: boolean;
   animate?: boolean;
@@ -54,7 +56,7 @@ export default function Board(props: BoardProps) {
     disableContextMenu: true,
     blockTouchScroll: false,
     animation: { enabled: props.animate ?? true, duration: 200 },
-    highlight: { lastMove: true, check: true },
+    highlight: { lastMove: true, check: true, custom: props.squareClasses ?? new Map() },
     movable: {
       free: false,
       color: props.movableColor,
@@ -113,6 +115,7 @@ export default function Board(props: BoardProps) {
     props.dests,
     props.viewOnly,
     props.shapes,
+    props.squareClasses,
   ]);
 
   return (

@@ -12,6 +12,8 @@ import { upsertGames, type StoredGame } from '../lib/storage';
 import { navigate, type Route } from '../lib/router';
 import { logActivity } from '../lib/activity';
 import { PRACTICE, practiceById, loadPracticeDone, markPracticeDone, type PracticePosition } from '../data/practice';
+import { METHODS } from '../data/practiceMethods';
+import MethodDemo from '../components/MethodDemo';
 
 /** Engine settings for endgame practice: full strength, it must defend (or attack) correctly. */
 const PRACTICE_LEVEL: Level = { n: 10, label: 'Tối đa', elo: '3000+', depth: 18, movetime: 900 };
@@ -50,6 +52,40 @@ function PracticeRun({ pos, back }: { pos: PracticePosition; back: string }) {
       onExit={() => navigate(back)}
       onRematch={() => setAttempt((a) => a + 1)}
     />
+  );
+}
+
+/** Steps of the method plus the animated model solution, in a sheet over the game. */
+function MethodSheet({ pos, onClose }: { pos: PracticePosition; onClose: () => void }) {
+  const method = METHODS[pos.id];
+  return (
+    <div className="sheet-backdrop" onClick={onClose}>
+      <div className="sheet method-sheet" onClick={(e) => e.stopPropagation()}>
+        <div className="row-between mb">
+          <b>{pos.title}</b>
+          <button className="chip" onClick={onClose}>
+            Đóng
+          </button>
+        </div>
+        {method ? (
+          <>
+            <div className="tiny muted">CÁCH LÀM</div>
+            <ol className="method-steps">
+              {method.steps.map((s, k) => (
+                <li key={k}>{s}</li>
+              ))}
+            </ol>
+            <div className="tiny muted mt">LỜI GIẢI MẪU (HÌNH ĐỘNG)</div>
+            <MethodDemo pos={pos} method={method} />
+            <p className="tiny muted" style={{ margin: '8px 0 0' }}>
+              Máy đánh với bạn có thể đi khác lời giải mẫu. Hãy làm theo cách làm ở trên, không cần nhớ từng nước.
+            </p>
+          </>
+        ) : (
+          <p className="small">{pos.hint}</p>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -495,13 +531,9 @@ function GameView({
             <Card>
               <div className="tiny muted">{practice.goal === 'draw' ? 'MỤC TIÊU: THỦ HÒA' : practice.goal === 'mate' ? 'MỤC TIÊU: CHIẾU HẾT' : 'MỤC TIÊU: PHONG HẬU HOẶC THẮNG QUÂN'}</div>
               {!embedded && <p className="small" style={{ margin: '4px 0' }}>{practice.brief}</p>}
-              {showHint ? (
-                <div className="explain">{practice.hint}</div>
-              ) : (
-                <button className="chip" onClick={() => setShowHint(true)}>
-                  Xem phương pháp
-                </button>
-              )}
+              <Button kind="default" className="mt" onClick={() => setShowHint(true)}>
+                ▶ Cách làm và lời giải mẫu
+              </Button>
               {slipped && (
                 <div className="feedback bad small">
                   {practice.goal === 'draw' ? 'Máy đánh giá thế này đối phương đã thắng được.' : 'Máy đánh giá thế này không còn thắng được nữa.'} Bấm “Đi lại” để thử nước khác.
@@ -513,7 +545,11 @@ function GameView({
             <Card>
               <h3>{resultText}</h3>
               <p className="muted small">{over.reason}</p>
-              {!goalMet && <div className="explain">{practice.hint}</div>}
+              {!goalMet && (
+                <Button kind="default" onClick={() => setShowHint(true)}>
+                  ▶ Xem cách làm và lời giải mẫu
+                </Button>
+              )}
               <div className="row mt">
                 <Button kind="primary" onClick={onRematch}>
                   {goalMet ? 'Đánh lại lần nữa' : 'Thử lại'}
@@ -581,6 +617,7 @@ function GameView({
           </Card>
         </div>
       </div>
+      {practice && showHint && <MethodSheet pos={practice} onClose={() => setShowHint(false)} />}
       {pending && (
         <PromotionPicker
           color={orientation}

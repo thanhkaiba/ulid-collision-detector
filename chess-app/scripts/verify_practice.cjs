@@ -22,6 +22,21 @@ const evalFen = (fen) => new Promise((res) => { let last = null; on = (l) => { c
     if (!ok) fail++;
     console.log(`${ok ? 'ok  ' : 'FAIL'} ${p.id} (${p.goal}, plays ${p.me}, ${c.turn()} to move): ${s.kind} ${s.v * sign}`);
   }
+  // the animated model lines: legal, and they end where the goal says
+  const msrc = fs.readFileSync(path.join(__dirname, '..', 'src/data/practiceMethods.ts'), 'utf8');
+  for (const p of items) {
+    const m = new RegExp(`'?${p.id}'?: \\{[\\s\\S]*?demo: \\[([\\s\\S]*?)\\n    \\],`).exec(msrc);
+    if (!m) { fail++; console.log('FAIL', p.id, 'no demo'); continue; }
+    const sans = [...m[1].matchAll(/\['([^']+)'/g)].map((x) => x[1]);
+    const c = new Chess(p.fen); let bad = null;
+    for (const s of sans) { try { c.move(s); } catch { bad = s; break; } }
+    let ok = !bad;
+    if (ok && p.goal === 'mate') ok = c.isCheckmate();
+    if (ok && p.goal === 'draw') ok = c.isDraw() || sans.length >= 12;
+    if (ok && p.goal === 'win') ok = /=Q/.test(sans[sans.length - 1]) || c.isCheckmate();
+    if (!ok) fail++;
+    console.log(`${ok ? 'ok  ' : 'FAIL'} demo ${p.id}: ${sans.length} plies${bad ? ' illegal ' + bad : ''}${c.isCheckmate() ? ', mate' : c.isDraw() ? ', draw' : ''}`);
+  }
   console.log(`\n${items.length} positions, ${fail} failures`);
   process.exit(fail ? 1 : 0);
 })();
