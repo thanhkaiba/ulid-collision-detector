@@ -7,17 +7,50 @@ import json, glob, sys, re
 a = json.load(open('book_alg.json'))
 vi = json.load(open('tr/synced.json'))
 fixed = 0
-for f in sorted(glob.glob('tr/fix_*.json')):
+# first proofreading pass (fix_R*), then the notation audit (fix2_S*), which only lists units it changed
+for f in sorted(glob.glob('tr/fix_R*.json')) + sorted(glob.glob('tr/fix2_S*.json')):
     try:
         for u in json.load(open(f)):
             if u.get('vi', '').strip(): vi[u['id']] = u['vi']; fixed += 1
     except Exception as e:
         print('skip', f, e)
+# single moves the reviewers found attributed to the wrong side: show the corrected move as an unverified ("loose") token
+try:
+    TOKEN_FIX = json.load(open('tr/token_overrides.json'))
+except FileNotFoundError:
+    TOKEN_FIX = {}
+def fix_tokens(text):
+    def rep(m):
+        new = TOKEN_FIX.get(m.group(1))
+        if not new: return m.group(0)
+        pre = re.match(r'^\d+\.+', m.group(2))
+        if pre and not re.match(r'^\d+\.', new): new = pre.group(0) + new
+        return f'⟦-|{new}⟧'
+    return re.sub(r'⟦(\d+)\|([^⟧]*)⟧', rep, text)
+# diagrams whose transcription is wrong in one square (kept as display patches so move ids stay stable)
+FIG_PATCH = {91: ('c7', 'b', 'p')}
+def patch_fen(fen, sq, old, new):
+    rows = fen.split(' ')[0].split('/'); rest = fen.split(' ')[1:]
+    r = 8 - int(sq[1]); f = ord(sq[0]) - 97
+    cells = []
+    for ch in rows[r]:
+        cells.extend([''] * int(ch) if ch.isdigit() else [ch])
+    if cells[f] != old: return fen
+    cells[f] = new
+    out = ''; e = 0
+    for c in cells:
+        if c == '': e += 1
+        else:
+            if e: out += str(e); e = 0
+            out += c
+    if e: out += str(e)
+    rows[r] = out
+    return ' '.join(['/'.join(rows)] + rest)
 missing = []
 def tr(id_, text):
-    if id_ in vi and vi[id_].strip(): return vi[id_]
+    if id_ in vi and vi[id_].strip(): return fix_tokens(vi[id_])
     missing.append(id_)
-    return text
+    return fix_tokens(text)
 # prose that appears inside the move columns
 CELL = [(r'^Resigns\.?$', 'Xin thua'), (r'^K moves$', 'Vua đi'), (r'^Black moves$', 'Đen đi'), (r'^White mates$', 'Trắng chiếu hết'),
         (r'^\(Best; see why\.\)$', '(Tốt nhất; hãy tìm hiểu vì sao.)'), (r'^\(Best\.\)$', '(Tốt nhất.)'), (r'^Drawn\.?$', 'Hòa'),
@@ -38,7 +71,14 @@ for pi, p in enumerate(a['parts']):
         C = {'title': c['title'].replace('CHAPTER', 'CHƯƠNG').replace('GAMES', 'CÁC VÁN ĐẤU'), 'heading': tr(f'{pi}.{ci}.h', c['heading']) if c['heading'] else '', 'sections': []}
         for si, s in enumerate(c['sections']):
             blocks = []
+            patch = None  # active diagram patch for the current example
             for bi, b in enumerate(s['blocks']):
+                if b['t'] == 'fig': patch = FIG_PATCH.get(b['n'])
+                if patch and b['t'] == 'fig' and b.get('fen'): b['fen'] = patch_fen(b['fen'], *patch)
+                if patch:
+                    ids = set(re.findall(r'⟦(\d+)\|', json.dumps(b, ensure_ascii=False)))
+                    for m in s['moves']:
+                        if str(m['id']) in ids: m['fen'] = patch_fen(m['fen'], *patch)
                 if b['t'] in ('p', 'h'):
                     if not b.get('text', '').strip(): continue
                     blocks.append({'t': b['t'], 'text': tr(f'{pi}.{ci}.{si}.{bi}', b['text'])})

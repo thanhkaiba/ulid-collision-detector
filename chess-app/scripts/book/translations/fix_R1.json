@@ -1,0 +1,182 @@
+[
+ {
+  "id": "0.0.1.8",
+  "vi": "Không đi ⟦12|Kc6⟧, vì khi đó Vua Đen sẽ quay về d8 và sẽ mất nhiều thời gian hơn để chiếu hết. Bây giờ nếu Vua Đen quay về d8, ⟦13|Ra8+⟧ chiếu hết ngay lập tức."
+ },
+ {
+  "id": "0.0.1.10",
+  "vi": "Từ thế cờ ban đầu, chiếu hết mất đúng mười nước. Ở nước 5, Đen có thể đi ⟦22|Ke8⟧, và theo nguyên tắc, Trắng sẽ tiếp tục ⟦23|6.Kd6⟧ ⟦24|Kf8⟧ (cuối cùng Vua Đen sẽ bị buộc phải đi tới trước mặt Vua Trắng và bị chiếu hết bằng ⟦25|Ra8+⟧); ⟦26|7.Ke6⟧ ⟦27|Kg8⟧; ⟦28|8.Kf6⟧ ⟦29|Kh8⟧; ⟦30|9.Kg6⟧ ⟦31|Kg8⟧; ⟦32|10.Ra8#⟧."
+ },
+ {
+  "id": "0.0.1.14",
+  "vi": "Bây giờ ván cờ tàn có thể tiếp tục: ⟦43|4...Kc2⟧; ⟦44|5.Rc4+⟧ ⟦45|Kb3⟧; ⟦46|6.Kd3⟧ ⟦47|Kb2⟧; ⟦48|7.Rb4+⟧ ⟦49|Ka3⟧; ⟦50|8.Kc3⟧ ⟦51|Ka2⟧. Cần lưu ý Vua Trắng đã bao nhiêu lần đi tới sát cạnh Xe, không chỉ để bảo vệ Xe mà còn để hạn chế khả năng di chuyển của Vua đối phương. Bây giờ Trắng chiếu hết trong ba nước như sau: ⟦52|9.Ra4+⟧ ⟦53|Kb1⟧; 10. Xe đi tới ô bất kỳ trên cột a (cột của Xe), buộc Vua Đen phải đứng trước mặt Vua Trắng, ⟦54|Kc1⟧; ⟦55|11.Ra1#⟧. Chiếu hết mất mười một nước, và trong bất kỳ điều kiện nào, tôi tin rằng việc này nên hoàn thành dưới hai mươi nước. Dù có thể tẻ nhạt, người mới vẫn nên luyện tập những điều như vậy, vì nó sẽ dạy cho họ cách sử dụng quân cờ đúng đắn."
+ },
+ {
+  "id": "0.0.1.18",
+  "vi": "Bây giờ ta có thể tiếp tục: ⟦61|3...Kg7⟧; ⟦62|4.Kf2⟧. Trong cờ tàn này, Vua Đen không chỉ phải bị dồn ra mép bàn cờ mà còn phải bị ép vào góc, và trước khi có thể chiếu hết, Vua Trắng phải được đưa lên hàng sáu, đồng thời nằm trên một trong hai cột ngoài cùng; trong trường hợp này là h6, g6, f7 hoặc f8, và vì h6 và g6 là những ô gần nhất, Vua nên đi tới một trong hai ô đó. ⟦63|4...Kf7⟧; ⟦64|5.Kg3⟧ ⟦65|Kg7⟧; ⟦66|6.Kh4⟧ ⟦67|Kf7⟧; ⟦68|7.Kh5⟧ ⟦69|Kg7⟧; ⟦70|8.Bg6⟧ ⟦71|Kg8⟧; ⟦72|9.Kh6⟧ ⟦73|Kf8⟧. Bây giờ Trắng phải đi một nước chờ bằng một trong hai Tượng, để buộc Vua Đen phải lùi lại; ⟦74|10.Bh5⟧ ⟦75|Kg8⟧; ⟦76|11.Be7⟧ ⟦77|Kh8⟧. Bây giờ Tượng Trắng phải chiếm một vị trí mà từ đó nó có thể chiếu ở nước tiếp theo trên đường chéo trắng, khi Vua Đen quay về g8. ⟦78|12.Bg4⟧ ⟦79|Kg8⟧; ⟦80|13.Be6+⟧ ⟦81|Kh8⟧; ⟦82|14.Bf6#⟧."
+ },
+ {
+  "id": "0.0.1.19",
+  "vi": "Chiếu hết mất mười bốn nước, và ở bất kỳ thế cờ nào, việc này nên hoàn thành dưới ba mươi nước."
+ },
+ {
+  "id": "0.0.1.21",
+  "vi": "Trong cờ tàn đặc biệt này, cần nhớ rằng Vua không chỉ phải bị dồn ra mép bàn cờ mà còn phải bị dồn vào góc. Tuy nhiên, trong mọi cờ tàn kiểu này, Vua bị ép ra hàng cuối hay ra cột ngoài cùng đều không quan trọng, ví dụ h5 hay a4, e1 hay d8."
+ },
+ {
+  "id": "0.0.1.22",
+  "vi": "**Ví dụ 4.**—Bây giờ chúng ta đến với cờ tàn Hậu và Vua chống Vua. Vì Hậu kết hợp sức mạnh của Xe và Tượng, đây là thế chiếu hết dễ nhất trong tất cả và luôn phải hoàn thành dưới mười nước. Hãy xem thế cờ sau:"
+ },
+ {
+  "id": "0.0.1.24",
+  "vi": "Một cách hay để bắt đầu là đi nước đầu bằng Hậu, cố hạn chế khả năng di chuyển của Vua Đen càng nhiều càng tốt. Như sau: ⟦83|1.Qc6⟧ ⟦84|Kd4⟧; ⟦85|2.Kd2⟧. Lúc này Vua Đen chỉ còn đúng một ô để đi: ⟦86|2...Ke5⟧; ⟦87|3.Ke3⟧ ⟦88|Kf5⟧; ⟦89|4.Qd6⟧ ⟦90|Kg5⟧. (Nếu Đen đi ⟦91|Kg4⟧, thì ⟦92|Qg6+⟧); ⟦93|5.Qe6⟧ ⟦94|Kh4⟧ (nếu ⟦95|Kh5⟧, ⟦96|Kf4⟧ và chiếu hết ở nước sau); ⟦97|6.Qg6⟧ ⟦98|Kh3⟧; ⟦99|7.Kf3⟧, Vua đi; 8. Hậu chiếu hết."
+ },
+ {
+  "id": "0.0.2.7",
+  "vi": "⟦110|6.e5+⟧ ⟦111|Ke6⟧; ⟦112|7.Ke4⟧ ⟦113|Ke7⟧; ⟦114|8.Kd5⟧ ⟦115|Kd7⟧; ⟦116|9.e6+⟧ ⟦117|Ke7⟧; ⟦118|10.Ke5⟧ ⟦119|Ke8⟧; ⟦120|11.Kd6⟧ ⟦121|Kd8⟧. Bây giờ nếu Trắng tiến Tốt, Vua Đen sẽ đứng chặn trước nó và Trắng hoặc phải bỏ Tốt hoặc đi ⟦-|Ke6⟧, dẫn đến pat. Nếu thay vì tiến Tốt, Trắng rút Vua lui, Đen đưa Vua lên sát Tốt và, khi bị buộc phải lùi, Vua lùi về e8, *trước mặt* Tốt, sẵn sàng tiến lên lại hoặc đứng trước mặt Vua Trắng như trước, nếu Vua Trắng tiến lên."
+ },
+ {
+  "id": "0.0.3.h",
+  "vi": "1.Ke4 Ke6."
+ },
+ {
+  "id": "0.0.4.h",
+  "vi": "2.e3 Kf6; 3.Kd5 Ke7."
+ },
+ {
+  "id": "0.0.4.0",
+  "vi": "Nếu Đen đi 3...Kf5, Trắng sẽ buộc phải tiến Tốt lên e4, vì không thể tiến Vua mà không cho Đen cơ hội đi Ke4 và thắng Tốt. Vì Đen không làm vậy, Trắng tốt hơn là chưa tiến Tốt, vì sự an toàn của nó chưa đòi hỏi điều đó, mà cố đưa Vua tiến xa hơn nữa. Như sau:"
+ },
+ {
+  "id": "0.0.5.h",
+  "vi": "4.Ke5 Kd7; 5.Kf6 Ke8."
+ },
+ {
+  "id": "0.0.6.h",
+  "vi": "6.e4 Kd7."
+ },
+ {
+  "id": "0.0.6.0",
+  "vi": "Bây giờ không nên đi Kf7, vì Đen sẽ đi Kd6, và Trắng sẽ phải đưa Vua về bảo vệ Tốt. Do đó Trắng phải tiếp tục."
+ },
+ {
+  "id": "0.0.7.h",
+  "vi": "7.e5 Ke8."
+ },
+ {
+  "id": "0.0.7.0",
+  "vi": "Nếu Vua Đen đi tới ô khác, Trắng có thể đi Kf7, rồi tiến Tốt lên e6, e7, e8; tất cả các ô này đều được Vua bảo vệ. Vì Đen cố ngăn điều đó, bây giờ Trắng phải ép Đen rời đi, đồng thời luôn giữ Vua đứng trước Tốt. Như sau:"
+ },
+ {
+  "id": "0.0.8.h",
+  "vi": "8.Ke6."
+ },
+ {
+  "id": "0.0.8.0",
+  "vi": "8.e6 sẽ dẫn đến hòa, vì khi đó Đen đi Kf8, và ta sẽ có thế cờ tương tự thế đã giải thích ở Ví dụ 5."
+ },
+ {
+  "id": "0.0.8.1",
+  "vi": "8...Kf8; 9.Kd7."
+ },
+ {
+  "id": "0.0.8.2",
+  "vi": "Vua Đen đi, Tốt Trắng tiến lên e8, phong Hậu, và thế là xong."
+ },
+ {
+  "id": "0.0.9.12",
+  "vi": "⟦196|15.Kh6⟧ (nếu ⟦197|Kf6⟧, ⟦198|Kh7⟧; và để thắng, Trắng phải quay lại đúng thế cờ hiện tại, vì ⟦199|16.g6+⟧ ⟦200|Kh8⟧ sẽ hòa), ⟦201|Kh8⟧; ⟦202|16.g6⟧ ⟦203|Kg8⟧; ⟦204|17.g7⟧ ⟦205|Kf7⟧; ⟦206|18.Kh7⟧, và Trắng phong Hậu cho Tốt rồi thắng."
+ },
+ {
+  "id": "0.0.10.h",
+  "vi": "1.f5 Ke7."
+ },
+ {
+  "id": "0.0.10.0",
+  "vi": "Nếu 1...g6 thì 2.f6; và ta có cờ tàn tương tự một trong những cờ tàn đã nêu ở trên. Nếu 1...h6; 2.g5."
+ },
+ {
+  "id": "0.0.11.h",
+  "vi": "2.Ke5 Kf7; 3.g5 Ke7."
+ },
+ {
+  "id": "0.0.11.0",
+  "vi": "Nếu 3...g6 thì 4.f6; còn nếu 3...h6 thì 4.g6+; trong cả hai trường hợp ta có một cờ tàn tương tự với những cờ tàn đã trình bày ở trên."
+ },
+ {
+  "id": "0.0.12.h",
+  "vi": "4.h5,"
+ },
+ {
+  "id": "0.0.12.0",
+  "vi": "và tiếp theo bằng g6, ta lại có cờ tàn đã trình bày trước đó. Nếu Đen chơi 4...g6 thì hxg6, hxg6; f6+ với kết quả tương tự."
+ },
+ {
+  "id": "0.0.13.h",
+  "vi": "1.g4."
+ },
+ {
+  "id": "0.0.14.h",
+  "vi": "2.a4 Kf6; 3.h4 Ke6."
+ },
+ {
+  "id": "0.0.14.0",
+  "vi": "Nếu 3...Kg6 thì chỉ cần tính đơn giản cũng thấy Trắng đưa Vua sang bên kia, thắng Tốt ở a5, rồi phong Hậu cho con Tốt duy nhất của mình từ rất lâu trước khi Đen có thể làm điều tương tự."
+ },
+ {
+  "id": "0.0.15.h",
+  "vi": "4.g5 Kf7; 5.Kf5 Kg7; 6.h5 Kf7."
+ },
+ {
+  "id": "0.0.15.0",
+  "vi": "Nếu 6...h6 thì 7.g6, và khi đó hai Tốt tự bảo vệ nhau, Trắng có thể đưa Vua sang bên kia để thắng con Tốt còn lại."
+ },
+ {
+  "id": "0.0.16.h",
+  "vi": "7.Ke5."
+ },
+ {
+  "id": "0.0.17.3",
+  "vi": "Đến lượt Đen đi, và nghĩ rằng Trắng chỉ dọa chơi ⟦207|Qh6⟧ rồi chiếu hết ở g7, Đen chơi ⟦208|1...Re8⟧, dọa chiếu hết bằng ⟦209|Re1+⟧. Lúc này Trắng mới bộc lộ mối đe dọa thật sự và hiệu quả nhất của mình, đó là:"
+ },
+ {
+  "id": "0.0.17.10",
+  "vi": "Đen không thể bắt Mã, vì Trắng dọa chiếu hết bằng ⟦218|Qxh2+⟧ rồi tiếp theo là ⟦-|Rh3+⟧."
+ },
+ {
+  "id": "0.0.17.12",
+  "vi": "Lại nữa, nếu ⟦221|Bxe7⟧; ⟦222|Qxh7+⟧, ⟦223|Kxh7⟧; ⟦224|Rh3+⟧, Vua đi; ⟦-|Rh8#⟧."
+ },
+ {
+  "id": "0.0.17.17",
+  "vi": "Đây là một dạng đòn phối hợp khác rất thú vị. Đen có Xe đổi lấy Mã, tức là hơn chất, nên lẽ ra phải thắng, trừ phi Trắng có thể lập tức giành được sự bù đắp nào đó. Thực tế, Trắng chiếu hết trong vài nước như sau:"
+ },
+ {
+  "id": "0.0.17.28",
+  "vi": "Ở đây Trắng kém chất và kém một Tốt, nhưng có thể thắng nhanh như sau: ⟦242|1.Bxh7+⟧ ⟦243|Kxh7⟧. (Nếu ⟦244|1...Kh8⟧; ⟦245|2.Qh5⟧ ⟦246|g6⟧; ⟦247|3.Qh6⟧ và thắng.)"
+ },
+ {
+  "id": "0.0.17.29",
+  "vi": "⟦248|2.Qh5+⟧ ⟦249|Kg8⟧; ⟦250|3.Ng5⟧, và Đen không thể ngăn chiếu hết ở h7, trừ phi thí Hậu bằng ⟦251|Qe4⟧, khi đó Trắng còn lại Hậu đổi lấy Xe."
+ },
+ {
+  "id": "0.0.17.32",
+  "vi": "Trắng tiến hành như sau: ⟦252|1.Nxe7+⟧ (nước này mở đường cho Tượng); ⟦253|Bxe7⟧ (để ngăn Mã nhảy lên g5 sau khi Trắng thí Tượng); ⟦254|2.Rxe7⟧ ⟦255|Nxe7⟧ tốt nhất; ⟦256|3.Bxh7+⟧ ⟦257|Kxh7⟧. (Nếu 3...⟦258|Kh1⟧; ⟦259|4.Qh5+⟧ ⟦-|g6⟧; ⟦-|5.Bxg6+⟧ ⟦-|Kg7⟧; ⟦-|6.Qh7+⟧ ⟦-|Kf6⟧; ⟦-|7.g5+⟧ ⟦-|Ke6⟧; ⟦-|8.Bxf7+⟧ ⟦-|Rxf7⟧; ⟦-|9.Qe4#⟧.) ⟦260|4.Qh5+⟧ ⟦261|Kg8⟧; ⟦262|5.Ng5⟧ ⟦263|Rc8⟧; ⟦264|6.Qh7+⟧ ⟦265|Kf8⟧; ⟦266|7.Qh8+⟧ ⟦267|Ng8⟧; ⟦268|8.Nh7+⟧ ⟦269|Ke7⟧; ⟦270|9.Re1+⟧ ⟦271|Kd8⟧; ⟦272|10.Qxg8#⟧."
+ },
+ {
+  "id": "0.0.19.1",
+  "vi": "Ngay từ đầu, hai nước 1.e4 hoặc 1.d4 mở đường cho Hậu và một Tượng. Do đó, về lý thuyết, một trong hai nước này phải là nước tốt nhất, vì không có nước đi đầu nào khác đạt được nhiều đến vậy."
+ },
+ {
+  "id": "0.0.19.8",
+  "vi": "Những nước này thuần túy mang tính phát triển quân."
+ },
+ {
+  "id": "0.0.19.12",
+  "vi": "Đen đáp lại theo cùng cách, dọa có thể đổi Tượng lấy Mã rồi tiếp theo là ⟦281|Nxe5⟧."
+ },
+ {
+  "id": "0.0.19.14",
+  "vi": "một cách gián tiếp ngăn ⟦283|5...Bxc3⟧, nước mà khi có thêm kinh nghiệm hoặc nghiên cứu, ta sẽ thấy là dở. Đồng thời *Xe được đưa vào hoạt động ở trung tâm, một điểm rất quan trọng*."
+ }
+]

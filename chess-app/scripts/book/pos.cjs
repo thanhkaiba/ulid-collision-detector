@@ -26,4 +26,4 @@ for (let j = Math.max(0, bi - 2); j <= Math.min(sec.blocks.length - 1, bi + 1); 
   console.log('  CONVERTED :', show(b));
 }
 const b = sec.blocks[bi];
-if (b && b.text) { console.log('\nTOKENS IN THIS UNIT (position after each):'); for (const m of b.text.matchAll(/⟦(\d+)\|([^⟧]*)⟧/g)) { const mv = byId.get(m[1]); if (mv) console.log(`  ⟦${m[1]}|${m[2]}⟧ -> ${mv.fen}`); } }
+if (b && b.text) { console.log('\nTOKENS IN THIS UNIT (position after each):'); for (const m of b.text.matchAll(/⟦(\d+)\|([^⟧]*)⟧/g)) { const mv = byId.get(m[1]); if (mv) console.log(`  ⟦${m[1]}|${m[2]}⟧ ${mv.lone ? '(HEURISTIC, moved by ' + (mv.color === 'w' ? 'White' : 'Black') + ')' : '(verified in sequence)'} -> ${mv.fen}`); } }

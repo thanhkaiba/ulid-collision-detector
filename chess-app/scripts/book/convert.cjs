@@ -176,6 +176,7 @@ const LONE_RE = new RegExp(String.raw`(?<![\w⟦])` + MOVE_RE + String.raw`(?![\
 const CUE = /\b(if|instead|not|could|would|should|alternative|alternatives|better|or|suppose|had|might|say|e\.g\.|for instance|variation|worse|wrong|threat|threatens|threatening|answer|reply|against|one by|the other|preferable|possible|option|was|were)\b/i;
 
 const report = [];
+const suspects = [];
 let moveId = 0;
 const flip = (pos) => { try { const f = pos.fen().split(' '); f[1] = f[1] === 'w' ? 'b' : 'w'; f[3] = '-'; return new Chess(f.join(' ')); } catch { return null; } };
 
@@ -328,6 +329,12 @@ async function convertText(text, tracker, ctx, forkOnly, isGame) {
     else { c2 = new Chess(found.pos.fen()); c2.move(found.move.san); }
     const id = moveId++;
     movesOut.push({ id, san: found.move.san, uci: found.move.from + found.move.to + (found.move.promotion || ''), fen: c2.fen(), color: found.move.color, lone: !playOnTracker });
+    // audit: the sentence names one side, but the move was resolved for the other
+    if (!playOnTracker && colorHint && found.move.color !== colorHint) {
+      const alts = [];
+      for (const pos of tried) { if (pos.turn() !== colorHint) continue; const r = resolve(p, pos); if (r.move && !alts.includes(r.move.san)) alts.push(r.move.san); }
+      suspects.push({ ctx, id, tok, san: found.move.san, mover: found.move.color, hint: colorHint, alts, near: text.slice(Math.max(0, s - 70), e + 20) });
+    }
     repls.push({ start: s, end: e, repl: `⟦${id}|${found.move.san}⟧` });
     if (!playOnTracker) { hypo = c2; hypoEnd = e; }
   }
@@ -524,6 +531,7 @@ const result = JSON.parse(JSON.stringify(book));
   }
   fs.writeFileSync('book_alg.json', JSON.stringify(result, null, 1));
   fs.writeFileSync('report.json', JSON.stringify(report, null, 1));
+  fs.writeFileSync('suspects.json', JSON.stringify(suspects, null, 1));
   fs.writeFileSync('engine_choices.json', JSON.stringify(engineChoices, null, 1));
   fs.writeFileSync('fig_illegal.json', JSON.stringify(figIllegal, null, 1));
   const total = result.parts.flatMap((p) => p.chapters.flatMap((c) => c.sections.map((s) => s.moves.length))).reduce((a, b) => a + b, 0);
