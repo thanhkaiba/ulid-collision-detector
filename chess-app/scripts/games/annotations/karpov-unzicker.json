@@ -90,7 +90,7 @@
     },
     {
       "san": "Qc7",
-      "c": "Hậu bảo vệ Tốt e5 thêm một lần và đứng sẵn trên cột c, phòng khi cột này mở ra sau một lần đổi Tốt ở d4."
+      "c": "Hậu đứng sau Tốt d6 để chống lưng cho e5: nếu Trắng đổi {dxe5 dxe5} thì Hậu trực tiếp bảo vệ Tốt e5 và không bị đổi trên cột d. Hậu cũng đứng sẵn trên cột c, phòng khi cột này mở ra sau một lần đổi Tốt ở d4."
     },
     {
       "san": "Nbd2",
@@ -106,7 +106,7 @@
     },
     {
       "san": "Nd8",
-      "c": "Mã lùi về d8, định sau này vòng qua b7 hoặc f7. Nhưng ở d8 nó chắn hàng cuối, khiến Xe a8 không được Xe f8 bảo vệ; chi tiết này lập tức có hậu quả. Engine thích {^Na5} hơn một chút, dù sau {^Na5 b3} Mã ở biên cũng chẳng vui vẻ gì."
+      "c": "Mã lùi về d8, định sau này vòng qua b7 hoặc f7. Nhưng ở d8 nó chắn hàng cuối: kể cả khi Tượng c8 đã ra, Xe f8 vẫn không bảo vệ được Xe a8; chi tiết này lập tức có hậu quả. Engine thích {^Na5} hơn một chút, dù sau {^Na5 b3} Mã ở biên cũng chẳng vui vẻ gì."
     },
     {
       "san": "a4",
@@ -182,11 +182,11 @@
     },
     {
       "san": "Bb1",
-      "c": "Tượng lùi về giữ đường chéo b1–h7, nhưng engine đánh giá đây là nước thiếu chính xác: {^Be2} tốt hơn, vì từ e2 Tượng sẵn sàng sang cánh Vua và không chắn hàng một của Xe. Sau 23.Bb1 Đen có một cơ hội thật sự. Bạn có thấy không?"
+      "c": "Tượng lùi về giữ đường chéo b1–h7, nhưng engine đánh giá đây là nước thiếu chính xác: {^Be2} tốt hơn, vì từ e2 Tượng sẵn sàng sang cánh Vua và không chắn hàng một của Xe. Sau 23.Bb1 Đen có một nhịp để xếp lại quân. Hãy để ý Hậu c7: sau lưng Mã b7, nó đang ngầm canh ô a7."
     },
     {
       "san": "Qd8",
-      "c": "Đen bỏ lỡ! Phải đổi Xe ngay: sau {^Rxa2 Bxa2 Ra8} hoặc {^Rxa2 Qxa2 Ra8} Đen có Xe trên cột a và Trắng chỉ còn hơn rất ít. Hậu lùi về d8 định sang cánh Vua, nhưng cho Trắng đúng một nhịp để thực hiện ý tưởng đẹp nhất ván."
+      "c": "Nước thiếu chính xác: Hậu rời c7 là bỏ việc canh ô a7. Engine thích {^Ne8} hoặc {^Nd8}, giữ Hậu tại chỗ; khi đó Tượng Trắng chưa vào a7 được, vì sau {^Ne8 Ba7 Na5} Mã cắt đường bảo vệ của Xe a2, Tượng bị cả Xe lẫn Hậu tấn công, còn {^Ne8 Ba7 Na5 bxa5 Rxa7} thì Đen lấy lại quân với thế đẹp. Đổi Xe ngay lại không giải quyết được gì: sau {^Rxa2 Qxa2} Hậu Trắng giữ cột a, và {^Rxa2 Qxa2 Ra8 Qxa8} còn mất Xe. Hậu lùi về d8 định sang cánh Vua, nhưng cho Trắng đúng một nhịp để thực hiện ý tưởng đẹp nhất ván."
     },
     {
       "san": "Ba7",
@@ -218,7 +218,7 @@
     },
     {
       "san": "Be8",
-      "c": "Tượng lùi về e8 nhường ô d7 và dọn đường để Mã b7 về d8 rồi sang f7. Đen gom quân về quanh Vua; họ đoán được Trắng sẽ đánh ở đâu."
+      "c": "Tượng lùi về e8, vẫn canh Tốt b5 từ xa và nhường ô d7; tiếp theo Mã b7 sẽ về d8 rồi tìm đường sang f7. Đen gom quân về quanh Vua; họ đoán được Trắng sẽ đánh ở đâu."
     },
     {
       "san": "Ne2",
@@ -258,7 +258,7 @@
     },
     {
       "san": "Bf7",
-      "c": "Tượng ra f7 canh các ô trắng h5 và g6; nó là người gác cổng duy nhất của Đen trên ô trắng. Engine đề nghị {^h5}, đưa Tốt lên chiếm ô h5 trước khi Tượng Trắng tới, dù sau {^h5 Ng3 h4 Ngf1} Trắng vẫn rất tốt."
+      "c": "Tượng sang f7, vẫn canh các ô trắng h5 và g6 như khi ở e8 và nhường ô e8 cho quân khác; nó là người gác cổng duy nhất của Đen trên ô trắng. Engine đề nghị {^h5}, đưa Tốt lên chiếm ô h5 trước khi Tượng Trắng tới, dù sau {^h5 Ng3 h4 Ngf1} Trắng vẫn rất tốt."
     },
     {
       "san": "Ng3",
@@ -282,7 +282,7 @@
     },
     {
       "san": "Qe8",
-      "c": "Hậu hỗ trợ Tượng f7 và canh ô g6 thêm một lúc. Engine thích {^Nd8} với cùng ý."
+      "c": "Hậu hỗ trợ Tượng f7: nếu Tượng bị đổi, Hậu bắt lại và vẫn còn quân canh ô g6. Engine thích {^Nd8} với cùng ý."
     },
     {
       "san": "Qd1",
@@ -330,11 +330,11 @@
     },
     {
       "san": "Nxf7",
-      "c": "Đen bắt lại bằng Mã để Hậu vẫn canh ô g6 và Mã canh h6. Bắt bằng Hậu thì {^Qxf7 Qh5} và Hậu Trắng cũng vào được h5."
+      "c": "Đen bắt lại bằng Mã: từ f7 nó canh các Tốt h6, g5 và d6, nhưng lại che mất đường chéo của Hậu e8, nên g6 và h5 không còn quân Đen nào canh. Bắt bằng Hậu thì {^Qxf7 Qh5} và Hậu Trắng cũng vào được h5."
     },
     {
       "san": "Qh5",
-      "c": "Hậu chiếm h5, nhắm tới g6 và Tốt h6. Engine thích đưa Mã vào trước bằng {^Nh5}, nhưng ý thì như nhau: quân Trắng tràn vào các ô trắng. Đen bị ép ở cả hai cánh cùng lúc: Xe phải canh cột a, Vua và Hậu phải canh g6 và h6."
+      "c": "Hậu chiếm h5, nhắm tới g6 và Tốt h6. Engine thích đưa Mã vào trước bằng {^Nh5}, nhưng ý thì như nhau: quân Trắng tràn vào các ô trắng. Đen bị ép ở cả hai cánh cùng lúc: Xe phải canh cột a, còn Mã f7 và Tượng g7 bị buộc vào việc giữ Tốt h6."
     },
     {
       "san": "Nd8",
@@ -353,7 +353,7 @@
       "c": "Mã vào h5, dọa chiếu hết ở g7: {Rab8 Qxg7#}. Đen đầu hàng. Trên bàn chưa có đòn kết thúc cưỡng bức nào, nhưng engine đánh giá Trắng thắng rõ trong mọi phương án. Nếu đổi Hậu, Mã Trắng vào f5 với những đòn như {Qxg6 fxg6 Kg8 Nf5 Ne8 Ne7+ Kf8 Nxc8} thắng chất, hay {Qxg6 fxg6 Kg8 Nf5 Bf8 Nxf6+} thắng Tốt kèm chiếu. Rút Tượng {Bf8 Qxf6+} cũng mất Tốt. Và nếu Hậu ở lại canh g7, đến lúc Tượng a7 làm nốt việc của nó: {Qf8 Bb6 Rxa3 Rxa3 Qf7 Ra7}, Xe Trắng vào hàng bảy. **Hai mặt trận, một hàng phòng thủ**: Đen không thể giữ cả cột a lẫn Vua."
     }
   ],
-  "outro": "Vật chất còn cân bằng, nhưng quân Đen không còn thở được. Trắng thắng theo từng bước: khóa trung tâm bằng 13.d5 để hơn không gian; mở cột a rồi dùng 24.Ba7 chặn chính cột ấy, không cho Đen đổi Xe; chồng Xe sau lưng Tượng; mở mặt trận thứ hai bằng 30.f4 và 31.f5; đưa Tượng ô trắng vòng ra h5 để đổi quân gác cổng của Đen; cuối cùng Hậu và Mã vào g6, h5. Engine cho thấy Đen có cơ hội dễ thở hơn, nhất là đổi Xe ở nước 23 và không khóa cánh Vua ở nước 31; còn Trắng có lúc đi chậm hơn mức cần thiết, nhưng chậm mà chắc vẫn đủ.",
+  "outro": "Vật chất còn cân bằng, nhưng quân Đen không còn thở được. Trắng thắng theo từng bước: khóa trung tâm bằng 13.d5 để hơn không gian; mở cột a rồi dùng 24.Ba7 chặn chính cột ấy, không cho Đen đổi Xe; chồng Xe sau lưng Tượng; mở mặt trận thứ hai bằng 30.f4 và 31.f5; đưa Tượng ô trắng vòng ra h5 để đổi quân gác cổng của Đen; cuối cùng Hậu và Mã vào g6, h5. Engine cho thấy Đen có cơ hội dễ thở hơn, nhất là giữ Hậu ở c7 để canh ô a7 ở nước 23 và không khóa cánh Vua ở nước 31; còn Trắng có lúc đi chậm hơn mức cần thiết, nhưng chậm mà chắc vẫn đủ.",
   "lessons": [
     "Hơn không gian thì tránh đổi quân: bên chật chội mới là bên cần đổi để dễ thở.",
     "Cột mở không nhất thiết phải dùng ngay: có thể tạm chặn nó bằng một quân được bảo vệ, chồng Xe phía sau rồi mở lại vào lúc mình muốn.",

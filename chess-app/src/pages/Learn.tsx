@@ -17,6 +17,7 @@ import PreviewSheet from '../components/PreviewSheet';
 import SquareQuiz from '../components/SquareQuiz';
 import { renderRich, type Preview } from '../lib/richtext';
 import { START_FEN } from '../lib/chess-utils';
+import { practiceById, loadPracticeDone } from '../data/practice';
 import { Chess } from 'chess.js';
 import type { Key } from 'chessground/types';
 import type { DrawShape } from 'chessground/draw';
@@ -322,6 +323,28 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
         if (b.kind === 'puzzles') {
           taskNo++;
           return <PuzzleSet key={i} block={b} n={taskNo} done={doneSet.has(i)} onDone={() => markDone(i)} />;
+        }
+        if (b.kind === 'practice') {
+          const done = loadPracticeDone();
+          return (
+            <Card key={i}>
+              <h3 style={{ margin: 0 }}>Tự tay đánh với máy</h3>
+              <p className="small muted">{b.intro ?? 'Đọc hiểu chưa đủ: hãy đánh tiếp thế cờ này với máy cho tới khi đạt mục tiêu. Máy chơi hết sức, bạn được đi lại.'}</p>
+              {b.ids.map((id) => {
+                const p = practiceById(id);
+                if (!p) return null;
+                return (
+                  <div key={id} className="list-item" onClick={() => navigate(`play/practice/${id}?back=learn/lesson/${lesson.id}`)}>
+                    <span>
+                      <b>{p.title}</b>
+                      <div className="small muted">{p.goal === 'draw' ? 'Thủ hòa' : p.goal === 'mate' ? 'Chiếu hết' : 'Phong Hậu hoặc thắng quân'} · bạn cầm {p.me === 'w' ? 'Trắng' : 'Đen'}</div>
+                    </span>
+                    {done[id] ? <Tag tone="good">✓ đã đạt</Tag> : <span className="muted">›</span>}
+                  </div>
+                );
+              })}
+            </Card>
+          );
         }
         return null;
       })}

@@ -30,7 +30,7 @@
     },
     {
       "san": "dxe5",
-      "c": "Trắng ăn Tốt và đặt Đen trước một bài toán khó. Nếu Đen ăn lại ngay thì {dxe5 Qxd8+ Kxd8 Nxe5}: hai Hậu bị đổi nên cái ghim biến mất, Trắng hơn một Tốt, Vua Đen mất quyền nhập thành, và Mã còn dọa cả f7 lẫn Tượng g4. Vì vậy Đen buộc phải đổi Tượng lấy Mã trước."
+      "c": "Trắng ăn Tốt và đặt Đen trước một bài toán khó. Nếu Đen ăn lại ngay thì {dxe5 Qxd8+ Kxd8 Nxe5}: hai Hậu bị đổi nên cái ghim biến mất, Trắng hơn một Tốt, Vua Đen mất quyền nhập thành, và Mã còn dọa cả f7 lẫn Tượng g4. Vì vậy, muốn lấy lại Tốt thì Đen phải đổi Tượng lấy Mã trước."
     },
     {
       "san": "Bxf3",
@@ -62,7 +62,7 @@
     },
     {
       "san": "Nc3",
-      "c": "Morphy không ăn Tốt mà ra thêm quân. Mã c3 chắn đường chéo từ b4 tới e1, nên Đen hết nước chiếu để đổi Hậu và Tốt b7 bây giờ mới thật sự bị dọa. Nói cho công bằng: máy tính đánh giá {^Qxb7 Qb4+ Qxb4 Bxb4+ c3}, hơn một Tốt trong tàn cuộc, là nhỉnh hơn một chút. Nhưng giữ Hậu trên bàn và tiếp tục phát triển cũng rất mạnh, lại khó chống đỡ hơn nhiều đối với người cầm quân Đen."
+      "c": "Morphy không ăn Tốt mà ra thêm quân. Mã c3 chắn đường chéo từ b4 tới e1, nên Đen hết nước chiếu để đổi Hậu và Tốt b7 bây giờ mới thật sự bị dọa. Nói cho công bằng: máy tính coi {^Qxb7 Qb4+ Qxb4 Bxb4+ c3}, hơn một Tốt trong tàn cuộc, là tốt ngang ngửa. Nhưng giữ Hậu trên bàn và tiếp tục phát triển thì khó chống đỡ hơn nhiều đối với người cầm quân Đen."
     },
     {
       "san": "c6",
@@ -74,7 +74,7 @@
     },
     {
       "san": "b5",
-      "c": "**Sai lầm.** Đen muốn đuổi Tượng c4 và nghĩ rằng mình đang giành nhịp. Nhưng khi Vua còn ở trung tâm và quân chưa ra, tự tay mở thêm đường là rất nguy hiểm: Tốt b5 chỉ được Tốt c6 bảo vệ, mà nếu Tốt c6 phải rời chỗ thì đường chéo từ a4 tới e8 dẫn thẳng vào Vua. Đúng ra nên đi {^Qc7}: Hậu gỡ cái ghim, vẫn giữ b7 và trả lại đường cho Tượng f8. **Dừng lại nghĩ:** Trắng có bắt buộc phải lùi Tượng không?"
+      "c": "**Sai lầm.** Đen muốn đuổi Tượng c4 và nghĩ rằng mình đang giành nhịp. Nhưng khi Vua còn ở trung tâm và quân chưa ra, tự tay mở thêm đường là rất nguy hiểm: Tốt b5 chỉ được Tốt c6 bảo vệ, mà nếu Tốt c6 phải rời chỗ thì đường chéo từ a4 tới e8 dẫn thẳng vào Vua. Bền hơn là ra thêm quân bằng {^Na6}, dọa nhảy tới c5 đuổi Hậu Trắng; nếu Trắng đổi {^Na6 Bxa6 bxa6} thì Tượng c4 nguy hiểm biến mất. Đen vẫn kém nhưng chưa sụp. **Dừng lại nghĩ:** Trắng có bắt buộc phải lùi Tượng không?"
     },
     {
       "san": "Nxb5",
@@ -94,7 +94,7 @@
     },
     {
       "san": "O-O-O",
-      "c": "Một nước làm hai việc: Vua Trắng vào chỗ an toàn, Xe xuất hiện ngay trên cột d mở và nhắm vào Mã d7 đang bị ghim. Đen không thể nhập thành dài để trốn: {O-O-O Ba6+ Kc7 Qb7#}. Vội đổi Hậu cũng dính đòn nếu sơ ý: {Qb4 Bxf6 Qxb3 Bxd7#}. Mã d7 giờ bị Tượng và Xe cùng tấn công, mà người bảo vệ nó là Mã f6 lại đang bị ghim."
+      "c": "Một nước làm hai việc: Vua Trắng vào chỗ an toàn, Xe xuất hiện ngay trên cột d mở và nhắm vào Mã d7 đang bị ghim. Đen không thể nhập thành dài để trốn: {O-O-O Ba6+ Kc7 Qb7#}. Vội đổi Hậu cũng dính đòn nếu sơ ý: {Qb4 Bxf6 Qxb3 Bxd7#}. Mã d7 giờ bị Tượng và Xe cùng tấn công, mà trong các quân bảo vệ nó (Vua, Hậu, Mã f6) thì Mã f6 lại đang bị ghim."
     },
     {
       "san": "Rd8",
@@ -137,7 +137,7 @@
       "c": "Chiếu hết. Xe chiếu trên hàng 8 và được Tượng g5 bảo vệ nên Vua không ăn được; ô d7 bị Xe canh, ô e7 bị Tượng canh, ô f7 có Tốt nhà chắn. Trắng chỉ còn đúng một Xe và một Tượng, và cả hai cùng góp mặt trong nước chiếu hết. Đen còn Hậu, Xe, Tượng, Mã, nhưng Tượng f8 và Xe h8 kết thúc ván cờ ở đúng ô xuất phát."
     }
   ],
-  "outro": "Trong 17 nước, Trắng không đi một nước chờ nào: gần như mỗi nước đều đưa thêm một quân vào trận và kèm một đe dọa buộc Đen phải trả lời. Đen thì tốn ba nước cho Tốt, đổi mất quân duy nhất đã phát triển và để Hậu chắn đường Tượng f8, nên cánh Vua không bao giờ ra được. Các đòn thí Mã, thí Xe, thí Hậu trông ngoạn mục nhưng đều dựa trên một phép đếm giản dị: tại nơi giao chiến, Trắng có nhiều quân hơn. Morphy không đi đúng ý máy tính ở mọi nước (8.Nc3 là một ví dụ), nhưng nguyên tắc ông theo thì ai cũng học được.",
+  "outro": "Trong 17 nước, Trắng không đi một nước chờ nào: gần như mỗi nước đều đưa thêm một quân vào trận và kèm một đe dọa buộc Đen phải trả lời. Đen thì tốn ba nước cho Tốt, đổi mất quân duy nhất đã phát triển và để Hậu chắn đường Tượng f8, nên cánh Vua không bao giờ ra được. Các đòn thí Mã, thí Xe, thí Hậu trông ngoạn mục nhưng đều dựa trên một phép đếm giản dị: tại nơi giao chiến, Trắng có nhiều quân hơn. Có lúc máy tính thấy một đường khác cũng tốt ngang (như ăn Tốt b7 thay cho 8.Nc3), nhưng nguyên tắc Morphy theo thì ai cũng học được.",
   "lessons": [
     "Trong khai cuộc, ưu tiên đưa quân ra và nhập thành; hạn chế nước Tốt không cần thiết và đừng để quân nhà chắn đường nhau.",
     "Hãy tìm nước phát triển kèm đe dọa: đối phương phải đỡ, còn bạn được thêm một nhịp.",

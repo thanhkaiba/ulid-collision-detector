@@ -42,7 +42,7 @@
     },
     {
       "san": "O-O",
-      "c": "Vua vào nơi an toàn, Xe f8 đứng ngay sau Tốt f5 – đúng tinh thần Hà Lan."
+      "c": "Vua vào nơi an toàn, Xe f8 đã ở sẵn trên cột f, sau lưng Mã f6 và Tốt f5 – đúng tinh thần Hà Lan."
     },
     {
       "san": "e3",
@@ -50,7 +50,7 @@
     },
     {
       "san": "b6",
-      "c": "Đen chuẩn bị đưa Tượng c8 ra đường chéo lớn, nơi nó nhìn thẳng vào e4 và g2."
+      "c": "Đen chuẩn bị đưa Tượng c8 ra đường chéo lớn, nơi nó nhìn thẳng vào e4 và Mã f3."
     },
     {
       "san": "Bd3",
@@ -74,7 +74,7 @@
     },
     {
       "san": "Ne4",
-      "c": "Mã nhảy vào tiền đồn e4, mở đường cho Tượng e7 đối mặt Tượng g5 và mời đổi quân để giảm sức ép."
+      "c": "Mã nhảy vào ô e4 đã được canh sẵn, mở đường cho Tượng e7 đối mặt Tượng g5 và mời đổi quân để giảm sức ép."
     },
     {
       "san": "Bxe7",
@@ -146,11 +146,11 @@
     },
     {
       "san": "Qd7",
-      "c": "Hậu bảo vệ thêm e6 và ngắm Tốt a4 theo đường chéo. Nhưng Đen vẫn chưa có đòn phản công nào ở trung tâm."
+      "c": "Hậu bảo vệ thêm e6 và ngắm Tốt a4 theo đường chéo, buộc Xe a1 ở lại canh nó. Nhưng Đen vẫn chưa có đòn phản công nào ở trung tâm."
     },
     {
       "san": "e4",
-      "c": "Đòn phá trung tâm được chuẩn bị từ lâu: cột e và đường chéo của Tượng d3 sắp mở ra. Tốt a4 không đáng lo: sau {Qxa4 exf5} Trắng lấy lại Tốt ngay và mở tung thế cờ trong lúc Hậu Đen đứng xa trận địa."
+      "c": "Đòn phá trung tâm được chuẩn bị từ lâu: cột e và đường chéo của Tượng d3 sắp mở ra. Tốt a4 không đáng lo vì đã có Xe a1 bảo vệ: tham ăn bằng {Qxa4 Rxa4} là Đen mất Hậu."
     },
     {
       "san": "fxe4",
@@ -162,7 +162,7 @@
     },
     {
       "san": "g6",
-      "c": "Chặn đường chéo, cứu Tốt h7. Điểm lại: Trắng đã mở được cột e và quân đứng tập trung; Đen có Tốt e6 yếu trên cột nửa mở và Mã a5 xa trận. Trắng dễ chơi hơn, nhưng chưa hơn gì cụ thể."
+      "c": "Chặn đường chéo, cứu Tốt h7. Điểm lại: Trắng đã có cột e nửa mở cho Xe và quân đứng tập trung; Đen có Tốt e6 yếu trên chính cột ấy và Mã a5 xa trận. Trắng dễ chơi hơn, nhưng chưa hơn gì cụ thể."
     },
     {
       "san": "g3",
@@ -186,7 +186,7 @@
     },
     {
       "san": "d5",
-      "c": "Đen tìm cách giải thoát bằng cách ép đổi Hậu: Tốt d5 đuổi Hậu e4 và giành ô c4 cho Mã. Nhưng tàn cuộc sắp tới lại hợp với Trắng hơn, vì Mã a5 còn xa trận và cột h sắp mở. Engine chỉ ra một cơ hội bị bỏ lỡ là {^Nxc4}: nếu {^Nxc4 Bxc4 d5} thì Tốt bắt đôi Hậu và Tượng, Đen lấy lại quân và lời một Tốt. Trắng khi đó sẽ không bắt Mã mà tấn công tiếp bằng Tốt h, song Đen đã có thêm Tốt làm vốn."
+      "c": "Đen tìm cách giải thoát bằng cách mời đổi Hậu: Tốt d5 đuổi Hậu e4 và giành ô c4 cho Mã. Nhưng tàn cuộc sắp tới lại hợp với Trắng hơn, vì Mã a5 còn xa trận và cột h sắp mở. Engine chỉ ra một cơ hội bị bỏ lỡ là {^Nxc4}: nếu {^Nxc4 Bxc4 d5} thì Tốt bắt đôi Hậu và Tượng, Đen lấy lại quân mà không thiệt gì, có khi còn lời một Tốt. Trắng khi đó sẽ không bắt Mã mà tấn công tiếp bằng Tốt h, song Đen đã có thêm Tốt làm vốn."
     },
     {
       "san": "cxd5",
@@ -210,11 +210,11 @@
     },
     {
       "san": "Kxe8",
-      "c": "Vua bắt lại và đã ở sẵn trung tâm. Điểm lại: vật chất ngang nhau, mỗi bên một Xe, một quân nhẹ và sáu Tốt. Nhưng Tượng d3 ngắm g6, Mã a5 đứng ngoài biên, còn Xe Trắng chưa có cột mở. **Hãy dừng lại nghĩ: làm sao để Xe a1 có việc làm?**"
+      "c": "Vua bắt lại và đã ở sẵn trung tâm. Điểm lại: vật chất ngang nhau, mỗi bên một Xe, một quân nhẹ và sáu Tốt. Nhưng Tượng d3 ngắm g6, Mã a5 đứng ngoài biên, còn Xe Trắng chưa có lối xâm nhập: cột e tuy mở nhưng Vua Đen đứng ngay đó canh các ô vào. **Hãy dừng lại nghĩ: làm sao để Xe a1 có việc làm?**"
     },
     {
       "san": "h5",
-      "c": "Câu trả lời: tự tạo cột mở. Tốt h đánh vào g6, đúng điểm Tượng d3 đang ngắm. Nếu {gxh5 Rh1 Kf8 Rxh5} Trắng lấy lại Tốt, còn h7 và d5 của Đen đều yếu. Nếu Đen lờ đi bằng {Nc4 hxg6 hxg6 Bxg6} thì mất Tốt, vì Xe f7 bị ghim vào Vua. **Xe chỉ mạnh khi có cột mở** – và đòn bẩy Tốt là cách để có nó."
+      "c": "Câu trả lời: tự mở thêm một cột ở cánh Vua. Tốt h đánh vào g6, đúng điểm Tượng d3 đang ngắm. Nếu {gxh5 Rh1 Kf8 Rxh5} Trắng lấy lại Tốt, còn h7 và d5 của Đen đều yếu. Nếu Đen lờ đi bằng {Nc4 hxg6 hxg6 Bxg6} thì mất Tốt và mất luôn chất, vì Xe f7 bị ghim vào Vua. **Xe chỉ mạnh khi có cột mở** – và đòn bẩy Tốt là cách để có nó."
     },
     {
       "san": "Rf6",
@@ -226,11 +226,11 @@
     },
     {
       "san": "hxg6",
-      "c": "Bắt lại bằng Tốt là đúng; sau {^Rxg6 Rh1} Tốt h7 làm mồi cho Xe Trắng trên cột h."
+      "c": "Bắt lại bằng Tốt là đúng; sau {^Rxg6 Bxg6+ hxg6} Đen mất chất, vì Tượng d3 đang ngắm đúng ô g6."
     },
     {
       "san": "Rh1",
-      "c": "Xe chiếm cột mở duy nhất. Lời dọa là chiếu ở h8 rồi xuống hàng 7, ví dụ {Nc4 Rh8+ Ke7 Rh7+ Kd6 Rg7} và Tốt g6 rất khó giữ."
+      "c": "Xe chiếm cột h vừa mở. Lời dọa là chiếu ở h8 rồi xuống hàng 7, ví dụ {Nc4 Rh8+ Ke7 Rh7+ Kd6 Rg7} và Tốt g6 rất khó giữ."
     },
     {
       "san": "Kf8",
@@ -278,7 +278,7 @@
     },
     {
       "san": "Kg3",
-      "c": "**Nước đi làm nên ván cờ.** Trắng bỏ mặc Tốt c3 – thậm chí cho ăn kèm chiếu – để Vua đi theo đường g3–h4–h5–g6 vào hỗ trợ Tốt thông. Trong cờ tàn, Vua là quân tấn công, và ở đây sự có mặt của nó đáng giá hơn một Tốt. Giữ Tốt thì sao? Xe không giữ nổi vì Vua f3 che mất hàng 3: {^Rh3 Rxc3+}. Lùi Vua về {^Ke2 Rxc3 Kd2} thì vẫn mất Tốt mà Vua lại xa cánh Vua; engine đánh giá khi đó hoàn toàn cân bằng. Mọi nước khác tôi thử với engine cũng chỉ hòa hoặc kém hơn."
+      "c": "**Nước đi làm nên ván cờ.** Trắng bỏ mặc Tốt c3 – thậm chí cho ăn kèm chiếu – để Vua đi theo đường g3–h4–h5–g6 vào hỗ trợ Tốt thông. Trong cờ tàn, Vua là quân tấn công, và ở đây sự có mặt của nó đáng giá hơn một Tốt. Giữ Tốt thì sao? Xe không giữ nổi vì Vua f3 che mất hàng 3: {^Rh3 Rxc3+} là chiếu, và sau đó Xe h3 mất luôn. Lùi Vua về {^Ke2 Rxc3 Kd2} thì vẫn mất Tốt mà Vua lại xa cánh Vua; engine đánh giá khi đó hoàn toàn cân bằng. Mọi nước khác tôi thử với engine cũng chỉ hòa hoặc kém hơn."
     },
     {
       "san": "Rxc3+",
@@ -286,7 +286,7 @@
     },
     {
       "san": "Kh4",
-      "c": "Vua bước lên, hướng tới h5 và g6. Tốt f4 cũng đang treo, và Trắng vẫn không bận tâm: mỗi nước Đen dùng để ăn Tốt là một nước Vua và Tốt g tiến thêm."
+      "c": "Vua bước lên, hướng tới h5 và g6. Tốt f4 cũng không còn ai bảo vệ, và Trắng vẫn không bận tâm: mỗi nước Đen dùng để ăn Tốt là một nước Vua và Tốt g tiến thêm."
     },
     {
       "san": "Rf3",
@@ -306,7 +306,7 @@
     },
     {
       "san": "Re4",
-      "c": "Xe tránh sang cột e để còn kịp về e8 giữ hàng cuối, tiện ngắm Tốt d4. Ăn Tốt thứ ba thì bị chiếu hết: {^Rxd4 Kf6 Kg8 Rd7 Re4 Rd8+ Re8 Rxe8#}. Điểm lại: Trắng kém hai Tốt nhưng Vua, Xe và Tốt g cùng vây Vua Đen. **Câu hỏi: Vua nên ăn Tốt f5 hay đi nước khác?**"
+      "c": "Xe tránh sang cột e để còn kịp về e8 giữ hàng cuối, tiện ngắm Tốt d4. Ăn Tốt thứ ba còn thua nhanh hơn, có khi bị chiếu hết: {^Rxd4 Kf6 Kg8 Rd7 Re4 Rd8+ Re8 Rxe8#}. Điểm lại: Trắng kém hai Tốt nhưng Vua, Xe và Tốt g cùng vây Vua Đen. **Câu hỏi: Vua nên ăn Tốt f5 hay đi nước khác?**"
     },
     {
       "san": "Kf6",
@@ -374,7 +374,7 @@
     },
     {
       "san": "Kxd5",
-      "c": "Vua ăn Tốt thứ tư kể từ nước 41. Điểm lại: Trắng hơn hai Tốt, có hai Tốt thông d4 và g7; Vua Đen bị buộc chân trước Tốt g7. Phần còn lại là kỹ thuật: đưa Tốt d lên với Vua hộ tống."
+      "c": "Trắng ăn Tốt thứ tư kể từ nước 41. Điểm lại: Trắng hơn hai Tốt, có hai Tốt thông d4 và g7; Vua Đen bị buộc chân trước Tốt g7. Phần còn lại là kỹ thuật: đưa Tốt d lên với Vua hộ tống."
     },
     {
       "san": "Rc1",
@@ -417,7 +417,7 @@
       "c": "Tốt d tiến và Đen đầu hàng. Xe có đuổi theo cũng vô ích: {Rd4 d7 Rc4+ Kb7 Rd4 Kc8} và Đen phải thí Xe lấy Tốt. Hai Tốt thông trên hàng 6 và 7, cộng với Vua và Xe hoạt động, là quá đủ."
     }
   ],
-  "outro": "Tartakower không thua vì đòn chiến thuật, mà vì từng bước để quân mình thụ động hơn: ép đổi Hậu ở nước 23, cho đổi Mã ở nước 33, rồi đi nhặt Tốt ở nước 36 thay vì phản công. Capablanca thì ngược lại: mở cột cho Xe, đưa Xe lên hàng 7, đổi Tượng đúng lúc và dùng Vua như một quân tấn công, chấp nhận kém hai Tốt để dựng lưới chiếu hết quanh Vua Đen. Khi quân đã vào đúng vị trí, số Tốt thí đi tự quay về, kèm thêm lãi. Hãy nhớ hình ảnh Vua f6, Xe hàng 7 và Tốt g6 – đó là sức mạnh của quân hoạt động trong cờ tàn Xe.",
+  "outro": "Tartakower không thua vì đòn chiến thuật, mà vì từng bước để quân mình thụ động hơn: mời đổi Hậu ở nước 23, cho đổi Mã ở nước 33, rồi đi nhặt Tốt ở nước 36 thay vì phản công. Capablanca thì ngược lại: mở cột cho Xe, đưa Xe lên hàng 7, đổi Tượng đúng lúc và dùng Vua như một quân tấn công, chấp nhận kém hai Tốt để dựng lưới chiếu hết quanh Vua Đen. Khi quân đã vào đúng vị trí, số Tốt thí đi tự quay về, kèm thêm lãi. Hãy nhớ hình ảnh Vua f6, Xe hàng 7 và Tốt g6 – đó là sức mạnh của quân hoạt động trong cờ tàn Xe.",
   "lessons": [
     "Trong cờ tàn, Vua là quân tấn công: đưa Vua lên hỗ trợ Tốt thông có thể đáng giá hơn một, thậm chí hai Tốt.",
     "Xe mạnh nhất trên hàng 7: vừa ăn Tốt, vừa nhốt Vua đối phương ở hàng cuối.",

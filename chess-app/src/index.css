@@ -258,3 +258,9 @@ label.field > span { display: block; font-size: 0.85rem; color: var(--fg-2); mar
 .board-wrap .cg-wrap coords.ranks coord:nth-child(even), .board-wrap .cg-wrap coords.files coord:nth-child(even) { color: #7a5c3e; }
 .board-wrap .cg-wrap coords.ranks.black coord:nth-child(odd), .board-wrap .cg-wrap coords.files.black coord:nth-child(odd) { color: #7a5c3e; }
 .board-wrap .cg-wrap coords.ranks.black coord:nth-child(even), .board-wrap .cg-wrap coords.files.black coord:nth-child(even) { color: #f3e3c3; }
+
+/* mistake explanations and weakness report */
+.explain { background: var(--bg-3); border-radius: 10px; padding: 8px 10px; font-size: 0.92rem; line-height: 1.45; }
+.wk-bar { margin: 8px 0; }
+.wk-bar .progress { margin-top: 3px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }

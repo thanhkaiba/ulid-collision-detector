@@ -11,6 +11,12 @@ import { fmtClock, gameEnd, playUci, turnColor, kingInCheckColor, toDests, needs
 import { upsertGames, type StoredGame } from '../lib/storage';
 import { navigate, type Route } from '../lib/router';
 import { logActivity } from '../lib/activity';
+import { PRACTICE, practiceById, loadPracticeDone, markPracticeDone, type PracticePosition } from '../data/practice';
+
+/** Engine settings for endgame practice: full strength, it must defend (or attack) correctly. */
+const PRACTICE_LEVEL: Level = { n: 10, label: 'Tối đa', elo: '3000+', depth: 18, movetime: 900 };
+const NO_CLOCK: TimeControl = { id: 'none', label: 'Luyện cờ tàn', initial: 0, inc: 0 };
+const PIECE_VAL: Record<string, number> = { p: 1, n: 3, b: 3, r: 5, q: 9, k: 0 };
 
 type Setup = { color: 'w' | 'b' | 'random'; level: number; tc: string };
 const SETUP_KEY = 'play-setup';
@@ -23,7 +29,65 @@ function loadSetup(): Setup {
   }
 }
 
-export default function Play(_: { route: Route }) {
+export default function Play({ route }: { route: Route }) {
+  if (route.parts[0] === 'practice') {
+    const pos = route.parts[1] ? practiceById(route.parts[1]) : undefined;
+    if (pos) return <PracticeRun key={pos.id} pos={pos} back={route.query.get('back') ?? 'play/practice'} />;
+    return <PracticeList />;
+  }
+  return <PlaySetup />;
+}
+
+function PracticeRun({ pos, back }: { pos: PracticePosition; back: string }) {
+  const [attempt, setAttempt] = useState(0);
+  return (
+    <GameView
+      key={attempt}
+      me={pos.me}
+      level={PRACTICE_LEVEL}
+      tc={NO_CLOCK}
+      practice={pos}
+      onExit={() => navigate(back)}
+      onRematch={() => setAttempt((a) => a + 1)}
+    />
+  );
+}
+
+function PracticeList() {
+  const done = loadPracticeDone();
+  const groups = [...new Set(PRACTICE.map((p) => p.group))];
+  return (
+    <div>
+      <div className="topbar">
+        <button className="back" onClick={() => navigate('play')} aria-label="Quay lại">
+          ‹
+        </button>
+        <h2 style={{ margin: 0 }}>Luyện cờ tàn với máy</h2>
+      </div>
+      <p className="small muted">
+        Biết lý thuyết chưa đủ: phải tự tay đánh thắng (hoặc thủ hòa) trước một đối thủ không đi sai. Máy chơi hết sức. Bạn được đi lại bao nhiêu lần tùy ý.
+      </p>
+      {groups.map((g) => (
+        <Card key={g}>
+          <h3>{g}</h3>
+          {PRACTICE.filter((p) => p.group === g).map((p) => (
+            <div key={p.id} className="list-item" onClick={() => navigate(`play/practice/${p.id}`)}>
+              <span>
+                <b>{p.title}</b>
+                <div className="small muted">
+                  {p.goal === 'draw' ? 'Mục tiêu: thủ hòa' : p.goal === 'mate' ? 'Mục tiêu: chiếu hết' : 'Mục tiêu: phong Hậu hoặc thắng quân'} · {'★'.repeat(p.level)}
+                </div>
+              </span>
+              <span className={`tag ${done[p.id] ? 'tag-good' : 'tag-default'}`}>{done[p.id] ? '✓ đã đạt' : p.me === 'w' ? 'cầm Trắng' : 'cầm Đen'}</span>
+            </div>
+          ))}
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function PlaySetup() {
   const [setup, setSetup] = useState<Setup>(loadSetup);
   const [game, setGame] = useState<{ me: 'w' | 'b'; level: Level; tc: TimeControl } | null>(null);
 
@@ -92,6 +156,15 @@ export default function Play(_: { route: Route }) {
           "15+10" nghĩa là mỗi bên có 15 phút, cộng thêm 10 giây sau mỗi nước đi. Để học, nên chơi 15+10 hoặc 30+0, hoặc "Không giờ" khi mới tập. Cờ chớp chỉ để giải trí.
         </p>
       </Card>
+      <Card onClick={() => navigate('play/practice')}>
+        <div className="row-between">
+          <div>
+            <b>Luyện cờ tàn với máy</b>
+            <div className="small muted">Chiếu hết cơ bản, cờ tàn Tốt, Lucena, Philidor: đánh tiếp từ thế cờ mẫu.</div>
+          </div>
+          <span className="muted">›</span>
+        </div>
+      </Card>
       <Button
         kind="primary"
         className="grow"
@@ -115,15 +188,25 @@ function GameView({
   tc,
   onExit,
   onRematch,
+  practice,
 }: {
   me: 'w' | 'b';
   level: Level;
   tc: TimeControl;
   onExit: () => void;
   onRematch: () => void;
+  /** endgame practice: start from this position with a goal instead of a normal game */
+  practice?: PracticePosition;
 }) {
-  const chessRef = useRef(new Chess());
+  const startFen = practice?.fen;
+  /** a practice position where Black moves first: shift the move list by one cell */
+  const listOffset = startFen?.split(' ')[1] === 'b' ? 1 : 0;
+  const chessRef = useRef(new Chess(startFen));
   const chess = chessRef.current;
+  /** practice only: the goal was reached / the engine thinks the goal has slipped away */
+  const [goalMet, setGoalMet] = useState(false);
+  const [slipped, setSlipped] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const [version, setVersion] = useState(0);
   const [pending, setPending] = useState<{ from: Key; to: Key } | null>(null);
   const [clock, setClock] = useState({ w: tc.initial * 1000, b: tc.initial * 1000 });
@@ -139,13 +222,25 @@ function GameView({
   const moveCount = history.length;
 
   const logged = useRef(false);
-  const finish = useCallback((result: string, reason: string) => {
-    setOver((o) => o ?? { result, reason });
-    if (!logged.current) {
-      logged.current = true;
-      logActivity('games');
-    }
-  }, []);
+  const finish = useCallback(
+    (result: string, reason: string, reached?: boolean) => {
+      setOver((o) => o ?? { result, reason });
+      if (practice) {
+        const drawn = result === '1/2-1/2';
+        const won = (result === '1-0') === (me === 'w') && !drawn;
+        const ok = reached ?? (practice.goal === 'draw' ? drawn || won : won);
+        if (ok) {
+          setGoalMet(true);
+          markPracticeDone(practice.id);
+        }
+      }
+      if (!logged.current) {
+        logged.current = true;
+        logActivity('games');
+      }
+    },
+    [practice, me],
+  );
 
   // clock
   useEffect(() => {
@@ -185,15 +280,46 @@ function GameView({
     let cancelled = false;
     (async () => {
       setThinking(true);
-      await applyLevel(engine, level);
+      if (practice) await engine.fullStrength();
+      else await applyLevel(engine, level);
       const res = await engine.evaluate(chess.fen(), { depth: level.depth, movetime: level.movetime });
       if (cancelled) return;
+      if (practice) {
+        // engine's own verdict (its point of view) tells whether the goal is still within reach
+        const l = res.lines[0];
+        const engineCp = l ? (l.mate !== undefined ? (l.mate > 0 ? 10000 : -10000) : (l.cp ?? 0)) : 0;
+        setSlipped(practice.goal === 'draw' ? engineCp >= 250 : engineCp > -150);
+        const myMoves = Math.ceil(chess.history().length / 2);
+        if (practice.goal === 'draw' && practice.hold && myMoves >= practice.hold && engineCp < 150) {
+          finish('1/2-1/2', `Bạn đã giữ vững ${practice.hold} nước, máy không tìm ra đường thắng.`, true);
+          setThinking(false);
+          return;
+        }
+      }
       // a tiny human-like delay on the lowest levels so moves don't feel instant
       await new Promise((r) => setTimeout(r, 250));
       if (cancelled) return;
       if (res.bestmove && res.bestmove !== '(none)') {
         const mover = chess.turn();
-        if (playUci(chess, res.bestmove)) afterMove(mover);
+        if (playUci(chess, res.bestmove)) {
+          afterMove(mover);
+          if (practice?.goal === 'win' && !chess.isGameOver()) {
+            // decisive material after the engine's reply: a safe new queen, or a bare king against a rook or more
+            let mine = 0;
+            let theirs = 0;
+            let queen = false;
+            for (const row of chess.board())
+              for (const sq of row) {
+                if (!sq) continue;
+                if (sq.color === me) {
+                  mine += PIECE_VAL[sq.type];
+                  if (sq.type === 'q') queen = true;
+                } else theirs += PIECE_VAL[sq.type];
+              }
+            if ((queen && mine - theirs >= 4) || (theirs === 0 && mine >= 5))
+              finish(me === 'w' ? '1-0' : '0-1', 'Bạn đã có ưu thế quyết định. Phần còn lại là chiếu hết cơ bản.', true);
+          }
+        }
       }
       setThinking(false);
     })();
@@ -228,11 +354,11 @@ function GameView({
   // position shown (live or browsing history)
   const shown = useMemo(() => {
     if (viewPly === null) return chess;
-    const c = new Chess();
+    const c = new Chess(startFen);
     const h = chess.history();
     for (let i = 0; i <= viewPly && i < h.length; i++) c.move(h[i]);
     return c;
-  }, [chess, viewPly, version]);
+  }, [chess, viewPly, version, startFen]);
   const shownHist = shown.history({ verbose: true });
   const last = shownHist[shownHist.length - 1];
   const live = viewPly === null;
@@ -274,12 +400,13 @@ function GameView({
     if (!canTakeback) return;
     chess.undo();
     chess.undo();
+    setSlipped(false);
     setViewPly(null);
     setVersion((v) => v + 1);
   };
 
   const myName = 'Bạn';
-  const botName = `Stockfish · cấp ${level.n} (${level.elo})`;
+  const botName = practice ? 'Stockfish · hết sức' : `Stockfish · cấp ${level.n} (${level.elo})`;
   const top = me === 'w' ? 'b' : 'w';
   const bottom = me;
   const bar = (side: 'w' | 'b') => (
@@ -296,7 +423,11 @@ function GameView({
     </div>
   );
 
-  const resultText = over
+  const resultText = practice && over
+    ? goalMet
+      ? 'Đạt mục tiêu!'
+      : 'Chưa đạt mục tiêu'
+    : over
     ? over.result === '1/2-1/2'
       ? 'Hòa'
       : (over.result === '1-0') === (me === 'w')
@@ -310,7 +441,7 @@ function GameView({
         <button className="back" onClick={onExit} aria-label="Quay lại">
           ‹
         </button>
-        <h2 style={{ margin: 0 }}>Ván đấu</h2>
+        <h2 style={{ margin: 0 }}>{practice ? practice.title : 'Ván đấu'}</h2>
       </div>
       <div className="board-layout">
         <div>
@@ -328,7 +459,41 @@ function GameView({
           {bar(bottom)}
         </div>
         <div>
-          {over && (
+          {practice && !over && (
+            <Card>
+              <div className="tiny muted">{practice.goal === 'draw' ? 'MỤC TIÊU: THỦ HÒA' : practice.goal === 'mate' ? 'MỤC TIÊU: CHIẾU HẾT' : 'MỤC TIÊU: PHONG HẬU HOẶC THẮNG QUÂN'}</div>
+              <p className="small" style={{ margin: '4px 0' }}>{practice.brief}</p>
+              {showHint ? (
+                <div className="explain">{practice.hint}</div>
+              ) : (
+                <button className="chip" onClick={() => setShowHint(true)}>
+                  Xem phương pháp
+                </button>
+              )}
+              {slipped && (
+                <div className="feedback bad small">
+                  {practice.goal === 'draw' ? 'Máy đánh giá thế này đối phương đã thắng được.' : 'Máy đánh giá thế này không còn thắng được nữa.'} Bấm “Đi lại” để thử nước khác.
+                </div>
+              )}
+            </Card>
+          )}
+          {over && practice && (
+            <Card>
+              <h3>{resultText}</h3>
+              <p className="muted small">{over.reason}</p>
+              {!goalMet && <div className="explain">{practice.hint}</div>}
+              <div className="row mt">
+                <Button kind="primary" onClick={onRematch}>
+                  {goalMet ? 'Đánh lại lần nữa' : 'Thử lại'}
+                </Button>
+                <Button onClick={onExit}>Quay lại</Button>
+                <Button kind="ghost" onClick={() => navigate('play/practice')}>
+                  Thế khác
+                </Button>
+              </div>
+            </Card>
+          )}
+          {over && !practice && (
             <Card>
               <h3>
                 {resultText} <span className="muted small">({over.result})</span>
@@ -349,7 +514,11 @@ function GameView({
             </Card>
           )}
           <Card>
-            <MoveList moves={history} current={viewPly ?? moveCount - 1} onSelect={(p) => setViewPly(p === moveCount - 1 ? null : p)} />
+            <MoveList
+              moves={listOffset ? ['…', ...history] : history}
+              current={(viewPly ?? moveCount - 1) + listOffset}
+              onSelect={(p) => setViewPly(p - listOffset === moveCount - 1 ? null : Math.max(-1, p - listOffset))}
+            />
             <div className="row mt">
               <Button kind="ghost" onClick={() => setViewPly(Math.max(-1, (viewPly ?? moveCount - 1) - 1))} disabled={moveCount === 0}>
                 ◀
@@ -363,9 +532,15 @@ function GameView({
                   <Button kind="ghost" onClick={takeback} disabled={!canTakeback}>
                     ↶ Đi lại
                   </Button>
-                  <Button kind="danger" onClick={resign}>
-                    Xin thua
-                  </Button>
+                  {practice ? (
+                    <Button kind="ghost" onClick={onRematch}>
+                      Làm lại từ đầu
+                    </Button>
+                  ) : (
+                    <Button kind="danger" onClick={resign}>
+                      Xin thua
+                    </Button>
+                  )}
                 </>
               )}
             </div>

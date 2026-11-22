@@ -11,7 +11,7 @@
   "title": "Phát triển quân nhanh hơn đối thủ",
   "theme": "Ra quân nhanh, mở đường cho quân và đi nước nào cũng có nhịp thì thắng được cả khi kém quân.",
   "plies": 33,
-  "words": 2026
+  "words": 2046
  },
  {
   "id": "steinitz-bardeleben",
@@ -25,7 +25,7 @@
   "title": "Vua kẹt ở trung tâm",
   "theme": "Khi Vua đối phương không kịp nhập thành, hãy mở trung tâm và giữ cho đòn tấn công không ngừng nghỉ.",
   "plies": 49,
-  "words": 2564
+  "words": 2602
  },
  {
   "id": "lasker-bauer",
@@ -39,7 +39,7 @@
   "title": "Thí hai Tượng phá cánh Vua",
   "theme": "Một đòn tấn công Vua được chuẩn bị ra sao: dồn quân về phía Vua, loại quân bảo vệ, rồi thí hai Tượng ở h7 và g7 để lột hết Tốt che Vua.",
   "plies": 75,
-  "words": 3100
+  "words": 3111
  },
  {
   "id": "rotlewi-rubinstein",
@@ -53,7 +53,7 @@
   "title": "Mọi quân cùng tham chiến",
   "theme": "Phát triển quân hài hòa và không phí nhịp: khi mọi quân cùng hướng về Vua đối phương, đòn phối hợp kết thúc sẽ tự xuất hiện.",
   "plies": 50,
-  "words": 2495
+  "words": 2584
  },
  {
   "id": "byrne-fischer",
@@ -67,7 +67,7 @@
   "title": "Chủ động quan trọng hơn vật chất",
   "theme": "Bên chậm phát triển và để Vua ở trung tâm sẽ bị trừng phạt bằng chiến thuật; quân phối hợp tốt đáng giá hơn một quân Hậu đơn độc.",
   "plies": 82,
-  "words": 2943
+  "words": 2993
  },
  {
   "id": "capablanca-tartakower",
@@ -81,7 +81,7 @@
   "title": "Cờ tàn Xe: Vua là quân tấn công",
   "theme": "Khi chuyển sang cờ tàn Xe, Xe trên hàng 7 và Vua tích cực có thể đáng giá hơn vài Tốt.",
   "plies": 103,
-  "words": 3039
+  "words": 3104
  },
  {
   "id": "alekhine-nimzowitsch",
@@ -95,7 +95,7 @@
   "title": "Cột mở và đòn ghim: dồn quân vào một điểm",
   "theme": "Hơn không gian thì chiếm cột mở, chồng quân nặng lên một quân bị ghim, rồi để đối phương tự hết nước đi.",
   "plies": 63,
-  "words": 3078
+  "words": 3150
  },
  {
   "id": "saemisch-nimzowitsch",
@@ -109,7 +109,7 @@
   "title": "Hạn chế đối phương đến khi hết nước đi",
   "theme": "Hạn chế và zugzwang ở trung cuộc: thắng bằng cách lấy dần các ô của quân đối phương.",
   "plies": 50,
-  "words": 1854
+  "words": 1889
  },
  {
   "id": "botvinnik-capablanca",
@@ -123,7 +123,7 @@
   "title": "Trung tâm Tốt di động và đòn phối hợp",
   "theme": "Trắng bỏ một Tốt cánh để dựng và đẩy trung tâm Tốt e4–e5, tạo Tốt thông e6 rồi kết thúc bằng đòn thí Tượng, thí Mã và cuộc đi bộ trốn chiếu của Vua.",
   "plies": 81,
-  "words": 3087
+  "words": 3115
  },
  {
   "id": "fischer-spassky-6",
@@ -137,7 +137,7 @@
   "title": "Tấn công Tốt treo, chuyển lợi thế",
   "theme": "Gambit Hậu từ chối (hệ thống Tartakower): bao vây cặp Tốt treo c5–d5, giành Tượng ô trắng không đối thủ rồi chuyển lợi thế cấu trúc thành tấn công cánh Vua.",
   "plies": 81,
-  "words": 3231
+  "words": 3350
  },
  {
   "id": "karpov-unzicker",
@@ -151,7 +151,7 @@
   "title": "Bóp nghẹt bằng không gian",
   "theme": "Trong thế đóng, bên hơn không gian nên giữ quân trên bàn, khóa đường đổi quân của đối phương (Tượng chặn cột a ở a7), rồi mở mặt trận thứ hai để bên chật chội không kịp chống đỡ.",
   "plies": 87,
-  "words": 3590
+  "words": 3745
  },
  {
   "id": "karpov-kasparov-16",

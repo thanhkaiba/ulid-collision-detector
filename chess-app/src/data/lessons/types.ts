@@ -47,7 +47,14 @@ export interface SquaresBlock {
   intro: string;
 }
 
-export type Block = TaskBlock | PuzzleSetBlock | DiagramBlock | TextBlock | SquaresBlock;
+export interface PracticeBlock {
+  kind: 'practice';
+  /** ids from src/data/practice.ts: positions to play out against the engine */
+  ids: string[];
+  intro?: string;
+}
+
+export type Block = TaskBlock | PuzzleSetBlock | DiagramBlock | TextBlock | SquaresBlock | PracticeBlock;
 
 export interface Resource {
   label: string;

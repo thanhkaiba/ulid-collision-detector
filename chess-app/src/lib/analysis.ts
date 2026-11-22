@@ -58,7 +58,8 @@ export async function analyzeGame(
     }
     const r = await engine.evaluate(fen, { depth });
     const line = r.lines[0];
-    evals[k] = line ? toWhitePov(line, c.turn()) : { cp: 0 };
+    // with server evals the curve stays the server's: the local engine only supplies lines
+    if (!useServer || evals[k] === undefined) evals[k] = line ? toWhitePov(line, c.turn()) : { cp: 0 };
     bests[k] = line?.pv ?? [r.bestmove];
   };
 
@@ -91,6 +92,9 @@ export async function analyzeGame(
       await evalPos(i);
       pv = bests[i];
     }
+    // refutation of the played move, needed to explain the mistake in words
+    if (winLoss >= 10 && bests[i + 1] === undefined) await evalPos(i + 1);
+    if (signal?.cancelled) return null;
     const best = pv?.[0] ?? verbose[i].uci;
     // without an engine pv (server evals, no ground lost) we cannot claim the move was best
     const isBest = !!pv?.length && best === verbose[i].uci;
@@ -105,6 +109,7 @@ export async function analyzeGame(
       best,
       bestSan: uciLineToSan(verbose[i].fenBefore, [best])[0] ?? best,
       bestPv: pv ?? [best],
+      refPv: winLoss >= 10 ? bests[i + 1] : undefined,
       judgment,
       winLoss: Math.max(0, winLoss),
     });

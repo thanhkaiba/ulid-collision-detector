@@ -9,6 +9,19 @@ import MoveList from '../components/MoveList';
 import { Button, Card, Spinner, Tag } from '../components/ui';
 import { getEngine, formatScore, toWhitePov, type EngineLine } from '../lib/engine';
 import { analyzeGame, extractMistakes } from '../lib/analysis';
+import {
+  explainPly,
+  isError,
+  buildWeaknessReport,
+  CATEGORY_VI,
+  CATEGORY_ADVICE,
+  PHASE_VI,
+  PHASE_ADVICE,
+  type ErrorCategory,
+  type Phase,
+  type WeaknessInput,
+  type WeaknessReport,
+} from '../lib/explain';
 import { fetchChesscomGames, fetchLichessGames, importPgn } from '../lib/import';
 import { kingInCheckColor, turnColor, uciLineToSan, toDests, playUci } from '../lib/chess-utils';
 import {
@@ -32,7 +45,18 @@ export default function Analyze({ route }: { route: Route }) {
   if (route.parts[0] === 'game' && route.parts[1]) {
     return <GameAnalysisView gameId={route.parts[1]} initialPly={route.query.get('ply') ? Number(route.query.get('ply')) : undefined} />;
   }
+  if (route.parts[0] === 'stats') return <Weaknesses />;
   return <GamesList />;
+}
+
+/** Save an analysis and add the user's own mistakes to the spaced-repetition queue. Returns how many were found. */
+async function storeAnalysis(game: StoredGame, res: GameAnalysis): Promise<number> {
+  await saveAnalysis(res);
+  const mine = extractMistakes(game, res);
+  const existing = await loadMistakes();
+  const ids = new Set(existing.map((m) => m.id));
+  await saveMistakes([...existing, ...mine.filter((m) => !ids.has(m.id))].slice(-500));
+  return mine.length;
 }
 
 /* ------------------------------------------------------------------ */
@@ -84,11 +108,78 @@ function GamesList() {
     setErr(null);
   };
 
+  const batchCancel = useRef<{ cancelled: boolean }>({ cancelled: false });
+  const [batch, setBatch] = useState<{ game: number; games: number; done: number; total: number } | null>(null);
+  useEffect(() => () => {
+    batchCancel.current.cancelled = true;
+  }, []);
+
   if (!games || !settings) return <Spinner label="Đang tải..." />;
+
+  const pendingGames = games.filter((g) => !analyzed.has(g.id) && g.moves.length >= 10).slice(0, 20);
+  const runBatch = async () => {
+    const engine = getEngine();
+    batchCancel.current = { cancelled: false };
+    // games that already carry Lichess evals are quick: do them first
+    const queue = [...pendingGames].sort((a, b) => Number(!!b.serverEvals) - Number(!!a.serverEvals));
+    for (let i = 0; i < queue.length; i++) {
+      const g = queue[i];
+      setBatch({ game: i + 1, games: queue.length, done: 0, total: g.moves.length });
+      await engine.newGame();
+      const res = await analyzeGame(g, engine, Math.min(settings.analysisDepth, 12), (done, total) => setBatch({ game: i + 1, games: queue.length, done, total }), batchCancel.current);
+      if (!res) break;
+      await storeAnalysis(g, res);
+      setAnalyzed((s) => new Set([...s, g.id]));
+    }
+    setBatch(null);
+  };
 
   return (
     <div>
       <h1>Phân tích ván đấu</h1>
+      {games.length > 0 && (
+        <Card>
+          <div className="row-between">
+            <div>
+              <b>Điểm yếu của bạn</b>
+              <div className="small muted">Tổng hợp lỗi từ {analyzed.size} ván đã phân tích: loại lỗi, giai đoạn, khai cuộc.</div>
+            </div>
+            <Button kind="primary" onClick={() => navigate('analyze/stats')}>
+              Xem
+            </Button>
+          </div>
+          {batch ? (
+            <div className="mt">
+              <div className="row-between small">
+                <span>
+                  Đang phân tích ván {batch.game}/{batch.games} · nước {batch.done}/{batch.total}
+                </span>
+                <button
+                  className="chip"
+                  onClick={() => {
+                    batchCancel.current.cancelled = true;
+                    getEngine().stop();
+                  }}
+                >
+                  dừng
+                </button>
+              </div>
+              <div className="progress mt">
+                <div style={{ width: `${(100 * (batch.game - 1 + batch.done / Math.max(1, batch.total))) / batch.games}%` }} />
+              </div>
+            </div>
+          ) : (
+            pendingGames.length > 0 && (
+              <div className="mt">
+                <Button kind="ghost" className="small" onClick={runBatch}>
+                  Phân tích {pendingGames.length} ván chưa phân tích
+                </Button>
+                <span className="tiny muted"> Cứ để máy chạy, có thể dừng bất cứ lúc nào.</span>
+              </div>
+            )
+          )}
+        </Card>
+      )}
       <Card>
         <label className="field">
           <span>Tên người dùng Lichess</span>
@@ -279,14 +370,7 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
     setRunning(null);
     if (!res) return;
     setAnalysis(res);
-    await saveAnalysis(res);
-    // harvest mistakes
-    const mine = extractMistakes(game, res);
-    const existing = await loadMistakes();
-    const ids = new Set(existing.map((m) => m.id));
-    const merged = [...existing, ...mine.filter((m) => !ids.has(m.id))].slice(-500);
-    await saveMistakes(merged);
-    setMistakeCount(mine.length);
+    setMistakeCount(await storeAnalysis(game, res));
   };
 
   useEffect(() => () => {
@@ -303,6 +387,12 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
     );
 
   const cur = analysis?.plies[ply];
+  const curExplain = cur && isError(cur.judgment) ? explainPly(cur, analysis?.plies[ply - 1], !!game.me && (ply % 2 === 0 ? 'w' : 'b') === game.me) : null;
+  /** Step back to the position before the move and play a line on the board as a "try" variation. */
+  const showLine = (sans: string[]) => {
+    setPly(ply - 1);
+    setVariation(sans);
+  };
   const judgments = analysis?.plies.map((p) => p.judgment);
   const sideToMove = chess.turn();
   const liveScore = live[0] ? toWhitePov(live[0], sideToMove) : cur ? cur.evalAfter : undefined;
@@ -435,6 +525,20 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
                   </>
                 )}
               </div>
+              {curExplain && (
+                <div className="explain mt">
+                  <div className="tiny muted">{CATEGORY_VI[curExplain.category]}</div>
+                  <div>{curExplain.text}</div>
+                  {curExplain.line && curExplain.line.length > 0 && (
+                    <div className="row mt" style={{ gap: 6 }}>
+                      <button className="chip" onClick={() => showLine(curExplain.line!)}>
+                        ▶ {curExplain.lineIsRefutation ? 'Xem vì sao sai' : 'Xem nước đúng'}: {curExplain.line.slice(0, 5).join(' ')}
+                      </button>
+                    </div>
+                  )}
+                  {!cur.refPv && analysis && <div className="tiny muted mt">Bấm “Phân tích lại” để có lời giải thích chi tiết hơn cho ván này.</div>}
+                </div>
+              )}
             </Card>
           )}
 
@@ -499,30 +603,227 @@ function GameAnalysisView({ gameId, initialPly }: { gameId: string; initialPly?:
             <MoveList moves={game.moves} current={ply} onSelect={go} judgments={judgments} />
           </Card>
 
-          {analysis && game.me && (
-            <Card>
-              <h3>Nước cần xem lại của bạn</h3>
-              {analysis.plies.filter((p) => (p.ply % 2 === 0 ? 'w' : 'b') === game.me && (p.judgment === 'blunder' || p.judgment === 'mistake')).length === 0 && (
-                <p className="small muted">Không có sai lầm lớn. Tốt!</p>
-              )}
-              {analysis.plies
-                .filter((p) => (p.ply % 2 === 0 ? 'w' : 'b') === game.me && (p.judgment === 'blunder' || p.judgment === 'mistake'))
-                .map((p) => (
-                  <div key={p.ply} className="list-item" onClick={() => go(p.ply - 1)}>
-                    <span>
-                      <b>
-                        {Math.floor(p.ply / 2) + 1}
-                        {p.ply % 2 === 0 ? '.' : '...'} {p.san}
-                      </b>{' '}
-                      <span className="muted small">nên {p.bestSan}</span>
-                    </span>
-                    <Tag tone={p.judgment === 'blunder' ? 'bad' : 'warn'}>{JUDGE_VI[p.judgment]}</Tag>
-                  </div>
-                ))}
-            </Card>
-          )}
+          {analysis && game.me && <ReviewList analysis={analysis} me={game.me} onGo={go} />}
         </div>
       </div>
+    </div>
+  );
+}
+
+function ReviewList({ analysis, me, onGo }: { analysis: GameAnalysis; me: 'w' | 'b'; onGo: (ply: number) => void }) {
+  const [all, setAll] = useState(false);
+  const mine = analysis.plies.filter((p) => (p.ply % 2 === 0 ? 'w' : 'b') === me && isError(p.judgment));
+  const serious = mine.filter((p) => p.judgment !== 'inaccuracy');
+  const list = all ? mine : serious;
+  return (
+    <Card>
+      <div className="row-between">
+        <h3 style={{ margin: 0 }}>Nước cần xem lại của bạn</h3>
+        {mine.length > serious.length && (
+          <button className="chip" onClick={() => setAll(!all)}>
+            {all ? 'chỉ lỗi lớn' : `cả ${mine.length - serious.length} nước thiếu chính xác`}
+          </button>
+        )}
+      </div>
+      {list.length === 0 && <p className="small muted">Không có sai lầm lớn. Tốt!</p>}
+      {list.map((p) => {
+        const ex = explainPly(p, analysis.plies[p.ply - 1], true);
+        return (
+          <div key={p.ply} className="list-item" style={{ alignItems: 'flex-start' }} onClick={() => onGo(p.ply)}>
+            <span>
+              <b>
+                {Math.floor(p.ply / 2) + 1}
+                {p.ply % 2 === 0 ? '.' : '...'} {p.san}
+              </b>{' '}
+              <span className="muted small">nên {p.bestSan}</span>
+              <div className="small">{ex.text}</div>
+            </span>
+            <Tag tone={p.judgment === 'blunder' ? 'bad' : 'warn'}>{JUDGE_VI[p.judgment]}</Tag>
+          </div>
+        );
+      })}
+    </Card>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+
+function Bar({ label, value, max, note, tone = 'accent' }: { label: string; value: number; max: number; note?: string; tone?: 'accent' | 'bad' }) {
+  return (
+    <div className="wk-bar">
+      <div className="row-between small">
+        <span>{label}</span>
+        <span className="muted">{note ?? value}</span>
+      </div>
+      <div className="progress">
+        <div style={{ width: `${max > 0 ? Math.max(2, (100 * value) / max) : 0}%`, background: tone === 'bad' ? 'var(--bad)' : undefined }} />
+      </div>
+    </div>
+  );
+}
+
+function Weaknesses() {
+  const [rep, setRep] = useState<WeaknessReport | null | undefined>(undefined);
+  const [unknownSide, setUnknownSide] = useState(0);
+  const [cat, setCat] = useState<ErrorCategory | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const games = await loadGames();
+      const ids = new Set(await listAnalyzedIds());
+      const inputs: WeaknessInput[] = [];
+      let unknown = 0;
+      for (const g of games) {
+        if (!ids.has(g.id)) continue;
+        if (!g.me) {
+          unknown++;
+          continue;
+        }
+        const a = await loadAnalysis(g.id);
+        if (a) inputs.push({ gameId: g.id, me: g.me, result: g.result, opening: g.opening, date: g.date, plies: a.plies, accuracy: a.accuracy });
+      }
+      setUnknownSide(unknown);
+      setRep(inputs.length ? buildWeaknessReport(inputs) : null);
+    })();
+  }, []);
+
+  const top = (
+    <div className="topbar">
+      <button className="back" onClick={() => navigate('analyze')} aria-label="Quay lại">
+        ‹
+      </button>
+      <h2 style={{ margin: 0 }}>Điểm yếu của bạn</h2>
+    </div>
+  );
+  if (rep === undefined) return <Spinner label="Đang tổng hợp..." />;
+  if (rep === null)
+    return (
+      <div>
+        {top}
+        <Card>
+          <p className="muted">
+            Chưa có ván nào đã phân tích mà biết bạn cầm quân nào. Hãy lấy ván từ Lichess hoặc Chess.com, hoặc chơi với máy, rồi bấm “Phân tích” ở danh sách ván.
+            {unknownSide > 0 && ` Có ${unknownSide} ván nhập bằng PGN không rõ bạn cầm bên nào nên không tính.`}
+          </p>
+        </Card>
+      </div>
+    );
+
+  const cats = (Object.keys(rep.byCategory) as ErrorCategory[]).sort((a, b) => rep.byCategory[b] - rep.byCategory[a]);
+  const totalErr = cats.reduce((n, c) => n + rep.byCategory[c], 0);
+  const maxCat = Math.max(1, ...cats.map((c) => rep.byCategory[c]));
+  const phases: Phase[] = ['opening', 'middlegame', 'endgame'];
+  const rate = (ph: Phase) => (rep.byPhase[ph].moves ? (100 * rep.byPhase[ph].errors) / rep.byPhase[ph].moves : 0);
+  const maxRate = Math.max(1, ...phases.map(rate));
+  const worstPhase = [...phases].filter((ph) => rep.byPhase[ph].moves >= 20).sort((a, b) => rate(b) - rate(a))[0];
+  const worstCat = totalErr > 0 ? cats[0] : null;
+  const perGame = (totalErr / rep.games).toFixed(1);
+  const shown = rep.examples.filter((e) => !cat || e.category === cat).slice(0, 8);
+  const colorRate = (c: 'w' | 'b') => (rep.byColor[c].moves ? (100 * rep.byColor[c].errors) / rep.byColor[c].moves : 0);
+
+  return (
+    <div>
+      {top}
+      <Card>
+        <div className="grid-3">
+          <div className="stat">
+            <b>{rep.games}</b>
+            <span>ván đã phân tích</span>
+          </div>
+          <div className="stat">
+            <b>{rep.accuracy.all ?? '–'}%</b>
+            <span>độ chính xác</span>
+          </div>
+          <div className="stat">
+            <b>{perGame}</b>
+            <span>lỗi lớn mỗi ván</span>
+          </div>
+        </div>
+        <p className="small muted mt" style={{ marginBottom: 0 }}>
+          Thắng {rep.score.win} · Hòa {rep.score.draw} · Thua {rep.score.loss}.
+          {rep.thrownWins > 0 && ` Có ${rep.thrownWins} ván bạn từng thắng thế rõ nhưng không thắng được.`}
+          {rep.games < 10 && ' Mới có ít ván nên số liệu chỉ để tham khảo: từ khoảng 10 ván trở lên mới đáng tin.'}
+        </p>
+      </Card>
+
+      {worstCat && (
+        <Card>
+          <h3>Nên sửa trước</h3>
+          <p className="small">{CATEGORY_ADVICE[worstCat].text}</p>
+          <Button kind="primary" onClick={() => navigate(CATEGORY_ADVICE[worstCat].to)}>
+            {CATEGORY_ADVICE[worstCat].cta}
+          </Button>
+          {worstPhase && rep.byPhase[worstPhase].errors > 0 && (
+            <p className="small mt" style={{ marginBottom: 0 }}>
+              {PHASE_ADVICE[worstPhase].text}{' '}
+              <a onClick={() => navigate(PHASE_ADVICE[worstPhase].to)}>{PHASE_ADVICE[worstPhase].cta}</a>
+            </p>
+          )}
+        </Card>
+      )}
+
+      <Card>
+        <h3>Lỗi lớn theo loại</h3>
+        {totalErr === 0 && <p className="small muted">Chưa thấy sai lầm lớn nào trong các ván đã phân tích.</p>}
+        {cats.map((c) => (
+          <div key={c} onClick={() => setCat(cat === c ? null : c)} style={{ cursor: 'pointer', opacity: cat && cat !== c ? 0.5 : 1 }}>
+            <Bar label={CATEGORY_VI[c]} value={rep.byCategory[c]} max={maxCat} tone="bad" note={`${rep.byCategory[c]} lần`} />
+          </div>
+        ))}
+        <p className="tiny muted" style={{ marginBottom: 0 }}>Chạm vào một loại để lọc các ví dụ bên dưới. Lỗi lớn gồm “sai lầm” và “sai nghiêm trọng”.</p>
+      </Card>
+
+      <Card>
+        <h3>Theo giai đoạn ván cờ</h3>
+        {phases.map((ph) => (
+          <Bar
+            key={ph}
+            label={PHASE_VI[ph]}
+            value={rate(ph)}
+            max={maxRate}
+            note={rep.byPhase[ph].moves ? `${rep.byPhase[ph].errors} lỗi lớn / ${rep.byPhase[ph].moves} nước (${rate(ph).toFixed(1)}%)` : 'chưa có nước nào'}
+          />
+        ))}
+        <h3 className="mt">Theo màu quân</h3>
+        {(['w', 'b'] as const).map((c) => (
+          <Bar
+            key={c}
+            label={c === 'w' ? `Cầm Trắng · ${rep.gamesByColor.w} ván` : `Cầm Đen · ${rep.gamesByColor.b} ván`}
+            value={colorRate(c)}
+            max={Math.max(1, colorRate('w'), colorRate('b'))}
+            note={rep.gamesByColor[c] ? `chính xác ${rep.accuracy[c]}% · ${rep.byColor[c].errors} lỗi lớn` : 'chưa có ván'}
+          />
+        ))}
+      </Card>
+
+      {rep.openings.length > 0 && (
+        <Card>
+          <h3>Khai cuộc hay gặp</h3>
+          {rep.openings.map((o) => (
+            <div key={o.name} className="row-between small" style={{ padding: '6px 0', borderBottom: '1px solid var(--line)' }}>
+              <span>{o.name}</span>
+              <span className="muted" style={{ whiteSpace: 'nowrap' }}>
+                {o.games} ván · {o.points}/{o.games} điểm · {o.accuracy}%
+              </span>
+            </div>
+          ))}
+        </Card>
+      )}
+
+      <Card>
+        <h3>Ví dụ từ ván của bạn{cat ? `: ${CATEGORY_VI[cat]}` : ''}</h3>
+        {shown.length === 0 && <p className="small muted">Không có ví dụ.</p>}
+        {shown.map((e) => (
+          <div key={`${e.gameId}:${e.ply}`} className="list-item" style={{ alignItems: 'flex-start' }} onClick={() => navigate(`analyze/game/${e.gameId}?ply=${e.ply}`)}>
+            <span>
+              <b>{e.label}</b> <span className="muted small">{PHASE_VI[e.phase]} · {CATEGORY_VI[e.category]}</span>
+              <div className="small">{e.text}</div>
+            </span>
+            <Tag tone={e.judgment === 'blunder' ? 'bad' : 'warn'}>{JUDGE_VI[e.judgment]}</Tag>
+          </div>
+        ))}
+        {unknownSide > 0 && <p className="tiny muted">{unknownSide} ván nhập bằng PGN không rõ bạn cầm bên nào nên không tính.</p>}
+      </Card>
     </div>
   );
 }

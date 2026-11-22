@@ -58,7 +58,7 @@
     },
     {
       "san": "d5",
-      "c": "Đen đặt Tốt vào trung tâm, chặn hẳn đường lên e4 của Tốt trắng. Cái giá: đường chéo của Tượng b7 tạm thời bị chính Tốt d5 che lại."
+      "c": "Đen đặt Tốt vào trung tâm, tạm thời chặn đường lên e4 của Tốt trắng. Cái giá: đường chéo của Tượng b7 tạm thời bị chính Tốt d5 che lại."
     },
     {
       "san": "Ne5",
@@ -78,7 +78,7 @@
     },
     {
       "san": "Bf4",
-      "c": "Quân nhẹ cuối cùng ra trận. Tượng canh ô e5 và nhìn dọc đường chéo tới tận b8."
+      "c": "Quân nhẹ cuối cùng ra trận. Tượng bảo vệ Mã e5; khi Mã rời đi, nó sẽ nhìn dọc đường chéo tới tận b8."
     },
     {
       "san": "a6",
@@ -110,11 +110,11 @@
     },
     {
       "san": "h3",
-      "c": "Một nước chờ không có mục tiêu. Dừng lại nghĩ thử: Mã c3 có cách nào tới được c5 không? Có: {^Ne4 dxe4 Rxc6 Qxd4}, Mã không mất không vì Tượng c6 treo trên cột c, thế cờ cân bằng; còn nếu Đen lùi Tượng, {^Ne4 Bb7 Nc5}, Mã chiếm được tiền đồn. Bỏ qua cơ hội này, Trắng trao thế chủ động cho Đen."
+      "c": "Một nước chờ không có mục tiêu. Dừng lại nghĩ thử: Mã c3 có cách nào tới được c5 không? Có: {^Ne4 dxe4 Rxc6 Qxd4}, Mã không mất không vì Tượng c6 treo trên cột c; Trắng tạm kém một Tốt nhưng quân hoạt động đủ bù, thế cờ cân bằng; còn nếu Đen lùi Tượng, {^Ne4 Bb7 Nc5}, Mã chiếm được tiền đồn. Bỏ qua cơ hội này, Trắng trao thế chủ động cho Đen."
     },
     {
       "san": "Qd7",
-      "c": "Hậu nối hai Xe, bảo vệ thêm Tượng c6 và Tốt b5. Đen ung dung cải thiện từng quân một."
+      "c": "Hậu nối hai Xe và bảo vệ Tượng c6, quân đang giữ cả Tốt b5 lẫn d5. Đen ung dung cải thiện từng quân một."
     },
     {
       "san": "Kh2",
@@ -150,7 +150,7 @@
     },
     {
       "san": "Rg1",
-      "c": "Một nước thụ động và có hại: Xe rời cột f nên Tốt f2 không còn quân nào bảo vệ. Engine đề nghị {^Bf3 Nf6 Bf4}, hỏi thăm Mã h5 rồi đưa Tượng trở lại đường chéo tốt."
+      "c": "Một nước thụ động và có mặt trái: Xe rời cột f nên Tốt f2 không còn quân nào bảo vệ. Engine đề nghị {^Bf3 Nf6 Bf4}, hỏi thăm Mã h5 rồi đưa Tượng trở lại đường chéo tốt."
     },
     {
       "san": "Bd6",
@@ -158,7 +158,7 @@
     },
     {
       "san": "e4",
-      "c": "**Sai lầm quyết định.** Ý của Trắng: Tốt e lên mở đường cho Hậu d1 đánh Mã h5; Mã không lùi được vì {Nf6 e5} là đòn đôi của Tốt vào Tượng và Mã, còn {dxe4 Qxh5} thì mất quân lấy một Tốt. Tưởng như thắng quân! Nhưng nước này mở cột f đúng lúc f2 không ai giữ. Bình tĩnh hơn là {^Bf3 Nf6 Bf4}, Trắng chỉ kém chút ít. Bạn thử tìm nước của Đen trước khi xem tiếp."
+      "c": "**Sai lầm quyết định.** Ý của Trắng: Tốt e lên mở đường cho Hậu d1 đánh Mã h5; Mã không lùi được vì {Nf6 e5} là đòn đôi của Tốt vào Tượng và Mã, còn {dxe4 Qxh5} thì mất quân lấy một Tốt. Tưởng như thắng quân! Nhưng nước này cho Đen mở cột f đúng lúc f2 không ai giữ. Bình tĩnh hơn là {^Bf3 Nf6 Bf4}, Trắng kém hơn nhưng vẫn còn đánh được. Bạn thử tìm nước của Đen trước khi xem tiếp."
     },
     {
       "san": "fxe4",
@@ -202,13 +202,13 @@
     },
     {
       "san": "h6",
-      "c": "Một nước Tốt nhỏ kết thúc ván cờ. Nó lấy nốt ô g5: nếu vội {^R5f3 Bxf3 Rxf3 Qg5} thì Hậu thoát. Giờ thử từng nước của Trắng: {Kh2 R5f3 Qxf2 Rxf2} mất Hậu đổi Xe; {g4 R5f3 Bxf3 Rh2#} bị chiếu hết; {Rc1 Re2 Qxe2 Bxe2} cũng mất Hậu; {Bc1 Bxb1} mất trắng Mã; {Nc3 bxc3} và {Bxb4 Bxb4} mất quân lấy một Tốt; {Rgf1 Bxf1} mất chất; {Bf1 Bxf1 Rexf1 Rxf1 Rxf1 Rxf1+} mất hẳn một Xe. Hậu thì đi đâu cũng bị ăn. Trung thực mà nói, đây chưa phải zugzwang tuyệt đối: Trắng còn vài nước Tốt, ví dụ {a3 a5 axb4 axb4 b3 Kh8 h4 Kg8 h5 Kh8}, nhưng chúng không thay đổi gì; Đen chỉ việc đi Vua qua lại, và khi hết nước Tốt Trắng vẫn phải động quân. Engine đánh giá thế cuối là Đen thắng rõ, có đến lượt ai đi cũng vậy. Sämisch xin thua."
+      "c": "Một nước Tốt nhỏ kết thúc ván cờ. Nó lấy nốt ô g5: nếu vội {^R5f3 Bxf3 Rxf3 Qg5} thì Hậu thoát. Giờ thử từng nước của Trắng: {Kh2 R5f3 Qxf2 Rxf2} mất Hậu đổi Xe; {g4 R5f3 Bxf3 Rh2#} bị chiếu hết (không ăn Xe thì mất Hậu); {Rc1 Re2 Qxe2 Bxe2} cũng mất Hậu; {Bc1 Bxb1} mất trắng Mã; {Nc3 bxc3} và {Bxb4 Bxb4} mất quân lấy một Tốt; {Rgf1 Bxf1} mất chất; {Bf1 Bxf1 Rexf1 Rxf1 Rxf1 Rxf1+} mất hẳn một Xe. Hậu thì đi đâu cũng bị ăn. Trung thực mà nói, đây chưa phải zugzwang tuyệt đối: Trắng còn vài nước Tốt, ví dụ {a3 a5 axb4 axb4 b3 Kh8 h4 Kg8 h5 Kh8}, nhưng chúng không thay đổi gì; Đen chỉ việc đi Vua qua lại, và khi hết nước Tốt Trắng vẫn phải động quân. Engine đánh giá thế cuối là Đen thắng rõ, có đến lượt ai đi cũng vậy. Sämisch xin thua."
     }
   ],
   "outro": "Nimzowitsch thắng mà không cần một đòn chiếu nào. Từ 11...b5, mỗi nước của Đen lấy đi vài ô của quân Trắng: Tốt b đuổi Mã về b1, Tốt f rồi Tốt e chiếm e4 và canh f3, d3, hai Xe chiếm cột f và hàng 2, Tượng d3 khóa hàng 3. Trắng góp phần bằng những nước chậm 14.h3, 15.Kh2, 19.Rg1 và sai lầm 20.e4. Cú thí Mã 20...fxe4 được engine xác nhận là chính xác; còn thế cuối, engine coi là thắng cho Đen dù Trắng chưa hết hẳn nước đi. Bài học lớn nhất: hơn quân chẳng có nghĩa gì nếu quân của bạn không có ô để đi.",
   "lessons": [
     "Trước mỗi nước, hãy hỏi: nước này lấy của quân đối phương những ô nào? Hạn chế quân địch cũng mạnh như tấn công trực tiếp.",
-    "Quân bị nhốt không tính là quân: Trắng hơn một Mã nhưng Mã b1 và Tượng d2 không đi được đâu.",
+    "Quân bị nhốt không tính là quân: Trắng hơn một Mã nhưng Mã b1 và Tượng d2 không nhúc nhích được mà không mất của.",
     "Tốt tiến có mục đích (b5 rồi b4, f5, Tốt ở e4) vừa giành không gian vừa đuổi quân đối phương về chỗ xấu.",
     "Đừng đi những nước chờ vô định như 14.h3 hay 15.Kh2 khi còn kế hoạch tích cực; đối thủ sẽ dùng thời gian đó để siết chặt.",
     "Trước khi mở thế cờ như 20.e4, hãy kiểm tra cột nào sẽ mở và điểm nào của mình đang không ai giữ (ở đây là f2)."

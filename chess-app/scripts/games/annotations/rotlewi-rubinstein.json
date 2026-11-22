@@ -26,7 +26,7 @@
   },
   {
    "san": "c5",
-   "c": "Đen đánh vào trung tâm Trắng từ bên cánh. Tốt c5 gây sức ép lên d4, giành không gian và dọn sẵn ô c6 cho Mã đứng phía sau nó."
+   "c": "Đen đánh vào trung tâm Trắng từ bên cánh. Tốt c5 gây sức ép lên d4, giành không gian, và Mã sẽ ra c6 đứng phía sau nó mà không chắn đường Tốt."
   },
   {
    "san": "c4",
@@ -70,7 +70,7 @@
   },
   {
    "san": "Bb2",
-   "c": "Tượng c1 đã có việc làm: trên đường chéo dài a1–h8 nó hướng về cánh Vua Đen. Trắng chỉ còn phải đưa Tượng f1 ra và nhập thành."
+   "c": "Tượng c1 đã có việc làm: trên đường chéo dài a1–h8 nó hướng về cánh Vua Đen, dù Mã c3 tạm thời còn đứng chắn phía trước. Trắng chỉ còn phải đưa Tượng f1 ra và nhập thành."
   },
   {
    "san": "O-O",
@@ -98,7 +98,7 @@
   },
   {
    "san": "b5",
-   "c": "Tốt tiến lên có lợi nhịp: đuổi Tượng thêm lần nữa và mở ô b7 cho Tượng c8. So với 8.b4 của Trắng thì ý tưởng giống hệt, nhưng Đen thực hiện đúng lúc Tượng đối phương đứng ngay trên đường đi của Tốt."
+   "c": "Tốt tiến lên có lợi nhịp: đuổi Tượng thêm lần nữa và mở ô b7 cho Tượng c8. So với 8.b4 của Trắng thì ý tưởng giống hệt, nhưng lần này quân Tượng bị đuổi phải đi tới nước thứ ba."
   },
   {
    "san": "Bd3",
@@ -114,7 +114,7 @@
   },
   {
    "san": "Bb7",
-   "c": "Quân nhẹ cuối cùng của Đen vào vị trí. Tượng từng bị nhốt sau Tốt e6 nay nằm trên đường chéo dài nhất bàn cờ, nhìn xuyên qua Mã f3 tới g2, ngay cạnh nơi Vua Trắng sắp trú ẩn."
+   "c": "Quân nhẹ cuối cùng của Đen vào vị trí. Tượng từng bị nhốt sau Tốt e6 nay nằm trên đường chéo dài nhất bàn cờ; khi Mã c6 rời đi, nó sẽ nhìn xuyên qua Mã f3 tới g2, ngay cạnh nơi Vua Trắng sắp trú ẩn."
   },
   {
    "san": "O-O",
@@ -134,7 +134,7 @@
   },
   {
    "san": "f4",
-   "c": "Trắng chặn đường chéo tới h2 và đuổi Tượng có lợi nhịp, nhưng nước Tốt này để lại những điểm yếu lâu dài: Tốt e3 không còn Tốt nào bảo vệ, ô e4 không còn Tốt nào canh giữ, và đường chéo từ b6 tới g1 mở về phía Vua. Bình tĩnh hơn là {^Rfd1}: Xe bảo vệ Tượng d3, nên {^Rfd1 Bxh2+ Kxh2 Qd6+ Kg1 Qxd3 Qxd3 Rxd3 Rxd3} chỉ khiến Đen lỗ nặng."
+   "c": "Trắng chặn đường chéo tới h2 và đuổi Tượng có lợi nhịp, nhưng nước Tốt này để lại những điểm yếu lâu dài: Tốt e3 không còn Tốt nào bảo vệ, ô e4 không còn Tốt nào canh giữ, và trên đường chéo từ b6 tới g1 chỉ còn Tốt e3 che cho Vua. Bình tĩnh hơn là {^Rfd1}: Xe bảo vệ Tượng d3, nên {^Rfd1 Bxh2+ Kxh2 Qd6+ Kg1 Qxd3 Qxd3 Rxd3 Rxd3} chỉ khiến Đen lỗ nặng."
   },
   {
    "san": "Bc7",
@@ -142,11 +142,11 @@
   },
   {
    "san": "e4",
-   "c": "Trắng muốn đẩy tiếp Tốt lên e5 để đuổi Mã f6 và giành không gian. Nhưng khi Tốt e3 rời đi, giữa Tượng Đen và ô g1 không còn gì che chắn, trong lúc hai Xe Trắng vẫn nằm ở a1 và f1. Tiến Tốt khi chưa phát triển xong là mạo hiểm; nên đưa Xe ra trước bằng {^Rac1}."
+   "c": "Trắng muốn đẩy tiếp Tốt lên e5 để đuổi Mã f6 và giành không gian. Nhưng khi Tốt e3 rời đi, đường chéo từ b6 tới g1 không còn gì che chắn, trong lúc hai Xe Trắng vẫn nằm ở a1 và f1. Tiến Tốt khi chưa phát triển xong là mạo hiểm; nên đưa Xe ra trước bằng {^Rac1}."
   },
   {
    "san": "Rac8",
-   "c": "Quân cuối cùng của Đen vào trận: Xe a8 chiếm cột c mở và nhìn vào Mã c3. Engine nhỉnh hơn đôi chút cho {^Nh5}, quấy rối Tốt f4 ngay, nhưng nước Xe hợp với tinh thần cả ván: **đưa mọi quân vào cuộc rồi mới ra đòn**. Điểm lại: Đen có hai Xe trên hai cột mở, hai Tượng chĩa về cánh Vua, Hậu và Mã sẵn sàng; hai Xe Trắng thì chưa làm gì ngoài nước nhập thành."
+   "c": "Quân cuối cùng của Đen vào trận: Xe a8 chiếm cột c mở, nấp sau Tượng c7; chỉ cần Tượng rời đi là Xe nhìn thẳng vào Mã c3. Engine nhỉnh hơn đôi chút cho {^Nh5}, quấy rối Tốt f4 ngay, nhưng nước Xe hợp với tinh thần cả ván: **đưa mọi quân vào cuộc rồi mới ra đòn**. Điểm lại: Đen có hai Xe trên hai cột mở, hai Tượng chĩa về cánh Vua, Hậu và Mã sẵn sàng; hai Xe Trắng thì chưa làm gì ngoài nước nhập thành."
   },
   {
    "san": "e5",
@@ -154,7 +154,7 @@
   },
   {
    "san": "Bb6+",
-   "c": "Chiếu trước, đúng thứ tự Chiếu–Bắt–Dọa. Tượng chiếm đường chéo mà hai nước Tốt 17.f4 và 18.e4 đã mở. Vua Trắng chỉ có hai lựa chọn: vào góc, hoặc lấy Xe ra che và mất chất sau {Rf2 Bxf2+}."
+   "c": "Chiếu trước, đúng thứ tự Chiếu–Bắt–Dọa. Tượng chiếm đường chéo mà hai nước Tốt 17.f4 và 18.e4 đã mở. Trắng chỉ có ba cách đỡ: Vua vào góc, lấy Xe ra che và mất chất sau {Rf2 Bxf2+}, hoặc lấy Hậu ra che, còn tệ hơn."
   },
   {
    "san": "Kh1",
@@ -166,15 +166,15 @@
   },
   {
    "san": "Be4",
-   "c": "Trắng lấy Tượng bịt đường chéo dài và đề nghị đổi Tượng b7 nguy hiểm. Ý tưởng hợp lý nhưng không còn cứu được thế cờ. Lấy Mã ra che cũng thua, ví dụ {^Ne4 Qh4 h3 Rxd3 Qxd3 Bxe4 Qxe4 Qg3 hxg4 Qh4#}: các quân Đen thay nhau đánh vào h2. Engine chọn {^Bxh7+ Kxh7 Qxg4 Rd2}, ăn một Tốt và đổi bớt quân, song Xe Đen xuống hàng hai cùng cặp Tượng vẫn cho Đen ưu thế lớn."
+   "c": "Trắng lấy Tượng bịt đường chéo dài và đề nghị đổi Tượng b7 nguy hiểm. Ý tưởng hợp lý nhưng không còn cứu được thế cờ. Lấy Mã ra che cũng thua, ví dụ {^Ne4 Qh4 h3 Rxd3 Qxd3 Bxe4 Qxe4 Qg3 hxg4 Qh4#}: các quân Đen thay nhau đánh vào cột h. Thử {^Bxh7+ Kxh7 Qxg4 Rd2}, ăn một Tốt và đổi bớt quân, cũng không khá hơn: Xe Đen xuống hàng hai cùng cặp Tượng vẫn cho Đen ưu thế lớn."
   },
   {
    "san": "Qh4",
-   "c": "Hậu nhập cuộc và dọa chiếu hết ngay: {Bxb7 Qxh2#}. Thành thật mà nói, engine cho rằng {^Nxh2} còn chính xác hơn một chút: Mã không thể bị ăn vì {^Nxh2 Kxh2 Qh4#}, nên Đen lời chất và một Tốt sau {^Nxh2 Qh5 Bxe4 Nxe4 Nxf1 Rxf1}. Nước của Rubinstein vẫn giữ thế thắng và dẫn tới một kết thúc đẹp hơn nhiều. Trắng chỉ có hai cách che h2; bạn thử tính xem vì sao {h3} thua."
+   "c": "Hậu nhập cuộc và dọa chiếu hết ngay: {Bxb7 Qxh2#}. Đơn giản hơn là {^Nxh2}: Mã không thể bị ăn vì {^Nxh2 Kxh2 Qh4#}, nên Đen lời chất và một Tốt sau {^Nxh2 Qh5 Bxe4 Nxe4 Nxf1 Rxf1}. Nhưng phân tích kỹ cho thấy nước Hậu của Rubinstein ít nhất cũng mạnh ngang, và nó dẫn tới một kết thúc đẹp hơn nhiều. Trắng chỉ có hai cách giữ h2 mà không phải bỏ Hậu; bạn thử tính xem vì sao {h3} thua."
   },
   {
    "san": "g3",
-   "c": "Tốt g chặn đường Hậu tới h2 và tấn công luôn Hậu. Cách kia thua ngay: {^h3 Rxc3 Bxb7 Rxh3+ gxh3 Qxh3+ Qh2 Qxh2#}, hoặc {^h3 Rxc3 Bxc3 Bxe4 Qxe4 Qg3 hxg4 Qh4#}. Nhưng hãy nhìn các quân phòng thủ của Trắng: Hậu e2 phải giữ cả Tượng e4 lẫn ô h2, Tượng e4 phải che Tượng b7, Mã c3 phải đỡ Tượng e4. Quân nào cũng gánh quá nhiều việc. **Dừng lại ở đây**: Hậu Đen đang bị tấn công, có bắt buộc phải lùi không?"
+   "c": "Tốt g tấn công Hậu, đồng thời rời g2 để Hậu e2 bảo vệ h2 dọc hàng hai. Cách kia cũng thua: {^h3 Rxc3 Bxb7 Rxh3+ gxh3 Qxh3+ Qh2 Qxh2#}, hoặc {^h3 Rxc3 Bxc3 Bxe4 Qxe4 Qg3 hxg4 Qh4#}; dai dẳng nhất là trả lại Hậu bằng {^h3 Rxc3 Bxc3 Bxe4 Qxg4 Qxg4 hxg4 Rd3}, nhưng Xe vừa dọa chiếu hết ở h3 vừa đánh Tượng c3, nên Đen được hai Tượng đổi một Xe. Nhưng hãy nhìn các quân phòng thủ của Trắng: Hậu e2 phải giữ cả Tượng e4 lẫn ô h2, Tượng e4 phải che Tượng b7, Mã c3 phải đỡ Tượng e4. Quân nào cũng gánh quá nhiều việc. **Dừng lại ở đây**: Hậu Đen đang bị tấn công, có bắt buộc phải lùi không?"
   },
   {
    "san": "Rxc3",

@@ -479,6 +479,7 @@ Khó hơn: cần dùng vua đối diện (đối vua) rồi xe chiếu. Luyện 
         explain: '1.Rb7 (cắt hàng 7, vua không xuống được) Kf8 2.Ra8#. Hoặc 1.Ra7 rồi 2.Rb8#.',
         verify: 'mate',
       },
+      { kind: 'practice', ids: ['mate-two-rooks', 'mate-queen', 'mate-rook'], intro: 'Ba kiểu chiếu hết này phải làm được không cần nghĩ. Đánh với máy cho tới khi chiếu hết thật sự, máy sẽ chạy Vua theo cách khó chịu nhất.' },
     ],
     resources: [
       { label: 'Lichess Practice: Checkmating patterns', url: 'https://lichess.org/practice', note: 'Mục "Checkmates" luyện hậu, xe, hai xe với máy.' },
@@ -642,6 +643,7 @@ Hai vua đứng đối diện nhau, cách nhau **một ô** (thường gặp nh�
         explain: 'Ke7! giữ đối vua (hai vua cách một ô, Trắng phải đi). Nếu Trắng Kd5 thì Kd7, nếu Kf5 thì Kf7, luôn đối diện. Kd7 hoặc Kf7?? thua vì Trắng chiếm đối vua.',
         verify: 'best',
       },
+      { kind: 'practice', ids: ['kp-win-6th', 'kp-win-opposition', 'kp-draw-opposition'], intro: 'Hai thế thắng và một thế thủ hòa. Đánh tiếp với máy: chỉ một nước Vua sai là kết quả đổi ngay, và máy sẽ báo cho bạn biết.' },
     ],
     resources: [
       { label: 'Lichess Practice: Pawn endgames', url: 'https://lichess.org/practice', note: 'Mục "Pawn Endgames" có bài tập tương tác về đối vua và hình vuông.' },

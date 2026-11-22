@@ -191,6 +191,7 @@ Mã cản tốt được trừ tốt biên hàng 7. Mã + vua vs tốt thông: g
       { kind: 'puzzles', themes: ['rookEndgame'], rating: [1600, 2000], count: 6, intro: 'Cờ tàn xe nâng cao: 6 bài.' },
       { kind: 'puzzles', themes: ['queenEndgame', 'queenRookEndgame'], rating: [1500, 2000], count: 6, intro: 'Cờ tàn hậu: 6 bài.' },
       { kind: 'puzzles', themes: ['zugzwang'], rating: [1500, 2000], count: 6, intro: 'Zugzwang: 6 bài.' },
+      { kind: 'practice', ids: ['q-vs-pawn7', 'mate-two-bishops', 'lucena', 'philidor'], intro: 'Các thế cờ kỹ thuật: Hậu chống Tốt hàng 7, chiếu hết bằng hai Tượng, và ôn lại Lucena, Philidor.' },
     ],
     resources: [
       { label: 'Sách: 100 Endgames You Must Know (de la Villa)', url: 'https://www.google.com/search?q=100+Endgames+You+Must+Know', note: 'Đúng 100 thế, đủ tới 2200.' },

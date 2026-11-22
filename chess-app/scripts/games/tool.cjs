@@ -3,6 +3,8 @@
  *   node scripts/games/tool.cjs evals <id> [depth]         -> engine table for every move of the game
  *   node scripts/games/tool.cjs line <id> <ply> <san...>   -> check a variation starting AFTER ply <ply> (0 = start position)
  *                                                            (to test an alternative to move N, pass the ply BEFORE it)
+ *   node scripts/games/tool.cjs board <id> <ply> [sq...]    -> board after <ply> half-moves, attackers/defenders of squares, open files
+ *   node scripts/games/tool.cjs deep <id> <ply> [depth]     -> top 3 engine moves at higher depth (default 22)
  *   node scripts/games/tool.cjs check <annotations.json>   -> validate an annotation file
  * Scores are in pawns from White's point of view (+ = White better). "#3" = mate in 3 for White, "#-3" for Black.
  */
@@ -118,10 +120,38 @@ function check(file) {
   process.exit(errs.length ? 1 : 0);
 }
 
+/** Board after <ply> half-moves, with who attacks/defends the given squares and which files are open. */
+function board(id, ply, squares) {
+  const g = META[id]; const c = new Chess();
+  for (let i = 0; i < ply; i++) c.move(g.moves[i]);
+  console.log(`after ply ${ply}${ply ? ' (' + label(ply - 1) + g.moves[ply - 1] + ')' : ''}, ${c.turn() === 'w' ? 'White' : 'Black'} to move`);
+  console.log(c.ascii()); console.log(c.fen());
+  const files = 'abcdefgh'.split('');
+  const pawns = { w: new Set(), b: new Set() };
+  for (const row of c.board()) for (const sq of row) if (sq && sq.type === 'p') pawns[sq.color].add(sq.square[0]);
+  console.log('open files (no pawns):', files.filter((f) => !pawns.w.has(f) && !pawns.b.has(f)).join(' ') || '-',
+    '| half-open for White (no white pawn):', files.filter((f) => !pawns.w.has(f) && pawns.b.has(f)).join(' ') || '-',
+    '| half-open for Black:', files.filter((f) => pawns.w.has(f) && !pawns.b.has(f)).join(' ') || '-');
+  for (const sq of squares) {
+    const pc = c.get(sq);
+    console.log(`${sq}: ${pc ? (pc.color === 'w' ? 'white ' : 'black ') + pc.type.toUpperCase() : 'empty'} | attacked by White from: ${c.attackers(sq, 'w').join(' ') || '-'} | by Black from: ${c.attackers(sq, 'b').join(' ') || '-'}`);
+  }
+}
+
+/** Deeper look at one position of the game: top 3 engine moves. */
+async function deep(id, ply, depth) {
+  const g = META[id]; const c = new Chess();
+  for (let i = 0; i < ply; i++) c.move(g.moves[i]);
+  const { execFileSync } = require('child_process');
+  console.log(execFileSync(process.execPath, [path.join(__dirname, '..', 'eval_fen.cjs'), c.fen(), String(depth || 22), '3'], { encoding: 'utf8' }));
+}
+
 (async () => {
   const [cmd, a, b, ...rest] = process.argv.slice(2);
   if (cmd === 'evals') { const txt = await evals(a, Number(b) || 16); fs.writeFileSync(path.join(__dirname, 'evals', a + '.txt'), txt + '\n'); console.log(txt); process.exit(0); }
   else if (cmd === 'line') { await line(a, Number(b), rest); process.exit(0); }
+  else if (cmd === 'board') { board(a, Number(b), rest); process.exit(0); }
+  else if (cmd === 'deep') { await deep(a, Number(b), Number(rest[0]) || 22); process.exit(0); }
   else if (cmd === 'check') check(a);
   else { console.log('usage: evals <id> [depth] | line <id> <ply> <san...> | check <file.json>'); process.exit(1); }
 })();

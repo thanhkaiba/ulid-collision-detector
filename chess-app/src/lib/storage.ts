@@ -124,6 +124,8 @@ export interface PlyAnalysis {
   best: string; // UCI best move in fenBefore
   bestSan: string;
   bestPv: string[];
+  /** opponent's best line AFTER the played move (UCI); stored for moves that lost ground */
+  refPv?: string[];
   judgment: Judgment;
   winLoss: number; // win% lost by the mover (0..100)
 }

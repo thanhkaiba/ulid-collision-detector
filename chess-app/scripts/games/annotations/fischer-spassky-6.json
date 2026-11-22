@@ -2,7 +2,7 @@
   "id": "fischer-spassky-6",
   "title": "Tấn công Tốt treo, chuyển lợi thế",
   "theme": "Gambit Hậu từ chối (hệ thống Tartakower): bao vây cặp Tốt treo c5–d5, giành Tượng ô trắng không đối thủ rồi chuyển lợi thế cấu trúc thành tấn công cánh Vua.",
-  "intro": "Reykjavik 1972, ván 6 trận tranh ngôi vô địch thế giới giữa Bobby Fischer (Trắng) và Boris Spassky (Đen); tỉ số đang hòa 2,5–2,5. Fischer gây bất ngờ khi bỏ nước mở đầu Tốt Vua quen thuộc để chơi Gambit Hậu, và Spassky đáp bằng hệ thống Tartakower mà ông rất tin cậy. Hãy quan sát ba giai đoạn. Một: Trắng đổi quân để Đen nhận cặp Tốt treo c5–d5, rồi dùng các cú ghim để bao vây chúng. Hai: cú đánh 20.e4 buộc cặp Tốt phải tiến, để lại cho Trắng một Tượng ô trắng không có đối thủ. Ba: Trắng đẩy đa số Tốt cánh Vua, mở cột f và chuyển lợi thế cấu trúc thành cuộc tấn công vào Vua. Mỗi lần Đen chọn một nước chờ, bạn hãy tự hỏi: có phản công nào tích cực hơn không?",
+  "intro": "Reykjavik 1972, ván 6 trận tranh ngôi vô địch thế giới giữa Bobby Fischer (Trắng) và Boris Spassky (Đen); tỉ số đang hòa 2,5–2,5. Fischer gây bất ngờ khi bỏ nước mở đầu Tốt Vua quen thuộc để chơi Gambit Hậu, và Spassky đáp bằng hệ thống Tartakower mà ông rất tin cậy. Hãy quan sát ba giai đoạn. Một: Trắng đổi quân để Đen nhận cặp Tốt treo c5–d5, rồi dùng các cú ghim để bao vây chúng. Hai: Trắng đổi Mã lấy Tượng ở e6 để có Tượng ô trắng không đối thủ, rồi cú đánh 20.e4 ép cặp Tốt phải tiến hoặc tan rã. Ba: Trắng đẩy đa số Tốt cánh Vua, mở cột f và chuyển lợi thế cấu trúc thành cuộc tấn công vào Vua. Mỗi lần Đen chọn một nước chờ, bạn hãy tự hỏi: có phản công nào tích cực hơn không?",
   "moves": [
     {
       "san": "c4",
@@ -46,7 +46,7 @@
     },
     {
       "san": "e3",
-      "c": "Bảo vệ vững Tốt d4 và c4, mở đường cho Tượng f1. Trắng chọn thế trận chắc chắn, chậm rãi."
+      "c": "Bảo vệ vững Tốt d4 và mở đường cho Tượng f1, nhờ đó Tượng canh luôn Tốt c4. Trắng chọn thế trận chắc chắn, chậm rãi."
     },
     {
       "san": "h6",
@@ -78,7 +78,7 @@
     },
     {
       "san": "Nxd5",
-      "c": "Đổi nốt cặp Mã để buộc Đen bắt lại bằng Tốt, cố định cấu trúc trung tâm."
+      "c": "Đổi tiếp một cặp Mã để buộc Đen bắt lại bằng Tốt, cố định cấu trúc trung tâm."
     },
     {
       "san": "exd5",
@@ -110,7 +110,7 @@
     },
     {
       "san": "Bb5",
-      "c": "Tượng ra một ô gây khó chịu: nó canh ô d7 và c6, nơi Mã b8 muốn tới để bảo vệ c5, và mời Đen đẩy Tốt a. Engine đánh giá nước lùi khiêm tốn {^Be2} tương đương, tức là thế cờ vẫn cân bằng; giá trị của Tượng ở b5 nằm ở những câu hỏi thực tế nó đặt ra cho Đen."
+      "c": "Tượng ra một ô gây khó chịu: nó canh ô d7 và c6, hai ô phát triển tự nhiên của Mã b8 (từ d7 Mã sẽ bảo vệ c5), và mời Đen đẩy Tốt a. Engine đánh giá nước lùi khiêm tốn {^Be2} tương đương, tức là thế cờ vẫn cân bằng; giá trị của Tượng ở b5 nằm ở những câu hỏi thực tế nó đặt ra cho Đen."
     },
     {
       "san": "a6",
@@ -154,7 +154,7 @@
     },
     {
       "san": "fxe6",
-      "c": "Bắt lại bắt buộc. Tốt e6 mới chống đỡ cho d5 và cột f mở cho Xe Đen, nhưng cấu trúc đã lỏng hơn: Tốt e6 nằm trên đường chéo a2–g8, đúng đường của Tượng Trắng. **Điểm lại:** Trắng có Tượng tốt hơn Mã và mục tiêu rõ ràng ở c5, d5, e6; Đen cần giữ cặp Tốt đứng yên."
+      "c": "Bắt lại bắt buộc. Tốt e6 mới chống đỡ cho d5 và cột f nửa mở cho quân nặng Đen, nhưng cấu trúc đã lỏng hơn: Tốt e6 nằm trên đường chéo a2–g8, đúng đường của Tượng Trắng. **Điểm lại:** Trắng có Tượng tốt hơn Mã và mục tiêu rõ ràng ở c5, d5, e6; Đen cần giữ cặp Tốt đứng yên."
     },
     {
       "san": "e4",
@@ -182,15 +182,15 @@
     },
     {
       "san": "Bc4",
-      "c": "Tượng lên đường chéo trong mơ: nhắm thẳng vào Tốt e6 với Vua g8 đứng phía sau, đồng thời canh luôn ô d5. Tốt b2 là mồi độc: {Rxb2 Bxe6+ Qxe6 Qxb2} và Trắng thắng chất. Mã cũng đã trễ: sau {Nb6 Qb3} nó bị ghim trên cột b, vì {Nb6 Qb3 Nxc4 Qxb8+} lại mất chất."
+      "c": "Tượng lên đường chéo trong mơ: nhắm thẳng vào Tốt e6 với Vua g8 đứng phía sau, đồng thời canh luôn ô d5. Tốt b2 chưa ăn được vì Hậu a3 vẫn canh nó: {Rxb2 Qxb2} mất trắng Xe. Mã cũng đã trễ: sau {Nb6 Qb3} nó bị ghim trên cột b, vì {Nb6 Qb3 Nxc4 Qxb8+} mất Xe, rồi Mã c4 cũng bị Xe c1 bắt nốt."
     },
     {
       "san": "Kh8",
-      "c": "Vua tránh khỏi đường chéo của Tượng, nhờ đó nước ăn e6 không còn kèm chiếu và Xe b8 dọa ăn b2 thật. **Điểm lại:** Đen đã lỡ ô d5, Mã d7 thiếu việc làm, còn mọi quân Trắng đang đổi hướng sang cánh Vua."
+      "c": "Vua tránh khỏi đường chéo của Tượng, nhờ đó nước ăn e6 không còn kèm chiếu; Tốt b2 thì vẫn được Hậu a3 canh giữ. **Điểm lại:** Đen đã lỡ ô d5, Mã d7 thiếu việc làm, còn mọi quân Trắng đang đổi hướng sang cánh Vua."
     },
     {
       "san": "Qh3",
-      "c": "Hậu chuyển từ cánh Hậu sang cánh Vua chỉ bằng một nước đi ngang hàng 3. Nó đánh e6 lần thứ hai và nhìn vào Tốt h6 cạnh Vua. Trắng sẵn sàng bỏ b2: sau {Rxb2 Bxe6} quân số bằng nhau nhưng Tượng e6 chế ngự cả bàn cờ."
+      "c": "Hậu chuyển từ cánh Hậu sang cánh Vua chỉ bằng một nước đi ngang hàng 3. Nó đánh e6 lần thứ hai và nhìn vào Tốt h6 cạnh Vua. Hậu rời a3 nên b2 hết được bảo vệ, nhưng Trắng sẵn sàng bỏ nó: sau {Rxb2 Bxe6} quân số bằng nhau nhưng Tượng e6 chế ngự cả bàn cờ."
     },
     {
       "san": "Nf8",
@@ -198,7 +198,7 @@
     },
     {
       "san": "b3",
-      "c": "Nước chậm mà chắc: Tốt rời khỏi tầm Xe b8, bảo vệ Tượng c4 và đóng cột b. Khi đối phương chỉ có một hướng phản công, hãy cất mục tiêu đi trước khi tấn công."
+      "c": "Nước chậm mà chắc: Tốt lên b3 được Tốt a2 chống lưng nên Xe b8 không ăn nổi, lại bảo vệ Tượng c4 và chắn cột b. Khi đối phương chỉ có một hướng phản công, hãy cất mục tiêu đi trước khi tấn công."
     },
     {
       "san": "a5",
@@ -230,7 +230,7 @@
     },
     {
       "san": "Qg3",
-      "c": "Hậu tránh trước nước Mã lên g5 và yểm trợ Tốt e5 theo đường chéo. Nếu giờ {Ng5 h4} thì Mã bị đuổi ngay, Đen chỉ mất thêm thời gian."
+      "c": "Hậu tránh trước nước Mã lên g5 và yểm trợ Tốt e5 theo đường chéo. Nếu giờ {Ng5 h4} thì Mã bị đuổi ngay, và sau {Ng5 h4 Nh7 Rf7} Xe Trắng đã xuống tới hàng 7."
     },
     {
       "san": "Re7",
@@ -258,7 +258,7 @@
     },
     {
       "san": "Qe8",
-      "c": "Hậu cùng Xe e7 nhắm vào cái nêm e6. Engine chỉ ra đây là cơ hội cuối để phản công bằng {^a4}; sau nước tiếp theo của Trắng thì cánh cửa này đóng hẳn."
+      "c": "Hậu cùng Xe e7 nhắm vào cái nêm e6. Đây cũng là dịp cuối để đẩy {^a4}, dù theo engine lúc này nó không còn cải thiện được gì đáng kể; sau nước tiếp theo của Trắng thì cánh cửa này đóng hẳn."
     },
     {
       "san": "a4",
@@ -274,7 +274,7 @@
     },
     {
       "san": "Qe8",
-      "c": "Lại chờ. Engine đề nghị thí Tốt {^d3 Rd2} để Hậu có ô d4 và tạo chút rắc rối, dù thế cờ khi đó vẫn rất xấu."
+      "c": "Lại chờ. Engine đề nghị thí Tốt {^d3 Rd2 Rcd7} để dồn Xe và Hậu lên cột d, tạo chút rắc rối, dù thế cờ khi đó vẫn rất xấu."
     },
     {
       "san": "R2f3",
@@ -286,19 +286,19 @@
     },
     {
       "san": "Bd3",
-      "c": "Tượng đổi đường chéo: từ a2–g8 sang b1–h7, nhắm thẳng vào Mã h7, quân duy nhất còn che Vua. Ý đồ là đưa Hậu về e4 để Hậu và Tượng cùng đứng trên một đường chéo. Cái giá: Tốt e6 tạm mất sự bảo vệ của Tượng, nên Trắng phải tính chính xác."
+      "c": "Tượng đổi đường chéo: từ a2–g8 sang b1–h7, hướng về Mã h7, quân canh các ô quanh Vua; Xe f5 còn tạm chắn đường, nhưng hễ nó rời đi là đường chéo mở. Ý đồ là đưa Hậu về e4 để Hậu và Tượng cùng đứng trên một đường chéo. Cái giá: Tốt e6 tạm mất sự bảo vệ của Tượng, nên Trắng phải tính chính xác."
     },
     {
       "san": "Qe8",
-      "c": "**Sai lầm quyết định.** Hậu đánh e6 nhưng bỏ quên ô h7. Phải đi {^Qg8}: Hậu canh cả h7 lẫn f8, và sau {^Qg8 Qe4 Rxe6} Đen ăn được Tốt mà không bị chiếu hết, nên Trắng sẽ phải tìm cách khác. Thế Đen khi đó vẫn rất khó, nhưng chưa thua ngay. Trước khi xem tiếp, bạn hãy tìm nước tạo đe dọa chiếu hết của Trắng."
+      "c": "**Sai lầm cuối cùng trong một thế đã rất xấu.** Hậu đánh e6 nhưng bỏ quên ô h7. Bền hơn là {^Qg8}: Hậu canh cả h7 lẫn f8, và sau {^Qg8 Qe4 Rxe6} Đen ăn được Tốt mà không bị chiếu hết, nên Trắng sẽ phải tìm cách khác. Thế Đen khi đó vẫn thua về lâu dài theo engine, nhưng chưa sập ngay. Trước khi xem tiếp, bạn hãy tìm nước tạo đe dọa chiếu hết của Trắng."
     },
     {
       "san": "Qe4",
-      "c": "Hậu và Tượng xếp hàng nhắm vào h7, dọa thí Xe ở f8 để kéo quân bảo vệ đi. Vì thế Tốt e6 không ăn được: {Rxe6 Rf8+ Nxf8 Rxf8+ Qxf8 Qh7#}. Engine thấy {^Rf7} cũng thắng, nhưng nước của Fischer tạo đe dọa rõ ràng và dễ tính hơn. Bài học: khi tính toán, xét Chiếu trước, rồi mới tới Bắt và Dọa."
+      "c": "Hậu và Tượng xếp hàng sau Xe f5, cùng hướng về h7; Trắng dọa thí Xe ở f8, vừa mở đường chéo vừa kéo quân bảo vệ đi. Vì thế Tốt e6 không ăn được: {Rxe6 Rf8+ Nxf8 Rxf8+ Qxf8 Qh7#}. Engine thấy {^Rf7} cũng thắng, nhưng nước của Fischer tạo đe dọa rõ ràng và dễ tính hơn. Bài học: khi tính toán, xét Chiếu trước, rồi mới tới Bắt và Dọa."
     },
     {
       "san": "Nf6",
-      "c": "Cách duy nhất để chặn đường chéo b1–h7. Các nước khác thua nhanh: {^Nf8 Rxf8+ Qxf8 Rxf8#}, hoặc {^Kg8 Rf7} và phòng tuyến hàng 7 vỡ. Nhưng Mã ở f6 đứng ngay trước hai Xe Trắng."
+      "c": "Cách duy nhất để kéo dài: Mã chặn cột f, không cho Xe xuống f8, lại đánh Hậu e4 và vẫn canh h7. Các nước khác thua nhanh: {^Nf8 Rxf8+ Qxf8 Rxf8#}, hoặc {^Kg8 Rf7} và phòng tuyến hàng 7 vỡ. Nhưng Mã ở f6 đứng ngay trước hai Xe Trắng."
     },
     {
       "san": "Rxf6",
@@ -306,7 +306,7 @@
     },
     {
       "san": "gxf6",
-      "c": "Đen phải bắt lại, nếu không mất trắng một Mã. Nhưng Tốt g7 rời đi nghĩa là Vua không còn Tốt nào che phía trước."
+      "c": "Đen phải bắt lại, nếu không mất trắng một Mã. Nhưng Tốt g7 rời đi nghĩa là lá chắn của Vua chỉ còn lại Tốt h6 lẻ loi."
     },
     {
       "san": "Rxf6",
