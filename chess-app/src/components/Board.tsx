@@ -22,7 +22,10 @@ export interface BoardProps {
   movableColor?: Color | 'both';
   dests?: Map<Key, Key[]>;
   onMove?: (from: Key, to: Key) => void;
-  /** fired when a square is tapped (the board must not be viewOnly) */
+  /**
+   * fired when a square is tapped (the board must not be viewOnly). Boards that use it receive every touch,
+   * so the page cannot be scrolled by swiping across them.
+   */
   onSelect?: (key: Key) => void;
   shapes?: DrawShape[];
   viewOnly?: boolean;
@@ -49,7 +52,7 @@ export default function Board(props: BoardProps) {
     coordinates: props.coordinates ?? true,
     viewOnly: props.viewOnly ?? false,
     disableContextMenu: true,
-    blockTouchScroll: true,
+    blockTouchScroll: false,
     animation: { enabled: props.animate ?? true, duration: 200 },
     highlight: { lastMove: true, check: true },
     movable: {
@@ -70,7 +73,26 @@ export default function Board(props: BoardProps) {
   useEffect(() => {
     if (!ref.current) return;
     api.current = Chessground(ref.current, config());
+    /*
+     * Let the page scroll when a finger lands on the board without meaning to move:
+     * only a touch on a piece the user may move (or any touch while a piece is selected) reaches the board.
+     * Everything else is stopped here, in the capture phase, before chessground can block scrolling.
+     */
+    const el = ref.current;
+    const onTouch = (e: TouchEvent) => {
+      const cg = api.current;
+      if (!cg || onSelectRef.current || e.touches.length !== 1) return;
+      const s = cg.state;
+      if (s.viewOnly || s.selected) return;
+      const t = e.touches[0];
+      const key = cg.getKeyAtDomPos([t.clientX, t.clientY]);
+      const piece = key ? s.pieces.get(key) : undefined;
+      const mine = !!piece && (s.movable.color === 'both' || s.movable.color === piece.color);
+      if (!mine) e.stopPropagation();
+    };
+    el.addEventListener('touchstart', onTouch, { capture: true, passive: true });
     return () => {
+      el.removeEventListener('touchstart', onTouch, { capture: true });
       api.current?.destroy();
       api.current = null;
     };

@@ -334,3 +334,7 @@ label.field > span { display: block; font-size: 0.85rem; color: var(--fg-2); mar
   backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid var(--line); z-index: 15;
 }
+
+/* puzzles: task above the board; boards leave room to scroll on short phones */
+.pz-prompt { font-weight: 600; font-size: 0.98rem; line-height: 1.45; margin: 2px 0 8px; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 10px 10px 0; }
+.slide-body .board-wrap, .page > div > .board-layout .board-wrap { max-width: max(260px, min(100%, calc(100svh - 380px))); margin-left: auto; margin-right: auto; }

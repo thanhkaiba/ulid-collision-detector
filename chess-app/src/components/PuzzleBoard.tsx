@@ -297,6 +297,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
 
   return (
     <div>
+      {/* the task stays above the board, so it can be read without scrolling past the board */}
+      <div className="pz-prompt">{props.prompt ?? `Bạn cầm ${sideText}. Tìm nước tốt nhất.`}</div>
       <div onClick={status === 'wrong' ? retry : undefined}>
         <Board
           fen={chess.fen()}
@@ -318,7 +320,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
               Đúng rồi! Đối phương đã đáp lại. {movesLeft > 1 ? `Còn ${movesLeft} nước nữa: tìm nước tiếp theo.` : 'Còn một nước nữa để kết thúc bài.'}
             </div>
           ) : (
-            <div className="feedback info">{props.prompt ?? `Bạn cầm ${sideText}. Tìm nước tốt nhất.`}</div>
+            <div className="feedback info">Tới lượt bạn: đi quân trên bàn cờ.</div>
           ))}
         {status === 'checking' && <div className="feedback info">Đang kiểm tra nước của bạn…</div>}
         {status === 'wrong' && wrongInfo && (
