@@ -73,14 +73,14 @@ Người mới hay thích 4.Ng5 nhưng biến đó rất sắc và Đen có nhi�
     blocks: [
       {
         kind: 'text',
-        md: `### Vì sao 1...e5
-Đen cũng chiếm trung tâm và phát triển tự nhiên. Các phòng thủ bất đối xứng (Sicilian, French) rất tốt nhưng đòi hỏi hiểu biết cấu trúc tốt; để sau 1500.
+        md: `### Vì sao 1.e4 e5
+Đen cũng chiếm trung tâm và phát triển tự nhiên. Sau 2.Nf3 Nc6 Trắng thường chọn một trong ba hệ thống dưới đây. Các phòng thủ bất đối xứng (Sicilian, French) rất tốt nhưng đòi hỏi hiểu biết cấu trúc tốt; để sau 1500.
 
 ### Chống Ý (3.Bc4): 3...Bc5
-Đi gương Trắng: ...Nf6, ...d6, ...O-O, ...a6, ...Ba7. Nếu Trắng đi c3 và d4 sớm: 4.c3 Nf6 5.d4 exd4 6.cxd4 Bb4+ 7.Bd2 Bxd2+ 8.Nbxd2 d5! Đen giải tỏa trung tâm và cân bằng. Nếu 6.e5 thì 6...d5!; nếu 7.Nc3 thì 7...Nxe4 (biến sắc, nên xem kỹ).
+Đi gương Trắng: ...Nf6, ...d6, ...O-O, ...a6, ...Ba7. Nếu Trắng đi c3 và d4 sớm: 4.c3 Nf6 5.d4 exd4 6.cxd4 Bb4+ 7.Bd2 Bxd2+ 8.Nbxd2 d5! Đen giải tỏa trung tâm và cân bằng. Nếu 6.e5 thì 6...d5!; nếu 6.cxd4 Bb4+ 7.Nc3 thì 7...Nxe4 (biến sắc, nên xem kỹ).
 
-### Chống 4.Ng5 (nếu bạn đi 3...Nf6)
-4...d5 5.exd5 **Na5!** (không 5...Nxd5? 6.Nxf7! Fried Liver). Sau 6.Bb5+ c6 7.dxc6 bxc6 Đen kém một tốt nhưng phát triển nhanh hơn, đủ bù đắp.
+### Nếu bạn đi 3...Nf6 (Hai Mã) và Trắng chơi 4.Ng5
+4...d5 5.exd5 **Na5!** (không 5...Nxd5? 6.Nxf7! Fried Liver). Sau 5...Na5 6.Bb5+ c6 7.dxc6 bxc6 Đen kém một tốt nhưng phát triển nhanh hơn, đủ bù đắp.
 
 ### Chống Ruy López (3.Bb5): 3...a6 4.Ba4 Nf6 5.O-O Be7
 Rồi ...b5, ...d6, ...O-O. Đây là hệ thống đóng kinh điển, chơi theo nguyên tắc là đủ.
@@ -230,7 +230,7 @@ Bắt hoặc đổi quân đang bảo vệ mục tiêu. Hãy nhìn xem mỗi qu�
         caption: 'Hậu chiếu dọc cột g nhưng vua Đen còn chạy được sang h8 nên đây CHƯA phải mate. Trắng còn thiếu một quân khống chế h8. Kiểm tra kỹ các ô thoát trước khi thí quân.',
       },
       { kind: 'puzzles', themes: ['smotheredMate', 'arabianMate', 'anastasiaMate'], rating: [1000, 1500], count: 6, intro: 'Mẫu ngạt, Ả Rập, Anastasia: 6 bài.' },
-      { kind: 'puzzles', themes: ['bodenMate', 'hookMate', 'dovetailMate', 'doubleBishopMate'], rating: [1000, 1500], count: 6, intro: 'Boden, móc, đuôi én, hai tượng: 6 bài.' },
+      { kind: 'puzzles', themes: ['bodenMate', 'doubleBishopMate'], rating: [1000, 1500], count: 6, intro: 'Chiếu hết bằng hai tượng, như mẫu Boden ở trên: 6 bài.' },
       { kind: 'puzzles', themes: ['mateIn2'], rating: [1100, 1400], count: 8, intro: 'Tổng hợp chiếu hết 2 nước: 8 bài.' },
     ],
   },

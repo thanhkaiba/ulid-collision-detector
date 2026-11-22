@@ -405,16 +405,28 @@ function LessonView({ lesson, progress, setProgress }: { lesson: Lesson; progres
     // move chips continue a line of play across the section: replay the earlier sections first
     const seq = { line: [START_FEN] };
     const fn = (t: string) => renderRich(t, { onShow: setPreview, seqStart: START_FEN, seq });
-    for (let k = 0; k < chunk; k++) renderMd(chunks[k].md, fn);
-    return renderMd(chunks[chunk].md, fn);
+    // headings carry moves too (e.g. "Ván cờ Ý (1.e4 e5 2.Nf3 Nc6 3.Bc4)"), read in order with the text
+    for (let k = 0; k < chunk; k++) {
+      if (chunks[k].title) fn(chunks[k].title);
+      renderMd(chunks[k].md, fn);
+    }
+    const title = chunks[chunk].title ? fn(chunks[chunk].title) : null;
+    return { title, body: renderMd(chunks[chunk].md, fn) };
   };
 
   const body = (() => {
     if (sl.kind === 'text')
       return (
         <div className="slide-text">
-          {sl.title && <h2 className="slide-title">{sl.title}</h2>}
-          {renderText(sl.block, sl.chunk)}
+          {(() => {
+            const r = renderText(sl.block, sl.chunk);
+            return r ? (
+              <>
+                {r.title && <h2 className="slide-title">{r.title}</h2>}
+                {r.body}
+              </>
+            ) : null;
+          })()}
           {sl.diagrams.map((d) => {
             const b = lesson.blocks[d];
             return b.kind === 'diagram' ? <Diagram key={d} block={b} onShow={setPreview} /> : null;
@@ -573,7 +585,7 @@ function Diagram({ block, onShow }: { block: Extract<Block, { kind: 'diagram' }>
     <Card>
       <Board fen={block.fen} orientation={block.orientation ?? 'white'} turnColor={chess.turn() === 'w' ? 'white' : 'black'} viewOnly shapes={shapes} check={chess.inCheck() ? (chess.turn() === 'w' ? 'white' : 'black') : false} />
       <p className="small mt" style={{ margin: '8px 0 0' }}>
-        {renderRich(block.caption, { onShow, seqStart: block.fen, squareFen: block.fen })}
+        {renderRich(block.caption, { onShow, seqStart: block.fen, squareFen: block.fen, braces: { before: block.fen, after: block.fen } })}
       </p>
     </Card>
   );

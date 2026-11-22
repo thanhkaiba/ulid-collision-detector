@@ -185,7 +185,8 @@ const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -10
         if (alt === overall.best) continue;
         const a = await go(b.fen, ` searchmoves ${alt}`);
         const diff = toWin(overall) - toWin(a);
-        if (diff > 60) fail(lesson, i, `alternative ${alt} is clearly worse (${diff}cp) than ${overall.best}`);
+        // opening theory accepts moves within about 3/4 of a pawn (e.g. the Fritz 5...Nd4 next to 5...Na5)
+        if (diff > 80) fail(lesson, i, `alternative ${alt} is clearly worse (${diff}cp) than ${overall.best}`);
       }
       // scripted opponent replies should be reasonable (not blunders): check each student move in line is still best-ish
       const cc = new Chess(b.fen);

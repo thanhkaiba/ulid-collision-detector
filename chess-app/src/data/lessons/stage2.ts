@@ -255,7 +255,7 @@ Khoảng 1500-1600, khi bạn thấy thua ngay sau khai cuộc vì đối phươ
 Lúc này Chessable (hoặc study Lichess + tự ôn) mới đáng dùng. Ôn biến như học từ vựng.
 
 ### Sicilian cho người muốn tấn công
-Nếu muốn chuyển từ 1...e5 sang Sicilian, bắt đầu với **Accelerated Dragon** hoặc **Taimanov**: ít lý thuyết ép buộc hơn Najdorf.`,
+Nếu muốn chuyển từ 1.e4 e5 sang 1.e4 c5 (Sicilian), bắt đầu với **Accelerated Dragon** hoặc **Taimanov**: ít lý thuyết ép buộc hơn Najdorf.`,
       },
       { kind: 'puzzles', themes: ['opening'], rating: [1500, 1900], count: 6, intro: 'Chiến thuật khai cuộc ở trình độ cao hơn: 6 bài.' },
     ],
