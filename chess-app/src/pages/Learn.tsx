@@ -701,6 +701,7 @@ function Diagram({ block, onShow }: { block: Extract<Block, { kind: 'diagram' }>
         turnColor={chess.turn() === 'w' ? 'white' : 'black'}
         lastMove={block.lastMove ? [block.lastMove.slice(0, 2) as Key, block.lastMove.slice(2, 4) as Key] : undefined}
         viewOnly
+        sides
         shapes={shapes}
         check={chess.inCheck() ? (chess.turn() === 'w' ? 'white' : 'black') : false}
       />

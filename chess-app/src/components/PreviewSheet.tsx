@@ -66,7 +66,7 @@ export default function PreviewSheet({ preview, onClose, orientation = 'white' }
             Đóng
           </button>
         </div>
-        <Board fen={preview.fen} orientation={orientation} turnColor={turn} lastMove={preview.lastMove} check={check} viewOnly shapes={shapes} />
+        <Board fen={preview.fen} orientation={orientation} turnColor={turn} lastMove={preview.lastMove} check={check} viewOnly sides shapes={shapes} />
       </div>
     </div>
   );

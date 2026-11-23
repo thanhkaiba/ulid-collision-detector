@@ -34,6 +34,8 @@ export interface BoardProps {
   coordinates?: boolean;
   animate?: boolean;
   className?: string;
+  /** label the two edges with the side that sits there and which way its pawns go */
+  sides?: boolean;
 }
 
 /** React wrapper around Lichess' chessground. Touch-friendly, tiny, fast. */
@@ -118,9 +120,32 @@ export default function Board(props: BoardProps) {
     props.squareClasses,
   ]);
 
-  return (
+  const board = (
     <div className={`board-wrap ${props.className ?? ''}`}>
       <div ref={ref} className="cg-board-root" />
+    </div>
+  );
+  if (!props.sides) return board;
+  const bottom: Color = props.orientation ?? 'white';
+  const top: Color = bottom === 'white' ? 'black' : 'white';
+  return (
+    <div className="board-frame">
+      <SideTag color={top} at="top" />
+      {board}
+      <SideTag color={bottom} at="bottom" />
+    </div>
+  );
+}
+
+function SideTag({ color, at }: { color: Color; at: 'top' | 'bottom' }) {
+  const name = color === 'white' ? 'Trắng' : 'Đen';
+  return (
+    <div className={`side-tag ${at}`}>
+      <i className={`disc ${color}`} />
+      <b>Phía {name}</b>
+      <span>
+        tốt {name.toLowerCase()} đi {at === 'bottom' ? 'lên ↑' : 'xuống ↓'}
+      </span>
     </div>
   );
 }

@@ -96,6 +96,7 @@ export default function MethodDemo({ pos, method }: { pos: PracticePosition; met
         check={c.inCheck() ? (c.turn() === 'w' ? 'white' : 'black') : false}
         squareClasses={classes}
         viewOnly
+        sides
       />
       <div className="demo-caption">
         <div className="tiny muted">

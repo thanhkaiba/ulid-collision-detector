@@ -337,6 +337,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
           dests={live ? toDests(chess) : new Map()}
           onMove={onMove}
           shapes={shapes}
+          sides
         />
       </div>
       <div className="mt">

@@ -410,3 +410,11 @@ input, select, textarea { border-radius: var(--r-md); padding: 8px 11px; }
 .side-switch { margin: 0 0 8px; }
 .side-switch .seg { width: 100%; }
 .side-switch .seg-btn { flex: 1; }
+
+/* which side sits on each edge of the board */
+.board-frame { display: flex; flex-direction: column; gap: 4px; }
+.side-tag { display: flex; align-items: center; gap: 6px; font-size: 12px; line-height: 16px; color: var(--fg-2); padding: 0 2px; }
+.side-tag b { font-weight: 600; color: var(--fg); }
+.side-tag .disc { width: 11px; height: 11px; border-radius: 50%; flex: none; box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg) 45%, transparent); }
+.side-tag .disc.white { background: #f4f4f4; }
+.side-tag .disc.black { background: #222; }
