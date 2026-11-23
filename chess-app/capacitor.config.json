@@ -1,0 +1,6 @@
+{
+  "appId": "vn.chesstrainer.app",
+  "appName": "Chess Trainer",
+  "webDir": "dist",
+  "android": { "allowMixedContent": false }
+}

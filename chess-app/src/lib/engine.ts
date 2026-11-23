@@ -1,3 +1,4 @@
+import { Capacitor, registerPlugin } from '@capacitor/core';
 /**
  * Thin promise-based wrapper around the Stockfish WASM worker (lite single-threaded build,
  * works without cross-origin isolation, so it runs on any static host / PWA).
@@ -33,10 +34,23 @@ const WASM_URL = `${import.meta.env.BASE_URL}stockfish/stockfish-17.1-lite-singl
 /** decoded size of the wasm file, for the progress bar when the server does not say (compressed transfer) */
 const WASM_BYTES = 7280741;
 
+/* ---------- the Android app: the full Stockfish binary run natively (see android/.../StockfishPlugin.java) ---------- */
+
+interface NativeStockfish {
+  start(): Promise<{ ok: boolean; cores: number; reason?: string }>;
+  send(o: { cmd: string }): Promise<void>;
+  addListener(ev: 'line', fn: (e: { line: string }) => void): Promise<unknown>;
+  addListener(ev: 'exit', fn: (e: { code: number }) => void): Promise<unknown>;
+}
+const nativeStockfish: NativeStockfish | null = Capacitor.isNativePlatform() ? registerPlugin<NativeStockfish>('Stockfish') : null;
+
 /* ---------- status shown to the user: download progress, then how far a search has got ---------- */
 
 export interface EngineStatus {
   phase: 'idle' | 'download' | 'init' | 'ready' | 'error';
+  /** which engine runs: the full native binary (Android app) or the light WebAssembly build */
+  kind?: 'native' | 'wasm';
+  threads?: number;
   loaded: number;
   total: number;
   /** a search in progress: 0..1, and when it started (short searches are not worth showing) */
@@ -106,6 +120,7 @@ export class Engine {
 
   constructor() {
     this.ready = (async () => {
+      if (nativeStockfish && (await this.bootNative(nativeStockfish))) return;
       const wasm = await fetchWasm();
       setStatus({ phase: 'init' });
       try {
@@ -117,9 +132,51 @@ export class Engine {
         this.worker?.terminate();
         await this.boot(WORKER_URL);
       }
-      setStatus({ phase: 'ready' });
+      setStatus({ phase: 'ready', kind: 'wasm', threads: 1 });
     })();
     this.ready.catch(() => setStatus({ phase: 'error', thinking: null }));
+  }
+
+  /** native commands go straight to the process */
+  private nativeSend: ((cmd: string) => void) | null = null;
+
+  /** the Android app: start the full Stockfish binary; false when this phone cannot run it (then WebAssembly is used) */
+  private async bootNative(n: NativeStockfish): Promise<boolean> {
+    setStatus({ phase: 'init' });
+    try {
+      const r = await n.start();
+      if (!r.ok) return false;
+      await n.addListener('line', (e) => {
+        for (const l of [...this.listeners]) l(e.line);
+      });
+      await n.addListener('exit', () => {
+        this.broken = true;
+        setStatus({ phase: 'error', thinking: null });
+        for (const l of [...this.listeners]) l('bestmove (none)');
+      });
+      this.nativeSend = (cmd) => void n.send({ cmd }).catch(() => undefined);
+      await new Promise<void>((resolve, reject) => {
+        const t = window.setTimeout(() => reject(new Error('no uciok')), 15000);
+        const off = this.on((line) => {
+          if (line === 'uciok') {
+            off();
+            clearTimeout(t);
+            resolve();
+          }
+        });
+        for (const c of this.pending.splice(0)) this.nativeSend!(c);
+        this.nativeSend!('uci');
+      });
+      // a phone has several cores: leave one for the interface; the hash table is cheap at this size
+      const threads = Math.max(1, Math.min(8, r.cores - 1));
+      this.nativeSend(`setoption name Threads value ${threads}`);
+      this.nativeSend('setoption name Hash value 128');
+      setStatus({ phase: 'ready', kind: 'native', threads });
+      return true;
+    } catch {
+      this.nativeSend = null;
+      return false;
+    }
   }
 
   /** start the worker and wait for "uciok"; rejects if the worker fails to load */
@@ -163,7 +220,8 @@ export class Engine {
   }
 
   send(cmd: string) {
-    if (this.worker) this.worker.postMessage(cmd);
+    if (this.nativeSend) this.nativeSend(cmd);
+    else if (this.worker) this.worker.postMessage(cmd);
     else this.pending.push(cmd);
   }
 

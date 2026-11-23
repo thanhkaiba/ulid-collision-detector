@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { getEngineStatus, subscribeEngineStatus } from '../lib/engine';
 import { Button, Card, Seg, Spinner } from '../components/ui';
 import { clearAll, loadSettings, saveSettings, type Settings as S } from '../lib/storage';
 import type { Route } from '../lib/router';
@@ -7,6 +8,7 @@ import { BOARD_THEMES, applyBoardTheme, currentBoardTheme, type BoardThemeId } f
 
 export default function Settings(_: { route: Route }) {
   const [s, setS] = useState<S | null>(null);
+  const engine = useSyncExternalStore(subscribeEngineStatus, getEngineStatus);
   const [saved, setSaved] = useState(false);
   const [board, setBoard] = useState<BoardThemeId>(currentBoardTheme);
   const savedTimer = useRef(0);
@@ -112,7 +114,16 @@ export default function Settings(_: { route: Route }) {
       <Card>
         <h3>Về ứng dụng</h3>
         <p className="small muted">
-          Bài tập: cơ sở dữ liệu Lichess (CC0). Engine: Stockfish 17.1 WASM (GPL). Bàn cờ: chessground (Lichess, GPL). Mọi dữ liệu được lưu trong máy bạn, không có máy chủ.
+          Bài tập: cơ sở dữ liệu Lichess (CC0). Bàn cờ: chessground (Lichess, GPL). Mọi dữ liệu được lưu trong máy bạn, không có máy chủ.
+        </p>
+        <p className="small muted">
+          Engine:{' '}
+          {engine.kind === 'native'
+            ? `Stockfish 17.1 bản đầy đủ, chạy trực tiếp trên máy (${engine.threads} luồng).`
+            : engine.kind === 'wasm'
+              ? 'Stockfish 17.1 bản nhẹ (WebAssembly, 1 luồng).'
+              : 'Stockfish 17.1.'}{' '}
+          Stockfish là phần mềm tự do theo giấy phép GNU GPL v3 (<a href="stockfish/COPYING-stockfish.txt" target="_blank" rel="noreferrer">giấy phép</a>, <a href="https://github.com/official-stockfish/Stockfish" target="_blank" rel="noreferrer">mã nguồn</a>).
         </p>
         <Button
           kind="danger"
