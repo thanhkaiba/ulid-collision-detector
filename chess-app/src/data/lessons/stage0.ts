@@ -622,7 +622,7 @@ Dễ nhất, nên học trước. Hai xe luân phiên cắt từng hàng, vua đ
         kind: 'diagram',
         fen: '8/8/8/4k3/R7/8/8/1R4K1 w - - 0 1',
         marks: ['b1b5:blue'],
-        caption: 'Xe a4 cắt hàng 4, Vua đen không xuống được. Trắng đi Rb5+ (mũi tên): vua phải lùi lên hàng 6. Sau đó Ra6+, rồi Rb7, cứ luân phiên như leo thang.',
+        caption: 'Xe a4 cắt hàng 4, Vua đen không xuống được. Trắng đi Rb5+ (mũi tên): vua phải lùi lên hàng 6. Sau đó xe a4 lên hàng 6 chiếu, rồi xe kia lên hàng 7, cứ luân phiên như leo thang (vua đen đến gần xe nào thì đưa xe đó sang cánh xa).',
       },
       {
         kind: 'diagram',
@@ -850,16 +850,51 @@ Sau khi nhập thành, ba tốt f-g-h che vua nhưng cũng nhốt nó. Nếu hà
       {
         kind: 'text',
         md: `### Quy tắc hình vuông
-Vẽ hình vuông có cạnh từ tốt tới ô phong cấp. Nếu vua đối phương **đang ở trong** hình vuông (hoặc bước vào được khi đến lượt), nó bắt kịp tốt. Nếu không, tốt phong cấp. Không cần đếm từng nước. Lưu ý: tốt còn ở hàng 2 được đi hai ô, nên hãy vẽ hình vuông như thể nó đã đứng ở hàng 3.
-
-### Đối vua (opposition)
-Hai vua đứng đối diện nhau, cách nhau **một ô** (thường gặp nhất là trên cùng một cột; cùng hàng hay cùng đường chéo cũng tính). Bên **không phải đi** đang "có đối vua" và thắng thế: bên kia buộc phải nhường đường.
-
-### Vua + tốt chống vua
+Vẽ hình vuông có cạnh từ tốt tới ô phong cấp. Nếu vua đối phương **đang ở trong** hình vuông (hoặc bước vào được khi đến lượt), nó bắt kịp tốt. Nếu không, tốt phong cấp. Không cần đếm từng nước. Lưu ý: tốt còn ở hàng 2 được đi hai ô, nên hãy vẽ hình vuông như thể nó đã đứng ở hàng 3.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '8/8/8/8/2P4k/8/8/7K b - - 0 1',
+        marks: ['c4:yellow', 'c5:yellow', 'c6:yellow', 'c7:yellow', 'c8:yellow', 'd8:yellow', 'e8:yellow', 'f8:yellow', 'g8:yellow', 'g7:yellow', 'g6:yellow', 'g5:yellow', 'g4:yellow', 'f4:yellow', 'e4:yellow', 'd4:yellow'],
+        caption: 'Đen đi. Hình vuông của tốt c4 là c4-c8-g8-g4 (viền vàng). Vua h4 đang ở ngoài, nhưng đến lượt Đen nên bước được vào g4 hoặc g5: vua bắt kịp tốt, hòa.',
+      },
+      {
+        kind: 'diagram',
+        fen: '8/8/8/2P5/7k/8/8/7K b - - 0 1',
+        lastMove: 'c4c5',
+        marks: ['c5:yellow', 'c6:yellow', 'c7:yellow', 'c8:yellow', 'd8:yellow', 'e8:yellow', 'f8:yellow', 'f7:yellow', 'f6:yellow', 'f5:yellow', 'e5:yellow', 'd5:yellow'],
+        caption: 'Cùng thế cờ nhưng Trắng đi trước: c5! Hình vuông co lại thành c5-c8-f8-f5. Giờ Đen đi, vua h4 không bước vào kịp (g5 vẫn ở ngoài): tốt phong cấp, Trắng thắng.',
+      },
+      {
+        kind: 'text',
+        md: `### Đối vua (opposition)
+Hai vua đứng đối diện nhau, cách nhau **một ô** (thường gặp nhất là trên cùng một cột; cùng hàng hay cùng đường chéo cũng tính). Bên **không phải đi** đang "có đối vua" và thắng thế: bên kia buộc phải nhường đường.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '8/8/4k3/8/4K3/8/8/8 w - - 0 1',
+        marks: ['e5:yellow'],
+        caption: 'Hai vua cùng cột e, giữa là ô vàng e5. Trắng phải đi, nên Đen đang có đối vua: vua trắng không được bước lên d5, e5, f5 (giáp vua đen), buộc phải lùi hoặc đi ngang.',
+      },
+      {
+        kind: 'text',
+        md: `### Vua + tốt chống vua
 - Vua tấn công nên đứng **trước** tốt của mình, không phải cạnh hay sau: đó là cách thắng trong hầu hết các thế.
 - Vua đứng ở hàng 6 (trước tốt) thì **luôn thắng**, bất kể ai đi (trừ tốt biên).
 - Vua phòng thủ chặn ngay trước tốt và giữ đối vua thì **hòa**.
 - Tốt biên (a, h): hòa nếu vua phòng thủ tới được góc.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '4k3/8/4K3/8/4P3/8/8/8 b - - 0 1',
+        marks: ['d6:yellow', 'e6:yellow', 'f6:yellow'],
+        caption: 'Thế then chốt: với tốt e4, ba ô vàng d6, e6, f6 là ô then chốt. Vua trắng đã đứng ở e6, trước tốt hai hàng: Trắng thắng dù Đen hay Trắng đi.',
+      },
+      {
+        kind: 'diagram',
+        fen: 'k7/8/1K6/P7/8/8/8/8 w - - 0 1',
+        marks: ['a8:yellow'],
+        caption: 'Tốt biên: Vua đen đã vào góc a8 (ô vàng). Vua trắng không đẩy được nó ra (dồn sát thì thành pat), nên dù hơn tốt vẫn chỉ hòa.',
       },
       {
         kind: 'task',
@@ -903,12 +938,23 @@ Hai vua đứng đối diện nhau, cách nhau **một ô** (thường gặp nh�
         md: `### Trước khi đi, hỏi ba câu
 1. **Đối phương vừa đe dọa gì?** Nước vừa rồi của họ tấn công quân nào, mở đường nào?
 2. **Tôi có chiếu, bắt quân, hay đe dọa nào không?** (C-C-T: Checks, Captures, Threats). Xét theo đúng thứ tự đó.
-3. **Sau nước tôi định đi, đối phương có chiếu, bắt quân, đe dọa gì?** Đây là "kiểm tra an toàn". Bỏ qua bước này là nguyên nhân của hầu hết thất bại dưới 1200.
-
-### Khi đối phương đi một nước lạ
-Đừng đoán. Hỏi "nếu tôi không làm gì, họ làm gì tiếp?". Đó là cách tìm ra ý đồ.
-
-### Nhịp độ
+3. **Sau nước tôi định đi, đối phương có chiếu, bắt quân, đe dọa gì?** Đây là "kiểm tra an toàn". Bỏ qua bước này là nguyên nhân của hầu hết thất bại dưới 1200.`,
+      },
+      {
+        kind: 'text',
+        md: `### Khi đối phương đi một nước lạ
+Đừng đoán. Hỏi "nếu tôi không làm gì, họ làm gì tiếp?". Đó là cách tìm ra ý đồ.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/2P2N2/PP1P1PPP/RNBQK2R b KQkq - 0 4',
+        lastMove: 'c2c3',
+        marks: ['d2d4:blue', 'c5:red', 'e5:red'],
+        caption: 'Sau 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 Trắng đi 4.c3, trông lặng lẽ. Hỏi: nếu Đen không làm gì? Trắng sẽ đi d4 (mũi tên xanh), tốt d4 đánh cùng lúc tượng c5 và tốt e5 (vòng đỏ); nếu Đen ăn exd4 thì tốt c3 ăn lại.',
+      },
+      {
+        kind: 'text',
+        md: `### Nhịp độ
 Chơi cờ chậm (15+10 trở lên). Dùng ít nhất 10 giây cho mỗi nước ngay cả khi thấy nước rõ ràng, chỉ để chạy ba câu hỏi trên.`,
       },
       {
