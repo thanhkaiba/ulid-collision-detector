@@ -850,7 +850,9 @@ Sau khi nhập thành, ba tốt f-g-h che vua nhưng cũng nhốt nó. Nếu hà
       {
         kind: 'text',
         md: `### Quy tắc hình vuông
-Vẽ hình vuông có cạnh từ tốt tới ô phong cấp. Nếu vua đối phương **đang ở trong** hình vuông (hoặc bước vào được khi đến lượt), nó bắt kịp tốt. Nếu không, tốt phong cấp. Không cần đếm từng nước. Lưu ý: tốt còn ở hàng 2 được đi hai ô, nên hãy vẽ hình vuông như thể nó đã đứng ở hàng 3.`,
+Vẽ hình vuông có cạnh từ tốt tới ô phong cấp. Nếu vua đối phương **đang ở trong** hình vuông (hoặc bước vào được khi đến lượt), nó bắt kịp tốt. Nếu không, tốt phong cấp. Không cần đếm từng nước.
+
+**Ngoại lệ: tốt chưa đi lần nào.** Tốt đứng ở chỗ ban đầu (tốt trắng ở hàng 2) được phép tiến **2 ô** trong nước đầu, nên nó nhanh hơn một nhịp. Vì vậy hãy vẽ hình vuông như thể tốt đã đứng sẵn ở hàng 3. Ví dụ tốt c2: vẽ từ c3, tức hình vuông c3-c8-h8-h3, chứ không phải từ c2.`,
       },
       {
         kind: 'diagram',
