@@ -52,7 +52,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   /** the line being followed: the main solution, or an alternative line the solver chose */
   const alt = useRef<string[] | null>(null);
   /** set once Stockfish has taken over the opponent's side (see playFree) */
-  const free = useRef<{ target: number; mate: boolean } | null>(null);
+  const free = useRef<{ target: number; mate: boolean; pawnGoal: number } | null>(null);
   const lineNow = () => alt.current ?? props.moves;
   const moves = lineNow();
   const chessRef = useRef(new Chess(fen));
@@ -233,7 +233,14 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
    */
   const playFree = (uci: string, at: number) => {
     const myAttempt = attempt.current;
-    if (!free.current) free.current = { target: solverPlies(props.moves.length), mate: props.mateGoal ?? false };
+    if (!free.current) {
+      // what the scripted solution achieves besides its length: a mate, or a pawn pushed to a given rank
+      const end = new Chess(fen);
+      for (const u of props.moves) if (!playUci(end, u)) break;
+      const start = new Chess(fen);
+      const pawnGoal = pawnRank(end, playerColor) > pawnRank(start, playerColor) ? pawnRank(end, playerColor) : 0;
+      free.current = { target: solverPlies(props.moves.length), mate: (props.mateGoal ?? false) || end.isCheckmate(), pawnGoal };
+    }
     const mv = playUci(chess, uci);
     if (!mv) return;
     alt.current = [...lineNow().slice(0, at), uci];
@@ -245,8 +252,9 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     setIdx(at + 1);
     bump();
     const made = solverPlies(at + 1);
-    const { target, mate } = free.current;
-    if (chess.isCheckmate() || chess.isGameOver() || (made >= target && !mate) || made >= target + 3) {
+    const { target, mate, pawnGoal } = free.current;
+    const goalMet = mate ? false : pawnRank(chess, playerColor) >= pawnGoal;
+    if (chess.isCheckmate() || chess.isGameOver() || (made >= target && goalMet) || made >= target + 4) {
       setStatus('solved');
       finish(!failed);
       return;
@@ -417,7 +425,15 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   const solutionSan = useMemo(() => uciLineToSan(fen, moves), [fen, moves]);
   const live = status === 'solving';
   const myTurn = live && turnColor(chess) === playerColor;
-  const left = movesLeft > 1 ? `Còn ${movesLeft} nước nữa: tìm nước tiếp theo.` : 'Còn một nước nữa để kết thúc bài.';
+  const madeFree = free.current ? Array.from({ length: idx }, (_, k) => k).filter((k) => k % 2 === (playerFirst ? 0 : 1)).length : 0;
+  const left =
+    free.current && madeFree >= free.current.target
+      ? free.current.mate
+        ? 'Đi tiếp cho tới khi chiếu hết.'
+        : `Đi tiếp cho tới khi tốt lên hàng ${free.current.pawnGoal}.`
+      : movesLeft > 1
+        ? `Còn ${movesLeft} nước nữa: tìm nước tiếp theo.`
+        : 'Còn một nước nữa để kết thúc bài.';
   const sideText = playerColor === 'white' ? 'Trắng' : 'Đen';
 
   return (
@@ -507,4 +523,14 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
       )}
     </div>
   );
+}
+
+/** the furthest rank (from that side's point of view) a pawn of `color` has reached; a promotion made on this board counts as 8 */
+function pawnRank(c: Chess, color: Color): number {
+  const me = color === 'white' ? 'w' : 'b';
+  if (c.history({ verbose: true }).some((m) => m.color === me && !!m.promotion)) return 8;
+  let best = 0;
+  for (const row of c.board())
+    for (const sq of row) if (sq && sq.color === me && sq.type === 'p') best = Math.max(best, me === 'w' ? Number(sq.square[1]) : 9 - Number(sq.square[1]));
+  return best;
 }
