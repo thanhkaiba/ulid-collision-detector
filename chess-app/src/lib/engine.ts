@@ -29,38 +29,112 @@ export interface GoOptions {
 }
 
 const WORKER_URL = `${import.meta.env.BASE_URL}stockfish/stockfish-17.1-lite-single-03e3232.js`;
+const WASM_URL = `${import.meta.env.BASE_URL}stockfish/stockfish-17.1-lite-single-03e3232.wasm`;
+/** decoded size of the wasm file, for the progress bar when the server does not say (compressed transfer) */
+const WASM_BYTES = 7280741;
+
+/* ---------- status shown to the user: download progress, then how far a search has got ---------- */
+
+export interface EngineStatus {
+  phase: 'idle' | 'download' | 'init' | 'ready' | 'error';
+  loaded: number;
+  total: number;
+  /** a search in progress: 0..1, and when it started (short searches are not worth showing) */
+  thinking: { pct: number; since: number } | null;
+}
+let status: EngineStatus = { phase: 'idle', loaded: 0, total: WASM_BYTES, thinking: null };
+const statusSubs = new Set<() => void>();
+function setStatus(p: Partial<EngineStatus>) {
+  status = { ...status, ...p };
+  for (const f of statusSubs) f();
+}
+export const getEngineStatus = () => status;
+export function subscribeEngineStatus(fn: () => void) {
+  statusSubs.add(fn);
+  return () => {
+    statusSubs.delete(fn);
+  };
+}
+
+/**
+ * Download the wasm here (not inside the worker) so the download can be shown as a percentage, then hand it to the
+ * worker as a blob URL: the Stockfish loader reads the wasm location from the worker URL's hash.
+ */
+async function fetchWasm(): Promise<string | null> {
+  setStatus({ phase: 'download', loaded: 0 });
+  try {
+    const res = await fetch(WASM_URL);
+    if (!res.ok) throw new Error(String(res.status));
+    const len = Number(res.headers.get('content-length'));
+    const total = len && !res.headers.get('content-encoding') ? len : WASM_BYTES;
+    setStatus({ total });
+    let blob: Blob;
+    if (res.body) {
+      const reader = res.body.getReader();
+      const parts: BlobPart[] = [];
+      let loaded = 0;
+      let shown = 0;
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        parts.push(value);
+        loaded += value.byteLength;
+        if (loaded - shown > total / 100) {
+          shown = loaded;
+          setStatus({ loaded: Math.min(loaded, total) });
+        }
+      }
+      blob = new Blob(parts, { type: 'application/wasm' });
+    } else blob = await res.blob();
+    setStatus({ loaded: total });
+    return URL.createObjectURL(blob);
+  } catch {
+    // let the worker fetch it by itself (no percentage then)
+    return null;
+  }
+}
 
 export class Engine {
-  private worker: Worker;
+  private worker: Worker | null = null;
   private ready: Promise<void>;
   private listeners = new Set<(line: string) => void>();
   private queue: Promise<unknown> = Promise.resolve();
   private options: Record<string, string | number | boolean> = {};
   private searching = false;
+  /** commands sent before the worker exists */
+  private pending: string[] = [];
 
   constructor() {
-    this.worker = new Worker(WORKER_URL);
-    this.worker.onmessage = (e: MessageEvent<string>) => {
-      const line = typeof e.data === 'string' ? e.data : String(e.data);
-      for (const l of this.listeners) l(line);
-    };
-    this.ready = new Promise<void>((resolve, reject) => {
-      const off = this.on((line) => {
-        if (line === 'uciok') {
-          off();
-          resolve();
-        }
-      });
-      // the worker could not load (offline before it was cached, blocked file) or crashed: fail fast instead of
-      // leaving every caller waiting forever, and end any search in progress as "no move"
-      this.worker.onerror = (e) => {
-        e.preventDefault?.();
-        this.broken = true;
-        reject(new Error('engine unavailable'));
-        for (const l of [...this.listeners]) l('bestmove (none)');
+    this.ready = (async () => {
+      const wasm = await fetchWasm();
+      setStatus({ phase: 'init' });
+      const worker = new Worker(wasm ? `${WORKER_URL}#${encodeURIComponent(wasm)}` : WORKER_URL);
+      this.worker = worker;
+      worker.onmessage = (e: MessageEvent<string>) => {
+        const line = typeof e.data === 'string' ? e.data : String(e.data);
+        for (const l of this.listeners) l(line);
       };
-      this.send('uci');
-    });
+      await new Promise<void>((resolve, reject) => {
+        const off = this.on((line) => {
+          if (line === 'uciok') {
+            off();
+            resolve();
+          }
+        });
+        // the worker could not load (offline before it was cached, blocked file) or crashed: fail fast instead of
+        // leaving every caller waiting forever, and end any search in progress as "no move"
+        worker.onerror = (e) => {
+          e.preventDefault?.();
+          this.broken = true;
+          setStatus({ phase: 'error', thinking: null });
+          reject(new Error('engine unavailable'));
+          for (const l of [...this.listeners]) l('bestmove (none)');
+        };
+        for (const c of this.pending.splice(0)) worker.postMessage(c);
+        worker.postMessage('uci');
+      });
+      setStatus({ phase: 'ready' });
+    })();
     this.ready.catch(() => undefined);
   }
 
@@ -73,7 +147,8 @@ export class Engine {
   }
 
   send(cmd: string) {
-    this.worker.postMessage(cmd);
+    if (this.worker) this.worker.postMessage(cmd);
+    else this.pending.push(cmd);
   }
 
   async waitReady(): Promise<void> {
@@ -125,15 +200,24 @@ export class Engine {
       return new Promise<EvalResult>((resolve) => {
         const lines = new Map<number, EngineLine>();
         let depth = 0;
+        const target = opts.depth ?? 12;
+        const since = Date.now();
+        setStatus({ thinking: { pct: 0, since } });
+        const tick = opts.movetime
+          ? window.setInterval(() => setStatus({ thinking: { pct: Math.min(0.99, (Date.now() - since) / opts.movetime!), since } }), 200)
+          : 0;
         const off = this.on((line) => {
           if (line.startsWith('info ') && line.includes(' pv ')) {
             const parsed = parseInfo(line);
             if (!parsed) return;
             lines.set(parsed.multipv, parsed);
+            if (!opts.movetime && parsed.depth > depth) setStatus({ thinking: { pct: Math.min(0.99, parsed.depth / target), since } });
             depth = Math.max(depth, parsed.depth);
             opts.onInfo?.(sortedLines(lines));
           } else if (line.startsWith('bestmove')) {
             off();
+            if (tick) clearInterval(tick);
+            setStatus({ thinking: null });
             this.searching = false;
             const parts = line.split(/\s+/);
             resolve({
@@ -157,7 +241,7 @@ export class Engine {
 
   terminate() {
     this.send('quit');
-    this.worker.terminate();
+    this.worker?.terminate();
   }
 }
 

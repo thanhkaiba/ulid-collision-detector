@@ -1,3 +1,4 @@
+import EngineBadge from './components/EngineBadge';
 import { Component, lazy, Suspense, useLayoutEffect, type JSX, type ReactNode } from 'react';
 import { useRoute, navigate, type Tab } from './lib/router';
 import { Button, Spinner } from './components/ui';
@@ -161,6 +162,7 @@ export default function App() {
           </Suspense>
         </PageBoundary>
       </main>
+      <EngineBadge hideThinking={route.tab === 'analyze'} />
       <nav className="tabbar">
         {TABS.map((t) => (
           <button
