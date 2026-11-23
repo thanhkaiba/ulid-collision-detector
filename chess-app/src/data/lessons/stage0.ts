@@ -11,12 +11,28 @@ export const STAGE0: Lesson[] = [
       {
         kind: 'text',
         md: `### Hai người, hai màu quân
-Cờ vua là trò chơi cho hai người. Một người cầm quân **Trắng**, người kia cầm quân **Đen**. Trắng luôn đi trước, sau đó hai bên lần lượt mỗi người đi một nước.
-
-### Mục tiêu
-Mỗi bên có một quân **Vua**. Bạn thắng khi tấn công Vua đối phương mà nó không còn cách nào thoát. Tình huống đó gọi là **chiếu hết**. Không cần ăn hết quân của đối phương.
-
-### Sáu loại quân
+Cờ vua là trò chơi cho hai người. Một người cầm quân **Trắng**, người kia cầm quân **Đen**. Trắng luôn đi trước, sau đó hai bên lần lượt mỗi người đi một nước.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        caption: 'Mỗi bên có 16 quân. Quân Trắng xếp ở phía dưới (phía bạn), quân Đen ở phía trên. Trắng đi nước đầu tiên.',
+      },
+      {
+        kind: 'text',
+        md: `### Mục tiêu
+Mỗi bên có một quân **Vua**. Bạn thắng khi tấn công Vua đối phương mà nó không còn cách nào thoát. Tình huống đó gọi là **chiếu hết**. Không cần ăn hết quân của đối phương.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '3k4/3Q4/3K4/8/8/8/8/8 b - - 0 1',
+        marks: ['d7d8:red'],
+        mate: true,
+        caption: 'Mũi tên đỏ: Hậu trắng d7 tấn công Vua đen d8. Ô nào quanh Vua đen cũng bị Hậu khống chế, và Vua đen không bắt được Hậu vì Vua trắng d6 bảo vệ nó. Đó là chiếu hết: Trắng thắng, dù Đen chưa mất quân nào khác.',
+      },
+      {
+        kind: 'text',
+        md: `### Sáu loại quân
 - **Vua** ♔ (1 quân): quân quan trọng nhất.
 - **Hậu** ♕ (1 quân): quân mạnh nhất.
 - **Xe** ♖ (2 quân).
@@ -29,7 +45,8 @@ Bài sau sẽ dạy từng quân đi thế nào. Bây giờ hãy nhìn cách x�
       {
         kind: 'diagram',
         fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-        caption: 'Thế xuất phát. Quân Trắng ở phía dưới. Hàng trong cùng, từ trái sang: Xe, Mã, Tượng, Hậu, Vua, Tượng, Mã, Xe. Hàng trước mặt là tám Tốt. Mẹo: Hậu trắng đứng ô sáng, Hậu đen đứng ô sẫm.',
+        marks: ['d1:yellow', 'd8:yellow'],
+        caption: 'Thế xuất phát. Hàng trong cùng, từ trái sang: Xe, Mã, Tượng, Hậu, Vua, Tượng, Mã, Xe. Hàng trước mặt là tám Tốt. Mẹo (vòng vàng): Hậu trắng đứng ô sáng, Hậu đen đứng ô sẫm.',
       },
       {
         kind: 'text',
@@ -40,6 +57,12 @@ Bàn cờ có 64 ô. Để nói rõ một ô, người ta đặt tên cho nó:
 - Tên ô = chữ của cột + số của hàng. Ô góc dưới bên trái là **a1**, ô góc trên bên phải là **h8**.
 
 Các chữ và số nhỏ in ngay trên mép bàn cờ để bạn dò. Hãy luyện một chút: tìm đúng ô được hỏi.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '4k3/8/8/8/8/8/8/4K3 w - - 0 1',
+        marks: ['a1:yellow', 'h8:yellow', 'c5:blue'],
+        caption: 'Vòng vàng: a1 (góc dưới bên trái) và h8 (góc trên bên phải). Vòng xanh: ô c5, nằm ở cột c, hàng 5. Vua trắng đứng ô e1, Vua đen đứng ô e8.',
       },
       {
         kind: 'squares',
@@ -66,6 +89,12 @@ Các chữ và số nhỏ in ngay trên mép bàn cờ để bạn dò. Hãy luy
 Xe đi **thẳng**: dọc theo cột hoặc ngang theo hàng, xa bao nhiêu cũng được. Xe không nhảy qua quân khác.`,
       },
       {
+        kind: 'diagram',
+        fen: 'k7/8/8/8/3R4/8/8/7K w - - 0 1',
+        marks: ['d4d8', 'd4d1', 'd4a4', 'd4h4'],
+        caption: 'Xe trắng ở d4. Bốn mũi tên: Xe đi lên, xuống, sang trái, sang phải tới tận mép bàn cờ, dừng ở bất kỳ ô nào trên đường.',
+      },
+      {
         kind: 'task',
         fen: '7k/8/8/8/8/8/R6p/4K3 w - - 0 1',
         moves: ['a2h2'],
@@ -87,6 +116,12 @@ Xe đi **thẳng**: dọc theo cột hoặc ngang theo hàng, xa bao nhiêu cũn
 Tượng đi **chéo**, xa bao nhiêu cũng được, không nhảy qua quân. Vì chỉ đi chéo nên mỗi Tượng suốt ván chỉ đứng trên ô một màu.`,
       },
       {
+        kind: 'diagram',
+        fen: 'k7/8/8/8/3B4/8/8/7K w - - 0 1',
+        marks: ['d4a1', 'd4a7', 'd4h8', 'd4g1'],
+        caption: 'Tượng trắng ở d4 đi theo bốn đường chéo tới mép bàn cờ. Mọi ô nó tới được đều là ô sẫm, cùng màu với ô d4.',
+      },
+      {
         kind: 'task',
         fen: '7k/8/8/8/5p2/8/3B4/4K3 w - - 0 1',
         moves: ['d2f4'],
@@ -98,6 +133,12 @@ Tượng đi **chéo**, xa bao nhiêu cũng được, không nhảy qua quân. V
         kind: 'text',
         md: `### Hậu ♕
 Hậu đi được như **Xe và Tượng cộng lại**: thẳng hoặc chéo, xa bao nhiêu cũng được. Vì thế Hậu là quân mạnh nhất, và mất Hậu thường là thua.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'k7/8/8/8/3Q4/8/8/7K w - - 0 1',
+        marks: ['d4d8:blue', 'd4d1:blue', 'd4a4:blue', 'd4h4:blue', 'd4a1', 'd4a7', 'd4h8', 'd4g1'],
+        caption: 'Hậu trắng ở d4 đi được theo tám hướng. Mũi tên xanh dương: đường thẳng giống Xe. Mũi tên xanh lá: đường chéo giống Tượng.',
       },
       {
         kind: 'task',
@@ -123,6 +164,12 @@ Hậu đi được như **Xe và Tượng cộng lại**: thẳng hoặc chéo, 
 Vua đi **một ô** theo mọi hướng. Vua không bao giờ được đi vào ô đang bị quân đối phương tấn công.`,
       },
       {
+        kind: 'diagram',
+        fen: 'k7/8/8/7r/4K3/8/8/8 w - - 0 1',
+        marks: ['e4d4', 'e4d3', 'e4e3', 'e4f3', 'e4f4', 'h5d5:red', 'd5:red', 'e5:red', 'f5:red'],
+        caption: 'Vua trắng e4 đi một ô theo các mũi tên xanh. Ba ô phía trên (vòng đỏ) đang bị Xe đen h5 tấn công dọc hàng 5, nên Vua không được bước vào.',
+      },
+      {
         kind: 'task',
         fen: '7k/8/8/8/8/8/P2n4/4K3 w - - 0 1',
         moves: ['e1d2'],
@@ -134,6 +181,12 @@ Vua đi **một ô** theo mọi hướng. Vua không bao giờ được đi vào
         kind: 'text',
         md: `### Mã ♘
 Mã đi hình **chữ L**: hai ô thẳng rồi rẽ một ô sang bên. Mã là quân duy nhất **nhảy qua** được quân khác.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'k7/8/8/8/3N4/8/8/7K w - - 0 1',
+        marks: ['d4b3', 'd4b5', 'd4c6', 'd4e6', 'd4f5', 'd4f3', 'd4e2', 'd4c2'],
+        caption: 'Mã trắng ở d4 có tám ô để nhảy tới (đầu mũi tên). Mỗi ô cách d4 hai ô theo một hướng và một ô theo hướng kia, như hình chữ L.',
       },
       {
         kind: 'task',
@@ -158,6 +211,18 @@ Tốt là quân duy nhất **đi một kiểu, bắt một kiểu**:
 - **Đi**: tiến thẳng một ô. Riêng nước đầu tiên của mỗi Tốt được chọn tiến hai ô.
 - **Bắt**: chéo lên một ô (sang trái hoặc phải).
 - Tốt không bao giờ đi lùi. Gặp quân đứng ngay trước mặt thì Tốt bị chặn.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '6k1/8/8/8/8/7P/4P3/6K1 w - - 0 1',
+        marks: ['e2e3', 'e2e4', 'h3h4'],
+        caption: 'Tốt e2 chưa đi lần nào nên được chọn tiến một ô (e3) hoặc hai ô (e4). Tốt h3 đã đi rồi, chỉ tiến được một ô tới h4.',
+      },
+      {
+        kind: 'diagram',
+        fen: '6k1/8/8/2nr4/3P4/8/8/6K1 w - - 0 1',
+        marks: ['d4c5', 'd5:red'],
+        caption: 'Tốt d4 bắt chéo được Mã c5 (mũi tên). Xe đen d5 (vòng đỏ) đứng ngay trước mặt: Tốt không bắt được Xe, cũng không tiến lên được.',
       },
       {
         kind: 'task',
@@ -202,9 +267,11 @@ Tốt là quân duy nhất **đi một kiểu, bắt một kiểu**:
 - **R** = Xe (Rook)
 - **B** = Tượng (Bishop)
 - **N** = Mã (Knight)
-- Tốt không có chữ: chỉ ghi ô đến.
-
-### Ví dụ
+- Tốt không có chữ: chỉ ghi ô đến.`,
+      },
+      {
+        kind: 'text',
+        md: `### Ví dụ
 - **Nf3**: Mã đi tới ô f3.
 - **e4**: Tốt đi tới ô e4.
 - **Bxe5**: Tượng bắt quân ở e5. Dấu **x** nghĩa là bắt.
@@ -213,6 +280,12 @@ Tốt là quân duy nhất **đi một kiểu, bắt một kiểu**:
 Các ký hiệu khác sẽ gặp ở những bài sau: **+** là chiếu, **#** là chiếu hết, **O-O** là nhập thành.
 
 Số đứng trước cho biết đó là nước thứ mấy: **1.e4 e5** nghĩa là ở nước 1, Trắng đi e4 và Đen đáp e5.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R b KQkq - 1 2',
+        lastMove: 'g1f3',
+        caption: 'Thế cờ sau 1.e4 e5 2.Nf3. Hai ô tô màu: Mã trắng vừa đi từ g1 tới f3, nên nước này ghi là Nf3. Hai Tốt e4 và e5 là nước thứ nhất của mỗi bên.',
       },
       {
         kind: 'task',
@@ -256,13 +329,49 @@ Vua đi 2 ô về phía xe, xe nhảy qua vua đứng cạnh. Điều kiện:
 - Giữa vua và xe **không có quân nào**.
 - Vua **không đang bị chiếu**, không đi qua và không đến ô bị tấn công. (Xe thì được phép bị tấn công.)
 
-Nhập thành sớm là một trong những nguyên tắc khai cuộc quan trọng nhất (xem bài Nguyên tắc khai cuộc): vua an toàn, xe vào cuộc.
-
-### Bắt tốt qua đường (en passant)
-Khi tốt đối phương đi 2 ô từ vị trí ban đầu và đứng **ngay cạnh** tốt của bạn, bạn được bắt nó như thể nó chỉ đi 1 ô. Chỉ được làm **ngay nước tiếp theo**, sau đó mất quyền.
-
-### Phong cấp
+Nhập thành sớm là một trong những nguyên tắc khai cuộc quan trọng nhất (xem bài Nguyên tắc khai cuộc): vua an toàn, xe vào cuộc.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '4k3/8/8/8/8/8/PPPPPPPP/R3K2R w KQ - 0 1',
+        marks: ['e1g1', 'h1f1', 'e1c1:blue', 'a1d1:blue'],
+        caption: 'Mũi tên xanh lá: nhập thành ngắn (O-O), vua e1 tới g1, xe h1 nhảy qua đứng f1. Mũi tên xanh dương: nhập thành dài (O-O-O), vua tới c1, xe a1 tới d1.',
+      },
+      {
+        kind: 'diagram',
+        fen: '4k3/8/8/8/2b5/8/PPPP1PPP/R3K2R w KQ - 0 1',
+        marks: ['c4f1:red', 'f1:red'],
+        caption: 'Tượng đen c4 tấn công ô f1 (đỏ). Vua phải đi qua f1 nên Trắng KHÔNG được nhập thành ngắn. Nhập thành dài sang c1 vẫn được.',
+      },
+      {
+        kind: 'text',
+        md: `### Bắt tốt qua đường (en passant)
+Khi tốt đối phương đi 2 ô từ vị trí ban đầu và đứng **ngay cạnh** tốt của bạn, bạn được bắt nó như thể nó chỉ đi 1 ô. Chỉ được làm **ngay nước tiếp theo**, sau đó mất quyền.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 1',
+        lastMove: 'd7d5',
+        marks: ['e5d6', 'd5:red'],
+        caption: 'Đen vừa đi tốt d7-d5 (ô tô màu), đứng ngay cạnh tốt trắng e5. Mũi tên: tốt e5 được bắt chéo tới d6, và tốt d5 (vòng đỏ) bị lấy khỏi bàn.',
+      },
+      {
+        kind: 'diagram',
+        fen: '4k3/8/3P4/8/8/8/8/4K3 b - - 0 1',
+        lastMove: 'e5d6',
+        caption: 'Sau khi bắt qua đường: tốt trắng đứng ở d6, tốt đen d5 đã biến mất dù tốt trắng không đi vào ô d5.',
+      },
+      {
+        kind: 'text',
+        md: `### Phong cấp
 Tốt đến hàng cuối **bắt buộc** đổi thành hậu, xe, tượng hoặc mã (gần như luôn chọn hậu). Bạn có thể có nhiều hậu cùng lúc.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '4Q3/8/8/8/8/6k1/8/1K1Q4 b - - 0 1',
+        lastMove: 'e7e8',
+        marks: ['e8:yellow'],
+        caption: 'Tốt trắng vừa đi từ e7 lên e8 (hàng cuối) và được đổi thành hậu (vòng vàng). Giờ Trắng có hai hậu: e8 và d1.',
       },
       {
         kind: 'task',
@@ -301,12 +410,29 @@ Tốt đến hàng cuối **bắt buộc** đổi thành hậu, xe, tượng ho�
       {
         kind: 'text',
         md: `### Chiếu (+)
-Vua bị tấn công. Bạn **phải** thoát chiếu ngay bằng một trong ba cách: **chạy** vua, **chặn** bằng quân khác, hoặc **bắt** quân đang chiếu.
-
-### Chiếu hết (#)
-Bị chiếu và không có cách nào thoát. Ván cờ kết thúc. Đây là mục tiêu duy nhất: không cần ăn hết quân.
-
-### Hòa
+Vua bị tấn công. Bạn **phải** thoát chiếu ngay bằng một trong ba cách: **chạy** vua, **chặn** bằng quân khác, hoặc **bắt** quân đang chiếu.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'k3r3/8/5N2/8/2B5/8/8/4K3 w - - 0 1',
+        marks: ['e8e1:red', 'e1d2:blue', 'c4e2:blue', 'f6e8:blue'],
+        caption: 'Mũi tên đỏ: xe đen e8 chiếu vua trắng dọc cột e. Ba cách thoát (xanh dương): chạy vua (Kd2), chặn bằng tượng (Be2), hoặc mã bắt xe (Nxe8).',
+      },
+      {
+        kind: 'text',
+        md: `### Chiếu hết (#)
+Bị chiếu và không có cách nào thoát. Ván cờ kết thúc. Đây là mục tiêu duy nhất: không cần ăn hết quân.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'R6k/1R6/8/8/8/8/8/6K1 b - - 0 1',
+        marks: ['a8h8:red', 'b7h7:red'],
+        mate: true,
+        caption: 'Xe a8 chiếu vua đen dọc hàng 8. Xe b7 khống chế cả hàng 7 nên vua không chạy được lên g7, h7; Đen cũng không có quân nào để chặn hay bắt xe. Chiếu hết, Trắng thắng.',
+      },
+      {
+        kind: 'text',
+        md: `### Hòa
 - **Pat (stalemate)**: bên đi không bị chiếu nhưng **không có nước hợp lệ nào**. Lỗi kinh điển của người mới khi đang thắng đậm.
 - Lặp lại thế cờ 3 lần.
 - 50 nước không có bắt quân hay đi tốt.
@@ -316,7 +442,8 @@ Bị chiếu và không có cách nào thoát. Ván cờ kết thúc. Đây là 
       {
         kind: 'diagram',
         fen: '7k/5Q2/6K1/8/8/8/8/8 b - - 0 1',
-        caption: 'Đen đi: KHÔNG bị chiếu nhưng không có nước nào. Pat, hòa. Trắng vừa vứt đi ván thắng.',
+        marks: ['g8:red', 'g7:red', 'h7:red'],
+        caption: 'Đen đi: vua h8 KHÔNG bị chiếu, nhưng cả ba ô quanh nó (vòng đỏ) đều bị hậu hoặc vua trắng khống chế, và Đen không còn quân nào khác. Không có nước hợp lệ: pat, hòa. Trắng vừa vứt đi ván thắng.',
       },
       {
         kind: 'task',
@@ -361,12 +488,25 @@ Bị chiếu và không có cách nào thoát. Ván cờ kết thúc. Đây là 
 - Tượng = **3** (hơi hơn mã một chút ở thế cờ mở)
 - Xe = **5**
 - Hậu = **9**
-- Vua = vô giá (không thể bị bắt)
-
-### Dùng thế nào
+- Vua = vô giá (không thể bị bắt)`,
+      },
+      {
+        kind: 'diagram',
+        fen: '6k1/8/8/8/1PNBRQ2/8/8/6K1 w - - 0 1',
+        caption: 'Hàng 4, từ trái sang: Tốt (1), Mã (3), Tượng (3), Xe (5), Hậu (9). Hai vua không có điểm vì vua không bao giờ bị bắt.',
+      },
+      {
+        kind: 'text',
+        md: `### Dùng thế nào
 Trước mỗi lần bắt quân hãy đếm: "tôi lấy bao nhiêu, mất bao nhiêu?". Đổi mã lấy xe (3 đổi 5) là **hơn chất**. Đổi xe lấy mã là **mất chất**.
 
 Ở trình độ dưới 1000, ván cờ hầu như luôn được định đoạt bởi việc **ai bỏ quân miễn phí nhiều hơn**. Vì vậy thói quen quan trọng nhất là trước khi đi, hỏi: **"nước này có để quân nào của tôi bị bắt không?"**`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'rk6/2N2ppp/8/5b2/8/8/5PPP/4R1K1 w - - 0 1',
+        marks: ['c7a8', 'b8a8:red'],
+        caption: 'Trắng đi Nxa8 (mũi tên xanh): mất mã (3) nhưng lấy được xe (5). Đen ăn lại Kxa8 (mũi tên đỏ), Trắng còn xe đối tượng: hơn chất, lời 2 điểm.',
       },
       {
         kind: 'lichess',
@@ -399,14 +539,36 @@ Trước mỗi lần bắt quân hãy đếm: "tôi lấy bao nhiêu, mất bao 
 2. **Phát triển quân nhẹ** (mã, tượng) ra khỏi hàng 1, mã trước tượng. Mục tiêu: sau 10 nước, không còn quân nhẹ nào ở nhà.
 3. **Nhập thành sớm**, thường trước nước 10.
 4. **Đừng đi một quân hai lần** khi chưa phát triển xong, trừ khi có lý do cụ thể.
-5. **Đừng đưa hậu ra sớm**: hậu dễ bị quân nhẹ đuổi, đối phương vừa đuổi vừa phát triển.
-
-### Những lỗi phổ biến
+5. **Đừng đưa hậu ra sớm**: hậu dễ bị quân nhẹ đuổi, đối phương vừa đuổi vừa phát triển.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        marks: ['d4:yellow', 'e4:yellow', 'd5:yellow', 'e5:yellow', 'e2e4:blue', 'd2d4:blue', 'g1f3', 'b1c3'],
+        caption: 'Bốn ô vàng là trung tâm. Mũi tên xanh dương: tốt e, d tiến hai ô chiếm trung tâm. Mũi tên xanh lá: mã ra f3, c3, nhìn thẳng vào trung tâm.',
+      },
+      {
+        kind: 'diagram',
+        fen: 'r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
+        lastMove: 'f8c5',
+        marks: ['e1g1:blue', 'h1f1:blue'],
+        caption: 'Sau 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5: mỗi bên có một tốt trung tâm và hai quân nhẹ đã ra. Trắng nhập thành được ngay (mũi tên: vua sang g1, xe sang f1).',
+      },
+      {
+        kind: 'text',
+        md: `### Những lỗi phổ biến
 - Đi tốt biên (a3, h3) vô cớ.
 - Mang hậu đi săn tốt rồi bị bẫy.
 - Tấn công khi chưa phát triển đủ quân.
 
 Ở giai đoạn này **đừng học biến khai cuộc**. Hãy chơi theo nguyên tắc rồi xem engine nói gì sau ván.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'rnb1kbnr/ppp1pppp/8/3q4/8/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 3',
+        lastMove: 'b1c3',
+        marks: ['c3d5:red'],
+        caption: 'Sau 1.e4 d5 2.exd5 Qxd5 3.Nc3: hậu ra sớm bị mã đuổi (mũi tên đỏ). Trắng vừa phát triển thêm một quân, còn Đen phải mất thêm một nước để đi hậu lần nữa.',
       },
       {
         kind: 'task',
@@ -443,10 +605,31 @@ Trước mỗi lần bắt quân hãy đếm: "tôi lấy bao nhiêu, mất bao 
         md: `### Nguyên tắc chung
 Với một hậu hoặc một xe, vua đơn độc chỉ bị chiếu hết ở **biên** hoặc **góc**. Kế hoạch gồm hai bước: (1) dồn vua đối phương ra biên bằng cách thu hẹp "chiếc hộp", (2) đưa vua của mình lại gần để hỗ trợ, rồi chiếu hết (riêng hai xe thì không cần vua giúp).
 
-Bài này có ba kỹ thuật. Mỗi kỹ thuật: đọc cách làm, giải một thế chiếu hết ngắn, rồi **đánh trọn từ đầu tới cuối với máy** ngay bên dưới. Máy chạy Vua theo cách khó chịu nhất, nên làm được với máy là làm được trong ván thật.
-
-### 1. Hai xe (chiếu thang)
+Bài này có ba kỹ thuật. Mỗi kỹ thuật: đọc cách làm, giải một thế chiếu hết ngắn, rồi **đánh trọn từ đầu tới cuối với máy** ngay bên dưới. Máy chạy Vua theo cách khó chịu nhất, nên làm được với máy là làm được trong ván thật.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '8/8/5k2/8/3R4/2K5/8/8 b - - 0 1',
+        marks: ['e5:yellow', 'h5:yellow', 'h8:yellow', 'e8:yellow'],
+        caption: 'Chiếc hộp: Xe d4 (được Vua c3 bảo vệ) chặn cột d và hàng 4, nên Vua đen bị nhốt trong hình chữ nhật có 4 góc vàng e5, h5, h8, e8. Mỗi bước, Trắng thu hộp nhỏ lại cho tới khi vua đen chạm biên.',
+      },
+      {
+        kind: 'text',
+        md: `### 1. Hai xe (chiếu thang)
 Dễ nhất, nên học trước. Hai xe luân phiên cắt từng hàng, vua đối phương bị đẩy lùi như leo thang. Nếu vua đối phương đến gần xe, chuyển xe sang cánh kia, càng xa càng tốt.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '8/8/8/4k3/R7/8/8/1R4K1 w - - 0 1',
+        marks: ['b1b5:blue'],
+        caption: 'Xe a4 cắt hàng 4, Vua đen không xuống được. Trắng đi Rb5+ (mũi tên): vua phải lùi lên hàng 6. Sau đó Ra6+, rồi Rb7, cứ luân phiên như leo thang.',
+      },
+      {
+        kind: 'diagram',
+        fen: 'R3k3/7R/8/8/8/8/8/6K1 b - - 0 1',
+        mate: true,
+        marks: ['a8e8:red'],
+        caption: 'Bậc thang cuối: Xe h7 canh hàng 7, Xe a8 chiếu dọc hàng 8 (mũi tên đỏ). Vua e8 không còn ô nào: chiếu hết, không cần vua trắng giúp.',
       },
       {
         kind: 'task',
@@ -464,6 +647,18 @@ Dễ nhất, nên học trước. Hai xe luân phiên cắt từng hàng, vua đ
 Hậu đứng cách vua đối phương "một nước mã" sẽ nhốt nó vào hộp nhỏ dần, không cần chiếu. Khi vua đối phương đã ở biên, **dừng hậu lại** và đưa vua mình đến đối diện, rồi chiếu hết. **Cảnh báo pat**: khi vua đối phương ở góc chỉ còn 1-2 ô, kiểm tra kỹ xem nó còn nước đi không trước khi đi hậu.`,
       },
       {
+        kind: 'diagram',
+        fen: '8/8/8/4k3/8/3Q4/8/6K1 b - - 0 1',
+        marks: ['e4:yellow', 'h4:yellow', 'h8:yellow', 'e8:yellow'],
+        caption: 'Hậu d3 cách Vua e5 đúng một nước mã. Hậu chặn cột d và hàng 3, nên vua đen chỉ còn trong hộp có 4 góc vàng e4, h4, h8, e8. Vua lùi bước nào, hậu theo bước đó để giữ khoảng cách nước mã.',
+      },
+      {
+        kind: 'diagram',
+        fen: '7k/8/6Q1/8/8/8/8/6K1 b - - 0 1',
+        marks: ['h8:red'],
+        caption: 'Cảnh báo pat: Hậu g6 không chiếu, nhưng Vua h8 không còn ô nào để đi (g8, g7, h7 đều bị hậu kiểm soát). Đen đến lượt mà không có nước hợp lệ: hòa!',
+      },
+      {
         kind: 'task',
         fen: '3k4/8/3K4/8/8/8/8/6Q1 w - - 0 1',
         moves: ['g1g8'],
@@ -478,6 +673,19 @@ Hậu đứng cách vua đối phương "một nước mã" sẽ nhốt nó vào
 Khó hơn, cần khoảng 15 đến 20 nước. Xe cắt vua đối phương trong một cái hộp. Đưa vua mình tới **đối diện** vua đối phương (cách nhau một ô, cùng cột hoặc cùng hàng): đúng lúc đó xe chiếu để đẩy nó lùi một hàng. Nếu chưa đối diện được, đi một nước chờ bằng xe trên cùng hàng. Lặp lại cho tới khi vua đối phương ở hàng cuối.
 
 Đánh lại thế dưới đây nhiều lần cho tới khi bạn chiếu hết được trong khoảng 20 nước mà không phải nghĩ lâu.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '8/8/4k3/7R/4K3/8/8/8 w - - 0 1',
+        marks: ['e5:yellow', 'h5h6:blue'],
+        caption: 'Xe h5 cắt hàng 5, vua đen bị nhốt ở hàng 6 trở lên. Hai vua đối diện (ô vàng e5 ở giữa): đúng lúc này Trắng đi Rh6+ (mũi tên), vua đen phải lùi lên hàng 7.',
+      },
+      {
+        kind: 'diagram',
+        fen: 'R3k3/8/4K3/8/8/8/8/8 b - - 0 1',
+        mate: true,
+        marks: ['a8e8:red'],
+        caption: 'Hình chiếu hết cuối cùng: Vua e6 đối diện Vua e8 và canh d7, e7, f7; Xe a8 chiếu dọc hàng cuối (mũi tên đỏ). Chiếu hết.',
       },
       {
         kind: 'task',
