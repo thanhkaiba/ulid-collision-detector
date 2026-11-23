@@ -973,7 +973,7 @@ Chơi cờ chậm (15+10 trở lên). Dùng ít nhất 10 giây cho mỗi nướ
         fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p1N1/2B1P3/8/PPPP1PPP/RNBQK2R b KQkq - 5 4',
         moves: ['d7d5'],
         prompt: 'Trắng vừa đi 4.Ng5, dọa ăn tốt f7 bằng cả mã lẫn tượng. Tìm nước phòng thủ tốt nhất cho Đen: chặn đường tấn công vào f7.',
-        explain: 'd5! chặn đường chéo của tượng c4, mối đe dọa Nxf7 không còn. (Bc5!? là cách đáp trả hung hãn hơn, gọi là Traxler.) Đừng đi h6?? vì Nxf7 vẫn xảy ra.',
+        explain: 'd5! chặn đường chéo của tượng c4, mối đe dọa Nxf7 không còn. Còn một nước nữa là Bc5 (gọi là Traxler): Đen bỏ mặc tốt f7 để phản công vào f2. Đó là canh bạc, máy đánh giá Trắng hơn khoảng một tốt sau {^Bc5 Bxf7+}, nên ở đây không tính là đúng. Đừng đi h6?? vì Nxf7 vẫn xảy ra.',
         verify: 'best',
       },
       {
