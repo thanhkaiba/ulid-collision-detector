@@ -40,3 +40,23 @@ trong kế hoạch hôm nay bị tích dù chưa làm; thông tin thừa gây r�
 1. Lỗi đã sửa: mỗi lỗi một dòng (triệu chứng, nguyên nhân, cách sửa, đã kiểm lại thế nào).
 2. Lỗi ở file không được giao: triệu chứng, cách tái hiện, file/dòng, đề xuất sửa.
 3. Những gì đã thử mà không thấy lỗi.
+
+## Đợt soát "edge case" (đọc thêm)
+
+Người dùng vừa gặp: bài tập đi một nước khác cũng đúng (Kf6 thay vì Kd6) thì máy đáp theo kịch bản soạn sẵn, tới lúc nước
+kịch bản không còn hợp lệ thì bàn cờ treo ở "Chờ đối phương đáp…". Đã sửa: khi người học rời kịch bản bằng nước tốt,
+Stockfish đáp và chấm (PuzzleBoard `playFree`, `src/lib/judge.ts`). Người dùng muốn tìm và sửa HẾT các trường hợp biên
+kiểu này trong toàn app. Gợi ý những thứ cần thử:
+
+- Luật cờ: phong cấp (cả phong Mã/Xe/Tượng), nhập thành (kéo vua 2 ô và kéo vua lên xe), bắt tốt qua đường, pat, lặp 3 lần,
+  50 nước, không đủ quân chiếu hết, chiếu hết ngay nước đầu, ván kết thúc khi đang chờ máy.
+- Đi nước khác lời giải nhưng cũng tốt, đi nước chiếu hết khác lời giải, đi nước thua; ở nước 1 và ở giữa chuỗi.
+- Cuộc đua bất đồng bộ: bấm "Làm lại"/"Xem lời giải"/"Gợi ý"/chuyển trang/chuyển slide khi máy đang nghĩ; bấm hai lần
+  thật nhanh; đi quân thật nhanh liên tiếp; tải lại trang giữa chừng.
+- Bàn lật (cầm Đen): toạ độ, mũi tên, vạch Trắng/Đen ở mép bàn.
+- Trạng thái lưu: tiến độ, dấu tích, số đếm có khớp sau tải lại, sau khi làm lại, sau khi xem lời giải.
+- Máy chậm hoặc lỗi (Stockfish chưa tải xong): giao diện có kẹt ở trạng thái chờ mãi không.
+- Đi quân trong Playwright: kéo thả bằng chuột chắc ăn nhất (`mouse.move` tới ô đi, `down`, `move` tới ô đến với `steps`,
+  `up`), nhớ `scrollIntoViewIfNeeded` bàn cờ trước. Đọc thế cờ từ DOM: mỗi `cg-board piece` (bỏ `.ghost`) có thuộc tính JS
+  `cgKey` là ô, class là màu và loại quân.
+- Tìm nước tốt nhất cho kịch bản: `node scripts/eval_fen.cjs "<fen>" 12 1`.
