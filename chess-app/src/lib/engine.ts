@@ -108,34 +108,50 @@ export class Engine {
     this.ready = (async () => {
       const wasm = await fetchWasm();
       setStatus({ phase: 'init' });
-      const worker = new Worker(wasm ? `${WORKER_URL}#${encodeURIComponent(wasm)}` : WORKER_URL);
-      this.worker = worker;
-      worker.onmessage = (e: MessageEvent<string>) => {
-        const line = typeof e.data === 'string' ? e.data : String(e.data);
-        for (const l of this.listeners) l(line);
-      };
-      await new Promise<void>((resolve, reject) => {
-        const off = this.on((line) => {
-          if (line === 'uciok') {
-            off();
-            resolve();
-          }
-        });
-        // the worker could not load (offline before it was cached, blocked file) or crashed: fail fast instead of
-        // leaving every caller waiting forever, and end any search in progress as "no move"
-        worker.onerror = (e) => {
-          e.preventDefault?.();
-          this.broken = true;
-          setStatus({ phase: 'error', thinking: null });
-          reject(new Error('engine unavailable'));
-          for (const l of [...this.listeners]) l('bestmove (none)');
-        };
-        for (const c of this.pending.splice(0)) worker.postMessage(c);
-        worker.postMessage('uci');
-      });
+      try {
+        await this.boot(wasm ? `${WORKER_URL}#${encodeURIComponent(wasm)}` : WORKER_URL);
+      } catch (e) {
+        // a host that will not let the worker read a blob URL: start again the plain way (it downloads by itself)
+        if (!wasm) throw e;
+        this.broken = false;
+        this.worker?.terminate();
+        await this.boot(WORKER_URL);
+      }
       setStatus({ phase: 'ready' });
     })();
-    this.ready.catch(() => undefined);
+    this.ready.catch(() => setStatus({ phase: 'error', thinking: null }));
+  }
+
+  /** start the worker and wait for "uciok"; rejects if the worker fails to load */
+  private boot(url: string): Promise<void> {
+    const worker = new Worker(url);
+    this.worker = worker;
+    worker.onmessage = (e: MessageEvent<string>) => {
+      const line = typeof e.data === 'string' ? e.data : String(e.data);
+      for (const l of this.listeners) l(line);
+    };
+    return new Promise<void>((resolve, reject) => {
+      let up = false;
+      const off = this.on((line) => {
+        if (line === 'uciok') {
+          off();
+          up = true;
+          resolve();
+        }
+      });
+      // the worker could not load (offline before it was cached, blocked file) or crashed: fail fast instead of
+      // leaving every caller waiting forever, and end any search in progress as "no move"
+      worker.onerror = (e) => {
+        e.preventDefault?.();
+        this.broken = true;
+        if (up) setStatus({ phase: 'error', thinking: null });
+        off();
+        reject(new Error('engine unavailable'));
+        for (const l of [...this.listeners]) l('bestmove (none)');
+      };
+      for (const c of this.pending.splice(0)) worker.postMessage(c);
+      worker.postMessage('uci');
+    });
   }
 
   /** set when the worker failed; getEngine() then starts a fresh one */
