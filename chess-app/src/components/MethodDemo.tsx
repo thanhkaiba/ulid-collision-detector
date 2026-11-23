@@ -13,6 +13,9 @@ function boxOf(c: Chess, def: 'w' | 'b'): Set<string> {
   const att = def === 'w' ? 'b' : 'w';
   let start = '';
   for (const row of c.board()) for (const p of row) if (p && p.type === 'k' && p.color === def) start = p.square;
+  // look at the board without the king: a square behind it on a checking line is attacked once it steps there
+  const bare = new Chess(c.fen());
+  bare.remove(start as Square);
   const seen = new Set([start]);
   const q = [start];
   while (q.length) {
@@ -28,7 +31,7 @@ function boxOf(c: Chess, def: 'w' | 'b'): Set<string> {
         if (seen.has(n)) continue;
         const p = c.get(n as Square);
         if (p && p.color === att) continue;
-        if (c.isAttacked(n as Square, att)) continue;
+        if (bare.isAttacked(n as Square, att)) continue;
         seen.add(n);
         q.push(n);
       }

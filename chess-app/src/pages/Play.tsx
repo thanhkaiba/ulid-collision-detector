@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { Chess } from 'chess.js';
+import { Chess, type Square } from 'chess.js';
 import type { Key, Color } from 'chessground/types';
 import Board from '../components/Board';
 import PromotionPicker from '../components/PromotionPicker';
@@ -61,10 +61,46 @@ function saveCurrent(g: CurrentGame | null) {
   }
 }
 
+/** The endgame practice in progress (one at a time), so leaving the page or reloading does not lose the moves. */
+type CurrentPractice = { id: string; swapped: boolean; moves: string[] };
+const PRACTICE_CURRENT_KEY = 'practice-current';
+function loadPracticeCurrent(id: string): CurrentPractice | null {
+  try {
+    const g = JSON.parse(localStorage.getItem(PRACTICE_CURRENT_KEY) ?? 'null');
+    return g && g.id === id && Array.isArray(g.moves) && g.moves.length > 0 ? g : null;
+  } catch {
+    return null;
+  }
+}
+function savePracticeCurrent(id: string, g: CurrentPractice | null) {
+  try {
+    if (g) localStorage.setItem(PRACTICE_CURRENT_KEY, JSON.stringify(g));
+    // only forget the stored attempt if it belongs to this position
+    else if (loadPracticeCurrent(id)) localStorage.removeItem(PRACTICE_CURRENT_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
 /** Only a bare king, or a king with a single minor piece: cannot checkmate (so the opponent's flag fall is a draw). */
 function cannotMate(chess: Chess, side: 'w' | 'b'): boolean {
   const pcs = chess.board().flat().filter((p) => p && p.color === side && p.type !== 'k');
   return pcs.length === 0 || (pcs.length === 1 && (pcs[0]!.type === 'n' || pcs[0]!.type === 'b'));
+}
+
+/**
+ * Legal destinations, plus the rook's square for each legal castling, so the king can also be dropped onto its rook
+ * (chessground then castles on the board; onMove maps the move back to the king's real target square).
+ */
+function destsWithRookCastle(chess: Chess): Map<Key, Key[]> {
+  const dests = toDests(chess);
+  for (const m of chess.moves({ verbose: true })) {
+    if (!m.flags.includes('k') && !m.flags.includes('q')) continue;
+    const rook = ((m.flags.includes('k') ? 'h' : 'a') + m.from[1]) as Key;
+    const arr = dests.get(m.from as Key) ?? [];
+    if (!arr.includes(rook)) dests.set(m.from as Key, [...arr, rook]);
+  }
+  return dests;
 }
 
 export default function Play({ route }: { route: Route }) {
@@ -95,19 +131,34 @@ function SideSwitch({ pos, swap, onChange }: { pos: PracticePosition; swap: bool
 
 function PracticeRun({ pos, back }: { pos: PracticePosition; back: string }) {
   const [attempt, setAttempt] = useState(0);
-  const [swap, setSwap] = useState(false);
+  // an attempt left unfinished (page left or reloaded) carries on where it was
+  const [saved, setSaved] = useState(() => loadPracticeCurrent(pos.id));
+  const [swap, setSwap] = useState(() => !!saved?.swapped);
   const shown = swap ? swapPractice(pos) : pos;
   return (
     <>
       <GameView
         key={`${attempt}-${swap}`}
+        resumeMoves={saved?.moves}
         me={shown.me}
         level={PRACTICE_LEVEL}
         tc={NO_CLOCK}
         practice={shown}
         onExit={() => navigate(back)}
-        onRematch={() => setAttempt((a) => a + 1)}
-        switcher={<SideSwitch pos={pos} swap={swap} onChange={setSwap} />}
+        onRematch={() => {
+          setSaved(null);
+          setAttempt((a) => a + 1);
+        }}
+        switcher={
+          <SideSwitch
+            pos={pos}
+            swap={swap}
+            onChange={(v) => {
+              setSaved(null);
+              setSwap(v);
+            }}
+          />
+        }
         otherLink={back !== 'play/practice'}
       />
     </>
@@ -121,7 +172,8 @@ function MethodSheet({ pos: shownPos, onClose }: { pos: PracticePosition; onClos
   return (
     <div className="sheet-backdrop" onClick={onClose}>
       <div className="sheet method-sheet" onClick={(e) => e.stopPropagation()}>
-        <div className="row-between mb">
+        {/* stays on top while the long sheet is scrolled, so "Đóng" is always at hand */}
+        <div className="row-between mb" style={{ position: 'sticky', top: -14, zIndex: 5, background: 'var(--bg-2)', padding: '14px 0 6px', marginTop: -14 }}>
           <b>{pos.title}</b>
           <button className="chip" onClick={onClose}>
             Đóng
@@ -152,20 +204,34 @@ function MethodSheet({ pos: shownPos, onClose }: { pos: PracticePosition; onClos
 /** A practice position played right inside a lesson slide: the game starts as soon as the slide is shown. */
 export function PracticeInline({ pos, onGoal }: { pos: PracticePosition; onGoal?: () => void }) {
   const [attempt, setAttempt] = useState(0);
-  const [swap, setSwap] = useState(false);
+  const [saved, setSaved] = useState(() => loadPracticeCurrent(pos.id));
+  const [swap, setSwap] = useState(() => !!saved?.swapped);
   const shown = swap ? swapPractice(pos) : pos;
   return (
     <GameView
       key={`${attempt}-${swap}`}
+      resumeMoves={saved?.moves}
       me={shown.me}
       level={PRACTICE_LEVEL}
       tc={NO_CLOCK}
       practice={shown}
-      switcher={<SideSwitch pos={pos} swap={swap} onChange={setSwap} />}
+      switcher={
+        <SideSwitch
+          pos={pos}
+          swap={swap}
+          onChange={(v) => {
+            setSaved(null);
+            setSwap(v);
+          }}
+        />
+      }
       embedded
       onGoal={onGoal}
       onExit={() => setAttempt((a) => a + 1)}
-      onRematch={() => setAttempt((a) => a + 1)}
+      onRematch={() => {
+        setSaved(null);
+        setAttempt((a) => a + 1);
+      }}
     />
   );
 }
@@ -253,7 +319,8 @@ function PlaySetup() {
         <Card>
           <b>Ván đang chơi dở</b>
           <div className="small muted">
-            Bạn cầm {current.me === 'w' ? 'Trắng' : 'Đen'} · cấp {current.level} · đã đi {Math.ceil(current.moves.length / 2)} nước
+            Bạn cầm {current.me === 'w' ? 'Trắng' : 'Đen'} · cấp {current.level} ·{' '}
+            {TIME_CONTROLS.find((t) => t.id === current.tc)?.label ?? 'Không giờ'} · đã đi {Math.ceil(current.moves.length / 2)} nước
           </div>
           <div className="row mt">
             <Button kind="primary" onClick={() => setGame(fromCurrent(current, Date.now()))}>
@@ -342,8 +409,11 @@ function GameView({
   onGoal,
   switcher,
   resume,
+  resumeMoves,
   otherLink,
 }: {
+  /** practice: moves of an unfinished attempt to carry on */
+  resumeMoves?: string[];
   /** a game in progress to carry on (normal games only) */
   resume?: CurrentGame;
   /** practice: also offer a link to the practice list (when "back" leads elsewhere) */
@@ -368,8 +438,9 @@ function GameView({
   const chessRef = useRef<Chess | null>(null);
   if (!chessRef.current) {
     const c = new Chess(startFen);
-    if (resume && !practice)
-      for (const san of resume.moves) {
+    const replay = practice ? resumeMoves : resume?.moves;
+    if (replay)
+      for (const san of replay) {
         try {
           c.move(san);
         } catch {
@@ -382,6 +453,8 @@ function GameView({
   /** practice only: the goal was reached / the engine thinks the goal has slipped away */
   const [goalMet, setGoalMet] = useState(false);
   const [slipped, setSlipped] = useState(false);
+  /** practice: the engine's verdict per position (by number of moves played), so a takeback shows the right warning */
+  const slippedAt = useRef(new Map<number, boolean>());
   const [showHint, setShowHint] = useState(false);
   /** practice: mate distance the engine sees for itself (shown when the student faces the technique) */
   const [engineMate, setEngineMate] = useState<number | null>(null);
@@ -419,7 +492,8 @@ function GameView({
           }
         }
       }
-      if (!logged.current) {
+      // a game resigned before any move was played is not a game played today (no streak credit)
+      if (!logged.current && (chess.history().length >= 2 || chess.isGameOver())) {
         logged.current = true;
         logActivity('games');
         // the daily "play one game" goal needs a real game from the start: not endgame practice, and not a game
@@ -467,7 +541,9 @@ function GameView({
 
   const afterMove = useCallback(
     (mover: 'w' | 'b') => {
-      if (tc.initial > 0 && moveCount >= 1) setClock((c) => ({ ...c, [mover]: c[mover] + tc.inc * 1000 }));
+      // the increment is earned once the mover's clock has been running: from each side's second move on (the clocks
+      // start after both first moves), so White and Black get the same bonus
+      if (tc.initial > 0 && moveCount >= 2) setClock((c) => ({ ...c, [mover]: c[mover] + tc.inc * 1000 }));
       setVersion((v) => v + 1);
       setViewPly(null);
       countPlayed();
@@ -485,6 +561,8 @@ function GameView({
       setThinking(true);
       if (practice) await engine.fullStrength();
       else await applyLevel(engine, level);
+      // left, restarted or the game ended meanwhile: do not start a search nobody waits for (it would delay the next one)
+      if (cancelled) return;
       const res = await engine.evaluate(chess.fen(), { depth: level.depth, movetime: level.movetime });
       if (cancelled) return;
       if (practice) {
@@ -493,7 +571,9 @@ function GameView({
         const engineCp = l ? (l.mate !== undefined ? (l.mate > 0 ? 10000 : -10000) : (l.cp ?? 0)) : 0;
         setEngineMate(l?.mate !== undefined && l.mate > 0 ? l.mate : null);
         // in the swapped role the engine is expected to stay ahead: no "you slipped" warning there
-        setSlipped(practice.swapped ? false : practice.goal === 'draw' ? engineCp >= 250 : engineCp > -150);
+        const sl = practice.swapped ? false : practice.goal === 'draw' ? engineCp >= 250 : engineCp > -150;
+        slippedAt.current.set(chess.history().length, sl);
+        setSlipped(sl);
         const myMoves = Math.ceil(chess.history().length / 2);
         if (practice.goal === 'win' && practice.hold && myMoves >= practice.hold && engineCp > -150) {
           finish('1/2-1/2', `Sau ${practice.hold} nước bạn vẫn chưa thắng được: máy giữ vững thế hòa.`, false);
@@ -526,7 +606,8 @@ function GameView({
                   if (sq.type === 'q') queen = true;
                 } else theirs += PIECE_VAL[sq.type];
               }
-            if ((queen && mine - theirs >= 4) || (theirs === 0 && mine >= 5))
+            // (or a whole rook up, e.g. after promoting to a Rook in the Lucena: two Rooks against one)
+            if ((queen && mine - theirs >= 4) || (theirs === 0 && mine >= 5) || mine - theirs >= 5)
               finish(me === 'w' ? '1-0' : '0-1', 'Bạn đã có ưu thế quyết định. Phần còn lại là chiếu hết cơ bản.', true);
           }
           if (practice?.swapped && practice.goal === 'draw' && !chess.isGameOver()) {
@@ -543,7 +624,9 @@ function GameView({
                   if (sq.type === 'q') queen = true;
                 }
               }
-            if (queen && theirs - mine >= 4) finish(me === 'w' ? '0-1' : '1-0', 'Máy đã phong Hậu, phần còn lại chỉ là chiếu hết.', false);
+            // only for positions where the engine has to promote (pawn and rook endings): in the basic mates
+            // (queen, queen against a pawn) the engine has its queen from the start
+            if (queen && theirs - mine >= 4 && practiceById(practice.id)?.goal === 'win') finish(me === 'w' ? '0-1' : '1-0', 'Máy đã phong Hậu, phần còn lại chỉ là chiếu hết.', false);
           }
         }
       }
@@ -561,6 +644,13 @@ function GameView({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // the game ended while the engine was thinking (resigned, flag fell): stop its search
+  useEffect(() => {
+    if (!over) return;
+    engine.stop();
+    setThinking(false);
+  }, [over, engine]);
+
   const commit = (from: Key, to: Key, promotion?: 'q' | 'r' | 'b' | 'n') => {
     if (over || chess.turn() !== me) return;
     try {
@@ -573,6 +663,11 @@ function GameView({
 
   const onMove = (from: Key, to: Key) => {
     if (viewPly !== null) setViewPly(null);
+    // the king dropped onto its own rook: castle (the king's real target is the g- or c-file)
+    const piece = chess.get(from as Square);
+    const target = chess.get(to as Square);
+    if (piece?.type === 'k' && target?.type === 'r' && target.color === piece.color)
+      to = ((to[0] === 'h' ? 'g' : 'c') + to[1]) as Key;
     if (needsPromotion(chess, from, to)) setPending({ from, to });
     else commit(from, to);
   };
@@ -634,14 +729,20 @@ function GameView({
   const keep = useRef<() => CurrentGame | null>(snapshot);
   keep.current = () => (over || chess.history().length === 0 ? null : snapshot());
   useEffect(() => {
+    if (!practice) return;
+    const moves = chess.history();
+    savePracticeCurrent(practice.id, over || moves.length === 0 ? null : { id: practice.id, swapped: !!practice.swapped, moves });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [version, over]);
+  useEffect(() => {
     if (practice) return;
     if (over) {
       saveCurrent(null);
       if (chess.history().length >= 2) saveGame();
       return;
     }
-    const s = keep.current();
-    if (s) saveCurrent(s);
+    // no move left (e.g. everything taken back): forget the stored game, or a reload would bring back the old moves
+    saveCurrent(keep.current());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [version, over]);
   useEffect(() => {
@@ -674,7 +775,9 @@ function GameView({
     if (!canTakeback) return;
     for (let i = 0; i < undoPlies; i++) chess.undo();
     setOver(null);
-    setSlipped(false);
+    // back on your move: the warning is the engine's verdict on the position after your previous move (if it was wrong
+    // already then, taking back one move is not enough)
+    setSlipped(slippedAt.current.get(chess.history().length - 1) ?? false);
     setViewPly(null);
     setConfirmResign(false);
     setVersion((v) => v + 1);
@@ -739,7 +842,7 @@ function GameView({
             lastMove={last ? [last.from as Key, last.to as Key] : undefined}
             check={kingInCheckColor(shown)}
             movableColor={live && !over && chess.turn() === me ? orientation : undefined}
-            dests={live ? toDests(chess) : new Map()}
+            dests={live ? destsWithRookCastle(chess) : new Map()}
             onMove={onMove}
           />
           {bar(bottom)}
@@ -822,16 +925,20 @@ function GameView({
                 {moveCount >= 2 && '. Ván đã được lưu ở tab Phân tích.'}
               </p>
               <div className="row">
-                <Button
-                  kind="primary"
-                  onClick={async () => {
-                    const id = await saveGame();
-                    navigate(`analyze/game/${id}`);
-                  }}
-                >
-                  Phân tích ván này
+                {moveCount >= 2 && (
+                  <Button
+                    kind="primary"
+                    onClick={async () => {
+                      const id = await saveGame();
+                      navigate(`analyze/game/${id}`);
+                    }}
+                  >
+                    Phân tích ván này
+                  </Button>
+                )}
+                <Button kind={moveCount >= 2 ? 'default' : 'primary'} onClick={onRematch}>
+                  Ván mới
                 </Button>
-                <Button onClick={onRematch}>Ván mới</Button>
               </div>
             </Card>
           )}
