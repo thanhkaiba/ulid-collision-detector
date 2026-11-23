@@ -19,6 +19,7 @@ import SquareQuiz from '../components/SquareQuiz';
 import { renderRich, type Preview } from '../lib/richtext';
 import { START_FEN } from '../lib/chess-utils';
 import { practiceById, loadPracticeDone } from '../data/practice';
+import { LEGACY_KEYS } from '../data/lessons/legacyKeys';
 import { PracticeInline } from './Play';
 import { puzzlePrompt } from './Puzzles';
 import { Chess } from 'chess.js';
@@ -68,7 +69,7 @@ function doneKeys(l: Lesson, p: LessonProgress): Set<string> {
   const out = new Set<string>();
   for (const v of p.done[l.id] ?? []) {
     if (typeof v === 'string') out.add(v);
-    else if (!RELAID.has(l.id) && l.blocks[v]) out.add(exerciseKey(l.blocks[v], v));
+    else if (!RELAID.has(l.id) && LEGACY_KEYS[l.id]?.[v]) out.add(LEGACY_KEYS[l.id][v]);
   }
   return out;
 }

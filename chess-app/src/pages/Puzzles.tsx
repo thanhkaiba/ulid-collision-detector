@@ -99,8 +99,8 @@ export default function Puzzles({ route }: { route: Route }) {
           <b>Giải bài tập như thế nào?</b>
         </summary>
         <p style={{ marginBottom: 0 }}>
-          Mỗi bài là một tình huống lấy từ ván thật, có đúng một lời giải rõ ràng nhất, dài từ 1 đến vài nước. Bạn <b>không cần đánh hết ván</b>: đi đúng nước, máy tự đi thay đối phương,
-          rồi bạn đi tiếp cho tới hết chuỗi là xong. Khung chữ ngay phía trên bàn cờ cho biết bạn cầm bên nào, mục tiêu (chiếu hết, hoặc thắng quân) và số nước cần tìm. “Nước tốt nhất” nghĩa là nước mạnh hơn hẳn
+          Mỗi bài là một tình huống lấy từ ván thật, có đúng một lời giải rõ ràng nhất, dài từ 1 đến vài nước. Bạn <b>không cần đánh hết ván</b>: đi đúng nước
+          rồi đi tiếp cho tới hết chuỗi là xong. Khung chữ ngay phía trên bàn cờ cho biết bạn cầm bên nào, mục tiêu (chiếu hết, hoặc thắng quân) và số nước cần tìm. “Nước tốt nhất” nghĩa là nước mạnh hơn hẳn
           các nước còn lại; nước chỉ “tạm được” sẽ bị tính là sai.
         </p>
       </details>
@@ -317,7 +317,7 @@ export function puzzlePrompt(p: Puzzle): string {
   const side = c.turn() === 'w' ? 'Trắng' : 'Đen';
   const mine = Math.ceil((p.moves.length - (p.playerFirst ? 0 : 1)) / 2);
   const who = `Bạn cầm ${side} (phía dưới bàn cờ).`;
-  const count = mine <= 1 ? 'Chỉ cần đúng một nước.' : `Cần tìm ${mine} nước liên tiếp, máy tự đi thay đối phương.`;
+  const count = mine <= 1 ? 'Chỉ cần đúng một nước.' : `Cần tìm ${mine} nước liên tiếp.`;
   const mate = p.themes.find((t) => /^mateIn\d$/.test(t));
   if (mate) return `${who} Mục tiêu: chiếu hết trong ${mate.slice(-1)} nước.`;
   if (p.themes.includes('mate')) return `${who} Mục tiêu: chiếu hết. ${count}`;

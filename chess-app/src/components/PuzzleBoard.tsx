@@ -365,11 +365,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
           </div>
         )}
         {status === 'solved' &&
-          (shown.current ? (
-            <div className="feedback info">Đã đi hết lời giải, nhưng theo mũi tên gợi ý nên chưa tính là tự giải.</div>
-          ) : (
-            <div className="feedback ok">{failed ? 'Đã giải xong, nhưng có dùng gợi ý hoặc đã đi sai trước đó.' : 'Chính xác!'}</div>
-          ))}
+          (shown.current || failed ? <div className="feedback info">Đã đi hết lời giải.</div> : <div className="feedback ok">Chính xác!</div>)}
         {status === 'revealed' && (
           <div className="feedback info">
             Lời giải{solutionSan.length - (playerFirst ? 0 : 1) > 1 ? ' (nước của bạn in đậm)' : ''}:{' '}
