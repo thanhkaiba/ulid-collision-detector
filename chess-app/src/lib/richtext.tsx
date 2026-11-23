@@ -9,6 +9,8 @@ export interface Preview {
   /** squares to highlight */
   squares?: Key[];
   label: string;
+  /** which side to show at the bottom (the board the text belongs to may be flipped) */
+  orientation?: 'white' | 'black';
 }
 
 export interface RichOptions {

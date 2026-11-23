@@ -560,7 +560,7 @@ function LessonView({ lesson, progress, setProgress, hidden }: { lesson: Lesson;
               {p.title} {practiceDone[p.id] && <Tag tone="good">✓ đã đạt</Tag>}
             </h2>
             <p className="small" style={{ marginTop: 0 }}>
-              {b.ids.length === 1 && b.intro ? b.intro : p.brief} Cứ đi quân là bắt đầu, máy chơi hết sức.
+              {b.ids.length === 1 && b.intro ? b.intro : p.brief} {p.fen.split(' ')[1] === p.me ? 'Cứ đi quân là bắt đầu, máy chơi hết sức.' : 'Máy đi trước, rồi tới lượt bạn. Máy chơi hết sức.'}
             </p>
             {p.level >= 3 && <p className="tiny muted">Bài khó, không bắt buộc để qua bài học.</p>}
             <PracticeInline pos={p} onGoal={() => setPracticeDone(loadPracticeDone())} />
@@ -674,7 +674,7 @@ function LessonView({ lesson, progress, setProgress, hidden }: { lesson: Lesson;
       <div className="slide-body" key={at}>
         {body}
       </div>
-      <PreviewSheet preview={preview} onClose={() => setPreview(null)} />
+      <PreviewSheet preview={preview} onClose={() => setPreview(null)} orientation={preview?.orientation} />
       {sl.kind !== 'end' && (
         <div className="slide-nav">
           <Button kind="ghost" onClick={() => go(at - 1)} disabled={at === 0}>
@@ -708,7 +708,7 @@ function Diagram({ block, onShow }: { block: Extract<Block, { kind: 'diagram' }>
         check={chess.inCheck() ? (chess.turn() === 'w' ? 'white' : 'black') : false}
       />
       <p className="small mt" style={{ margin: '8px 0 0' }}>
-        {renderRich(block.caption, { onShow, seqStart: block.fen, squareFen: block.fen, braces: { before: block.fen, after: block.fen } })}
+        {renderRich(block.caption, { onShow: (p) => onShow({ ...p, orientation: block.orientation ?? 'white' }), seqStart: block.fen, squareFen: block.fen, braces: { before: block.fen, after: block.fen } })}
       </p>
     </Card>
   );
@@ -781,11 +781,11 @@ function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: num
         <div className="feedback bad small">Chưa tính là qua vì bạn đã xem nước đi. Đọc giải thích, rồi bấm “Làm lại” và tự đi.</div>
       )}
       {block.verify === 'line' && misses > 0 && finished === null && (
-        <p className="tiny muted">Bài này đi đúng theo đề bài ở trên bàn cờ. Nước khác dù hợp lệ cũng chưa được tính.</p>
+        <p className="tiny muted">Bài này phải đi đúng nước mà đề bài (khung phía trên bàn cờ) yêu cầu. Nước khác dù hợp lệ cũng chưa được tính.</p>
       )}
       {showExplain && (
         <div className="task-box small">
-          <b>{finished !== null ? 'Giải thích:' : 'Gợi ý lời giải:'}</b> {renderRich(block.explain, { onShow, seqStart: block.fen, squareFen: block.fen, braces: { before: block.fen, after: block.fen } })}
+          <b>{finished !== null ? 'Giải thích:' : 'Gợi ý lời giải:'}</b> {renderRich(block.explain, { onShow: (p) => onShow({ ...p, orientation: block.fen.split(' ')[1] === 'b' ? 'black' : 'white' }), seqStart: block.fen, squareFen: block.fen, braces: { before: block.fen, after: block.fen } })}
         </div>
       )}
     </Card>

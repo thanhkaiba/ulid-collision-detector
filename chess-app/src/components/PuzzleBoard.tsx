@@ -17,7 +17,7 @@ const ENGINE_MS = 25000;
  * shown: finished, but the move was handed over (arrow hint or "show solution").
  */
 export type PuzzleOutcome = 'clean' | 'solved' | 'shown';
-export type PuzzleStatus = 'intro' | 'solving' | 'checking' | 'wrong' | 'solved' | 'revealed';
+export type PuzzleStatus = 'intro' | 'solving' | 'checking' | 'wrong' | 'solved' | 'revealed' | 'unmet';
 
 export interface PuzzleBoardProps {
   fen: string;
@@ -254,11 +254,17 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     const myAttempt = attempt.current;
     if (!free.current) {
       // what the scripted solution achieves besides its length: a mate, or a pawn pushed to a given rank
+      // (a pawn advanced by a capture, e.g. "exd4", is not a plan to push it: only quiet pushes count)
       const end = new Chess(fen);
-      for (const u of props.moves) if (!playUci(end, u)) break;
-      const start = new Chess(fen);
-      const pawnGoal = pawnRank(end, playerColor) > pawnRank(start, playerColor) ? pawnRank(end, playerColor) : 0;
-      free.current = { target: solverPlies(props.moves.length), mate: (props.mateGoal ?? false) || end.isCheckmate(), pawnGoal };
+      let pawnGoal = 0;
+      props.moves.forEach((u, k) => {
+        const m = playUci(end, u);
+        if (!m || !mine(k) || m.piece !== 'p' || m.captured) return;
+        const r = Number(m.to[1]);
+        pawnGoal = Math.max(pawnGoal, m.promotion ? 8 : m.color === 'w' ? r : 9 - r);
+      });
+      const target = solverPlies(props.moves.length);
+      free.current = { target, mate: (props.mateGoal ?? false) || end.isCheckmate(), pawnGoal: target > 1 ? pawnGoal : 0 };
     }
     const mv = playUci(chess, uci);
     if (!mv) return;
@@ -273,11 +279,12 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     const made = solverPlies(at + 1);
     const { target, mate, pawnGoal } = free.current;
     const goalMet = mate ? false : pawnRank(chess, playerColor) >= pawnGoal;
-    if (chess.isCheckmate() || chess.isGameOver() || (made >= target && goalMet) || made >= target + 4) {
+    if (chess.isCheckmate() || (made >= target && goalMet)) {
       setStatus('solved');
       finish(!failed);
       return;
     }
+    if (chess.isGameOver() || made >= target + 4) return endFree();
     setStatus('solving');
     const engine = getEngine();
     // a stalled engine must not leave the board on "Chờ đối phương đáp…" forever
@@ -297,9 +304,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
         setLastMove([reply.from as Key, reply.to as Key]);
         if (chess.isGameOver()) {
           setIdx(at + 2);
-          setStatus('solved');
           bump();
-          finish(!failed);
+          endFree();
           return;
         }
         setIdx(at + 2);
@@ -319,6 +325,24 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
         setStatus('solved');
         finish(!failed);
       });
+  };
+
+  /**
+   * The free continuation stopped (the game ended, or too many moves went by) without the solver mating: a task with a
+   * goal (mate, a pawn to push) is then not reached; a task without one (hold a draw, keep the edge) is.
+   */
+  const endFree = () => {
+    const f = free.current;
+    const hasGoal = !!f && (f.mate || f.pawnGoal > 0);
+    if (!hasGoal && !chess.isCheckmate()) {
+      setStatus('solved');
+      finish(!failed);
+      return;
+    }
+    setFailed(true);
+    setStatus('unmet');
+    endedAt.current = Date.now();
+    finish(false);
   };
 
   const applyUserMove = (from: Key, to: Key, promotion?: 'q' | 'r' | 'b' | 'n') => {
@@ -416,6 +440,34 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     setWrongInfo(null);
     endedAt.current = Date.now();
     finish(false, true);
+    if (free.current) {
+      // off the script there is no stored line: let Stockfish play both sides on until the task's goal is shown
+      const f = free.current;
+      const myAttempt = attempt.current;
+      const engine = getEngine();
+      let plies = 0;
+      const auto = () => {
+        const done = chess.isGameOver() || plies >= 16 || (!f.mate && f.pawnGoal > 0 && pawnRank(chess, playerColor) >= f.pawnGoal);
+        if (done) return;
+        withTimeout(engine.evaluate(chess.fen(), { depth: 12 }), ENGINE_MS)
+          .then((r) => {
+            if (attempt.current !== myAttempt) return;
+            const m = r.bestmove && r.bestmove !== '(none)' ? playUci(chess, r.bestmove) : null;
+            if (!m) return;
+            plies++;
+            alt.current = [...chess.history({ verbose: true }).map((x) => x.from + x.to + (x.promotion ?? ''))];
+            setLastMove([m.from as Key, m.to as Key]);
+            setIdx(alt.current.length);
+            bump();
+            later(auto, 500);
+          })
+          .catch(() => undefined);
+      };
+      // drop the precomputed hint move: the loop replays from the current position
+      alt.current = chess.history({ verbose: true }).map((x) => x.from + x.to + (x.promotion ?? ''));
+      auto();
+      return;
+    }
     // a pending opponent reply was cancelled above, so moves[idx] is exactly the next move to show
     let i = idx;
     const step = () => {
@@ -440,6 +492,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     finished.current = false;
     shown.current = false;
     undoPlies.current = 0;
+    wrongCount.current = 0;
     setJustRight(false);
     setPending(null);
     setFailed(false);
@@ -541,7 +594,20 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
           </div>
         )}
         {status === 'solved' &&
-          (shown.current || failed ? <div className="feedback info">Đã đi hết lời giải.</div> : <div className="feedback ok">Chính xác!</div>)}
+          (shown.current ? (
+            <div className="feedback info">Đã đi hết lời giải.</div>
+          ) : failed ? (
+            <div className="feedback info">Đã giải xong{wrongCount.current > 0 ? ` sau ${wrongCount.current + 1} lần thử` : ''}.</div>
+          ) : (
+            <div className="feedback ok">Chính xác!</div>
+          ))}
+        {status === 'unmet' && (
+          <div className="feedback bad">
+            {free.current?.mate
+              ? 'Chưa chiếu hết được. Bấm “Làm lại” để thử lại.'
+              : `Chưa đạt mục tiêu: tốt chưa lên được hàng ${free.current?.pawnGoal ?? 8}. Bấm “Làm lại” để thử lại.`}
+          </div>
+        )}
         {status === 'revealed' && (
           <div className="feedback info">
             Lời giải{solutionSan.length - (playerFirst ? 0 : 1) > 1 ? ' (nước của bạn in đậm)' : ''}:{' '}
@@ -564,7 +630,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
                 </Button>
               </>
             )}
-            {(status === 'solved' || status === 'revealed') && (
+            {(status === 'solved' || status === 'revealed' || status === 'unmet') && (
               <Button kind="ghost" onClick={restart}>
                 Làm lại
               </Button>

@@ -1,4 +1,4 @@
-import { get, set } from 'idb-keyval';
+import { get, set } from './storage';
 
 /**
  * games: any finished game, endgame practice included (kept for old logs).
@@ -17,7 +17,8 @@ export function dayKey(d = new Date()): string {
 }
 
 export async function loadActivity(): Promise<ActivityLog> {
-  return (await get<ActivityLog>('activity')) ?? {};
+  const log = await get<ActivityLog>('activity');
+  return log && typeof log === 'object' && !Array.isArray(log) ? log : {};
 }
 
 /** Record one unit of work today (a solved puzzle, a finished game, a lesson marked done). */

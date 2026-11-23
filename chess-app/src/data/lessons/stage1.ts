@@ -180,8 +180,8 @@ Tượng tấn công mã d4; sau 5.Be3 Qf6 6.c3 Nge7 Đen thoải mái. Nếu 5.
       },
       {
         kind: 'task',
-        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-        moves: ['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f1c4', 'f8c5', 'c2c3', 'g8f6', 'd2d4', 'e5d4', 'c3d4', 'c5b4', 'c1d2', 'b4d2', 'b1d2', 'd7d5'],
+        fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1',
+        moves: ['e7e5', 'g1f3', 'b8c6', 'f1c4', 'f8c5', 'c2c3', 'g8f6', 'd2d4', 'e5d4', 'c3d4', 'c5b4', 'c1d2', 'b4d2', 'b1d2', 'd7d5'],
         prompt: 'Đi lại cho Đen: 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.c3 Nf6 5.d4 exd4 6.cxd4 Bb4+ 7.Bd2 Bxd2+ 8.Nbxd2 d5.',
         explain: 'Đen đã đổi tượng và đánh d5 đúng lúc: trung tâm Trắng bị tấn công, Đen phát triển hết quân nhẹ.',
         verify: 'line',
@@ -266,8 +266,8 @@ Tượng tấn công mã d4; sau 5.Be3 Qf6 6.c3 Nge7 Đen thoải mái. Nếu 5.
       },
       {
         kind: 'task',
-        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-        moves: ['d2d4', 'd7d5', 'c2c4', 'e7e6', 'b1c3', 'g8f6', 'c1g5', 'f8e7', 'e2e3', 'e8g8', 'g1f3', 'b8d7', 'a1c1', 'c7c6'],
+        fen: 'rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq - 0 1',
+        moves: ['d7d5', 'c2c4', 'e7e6', 'b1c3', 'g8f6', 'c1g5', 'f8e7', 'e2e3', 'e8g8', 'g1f3', 'b8d7', 'a1c1', 'c7c6'],
         prompt: 'Đi lại cho Đen: 1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Bg5 Be7 5.e3 O-O 6.Nf3 Nbd7 7.Rc1 c6.',
         explain: 'Thế cờ QGD chính thống. Kế hoạch tiếp theo của Đen: sau 8.Bd3 dxc4 9.Bxc4 thì ...Nd5 (đổi quân) rồi ...e5, hoặc ...b5; cũng có thể ...h6 trước.',
         verify: 'line',
@@ -488,9 +488,9 @@ Khi tốt của hai bên đối diện nhau, thí hai tốt để tạo một t�
         kind: 'task',
         fen: '7k/ppp5/8/PPP5/8/8/8/7K w - - 0 1',
         moves: ['b5b6', 'a7b6', 'c5c6', 'b7c6', 'a5a6'],
-        prompt: 'Đột phá kinh điển. Trắng đi và tạo tốt thông.',
+        prompt: 'Đột phá kinh điển. Trắng đi và tạo tốt thông bằng cách thí tốt (đi vua thì chưa phải lời giải).',
         explain: '1.b6! Nếu axb6 2.c6! bxc6 3.a6 và tốt a phong hậu. Nếu cxb6 2.a6! bxa6 3.c6. Đen không cản được.',
-        verify: 'best',
+        verify: 'line',
       },
       {
         kind: 'text',
