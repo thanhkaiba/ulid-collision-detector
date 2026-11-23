@@ -627,6 +627,9 @@ function LessonView({ lesson, progress, setProgress, hidden }: { lesson: Lesson;
   })();
 
   const state = passed(sl);
+  const exAll = slides.filter((x) => x.kind === 'exercise');
+  const exTotal = exAll.length;
+  const exPassed = exAll.filter((x) => passed(x)).length;
   // not "Bỏ qua": that word is the lesson-level skip on the summary, this only leaves the exercise for later
   const nextLabel = state === false ? 'Để sau' : at === slides.length - 2 ? 'Tổng kết' : 'Tiếp';
   return (
@@ -638,7 +641,12 @@ function LessonView({ lesson, progress, setProgress, hidden }: { lesson: Lesson;
           </button>
           <div className="grow" style={{ minWidth: 0 }}>
             <div className="tiny muted">
-              Giai đoạn {lesson.stage + 1} · {lesson.minutes} phút · {at + 1}/{slides.length}
+              Trang {at + 1}/{slides.length}
+              {exTotal > 0 && (
+                <>
+                  {' · '}bài tập đã qua {exPassed}/{exTotal}
+                </>
+              )}
             </div>
             <div className="slide-lesson-title">{lesson.title}</div>
           </div>
@@ -648,7 +656,8 @@ function LessonView({ lesson, progress, setProgress, hidden }: { lesson: Lesson;
             <button
               key={k}
               aria-label={`Trang ${k + 1}`}
-              className={`dot ${k === at ? 'cur' : ''} ${k < at ? 'seen' : ''} ${x.kind === 'exercise' ? 'ex' : ''} ${passed(x) ? 'ok' : ''}`}
+              aria-current={k === at ? 'step' : undefined}
+              className={`dot ${k === at ? 'cur' : ''} ${k < at ? 'seen' : ''} ${passed(x) ? 'ok' : ''}`}
               onClick={() => go(k)}
             />
           ))}

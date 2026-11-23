@@ -321,12 +321,15 @@ label.field > span { display: block; font-size: 0.85rem; color: var(--fg-2); mar
 .slides { padding-bottom: 72px; }
 .slide-head { position: sticky; top: 0; z-index: 6; background: var(--bg); padding-top: 4px; margin: 0 -12px 10px; padding-left: 12px; padding-right: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
 .slide-lesson-title { font-weight: 700; font-size: 1.02rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.slide-dots { display: flex; gap: 4px; }
-.slide-dots .dot { flex: 1; height: 5px; border: 0; padding: 8px 0; box-sizing: content-box; background-clip: content-box; border-radius: 999px; background-color: var(--bg-3); cursor: pointer; }
-.slide-dots .dot.seen { background: color-mix(in srgb, var(--accent) 45%, var(--bg-3)); }
-.slide-dots .dot.cur { background: var(--accent); }
-.slide-dots .dot.ex:not(.ok):not(.cur) { background: color-mix(in srgb, var(--warn) 45%, var(--bg-3)); }
-.slide-dots .dot.ex.ok:not(.cur) { background: var(--good); }
+.slide-dots { display: flex; gap: 3px; margin: -4px 0; }
+/* each page is a thin bar; the button around it is a finger-sized tap area */
+.slide-dots .dot { flex: 1; height: 16px; padding: 0; border: 0; background: none; cursor: pointer; position: relative; }
+.slide-dots .dot::after { content: ''; position: absolute; left: 0; right: 0; top: 6px; height: 4px; border-radius: 2px; background: var(--line); }
+.slide-dots .dot.seen::after { background: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+.slide-dots .dot.cur::after { background: var(--accent); top: 5px; height: 6px; }
+/* an exercise already passed stays green wherever it is */
+.slide-dots .dot.ok::after { background: var(--good); }
+.slide-dots .dot.ok.cur::after { background: var(--good); box-shadow: 0 0 0 2px color-mix(in srgb, var(--good) 35%, transparent); }
 .slide-title { font-size: 1.3rem; margin: 4px 0 10px; }
 .slide-text { font-size: 1.04rem; line-height: 1.65; }
 .slide-body { animation: slide-in 0.22s ease; min-height: 50vh; }
@@ -388,8 +391,6 @@ input, select, textarea { border-radius: var(--r-md); padding: 8px 11px; }
 .board-wrap, .board-wrap .cg-wrap { border-radius: var(--r-sm); }
 
 /* lesson slides */
-.slide-dots .dot { height: 4px; border-radius: 1px; }
-.slide-dots { margin: -6px 0; }
 .slide-title { font-size: 1.2rem; }
 .slide-text { font-size: 1rem; line-height: 1.6; }
 .slide-nav { background: var(--bg-2); backdrop-filter: none; -webkit-backdrop-filter: none; }
