@@ -60,6 +60,16 @@ export const THEMES: Record<string, { vi: string; desc: string }> = {
   enPassant: { vi: 'Bắt tốt qua đường', desc: '' },
   castling: { vi: 'Nhập thành', desc: '' },
   underPromotion: { vi: 'Phong cấp không hậu', desc: '' },
+  discoveredCheck: { vi: 'Chiếu mở', desc: 'Dời một quân để quân phía sau chiếu vua.' },
+  epauletteMate: { vi: 'Mẫu cầu vai (epaulette)', desc: 'Vua bị chính hai quân của mình chắn hai bên.' },
+  pillsburysMate: { vi: 'Mẫu Pillsbury', desc: '' },
+  morphysMate: { vi: 'Mẫu Morphy', desc: '' },
+  operaMate: { vi: 'Mẫu Opera', desc: '' },
+  vukovicMate: { vi: 'Mẫu Vuković', desc: '' },
+  swallowstailMate: { vi: 'Mẫu đuôi nhạn', desc: '' },
+  blindSwineMate: { vi: 'Hai xe hàng 7 (blind swine)', desc: '' },
+  cornerMate: { vi: 'Chiếu hết ở góc', desc: '' },
+  triangleMate: { vi: 'Mẫu tam giác', desc: '' },
 };
 
 /** Themes offered as drills, in a sensible learning order. */

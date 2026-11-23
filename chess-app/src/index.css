@@ -181,6 +181,9 @@ label.field > span { display: block; font-size: 0.85rem; color: var(--fg-2); mar
 .promo-row { display: flex; gap: 8px; }
 .promo-btn { border: 1px solid var(--line); background: var(--bg-3); border-radius: 10px; padding: 8px; display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; }
 .promo-piece { font-size: 2.4rem; line-height: 1; }
+/* fixed piece colours, so black pieces do not turn light in dark mode */
+.promo-piece.white { color: #fff; -webkit-text-stroke: 1px #222; }
+.promo-piece.black { color: #111; text-shadow: 0 0 2px rgba(255, 255, 255, 0.6); }
 
 .spinner-row { display: flex; gap: 10px; align-items: center; color: var(--fg-2); padding: 12px 0; }
 .spinner { width: 18px; height: 18px; border-radius: 50%; border: 3px solid var(--line); border-top-color: var(--accent); animation: spin 0.8s linear infinite; display: inline-block; }

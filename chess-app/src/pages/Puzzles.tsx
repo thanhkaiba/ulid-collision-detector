@@ -246,7 +246,16 @@ function Trainer({
     await savePuzzleProgress(next);
   };
 
-  if (!all || !puzzle) return <Spinner label="Đang tải bài tập..." />;
+  if (!all) return <Spinner label="Đang tải bài tập..." />;
+  if (!puzzle)
+    return (
+      <Card>
+        <p>Không có bài tập nào cho chủ đề này.</p>
+        <Button kind="primary" onClick={() => navigate('puzzles')}>
+          Về trang Tập
+        </Button>
+      </Card>
+    );
   const info = theme ? THEMES[theme] : undefined;
 
   return (
@@ -326,7 +335,8 @@ export function puzzlePrompt(p: Puzzle): string {
   const who = `Bạn cầm ${side} (phía dưới bàn cờ).`;
   const count = mine <= 1 ? 'Chỉ cần đúng một nước.' : `Cần tìm ${mine} nước liên tiếp.`;
   const mate = p.themes.find((t) => /^mateIn\d$/.test(t));
-  if (mate) return `${who} Mục tiêu: chiếu hết trong ${mate.slice(-1)} nước.`;
+  // Lichess files every mate in 5 or more under mateIn5: count the moves instead
+  if (mate) return `${who} Mục tiêu: chiếu hết trong ${Math.max(mine, Number(mate.slice(-1)))} nước.`;
   if (p.themes.includes('mate')) return `${who} Mục tiêu: chiếu hết. ${count}`;
   if (p.themes.includes('hangingPiece')) return `${who} Mục tiêu: bắt quân không được bảo vệ. ${count}`;
   if (p.themes.includes('equality')) return `${who} Bạn đang kém thế. Mục tiêu: tìm cách cứu hòa. ${count}`;

@@ -44,16 +44,28 @@ export class Engine {
       const line = typeof e.data === 'string' ? e.data : String(e.data);
       for (const l of this.listeners) l(line);
     };
-    this.ready = new Promise<void>((resolve) => {
+    this.ready = new Promise<void>((resolve, reject) => {
       const off = this.on((line) => {
         if (line === 'uciok') {
           off();
           resolve();
         }
       });
+      // the worker could not load (offline before it was cached, blocked file) or crashed: fail fast instead of
+      // leaving every caller waiting forever, and end any search in progress as "no move"
+      this.worker.onerror = (e) => {
+        e.preventDefault?.();
+        this.broken = true;
+        reject(new Error('engine unavailable'));
+        for (const l of [...this.listeners]) l('bestmove (none)');
+      };
       this.send('uci');
     });
+    this.ready.catch(() => undefined);
   }
+
+  /** set when the worker failed; getEngine() then starts a fresh one */
+  broken = false;
 
   private on(fn: (line: string) => void): () => void {
     this.listeners.add(fn);
@@ -181,7 +193,7 @@ function parseInfo(line: string): EngineLine | null {
 /** Shared engine instance (lazy). The lite build only uses one thread anyway. */
 let shared: Engine | null = null;
 export function getEngine(): Engine {
-  if (!shared) shared = new Engine();
+  if (!shared || shared.broken) shared = new Engine();
   return shared;
 }
 

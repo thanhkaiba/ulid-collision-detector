@@ -23,7 +23,7 @@ export default function PromotionPicker({
         <div className="promo-row">
           {PIECES.map((p) => (
             <button key={p.role} className="promo-btn" onClick={() => onPick(p.role)} aria-label={p.label}>
-              <span className="promo-piece">{color === 'white' ? p.w : p.b}</span>
+              <span className={`promo-piece ${color}`}>{color === 'white' ? p.w : p.b}</span>
               <span>{p.label}</span>
             </button>
           ))}
