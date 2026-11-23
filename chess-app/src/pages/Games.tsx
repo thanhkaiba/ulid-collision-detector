@@ -10,7 +10,7 @@ import { Button, Card, Spinner, Tag } from '../components/ui';
 import { GAMES, loadGame, type AnnotatedGame, type GameMeta } from '../data/games';
 import { renderRich, type Preview } from '../lib/richtext';
 import { loadLessonProgress, setLessonStatus, type LessonProgress } from '../lib/storage';
-import { needsPromotion, toDests } from '../lib/chess-utils';
+import { castleTarget, needsPromotion, toDests } from '../lib/chess-utils';
 import { navigate, type Route } from '../lib/router';
 import { logActivity, unlogLesson } from '../lib/activity';
 
@@ -207,7 +207,7 @@ function GameView({ meta }: { meta: GameMeta }) {
     const c = new Chess(mainFen);
     let san = '';
     try {
-      san = c.move({ from, to, promotion }).san;
+      san = c.move({ from, to: castleTarget(c, from, to), promotion }).san;
     } catch {
       return;
     }

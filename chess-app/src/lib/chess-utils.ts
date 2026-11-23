@@ -9,9 +9,22 @@ export function toDests(chess: Chess): Dests {
   for (const m of chess.moves({ verbose: true })) {
     const arr = dests.get(m.from as Key) ?? [];
     arr.push(m.to as Key);
+    // castling can also be made by dropping the king on its own rook, as on Lichess
+    if (m.flags.includes('k') || m.flags.includes('q')) {
+      const rook = `${m.flags.includes('k') ? 'h' : 'a'}${m.from[1]}` as Key;
+      if (!arr.includes(rook)) arr.push(rook);
+    }
     dests.set(m.from as Key, arr);
   }
   return dests;
+}
+
+/** a king dropped on its own rook means castling: return the king's real target square */
+export function castleTarget(chess: Chess, from: string, to: string): string {
+  const k = chess.get(from as Square);
+  const r = chess.get(to as Square);
+  if (k?.type === 'k' && r?.type === 'r' && r.color === k.color && from[1] === to[1]) return `${to[0] === 'h' ? 'g' : 'c'}${from[1]}`;
+  return to;
 }
 
 export function turnColor(chess: Chess): Color {
@@ -25,7 +38,7 @@ export function fullColor(c: 'w' | 'b'): Color {
 /** Play a UCI move (e2e4, e7e8q) on a Chess instance. Returns the move or null if illegal. */
 export function playUci(chess: Chess, uci: string): Move | null {
   const from = uci.slice(0, 2) as Square;
-  const to = uci.slice(2, 4) as Square;
+  const to = castleTarget(chess, from, uci.slice(2, 4)) as Square;
   const promotion = uci.length > 4 ? uci[4] : undefined;
   try {
     return chess.move({ from, to, promotion });

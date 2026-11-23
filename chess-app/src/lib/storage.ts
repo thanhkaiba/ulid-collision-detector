@@ -182,8 +182,11 @@ export async function upsertGames(newGames: StoredGame[]): Promise<StoredGame[]>
   const games = await loadGames();
   const byId = new Map(games.map((g) => [g.id, g]));
   for (const g of newGames) byId.set(g.id, { ...byId.get(g.id), ...g });
-  const all = [...byId.values()].sort((a, b) => b.date - a.date).slice(0, 400);
+  const sorted = [...byId.values()].sort((a, b) => b.date - a.date);
+  const all = sorted.slice(0, 400);
   await saveGames(all);
+  // games pushed out of the list take their analysis with them
+  for (const g of sorted.slice(400)) await deleteAnalysis(g.id);
   return all;
 }
 
