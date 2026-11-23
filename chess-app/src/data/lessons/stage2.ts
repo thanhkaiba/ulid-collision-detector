@@ -342,18 +342,38 @@ Mã kịp tới trước tốt thường cản được tốt; khó nhất là t
       {
         kind: 'text',
         md: `### Nước ứng viên (Kotov)
-Trước khi tính, **liệt kê** 2-4 nước đáng xem (theo thứ tự chiếu, bắt, đe dọa, rồi nước cải thiện vị trí). Chỉ sau đó mới tính từng nước. Lỗi phổ biến: tính một nước thật sâu rồi đi nước khác chưa tính.
-
-### Cây biến
-Với mỗi ứng viên, tìm các **đáp trả mạnh nhất** của đối phương (cũng theo chiếu-bắt-đe dọa). Đừng tính biến mà đối phương "giúp" bạn.
-
-### Kiểm tra ngược (blunder check)
-Sau khi chọn nước, nhìn thế cờ **như thể bạn là đối phương** trong 10 giây: họ có chiếu, bắt quân, đòn chiến thuật nào không?
-
-### Tính xa bằng "đá kê" (stepping stones)
-Khi biến dài, dừng ở các thế cờ trung gian rõ ràng, "chụp ảnh" chúng, rồi tính tiếp từ đó.
-
-### Phương pháp Woodpecker
+Trước khi tính, **liệt kê** 2-4 nước đáng xem (theo thứ tự chiếu, bắt, đe dọa, rồi nước cải thiện vị trí). Chỉ sau đó mới tính từng nước. Lỗi phổ biến: tính một nước thật sâu rồi đi nước khác chưa tính.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '4r1k1/pp1q1ppp/2n5/8/2B5/5Q2/PP3PPP/4R1K1 w - - 0 1',
+        marks: ['e1e8:blue', 'f3f7:blue', 'c4f7:blue'],
+        caption: 'Trắng đi. Liệt kê các nước chiếu trước: {Rxe8+}, {Qxf7+} và {Bxf7+} (ba mũi tên). Nước đầu tiên ai cũng thấy chỉ đổi xe, thế cờ gần cân bằng. Chỉ khi xét đủ ứng viên mới thấy {Qxf7+ Kh8 Rxe8+ Qxe8 Qxe8#}: vua không ăn được hậu vì tượng c4 bảo vệ f7.',
+      },
+      {
+        kind: 'text',
+        md: `### Cây biến
+Với mỗi ứng viên, tìm các **đáp trả mạnh nhất** của đối phương (cũng theo chiếu-bắt-đe dọa). Đừng tính biến mà đối phương "giúp" bạn.`,
+      },
+      {
+        kind: 'diagram',
+        fen: '4r1k1/pp1q1ppp/2n5/8/2B5/5Q2/PP3PPP/4R1K1 w - - 0 1',
+        marks: ['c4f7:blue', 'd7f7:red'],
+        caption: 'Cây biến của ứng viên {Bxf7+}. Đáp trả "giúp" Trắng là {Bxf7+ Kh8 Bxe8}, mất xe. Đáp trả mạnh nhất là ăn bằng hậu (mũi tên đỏ): {Bxf7+ Qxf7 Rxe8+ Qxe8} và Trắng mất tượng chỉ để lấy một tốt. Cùng thế cờ, ứng viên {Qxf7+} thì không có đáp trả nào cứu được Đen.',
+      },
+      {
+        kind: 'text',
+        md: `### Kiểm tra ngược (blunder check)
+Sau khi chọn nước, nhìn thế cờ **như thể bạn là đối phương** trong 10 giây: họ có chiếu, bắt quân, đòn chiến thuật nào không?`,
+      },
+      {
+        kind: 'text',
+        md: `### Tính xa bằng "đá kê" (stepping stones)
+Khi biến dài, dừng ở các thế cờ trung gian rõ ràng, "chụp ảnh" chúng, rồi tính tiếp từ đó.`,
+      },
+      {
+        kind: 'text',
+        md: `### Phương pháp Woodpecker
 Giải một bộ 300-1000 bài tập, rồi giải lại **cùng bộ** nhanh hơn, 4-7 vòng. Mục tiêu là nhận diện mẫu tức thì chứ không phải bài mới. App này: dùng "Lỗi của chính bạn" và các bài theo chủ đề, làm lại nhiều lần.`,
       },
       { kind: 'puzzles', themes: ['long', 'veryLong'], rating: [1600, 2000], count: 8, intro: 'Biến dài: 8 bài. Tính hết biến trước khi đi nước đầu.' },
@@ -375,20 +395,40 @@ Giải một bộ 300-1000 bài tập, rồi giải lại **cùng bộ** nhanh h
       {
         kind: 'text',
         md: `### Khi nào cần kho khai cuộc
-Khoảng 1500-1600, khi bạn thấy thua ngay sau khai cuộc vì đối phương biết nhiều hơn. Trước đó, thời gian học khai cuộc nên dành cho chiến thuật.
-
-### Cách xây
+Khoảng 1500-1600, khi bạn thấy thua ngay sau khai cuộc vì đối phương biết nhiều hơn. Trước đó, thời gian học khai cuộc nên dành cho chiến thuật.`,
+      },
+      {
+        kind: 'text',
+        md: `### Cách xây
 1. Chọn khai cuộc hợp **phong cách** (thích tấn công: Ý/Scotch, Sicilian; thích chắc: QGD, Caro-Kann, London).
 2. Với mỗi biến chính, học **ý tưởng và kế hoạch** trước, biến cụ thể sau.
 3. Dùng **Lichess Opening Explorer** lọc theo rating của bạn: xem đối thủ cùng trình thực sự đi gì, không phải kiện tướng đi gì.
 4. Tạo **study** trên Lichess cho mỗi khai cuộc, thêm biến mới mỗi khi thua vì không biết.
-5. Xem 5-10 **ván kiện tướng** trong khai cuộc đó để nắm kế hoạch trung cuộc.
-
-### Spaced repetition
-Lúc này Chessable (hoặc study Lichess + tự ôn) mới đáng dùng. Ôn biến như học từ vựng.
-
-### Sicilian cho người muốn tấn công
+5. Xem 5-10 **ván kiện tướng** trong khai cuộc đó để nắm kế hoạch trung cuộc.`,
+      },
+      {
+        kind: 'text',
+        md: `### Spaced repetition
+Lúc này Chessable (hoặc study Lichess + tự ôn) mới đáng dùng. Ôn biến như học từ vựng.`,
+      },
+      {
+        kind: 'text',
+        md: `### Sicilian cho người muốn tấn công
 Nếu muốn chuyển từ 1.e4 e5 sang 1.e4 c5 (Sicilian), bắt đầu với **Accelerated Dragon** hoặc **Taimanov**: ít lý thuyết ép buộc hơn Najdorf.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'r1bqkbnr/pp1ppp1p/2n3p1/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 0 5',
+        lastMove: 'g7g6',
+        marks: ['d7d5', 'c2c4:blue'],
+        caption: 'Accelerated Dragon: 1.e4 c5 2.Nf3 Nc6 3.d4 cxd4 4.Nxd4 g6. Đen chưa đi ...d6, nên nếu Trắng chơi kiểu tấn công Nam Tư (Be3, f3, Qd2, O-O-O), Đen thường phá trung tâm bằng ...d5 chỉ trong một nước (mũi tên xanh lá). Vì thế Trắng hay chọn {c4}, thế kìm Maróczy (mũi tên xanh dương), dẫn tới cuộc đấu chiến lược hơn.',
+      },
+      {
+        kind: 'diagram',
+        fen: 'r1bqkbnr/pp1p1ppp/2n1p3/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5',
+        lastMove: 'b8c6',
+        marks: ['a7a6', 'd8c7'],
+        caption: 'Taimanov: 1.e4 c5 2.Nf3 e6 3.d4 cxd4 4.Nxd4 Nc6. Đen giữ tốt d ở d7 và chưa cam kết chỗ đứng cho các quân: thường tiếp theo là ...a6 và ...Qc7 (mũi tên), sau đó mới chọn ô cho mã g8 và tượng f8. Hệ thống linh hoạt, dựa vào kế hoạch hơn là thuộc biến dài.',
       },
       { kind: 'puzzles', themes: ['opening'], rating: [1500, 1900], count: 6, intro: 'Chiến thuật khai cuộc ở trình độ cao hơn: 6 bài.' },
     ],
@@ -417,21 +457,42 @@ Khi không có chiến thuật, liệt kê sự khác biệt giữa hai bên:
 5. Kiểm soát cột/đường chéo/ô then chốt
 6. Thời gian (phát triển, tempo)
 7. An toàn vua
-8. Chủ động (ai đang ép ai phản ứng)
-
-### Từ mất cân bằng đến kế hoạch
-Kế hoạch là **khai thác mất cân bằng có lợi** và **hóa giải cái bất lợi**. Ví dụ: có cặp tượng → mở thế cờ; có mã vs tượng xấu → đóng thế cờ, tìm tiền đồn; đối phương có tốt yếu → dồn quân vào tốt đó.
-
-### "Nước mơ ước"
-Hỏi: nếu được đi 3 nước liên tiếp, bạn đặt quân ở đâu? Rồi tìm cách tiến tới đó. Kỹ thuật này tạo ra kế hoạch khi bạn bí.
-
-### Ván mẫu
-Học chiến lược hiệu quả nhất qua **ván có bình luận từng nước**. Logical Chess: Move by Move (Chernev) là lựa chọn số một; sau đó là tuyển tập ván Capablanca, Karpov.`,
+8. Chủ động (ai đang ép ai phản ứng)`,
       },
       {
         kind: 'diagram',
-        fen: '2rq1rk1/pp1bppbp/3p1np1/4n3/3NP3/1BN1BP2/PPPQ2PP/1K1R3R b - - 0 1',
-        caption: 'Nhập thành khác phía (Dragon, biến Nam Tư). Mất cân bằng: Trắng có trung tâm e4-f3 vững và kế hoạch g4, h4-h5, Bh6 đổi Tượng g7; Đen có cột c nửa mở và kế hoạch ...Nc4, ...b5, có khi thí ...Rxc3. Ai nhanh hơn? Mỗi nhịp đều quý.',
+        fen: '2rq1rk1/pp1bppbp/3p1np1/4n3/3NP3/1BN1BP2/PPPQ2PP/1K1R3R b - - 10 12',
+        lastMove: 'c1b1',
+        marks: ['g2g4:blue', 'e3h6:blue', 'e5c4', 'c8c3:red'],
+        caption: 'Rồng, biến Nam Tư: 1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 g6 6.Be3 Bg7 7.f3 O-O 8.Qd2 Nc6 9.Bc4 Bd7 10.O-O-O Rc8 11.Bb3 Ne5 12.Kb1. Mất cân bằng: nhập thành khác phía (an toàn vua), Trắng có trung tâm e4-f3 vững, Đen có cột c nửa mở. Kế hoạch Trắng (xanh dương): g4, h4-h5, Bh6 đổi tượng g7. Kế hoạch Đen: ...Nc4, ...b5, có khi thí xe ở c3 (mũi tên đỏ). Ai nhanh hơn? Mỗi nhịp đều quý.',
+      },
+      {
+        kind: 'text',
+        md: `### Từ mất cân bằng đến kế hoạch
+Kế hoạch là **khai thác mất cân bằng có lợi** và **hóa giải cái bất lợi**. Ví dụ: có cặp tượng → mở thế cờ; có mã vs tượng xấu → đóng thế cờ, tìm tiền đồn; đối phương có tốt yếu → dồn quân vào tốt đó.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'rnbqk2r/pppp1ppp/4pn2/8/2PP4/P1P5/4PPPP/R1BQKBNR b KQkq - 0 5',
+        lastMove: 'b2c3',
+        marks: ['f2f3:blue', 'e2e4:blue', 'c3:yellow', 'c4:yellow', 'b7b6'],
+        caption: 'Nimzo-Ấn, biến Sämisch: 1.d4 Nf6 2.c4 e6 3.Nc3 Bb4 4.a3 Bxc3+ 5.bxc3. Trắng có cặp tượng và trung tâm, nên muốn mở thế cờ bằng f3 và e4 (mũi tên xanh dương). Đen có cấu trúc tốt hơn: tốt chồng c3-c4 (vòng vàng) là mục tiêu, nên Đen giữ thế cờ đóng và dồn quân vào c4 bằng ...b6, ...Ba6, ...Nc6-a5. Mỗi bên chơi theo mất cân bằng của mình.',
+      },
+      {
+        kind: 'text',
+        md: `### "Nước mơ ước"
+Hỏi: nếu được đi 3 nước liên tiếp, bạn đặt quân ở đâu? Rồi tìm cách tiến tới đó. Kỹ thuật này tạo ra kế hoạch khi bạn bí.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'rnbq1rk1/1p2bppp/p2p1n2/4p3/4P3/1NN5/PPP1BPPP/R1BQ1RK1 w - - 4 9',
+        marks: ['c1g5:blue', 'c3d5:blue', 'd5:yellow'],
+        caption: 'Najdorf: 1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 a6 6.Be2 e5 7.Nb3 Be7 8.O-O O-O. Nếu được đi 3 nước liền, Trắng chọn Bg5, Bxf6 rồi Nd5: mã f6 giữ d5 bị đổi đi, mã trắng vào d5 (vòng vàng) nơi không tốt đen nào đuổi được, còn tượng ô đen của Đen bị chính tốt d6, e5 chặn. Trên thực tế Đen sẽ chống lại (...Be6, ...Nbd7 tranh ô d5), nhưng "nước mơ ước" đã cho Trắng một mục tiêu rõ ràng.',
+      },
+      {
+        kind: 'text',
+        md: `### Ván mẫu
+Học chiến lược hiệu quả nhất qua **ván có bình luận từng nước**. Logical Chess: Move by Move (Chernev) là lựa chọn số một; sau đó là tuyển tập ván Capablanca, Karpov.`,
       },
       { kind: 'puzzles', themes: ['middlegame', 'quietMove'], rating: [1600, 2000], count: 6, intro: 'Nước đi chiến lược: 6 bài.' },
     ],

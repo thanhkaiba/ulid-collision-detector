@@ -376,6 +376,11 @@ function chunksOf(md: string): { title: string; md: string }[] {
     } else cur.lines.push(line);
   }
   if (cur.lines.join('').trim() || cur.title) out.push({ title: cur.title, md: cur.lines.join('\n') });
+  // a short lead-in before the first heading opens the first section instead of being a slide of its own
+  if (out.length > 1 && !out[0].title) {
+    const [lead, first] = out.splice(0, 2);
+    out.unshift({ title: first.title, md: `${lead.md.trim()}\n\n${first.md}` });
+  }
   return out;
 }
 
