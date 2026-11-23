@@ -468,6 +468,9 @@ function GameView({
   const [clock, setClock] = useState(() => (resume && !practice ? resume.clock : { w: tc.initial * 1000, b: tc.initial * 1000 }));
   const [over, setOver] = useState<{ result: string; reason: string } | null>(null);
   const [thinking, setThinking] = useState(false);
+  /** "Gợi ý": the engine's best move for you, shown as an arrow while the board is at `fen` */
+  const [hint, setHint] = useState<{ fen: string; uci: string; text: string } | null>(null);
+  const [hinting, setHinting] = useState(false);
   const [viewPly, setViewPly] = useState<number | null>(null); // null = live
   const [confirmResign, setConfirmResign] = useState(false);
   const savedId = useRef<string | null>(null);
@@ -667,6 +670,7 @@ function GameView({
   };
 
   const onMove = (from: Key, to: Key) => {
+    setHint(null);
     if (viewPly !== null) setViewPly(null);
     // the king dropped onto its own rook: castle (the king's real target is the g- or c-file)
     const piece = chess.get(from as Square);
@@ -788,6 +792,42 @@ function GameView({
     setVersion((v) => v + 1);
   };
 
+  const canHint = live && !over && !thinking && !hinting && chess.turn() === me;
+  const askHint = async () => {
+    if (!canHint) return;
+    setHinting(true);
+    try {
+      await engine.fullStrength();
+      // the position already slipped away: the useful advice is the move that should have been played instead
+      if (practice && slipped && chess.history().length >= 2) {
+        const before = new Chess(startFen);
+        const hist = chess.history({ verbose: true });
+        for (const m of hist.slice(0, -2)) before.move(m.san);
+        const mine = hist[hist.length - 2];
+        const r = await engine.evaluate(before.fen(), { depth: 16 });
+        if (r.bestmove && r.bestmove !== '(none)') {
+          const san = new Chess(before.fen()).move({ from: r.bestmove.slice(0, 2), to: r.bestmove.slice(2, 4), promotion: r.bestmove[4] }).san;
+          setHint({
+            fen: before.fen(),
+            uci: r.bestmove,
+            text: san === mine.san ? `Nước ${mine.san} vẫn là tốt nhất ở đó; thế cờ đã khó từ trước. Bấm “Đi lại” vài lần.` : `Nước ${mine.san} vừa rồi làm hỏng thế cờ. Bấm “Đi lại”, rồi đi ${san} (mũi tên xanh).`,
+          });
+        }
+      } else {
+        const r = await engine.evaluate(chess.fen(), { depth: 16 });
+        if (r.bestmove && r.bestmove !== '(none)') {
+          const san = new Chess(chess.fen()).move({ from: r.bestmove.slice(0, 2), to: r.bestmove.slice(2, 4), promotion: r.bestmove[4] }).san;
+          setHint({ fen: chess.fen(), uci: r.bestmove, text: `Gợi ý: ${san} (mũi tên xanh).` });
+        }
+      }
+    } catch {
+      /* engine unavailable: the status pill already says so */
+    } finally {
+      setHinting(false);
+    }
+  };
+  const hintShapes = hint && hint.fen === shown.fen() ? [{ orig: hint.uci.slice(0, 2) as Key, dest: hint.uci.slice(2, 4) as Key, brush: 'green' }] : [];
+
   const myName = 'Bạn';
   const botName = practice ? 'Stockfish · hết sức' : `Stockfish · cấp ${level.n} (${level.elo})`;
   const top = me === 'w' ? 'b' : 'w';
@@ -849,8 +889,10 @@ function GameView({
             movableColor={live && !over && chess.turn() === me ? orientation : undefined}
             dests={live ? destsWithRookCastle(chess) : new Map()}
             onMove={onMove}
+            shapes={hintShapes}
           />
           {bar(bottom)}
+          {hint && !over && <div className="feedback info small">{hint.text}</div>}
         </div>
         <div>
           {practice && !over && (
@@ -982,6 +1024,9 @@ function GameView({
                 <span className="grow" />
                 {!over && (
                   <>
+                    <Button kind="ghost" onClick={askHint} disabled={!canHint}>
+                      {hinting ? 'Đang tìm…' : 'Gợi ý'}
+                    </Button>
                     <Button kind="ghost" onClick={takeback} disabled={!canTakeback}>
                       ↶ Đi lại
                     </Button>
