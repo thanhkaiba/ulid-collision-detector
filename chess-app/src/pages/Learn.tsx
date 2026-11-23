@@ -20,6 +20,7 @@ import { renderRich, type Preview } from '../lib/richtext';
 import { START_FEN } from '../lib/chess-utils';
 import { practiceById, loadPracticeDone } from '../data/practice';
 import { LEGACY_KEYS } from '../data/lessons/legacyKeys';
+import { judgeMove } from '../lib/judge';
 import { PracticeInline } from './Play';
 import { puzzlePrompt } from './Puzzles';
 import { Chess } from 'chess.js';
@@ -729,6 +730,8 @@ function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: num
         moves={block.moves}
         alternatives={block.alternatives}
         playerFirst
+        judge={(uci, fen) => judgeMove(uci, fen, { mate: block.verify === 'mate' })}
+        mateGoal={block.verify === 'mate'}
         prompt={block.prompt}
         onWrong={setMisses}
         onFinish={(_, how) => {

@@ -7,9 +7,9 @@ import { updateRating } from '../lib/rating';
 import { loadPuzzleProgress, savePuzzleProgress, loadMistakes, saveMistakes, type PuzzleProgress, type Mistake } from '../lib/storage';
 import { navigate, type Route } from '../lib/router';
 import { Chess } from 'chess.js';
-import { getEngine, toWhitePov, winPercent } from '../lib/engine';
 import { playUci, uciLineToSan } from '../lib/chess-utils';
 import { logActivity, loadActivity, dayKey } from '../lib/activity';
+import { judgeMove } from '../lib/judge';
 
 type Mode = 'rated' | 'theme' | 'daily' | 'mistakes';
 /** what a player below ~1000 should drill first */
@@ -432,21 +432,7 @@ function MistakeTrainer({ mistakes, setMistakes }: { mistakes: Mistake[]; setMis
   };
 
   /** Accept any move that is practically as good as the engine's first choice. */
-  const judge = async (uci: string, fenBefore: string): Promise<boolean> => {
-    const engine = getEngine();
-    await engine.fullStrength();
-    const side = fenBefore.split(' ')[1] as 'w' | 'b';
-    const best = await engine.evaluate(fenBefore, { depth: 12 });
-    const c = new Chess(fenBefore);
-    if (!playUci(c, uci)) return false;
-    if (c.isCheckmate()) return true;
-    const mine = await engine.evaluate(c.fen(), { depth: 12 });
-    if (!best.lines[0] || !mine.lines[0]) return false;
-    const wpBest = winPercent(toWhitePov(best.lines[0], side));
-    const wpMine = winPercent(toWhitePov(mine.lines[0], side === 'w' ? 'b' : 'w'));
-    const loss = side === 'w' ? wpBest - wpMine : wpMine - wpBest;
-    return loss <= 6;
-  };
+  const judge = (uci: string, fenBefore: string) => judgeMove(uci, fenBefore);
 
   return (
     <div>

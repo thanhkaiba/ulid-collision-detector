@@ -20,7 +20,11 @@ export interface PuzzleBoardProps {
   /** solution line in UCI. If !playerFirst, moves[0] is the opponent's move played automatically. */
   moves: string[];
   playerFirst?: boolean;
-  /** extra accepted first moves for the player (UCI) */
+  /**
+   * extra accepted first moves for the player (UCI). An entry may be a whole line ("e6f6 e8f8 e5e6 ..."): the puzzle then
+   * continues along it. A single move that leaves a longer scripted line behind ends the puzzle as solved, since the
+   * scripted replies no longer fit the position.
+   */
   alternatives?: string[];
   /** called exactly once when the puzzle is finished: ok=false if the user failed or revealed */
   onFinish?: (ok: boolean, how: PuzzleOutcome) => void;
@@ -37,12 +41,20 @@ export interface PuzzleBoardProps {
    * Resolve true to accept it.
    */
   judge?: (uci: string, fenBefore: string) => Promise<boolean>;
+  /** with judge: the task is to mate, so a free continuation only ends at mate */
+  mateGoal?: boolean;
   /** show the opponent's best reply to a wrong move (needs the engine). Default true. */
   refute?: boolean;
 }
 
 export default function PuzzleBoard(props: PuzzleBoardProps) {
-  const { fen, moves, playerFirst, alternatives } = props;
+  const { fen, playerFirst, alternatives } = props;
+  /** the line being followed: the main solution, or an alternative line the solver chose */
+  const alt = useRef<string[] | null>(null);
+  /** set once Stockfish has taken over the opponent's side (see playFree) */
+  const free = useRef<{ target: number; mate: boolean } | null>(null);
+  const lineNow = () => alt.current ?? props.moves;
+  const moves = lineNow();
   const chessRef = useRef(new Chess(fen));
   const [, setVersion] = useState(0);
   const bump = () => setVersion((v) => v + 1);
@@ -66,12 +78,14 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
 
   const chess = chessRef.current;
   /** how many of the solver's own moves are still to be found */
-  const movesLeft = Math.ceil((moves.length - idx) / 2);
+  const movesLeft = free.current
+    ? Math.max(1, free.current.target - Array.from({ length: idx }, (_, k) => k).filter((k) => k % 2 === (playerFirst ? 0 : 1)).length)
+    : Math.ceil((moves.length - idx) / 2);
   const playerColor: Color = useMemo(() => {
     const c = new Chess(fen);
-    if (!playerFirst && moves[0]) playUci(c, moves[0]);
+    if (!playerFirst && props.moves[0]) playUci(c, props.moves[0]);
     return turnColor(c);
-  }, [fen, moves, playerFirst]);
+  }, [fen, props.moves, playerFirst]);
 
   /** an arrow hint gives the move away: the puzzle no longer counts as passed */
   const shown = useRef(false);
@@ -99,6 +113,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     clearTimers();
     attempt.current++;
     chessRef.current = new Chess(fen);
+    alt.current = null;
+    free.current = null;
     finished.current = false;
     shown.current = false;
     wrongCount.current = 0;
@@ -127,7 +143,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     }
     return () => timers.current.forEach(clearTimeout);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fen, moves.join(' '), playerFirst, props.resetKey]);
+  }, [fen, props.moves.join(' '), playerFirst, props.resetKey]);
 
   const accept = (san: string, from: Key, to: Key, isMate: boolean, expectedIdx: number) => {
     chess.move(san);
@@ -139,7 +155,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     const next = expectedIdx + 1;
     setIdx(next);
     bump();
-    if (isMate || next >= moves.length) {
+    if (isMate || next >= lineNow().length) {
       setStatus('solved');
       finish(!failed);
       return;
@@ -147,11 +163,12 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     setStatus('solving');
     // opponent reply
     later(() => {
-      const reply = playUci(chess, moves[next]);
+      const reply = playUci(chess, lineNow()[next]);
       if (reply) setLastMove([reply.from as Key, reply.to as Key]);
       setIdx(next + 1);
       bump();
-      if (next + 1 >= moves.length) {
+      // a scripted reply that does not fit the position would leave the board waiting forever: end it instead
+      if (!reply || next + 1 >= lineNow().length) {
         setStatus('solved');
         finish(!failed);
       }
@@ -205,6 +222,72 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     bump();
   };
 
+  /** which plies of a line are the solver's */
+  const mine = (k: number) => k % 2 === (playerFirst ? 0 : 1);
+  const solverPlies = (n: number) => Array.from({ length: n }, (_, k) => k).filter(mine).length;
+
+  /**
+   * The solver left the scripted line with a move the engine judged as good: from here Stockfish answers for the
+   * opponent and judges every move, until the solver has made as many moves as the scripted solution asks for
+   * (and, in a mating task, has actually mated, a few extra moves at most).
+   */
+  const playFree = (uci: string, at: number) => {
+    const myAttempt = attempt.current;
+    if (!free.current) free.current = { target: solverPlies(props.moves.length), mate: props.mateGoal ?? false };
+    const mv = playUci(chess, uci);
+    if (!mv) return;
+    alt.current = [...lineNow().slice(0, at), uci];
+    setLastMove([mv.from as Key, mv.to as Key]);
+    setShapes([]);
+    setHintLevel(0);
+    setWrongInfo(null);
+    setJustRight(true);
+    setIdx(at + 1);
+    bump();
+    const made = solverPlies(at + 1);
+    const { target, mate } = free.current;
+    if (chess.isCheckmate() || chess.isGameOver() || (made >= target && !mate) || made >= target + 3) {
+      setStatus('solved');
+      finish(!failed);
+      return;
+    }
+    setStatus('solving');
+    const engine = getEngine();
+    engine
+      .fullStrength()
+      .then(() => engine.evaluate(chess.fen(), { depth: 12 }))
+      .then(async (r) => {
+        if (attempt.current !== myAttempt) return;
+        const reply = r.bestmove && r.bestmove !== '(none)' ? playUci(chess, r.bestmove) : null;
+        if (!reply) {
+          setStatus('solved');
+          finish(!failed);
+          return;
+        }
+        alt.current = [...lineNow(), reply.from + reply.to + (reply.promotion ?? '')];
+        setLastMove([reply.from as Key, reply.to as Key]);
+        if (chess.isGameOver()) {
+          setIdx(at + 2);
+          setStatus('solved');
+          bump();
+          finish(!failed);
+          return;
+        }
+        setIdx(at + 2);
+        bump();
+        // the solver's best move from here, for the hint and "Xem lời giải" (a move made meanwhile is judged instead)
+        const next = await engine.evaluate(chess.fen(), { depth: 12 });
+        if (attempt.current !== myAttempt || lineNow().length !== at + 2) return;
+        if (next.bestmove && next.bestmove !== '(none)') alt.current = [...lineNow(), next.bestmove];
+        bump();
+      })
+      .catch(() => {
+        if (attempt.current !== myAttempt) return;
+        setStatus('solved');
+        finish(!failed);
+      });
+  };
+
   const applyUserMove = (from: Key, to: Key, promotion?: 'q' | 'r' | 'b' | 'n') => {
     if (status !== 'solving') return;
     const expected = moves[idx];
@@ -214,11 +297,31 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     const mv = playUci(test, uci);
     if (!mv) return;
     const isMate = test.isCheckmate();
-    const accepted = uci === expected || (idx === (playerFirst ? 0 : 1) && alternatives?.includes(uci)) || isMate;
-    if (accepted) return accept(mv.san, from, to, isMate, idx);
+    const at = idx;
+    if (free.current) {
+      if (uci === expected || isMate) return playFree(uci, at);
+    } else {
+      if (uci === expected || isMate) return accept(mv.san, from, to, isMate, idx);
+      const altLine = idx === (playerFirst ? 0 : 1) ? alternatives?.map((a) => a.split(' ')).find((l) => l[0] === uci) : undefined;
+      if (altLine && altLine.length > 1) {
+        alt.current = [...lineNow().slice(0, idx), ...altLine];
+        return accept(mv.san, from, to, false, idx);
+      }
+      if (altLine) {
+        if (idx + 1 >= lineNow().length) return accept(mv.san, from, to, false, idx);
+        // an equally good first move: the scripted replies no longer fit, Stockfish takes over
+        if (props.judge) return playFree(uci, at);
+        chess.move(mv.san);
+        setLastMove([from, to]);
+        setIdx(lineNow().length);
+        setStatus('solved');
+        bump();
+        finish(!failed);
+        return;
+      }
+    }
     if (props.judge) {
       const myAttempt = ++attempt.current;
-      const at = idx;
       setStatus('checking');
       props
         .judge(uci, fenBefore)
@@ -226,20 +329,13 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
         .then((ok) => {
           if (attempt.current !== myAttempt) return;
           if (ok) {
-            // an equally good move: the scripted continuation no longer applies, so the puzzle ends here
-            chess.move(mv.san);
-            setLastMove([from, to]);
-            setShapes([]);
-            setIdx(moves.length);
-            setStatus('solved');
-            bump();
-            finish(!failed);
+            setStatus('solving');
+            playFree(uci, at);
           } else {
             setStatus('solving');
             reject(mv.san, from, to);
           }
         });
-      void at;
       return;
     }
     reject(mv.san, from, to);
@@ -295,6 +391,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     clearTimers();
     attempt.current++;
     chessRef.current = new Chess(fen);
+    alt.current = null;
+    free.current = null;
     finished.current = false;
     shown.current = false;
     undoPlies.current = 0;
