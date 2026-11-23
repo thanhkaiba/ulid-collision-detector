@@ -47,7 +47,12 @@ const CURRENT_KEY = 'play-current';
 function loadCurrent(): CurrentGame | null {
   try {
     const g = JSON.parse(localStorage.getItem(CURRENT_KEY) ?? 'null');
-    return g && Array.isArray(g.moves) && g.moves.length > 0 ? g : null;
+    if (!g || (g.me !== 'w' && g.me !== 'b') || !Array.isArray(g.moves) || g.moves.length === 0) return null;
+    if (typeof g.level !== 'number' || typeof g.tc !== 'string' || !g.clock || typeof g.clock.w !== 'number' || typeof g.clock.b !== 'number') return null;
+    // an old or damaged save whose moves do not replay is dropped rather than resumed half-way
+    const c = new Chess();
+    for (const m of g.moves) c.move(m);
+    return g;
   } catch {
     return null;
   }

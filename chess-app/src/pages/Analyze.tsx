@@ -8,7 +8,7 @@ import EvalGraph from '../components/EvalGraph';
 import MoveList from '../components/MoveList';
 import PromotionPicker from '../components/PromotionPicker';
 import { Button, Card, Spinner, Tag } from '../components/ui';
-import { getEngine, formatScore, toWhitePov, type EngineLine } from '../lib/engine';
+import { getEngine, formatScore, toWhitePov, type Engine, type EngineLine } from '../lib/engine';
 import { analyzeGame, extractMistakes, replayGame, startFenOf, sideOf, moveNumberOf } from '../lib/analysis';
 import {
   explainPly,
@@ -81,6 +81,18 @@ const resultVi = (r: string) => (r === '1-0' ? 'Trắng thắng' : r === '0-1' ?
 
 /** Half-moves to full moves, as players count them ("nước 12" = White's and Black's 12th move). */
 const fullMoves = (plies: number) => Math.ceil(plies / 2);
+
+const ENGINE_DOWN = 'Không khởi động được Stockfish (bộ máy cờ chưa tải xong hoặc bị chặn). Kiểm tra mạng rồi tải lại trang.';
+/** Start a fresh engine game, giving up (instead of waiting forever) when the engine never answers. */
+function engineNewGame(engine: Engine, ms = 20000): Promise<void> {
+  let timer: ReturnType<typeof setTimeout>;
+  return Promise.race([
+    engine.newGame(),
+    new Promise<void>((_, reject) => {
+      timer = setTimeout(() => reject(new Error(ENGINE_DOWN)), ms);
+    }),
+  ]).finally(() => clearTimeout(timer));
+}
 
 const SOURCE_VI: Record<StoredGame['source'], string> = { app: 'ván với máy', lichess: 'Lichess', chesscom: 'Chess.com', pgn: 'PGN' };
 const SPEED_VI: Record<string, string> = {
@@ -205,13 +217,18 @@ function GamesList() {
       const g = queue[i];
       setBatch({ game: i + 1, games: queue.length, done: 0, total: g.moves.length });
       try {
-        await engine.newGame();
+        await engineNewGame(engine);
         const res = await analyzeGame(g, engine, Math.min(settings.analysisDepth, 12), (d, total) => !token.cancelled && setBatch({ game: i + 1, games: queue.length, done: d, total }), token);
         if (!res) break;
         await storeAnalysis(g, res);
         done++;
         setAnalyzed((s) => new Set([...s, g.id]));
-      } catch {
+      } catch (e) {
+        if (e instanceof Error && e.message === ENGINE_DOWN) {
+          broken.length = 0;
+          broken.push(ENGINE_DOWN);
+          break;
+        }
         // one unreadable game must not stop (or freeze) the whole batch
         broken.push(`${g.white} – ${g.black}`);
       }
@@ -220,7 +237,9 @@ function GamesList() {
     token.cancelled = true;
     setBatch(null);
     setBatchNote(
-      broken.length
+      broken[0] === ENGINE_DOWN
+        ? ENGINE_DOWN
+        : broken.length
         ? `Đã phân tích ${done} ván. Không phân tích được ${broken.length} ván (${broken.slice(0, 3).join('; ')}${broken.length > 3 ? '…' : ''}): ván có nước không hợp lệ.`
         : null,
     );
@@ -396,6 +415,7 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
   const [running, setRunning] = useState<{ done: number; total: number } | null>(null);
   const [runError, setRunError] = useState<string | null>(null);
   const [promo, setPromo] = useState<{ from: Key; to: Key } | null>(null);
+  const [engineDown, setEngineDown] = useState(false);
   const [live, setLive] = useState<EngineLine[]>([]);
   const [liveDepth, setLiveDepth] = useState(0);
   const [showBest, setShowBest] = useState(true);
@@ -509,7 +529,7 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
     setRunError(null);
     setRunning({ done: 0, total: game.moves.length });
     try {
-      await engine.newGame();
+      await engineNewGame(engine);
       const res = await analyzeGame(game, engine, settings.analysisDepth, (done, total) => !token.cancelled && setRunning({ done, total }), token);
       if (cancel.current !== token || !res) return;
       setAnalysis(res);
@@ -529,6 +549,20 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
     // free the screen at once, even when the engine is slow to answer
     setRunning(null);
   };
+
+  // an engine that never loads would leave "đang tính..." spinning forever: say what is wrong instead
+  useEffect(() => {
+    let alive = true;
+    const t = setTimeout(() => alive && setEngineDown(true), 20000);
+    engine.waitReady().then(() => {
+      clearTimeout(t);
+      if (alive) setEngineDown(false);
+    });
+    return () => {
+      alive = false;
+      clearTimeout(t);
+    };
+  }, [engine]);
 
   useEffect(() => () => {
     // leaving mid-analysis: stop the search too, so the next screen does not wait behind it
@@ -722,7 +756,8 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
               </label>
             </div>
             {live.length === 0 && !over && running && <div className="small muted">Tạm dừng trong lúc phân tích toàn ván.</div>}
-            {live.length === 0 && !over && !running && <Spinner label="đang tính..." />}
+            {live.length === 0 && !over && !running && !engineDown && <Spinner label="đang tính..." />}
+            {live.length === 0 && !over && !running && engineDown && <div className="small muted">{ENGINE_DOWN}</div>}
             {live.map((l) => (
               <div key={l.multipv} className="small" style={{ marginTop: 4 }}>
                 <b>{formatScore(toWhitePov(l, sideToMove))}</b> {uciLineToSan(fen, l.pv.slice(0, 8)).join(' ')}
