@@ -39,12 +39,13 @@ function balance(c: Chess, side: Color): number {
   return s;
 }
 
-export function phaseOf(fen: string, ply: number): Phase {
+/** The move number comes from the FEN, so a game set up from a position (say at move 30) counts right. */
+export function phaseOf(fen: string): Phase {
   const c = new Chess(fen);
   let heavy = 0;
   for (const row of c.board()) for (const p of row) if (p && p.type !== 'p' && p.type !== 'k') heavy += VAL[p.type];
   if (heavy <= 26) return 'endgame';
-  if (ply < 20) return 'opening';
+  if ((Number(fen.split(' ')[5]) || 1) <= 10) return 'opening';
   return 'middlegame';
 }
 
@@ -87,7 +88,9 @@ const pts = (n: number) => {
   return r <= 1 ? 'một Tốt' : `khoảng ${r} điểm quân`;
 };
 
-const moveNo = (ply: number) => `${Math.floor(ply / 2) + 1}${ply % 2 === 0 ? '.' : '...'}`;
+/** Side that plays from a FEN, and the move number as the game counts it ("12." or "12..."). */
+const sideOf = (fen: string): Color => (fen.split(' ')[1] === 'b' ? 'b' : 'w');
+const moveNo = (fen: string) => `${Number(fen.split(' ')[5]) || 1}${sideOf(fen) === 'w' ? '.' : '...'}`;
 
 /** Squares of `victim` pieces attacked by the piece standing on `from`. */
 function targetsOf(c: Chess, from: Square, attacker: Color): { type: PieceSymbol; square: Square; defended: boolean }[] {
@@ -124,7 +127,7 @@ export function isError(j: Judgment): boolean {
  * @param mine true when the move was played by the user: the text then addresses "bạn" and adds a habit to train.
  */
 export function explainPly(p: PlyAnalysis, prev?: PlyAnalysis, mine = true): Explanation {
-  const side: Color = p.ply % 2 === 0 ? 'w' : 'b';
+  const side: Color = sideOf(p.fenBefore);
   const opp: Color = side === 'w' ? 'b' : 'w';
   const S = mine ? 'Bạn' : side === 'w' ? 'Trắng' : 'Đen';
   const s = mine ? 'bạn' : S;
@@ -246,7 +249,7 @@ export function explainPly(p: PlyAnalysis, prev?: PlyAnalysis, mine = true): Exp
   const myBefore = side === 'w' ? wpB : 100 - wpB;
   const wpA = winPercent(p.evalAfter);
   const myAfter = side === 'w' ? wpA : 100 - wpA;
-  const phase = phaseOf(p.fenBefore, p.ply);
+  const phase = phaseOf(p.fenBefore);
   let why = '';
   if (bestMove && (bestMove.isKingsideCastle() || bestMove.isQueensideCastle())) why = 'Vua còn ở giữa bàn: nhập thành ngay mới là ưu tiên.';
   else if (bestMove?.captured && !mv?.captured) why = `${S} bỏ qua nước bắt quân ${best}.`;
@@ -372,11 +375,11 @@ export function buildWeaknessReport(inputs: WeaknessInput[]): WeaknessReport {
     }
     let wasWinning = false;
     g.plies.forEach((p, i) => {
-      const side: Color = p.ply % 2 === 0 ? 'w' : 'b';
+      const side: Color = sideOf(p.fenBefore);
       if (side !== g.me) return;
       const wp = winPercent(p.evalBefore);
       if ((side === 'w' ? wp : 100 - wp) >= 80) wasWinning = true;
-      const phase = phaseOf(p.fenBefore, p.ply);
+      const phase = phaseOf(p.fenBefore);
       rep.myMoves++;
       rep.byPhase[phase].moves++;
       rep.byColor[side].moves++;
@@ -389,7 +392,7 @@ export function buildWeaknessReport(inputs: WeaknessInput[]): WeaknessReport {
       rep.examples.push({
         gameId: g.gameId,
         ply: p.ply,
-        label: `${moveNo(p.ply)} ${p.san}`,
+        label: `${moveNo(p.fenBefore)} ${p.san}`,
         category: ex.category,
         phase,
         judgment: p.judgment,

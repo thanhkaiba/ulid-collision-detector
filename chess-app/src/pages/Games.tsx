@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Chess } from 'chess.js';
 import type { Key } from 'chessground/types';
 import type { DrawShape } from 'chessground/draw';
@@ -12,7 +12,7 @@ import { renderRich, type Preview } from '../lib/richtext';
 import { loadLessonProgress, setLessonStatus, type LessonProgress } from '../lib/storage';
 import { needsPromotion, toDests } from '../lib/chess-utils';
 import { navigate, type Route } from '../lib/router';
-import { logActivity } from '../lib/activity';
+import { logActivity, unlogLesson } from '../lib/activity';
 
 const LEVEL = { 1: 'Cơ bản', 2: 'Trung bình', 3: 'Nâng cao' } as const;
 const GUESS_KEY = 'games-guess';
@@ -20,7 +20,8 @@ const GUESS_KEY = 'games-guess';
 /** ply the reader stopped at in a game (0 = not started) */
 function savedPly(id: string): number {
   try {
-    return Number(localStorage.getItem(`game-ply:${id}`) ?? 0) || 0;
+    // a damaged value (negative, fractional, text) must not index past the move list
+    return Math.max(0, Math.floor(Number(localStorage.getItem(`game-ply:${id}`) ?? 0) || 0));
   } catch {
     return 0;
   }
@@ -83,7 +84,7 @@ function GameList() {
             {!st(g.id) && savedPly(g.id) > 0 && (
               <>
                 {' '}
-                · <b>đang xem nước {Math.ceil(Math.min(savedPly(g.id), g.plies) / 2)}</b>
+                · <b>{savedPly(g.id) >= g.plies ? 'đã xem hết, chưa đánh dấu' : `đang xem nước ${Math.ceil(savedPly(g.id) / 2)}`}</b>
               </>
             )}
           </div>
@@ -121,18 +122,13 @@ function GameView({ meta }: { meta: GameMeta }) {
   const [showList, setShowList] = useState(false);
   const [status, setStatus] = useState<'done' | 'skipped' | undefined>();
   const [pendingPromo, setPendingPromo] = useState<{ from: Key; to: Key } | null>(null);
+  const marking = useRef(false);
 
   useEffect(() => {
     setGame(null);
     loadGame(meta.id).then(setGame);
     loadLessonProgress().then((lp) => setStatus(lp.status[`game:${meta.id}`]));
-    let saved = 0;
-    try {
-      saved = Number(localStorage.getItem(storeKey) ?? 0) || 0;
-    } catch {
-      /* ignore */
-    }
-    setPlyRaw(Math.min(saved, meta.plies));
+    setPlyRaw(Math.min(savedPly(meta.id), meta.plies));
     setPreview(null);
     setGuessMsg(null);
   }, [meta.id, meta.plies, storeKey]);
@@ -254,6 +250,7 @@ function GameView({ meta }: { meta: GameMeta }) {
           <Board
             fen={shownFen}
             orientation={orientation}
+            sides
             turnColor={chess?.turn() === 'b' ? 'black' : 'white'}
             lastMove={preview ? preview.lastMove ?? (preview.fen === mainFen ? line.last[ply] : undefined) : line.last[ply]}
             check={chess?.inCheck() ? (chess.turn() === 'w' ? 'white' : 'black') : false}
@@ -347,13 +344,24 @@ function GameView({ meta }: { meta: GameMeta }) {
               <MarkBar
                 status={status}
                 onMark={async (v) => {
-                  const lp = await setLessonStatus(`game:${meta.id}`, v);
-                  if (v === 'done') logActivity('lessons', 1, `Từng nước một: ${meta.white} – ${meta.black}`);
-                  setStatus(lp.status[`game:${meta.id}`]);
-                  if (v) {
-                    const idx = GAMES.findIndex((g) => g.id === meta.id);
-                    const nx = GAMES[idx + 1];
-                    navigate(nx ? `learn/games/${nx.id}` : 'learn/games');
+                  if (marking.current) return; // a double tap must not log the game twice
+                  marking.current = true;
+                  try {
+                    const key = `game:${meta.id}`;
+                    const was = (await loadLessonProgress()).status[key];
+                    const lp = await setLessonStatus(key, v);
+                    // today's plan counts what was learned: unmarking takes the game back off, re-marking does not count it twice
+                    const title = `Từng nước một: ${meta.white} – ${meta.black}`;
+                    if (v === 'done' && was !== 'done') await logActivity('lessons', 1, title);
+                    else if (v !== 'done' && was === 'done') await unlogLesson(title);
+                    setStatus(lp.status[key]);
+                    if (v) {
+                      const idx = GAMES.findIndex((g) => g.id === meta.id);
+                      const nx = GAMES[idx + 1];
+                      navigate(nx ? `learn/games/${nx.id}` : 'learn/games');
+                    }
+                  } finally {
+                    marking.current = false;
                   }
                 }}
               />

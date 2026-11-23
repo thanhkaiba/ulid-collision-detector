@@ -416,3 +416,11 @@ input, select, textarea { border-radius: var(--r-md); padding: 8px 11px; }
 .side-tag { height: 5px; border-radius: 3px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg) 35%, transparent); }
 .side-tag.white { background: #f4f4f4; }
 .side-tag.black { background: #1b1b1b; }
+/* side strips sit just outside the board's top and bottom edges, as wide as the board itself */
+.board-wrap.has-sides { margin-top: 12px; margin-bottom: 12px; }
+.board-wrap.has-sides > .side-tag { position: absolute; left: 0; right: 0; pointer-events: none; }
+.board-wrap.has-sides > .side-tag.top { top: -8px; }
+.board-wrap.has-sides > .side-tag.bottom { bottom: -8px; }
+/* a phone held sideways: the preview sheet's board must fit under its header instead of running off the screen */
+.sheet .board-wrap { max-width: min(340px, calc(100vh - 150px)); }
+@supports (height: 100dvh) { .sheet .board-wrap { max-width: min(340px, calc(100dvh - 150px)); } }

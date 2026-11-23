@@ -1,4 +1,68 @@
-import { get, set, del, keys } from 'idb-keyval';
+import { get as idbGet, set as idbSet, del as idbDel, keys as idbKeys, clear as idbClear } from 'idb-keyval';
+
+/*
+ * IndexedDB can be missing or blocked (some private modes, disabled site data, a full disk). The app must still work for
+ * the session then: every write also lands in this in-memory copy, and a failed read falls back to it.
+ */
+const memory = new Map<string, unknown>();
+/** keys whose last write reached only the in-memory copy */
+const unsaved = new Set<string>();
+const copy = <T>(v: T): T => {
+  try {
+    return structuredClone(v);
+  } catch {
+    return v;
+  }
+};
+export async function get<T>(key: string): Promise<T | undefined> {
+  if (unsaved.has(key)) return copy(memory.get(key) as T | undefined);
+  try {
+    return await idbGet<T>(key);
+  } catch {
+    return copy(memory.get(key) as T | undefined);
+  }
+}
+export async function set(key: string, value: unknown): Promise<void> {
+  memory.set(key, copy(value));
+  try {
+    await idbSet(key, value);
+    unsaved.delete(key);
+  } catch {
+    unsaved.add(key); // kept in memory for this session
+  }
+}
+export async function del(key: string): Promise<void> {
+  memory.delete(key);
+  unsaved.delete(key);
+  try {
+    await idbDel(key);
+  } catch {
+    unsaved.add(key); // reads must not bring the deleted value back
+  }
+}
+async function keys(): Promise<IDBValidKey[]> {
+  try {
+    return await idbKeys();
+  } catch {
+    return [...memory.keys()];
+  }
+}
+/** Wipe everything stored in IndexedDB (and its in-memory stand-in). */
+export async function clearAll(): Promise<void> {
+  memory.clear();
+  unsaved.clear();
+  try {
+    await idbClear();
+  } catch {
+    /* ignore */
+  }
+}
+
+/** stored values come from older versions or a damaged database: keep only what has the expected shape */
+const obj = <T extends object>(v: unknown): Partial<T> => (v && typeof v === 'object' && !Array.isArray(v) ? (v as Partial<T>) : {});
+const rec = (v: unknown) => (v && typeof v === 'object' && !Array.isArray(v) ? v : {});
+const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : []);
+const num = (v: unknown, d: number) => (typeof v === 'number' && Number.isFinite(v) ? v : d);
 
 export interface Settings {
   lichessUser: string;
@@ -19,7 +83,7 @@ export const DEFAULT_SETTINGS: Settings = {
 };
 
 export async function loadSettings(): Promise<Settings> {
-  return { ...DEFAULT_SETTINGS, ...((await get<Partial<Settings>>('settings')) ?? {}) };
+  return { ...DEFAULT_SETTINGS, ...obj<Settings>(await get('settings')) };
 }
 export async function saveSettings(s: Settings) {
   await set('settings', s);
@@ -42,7 +106,16 @@ export const DEFAULT_PUZZLE_PROGRESS: PuzzleProgress = {
 };
 
 export async function loadPuzzleProgress(): Promise<PuzzleProgress> {
-  return { ...DEFAULT_PUZZLE_PROGRESS, ...((await get<Partial<PuzzleProgress>>('puzzles')) ?? {}) };
+  const p = obj<PuzzleProgress>(await get('puzzles'));
+  return {
+    ...DEFAULT_PUZZLE_PROGRESS,
+    ...p,
+    rating: num(p.rating, DEFAULT_PUZZLE_PROGRESS.rating),
+    rd: num(p.rd, DEFAULT_PUZZLE_PROGRESS.rd),
+    solved: rec(p.solved) as PuzzleProgress['solved'],
+    history: arr(p.history),
+    streakBest: num(p.streakBest, 0),
+  };
 }
 export async function savePuzzleProgress(p: PuzzleProgress) {
   await set('puzzles', p);
@@ -60,7 +133,8 @@ export interface LessonProgress {
   status: Record<string, 'done' | 'skipped'>;
 }
 export async function loadLessonProgress(): Promise<LessonProgress> {
-  return { done: {}, read: {}, status: {}, ...((await get<Partial<LessonProgress>>('lessons')) ?? {}) };
+  const p = obj<LessonProgress>(await get('lessons'));
+  return { ...p, done: rec(p.done) as LessonProgress['done'], read: rec(p.read) as LessonProgress['read'], status: rec(p.status) as LessonProgress['status'] };
 }
 /** Set or clear (undefined) a manual mark. Returns the updated progress. */
 export async function setLessonStatus(key: string, value: 'done' | 'skipped' | undefined): Promise<LessonProgress> {
@@ -99,7 +173,7 @@ export interface StoredGame {
 }
 
 export async function loadGames(): Promise<StoredGame[]> {
-  return (await get<StoredGame[]>('games')) ?? [];
+  return arr<StoredGame>(await get('games'));
 }
 export async function saveGames(games: StoredGame[]) {
   await set('games', games);
@@ -144,7 +218,8 @@ export interface GameAnalysis {
 }
 
 export async function loadAnalysis(gameId: string): Promise<GameAnalysis | undefined> {
-  return get<GameAnalysis>(`analysis:${gameId}`);
+  const a = await get<GameAnalysis>(`analysis:${gameId}`);
+  return a && typeof a === 'object' && Array.isArray(a.plies) ? a : undefined;
 }
 export async function saveAnalysis(a: GameAnalysis) {
   await set(`analysis:${a.gameId}`, a);
@@ -179,7 +254,7 @@ export interface Mistake {
 }
 
 export async function loadMistakes(): Promise<Mistake[]> {
-  return (await get<Mistake[]>('mistakes')) ?? [];
+  return arr<Mistake>(await get('mistakes'));
 }
 export async function saveMistakes(m: Mistake[]) {
   await set('mistakes', m);

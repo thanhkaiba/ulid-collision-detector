@@ -179,6 +179,8 @@ function Trainer({
   };
   const [n, setN] = useState(0);
   const [wrong, setWrong] = useState(false);
+  /** the puzzle was resumed after a reload with a wrong move already made: solving it now does not count as right */
+  const [resumedWrong, setResumedWrong] = useState(false);
   /** the board calls onFinish again after "Làm lại": only the first finish of a puzzle is scored */
   const scored = useRef<string | null>(null);
   const skipped = useRef<Record<string, 1>>({});
@@ -200,6 +202,7 @@ function Trainer({
     setPuzzle(next);
     shownAt.current = Date.now();
     setWrong(!!(resume && saved?.wrong));
+    setResumedWrong(!!(resume && saved?.wrong));
     scored.current = null;
     setResult(null);
     lsSet(`pz-cur:${key}`, next ? { id: next.id } : null);
@@ -280,8 +283,12 @@ function Trainer({
         onFinish={onFinish}
         onWrong={onWrong}
         onHint={onWrong}
+        failedBefore={resumedWrong}
         prompt={puzzlePrompt(puzzle)}
       />
+      {resumedWrong && !result && (
+        <p className="tiny muted">Bài này bạn đã đi sai (hoặc xem gợi ý) trước khi rời trang, nên dù giải xong vẫn tính là sai.</p>
+      )}
       <div className="row mt">
         {result && (
           <Button kind="primary" onClick={() => setN(n + 1)}>
@@ -326,8 +333,12 @@ export function puzzlePrompt(p: Puzzle): string {
   return `${who} Mục tiêu: thắng quân hoặc giành ưu thế rõ rệt, không cần chiếu hết. ${count}`;
 }
 
+/** the daily puzzle already worked on (id + result): coming back to it must not count it again in today's plan */
+const DAILY_KEY = 'pz-daily-done';
+
 function Daily() {
   const [puzzle, setPuzzle] = useState<Puzzle | null>(null);
+  const [before] = useState(() => lsGet<{ id: string; ok: boolean }>(DAILY_KEY));
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState<boolean | null>(null);
   const [tries, setTries] = useState(0);
@@ -339,13 +350,15 @@ function Daily() {
       .catch((e: unknown) => {
         const offline = typeof navigator !== 'undefined' && navigator.onLine === false;
         const aborted = e instanceof DOMException && e.name === 'AbortError';
-        const detail = e instanceof Error && /^Lichess/.test(e.message) ? ` (${e.message})` : '';
+        const http = e instanceof Error && /^Lichess/.test(e.message);
         setErr(
           offline
             ? 'Bạn đang ngoại tuyến. Bài tập hàng ngày lấy từ Lichess nên cần kết nối mạng.'
             : aborted
               ? 'Lichess phản hồi quá lâu. Kiểm tra kết nối mạng rồi thử lại.'
-              : `Không lấy được bài tập hàng ngày từ Lichess${detail}. Kiểm tra kết nối mạng rồi thử lại.`,
+              : http
+                ? `Lichess đang không trả được bài tập hàng ngày (${(e as Error).message}). Thử lại sau ít phút.`
+                : 'Không lấy được bài tập hàng ngày từ Lichess. Kiểm tra kết nối mạng rồi thử lại.',
         );
       });
   }, [tries]);
@@ -372,6 +385,11 @@ function Daily() {
       {puzzle && (
         <>
           <p className="muted small">Bài tập của ngày hôm nay trên Lichess · độ khó {puzzle.rating}. Bài này không tính vào rating của bạn.</p>
+          {before?.id === puzzle.id && (
+            <p className="small muted">
+              Bạn đã làm bài này rồi ({before.ok ? 'giải đúng' : 'chưa giải đúng'}). Làm lại để ôn, không tính thêm vào số bài hôm nay.
+            </p>
+          )}
           <PuzzleBoard
             fen={puzzle.fen}
             moves={puzzle.moves}
@@ -379,8 +397,11 @@ function Daily() {
             prompt={puzzlePrompt(puzzle)}
             onWrong={() => (wrong.current = true)}
             onFinish={(ok) => {
-              if (done === null && (ok || wrong.current)) logActivity('puzzles');
-              if (done === null) setDone(ok);
+              if (done !== null) return;
+              setDone(ok);
+              if (before?.id === puzzle.id) return;
+              if (ok || wrong.current) logActivity('puzzles');
+              lsSet(DAILY_KEY, { id: puzzle.id, ok: ok && !wrong.current });
             }}
           />
           {done !== null && (

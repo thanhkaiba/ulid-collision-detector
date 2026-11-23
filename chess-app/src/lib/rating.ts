@@ -6,10 +6,11 @@ export function updateRating(
 ): { rating: number; rd: number; delta: number } {
   const expected = 1 / (1 + Math.pow(10, (puzzleRating - user.rating) / 400));
   const k = user.rd > 200 ? 48 : user.rd > 100 ? 32 : 20;
-  const delta = Math.round(k * ((win ? 1 : 0) - expected));
+  const rating = Math.max(400, Math.min(3200, user.rating + Math.round(k * ((win ? 1 : 0) - expected))));
   return {
-    rating: Math.max(400, Math.min(3200, user.rating + delta)),
+    rating,
     rd: Math.max(60, Math.round(user.rd * 0.93)),
-    delta,
+    // the change actually applied (at the floor or ceiling the shown "-12" would otherwise not match the rating)
+    delta: rating - user.rating,
   };
 }

@@ -17,7 +17,8 @@ import Games from './Games';
 import PreviewSheet from '../components/PreviewSheet';
 import SquareQuiz from '../components/SquareQuiz';
 import { renderRich, type Preview } from '../lib/richtext';
-import { START_FEN } from '../lib/chess-utils';
+import { START_FEN, playUci } from '../lib/chess-utils';
+import { getEngine } from '../lib/engine';
 import { practiceById, loadPracticeDone } from '../data/practice';
 import { LEGACY_KEYS } from '../data/lessons/legacyKeys';
 import { judgeMove } from '../lib/judge';
@@ -713,9 +714,44 @@ function Diagram({ block, onShow }: { block: Extract<Block, { kind: 'diagram' }>
   );
 }
 
+/**
+ * Second opinion for a move off the scripted solution of a lesson task, or undefined when the task takes only its own moves.
+ * The engine's "about as good" (judgeMove) alone is not enough here: in a won position almost every move keeps the win,
+ * so "Dùng Tượng bắt Tốt đen" passed with a king move, and "Chiếu hết trong 1 nước" passed with a check that mates later.
+ * - "line" tasks ask for exact moves ("Hãy đi nước Nf3", an opening to replay, the Lucena bridge): no other move counts.
+ * - a task that asks to capture ("bắt") and whose solution captures: the move must capture too.
+ * - a mating task: the move must keep a mate within the moves the task allows ("trong 1 nước", "trong 2 nước").
+ */
+function taskJudge(block: TaskBlock): ((uci: string, fen: string) => Promise<boolean>) | undefined {
+  if (block.verify === 'line') return undefined;
+  const start = new Chess(block.fen);
+  const first = playUci(start, block.moves[0]);
+  const mustCapture = !!first?.captured && /bắt/i.test(block.prompt);
+  const allowed = Math.ceil(block.moves.length / 2);
+  const moveNo = (fen: string) => Number(fen.split(' ')[5]) || 1;
+  return async (uci, fen) => {
+    const c = new Chess(fen);
+    const mv = playUci(c, uci);
+    if (!mv) return false;
+    if (mustCapture && !mv.captured) return false;
+    if (block.verify !== 'mate') return judgeMove(uci, fen);
+    if (c.isCheckmate()) return true;
+    // the solver always has the same colour, so full move numbers count the solver's moves made so far
+    const left = allowed - (moveNo(fen) - moveNo(block.fen)) - 1;
+    if (left < 1) return false;
+    const engine = getEngine();
+    await engine.fullStrength();
+    const r = await engine.evaluate(c.fen(), { depth: 12 });
+    const mate = r.lines[0]?.mate;
+    // the opponent is to move: "mate -k" means the solver mates in k more moves
+    return mate !== undefined && mate < 0 && -mate <= left;
+  };
+}
+
 function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: number; done: boolean; onDone: () => void; onShow: (p: Preview) => void }) {
   const [finished, setFinished] = useState<PuzzleOutcome | null>(null);
   const [misses, setMisses] = useState(0);
+  const judge = useMemo(() => taskJudge(block), [block]);
   const showExplain = finished !== null || misses >= 2;
   return (
     <Card>
@@ -730,8 +766,10 @@ function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: num
         moves={block.moves}
         alternatives={block.alternatives}
         playerFirst
-        judge={(uci, fen) => judgeMove(uci, fen, { mate: block.verify === 'mate' })}
+        judge={judge}
         mateGoal={block.verify === 'mate'}
+        // in a "line" task another move is not a blunder to punish, just not the move asked for
+        refute={block.verify !== 'line'}
         prompt={block.prompt}
         onWrong={setMisses}
         onFinish={(_, how) => {
@@ -741,6 +779,9 @@ function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: num
       />
       {finished === 'shown' && !done && (
         <div className="feedback bad small">Chưa tính là qua vì bạn đã xem nước đi. Đọc giải thích, rồi bấm “Làm lại” và tự đi.</div>
+      )}
+      {block.verify === 'line' && misses > 0 && finished === null && (
+        <p className="tiny muted">Bài này đi đúng theo đề bài ở trên bàn cờ. Nước khác dù hợp lệ cũng chưa được tính.</p>
       )}
       {showExplain && (
         <div className="task-box small">
@@ -932,6 +973,9 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
             onWrong={() => setMissed(i)}
             onHint={() => setMissed(i)}
             onFinish={(solved) => {
+              // "Làm lại" on a finished puzzle replays it: only the first finish counts, or redoing one puzzle (even
+              // after "Xem lời giải") piled up right answers and passed the set
+              if (results.length > i) return;
               const ok = solved && !missedHere;
               setCur(ok);
               const r = [...results, ok];

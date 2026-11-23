@@ -1,12 +1,16 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Chess } from 'chess.js';
+import { Chess, type Square } from 'chess.js';
 import type { Key, Color } from 'chessground/types';
 import type { DrawShape } from 'chessground/draw';
 import Board from './Board';
 import PromotionPicker from './PromotionPicker';
 import { Button } from './ui';
 import { getEngine } from '../lib/engine';
+import { withTimeout } from '../lib/judge';
 import { playUci, toDests, turnColor, kingInCheckColor, needsPromotion, uciLineToSan } from '../lib/chess-utils';
+
+/** how long to wait for the engine (judging a move, answering for the opponent) before giving up */
+const ENGINE_MS = 25000;
 
 /**
  * clean: solved first try without hints. solved: solved by the student after a mistake or a square hint.
@@ -45,6 +49,8 @@ export interface PuzzleBoardProps {
   mateGoal?: boolean;
   /** show the opponent's best reply to a wrong move (needs the engine). Default true. */
   refute?: boolean;
+  /** the solver already went wrong on this puzzle earlier (e.g. before a reload): a solve is not "Chính xác!" */
+  failedBefore?: boolean;
 }
 
 export default function PuzzleBoard(props: PuzzleBoardProps) {
@@ -65,9 +71,13 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   const [shapes, setShapes] = useState<DrawShape[]>([]);
   const [hintLevel, setHintLevel] = useState(0);
   const [lastMove, setLastMove] = useState<Key[] | undefined>();
-  const [wrongInfo, setWrongInfo] = useState<{ san: string; reply?: string; mate?: boolean } | null>(null);
+  const [wrongInfo, setWrongInfo] = useState<{ san: string; reply?: string; mate?: boolean; draw?: string } | null>(null);
   /** the last thing the solver did was a correct move (drives the "Đúng rồi!" message) */
   const [justRight, setJustRight] = useState(false);
+  /** while a move is being judged, the board keeps showing it instead of snapping the piece back */
+  const [view, setView] = useState<{ fen: string; lastMove: Key[] } | null>(null);
+  /** the engine could not judge a move (not loaded, too slow): the move is taken back, not counted as wrong */
+  const [engineNote, setEngineNote] = useState(false);
   const finished = useRef(false);
   const timers = useRef<number[]>([]);
   const wrongCount = useRef(0);
@@ -120,12 +130,14 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     wrongCount.current = 0;
     undoPlies.current = 0;
     setJustRight(false);
-    setFailed(false);
+    setFailed(!!props.failedBefore);
     setPending(null);
     setShapes([]);
     setHintLevel(0);
     setWrongInfo(null);
     setLastMove(undefined);
+    setView(null);
+    setEngineNote(false);
     bump();
     if (playerFirst) {
       setIdx(0);
@@ -134,7 +146,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
       setIdx(0);
       setStatus('intro');
       later(() => {
-        const m = playUci(chessRef.current, moves[0]);
+        // props.moves, not `moves`: this render's line may still be the previous puzzle's alternative line
+        const m = playUci(chessRef.current, props.moves[0]);
         if (m) setLastMove([m.from as Key, m.to as Key]);
         setIdx(1);
         setStatus('solving');
@@ -184,7 +197,13 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     setJustRight(false);
     setFailed(true);
     setShapes([]);
-    setWrongInfo({ san });
+    // a move that ends the game in a draw gets no reply: say why it is wrong
+    const draw = chess.isStalemate()
+      ? 'Đối phương không bị chiếu nhưng hết nước đi hợp lệ: hòa pat.'
+      : chess.isInsufficientMaterial()
+        ? 'Không bên nào còn đủ quân để chiếu hết: hòa.'
+        : undefined;
+    setWrongInfo({ san, draw });
     wrongCount.current++;
     props.onWrong?.(wrongCount.current);
     bump();
@@ -261,10 +280,12 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     }
     setStatus('solving');
     const engine = getEngine();
-    engine
-      .fullStrength()
-      .then(() => engine.evaluate(chess.fen(), { depth: 12 }))
-      .then(async (r) => {
+    // a stalled engine must not leave the board on "Chờ đối phương đáp…" forever
+    withTimeout(
+      engine.fullStrength().then(() => engine.evaluate(chess.fen(), { depth: 12 })),
+      ENGINE_MS,
+    )
+      .then((r) => {
         if (attempt.current !== myAttempt) return;
         const reply = r.bestmove && r.bestmove !== '(none)' ? playUci(chess, r.bestmove) : null;
         if (!reply) {
@@ -283,11 +304,15 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
         }
         setIdx(at + 2);
         bump();
-        // the solver's best move from here, for the hint and "Xem lời giải" (a move made meanwhile is judged instead)
-        const next = await engine.evaluate(chess.fen(), { depth: 12 });
-        if (attempt.current !== myAttempt || lineNow().length !== at + 2) return;
-        if (next.bestmove && next.bestmove !== '(none)') alt.current = [...lineNow(), next.bestmove];
-        bump();
+        // the solver's best move from here, for the hint and "Xem lời giải" (a move made meanwhile is judged instead).
+        // Not knowing it only hides the hint: it must not end the puzzle.
+        withTimeout(engine.evaluate(chess.fen(), { depth: 12 }), ENGINE_MS)
+          .then((next) => {
+            if (attempt.current !== myAttempt || lineNow().length !== at + 2) return;
+            if (next.bestmove && next.bestmove !== '(none)') alt.current = [...lineNow(), next.bestmove];
+            bump();
+          })
+          .catch(() => undefined);
       })
       .catch(() => {
         if (attempt.current !== myAttempt) return;
@@ -331,18 +356,23 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     if (props.judge) {
       const myAttempt = ++attempt.current;
       setStatus('checking');
-      props
-        .judge(uci, fenBefore)
-        .catch(() => false)
+      setView({ fen: test.fen(), lastMove: [from, to] });
+      setEngineNote(false);
+      withTimeout(props.judge(uci, fenBefore), ENGINE_MS)
+        .then(
+          (ok) => ok,
+          () => null,
+        )
         .then((ok) => {
           if (attempt.current !== myAttempt) return;
-          if (ok) {
-            setStatus('solving');
-            playFree(uci, at);
-          } else {
-            setStatus('solving');
-            reject(mv.san, from, to);
-          }
+          setView(null);
+          setStatus('solving');
+          // no verdict (engine missing or too slow): take the move back without counting it as a mistake
+          if (ok === null) {
+            setEngineNote(true);
+            bump();
+          } else if (ok) playFree(uci, at);
+          else reject(mv.san, from, to);
         });
       return;
     }
@@ -350,12 +380,18 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
   };
 
   const onMove = (from: Key, to: Key) => {
+    setEngineNote(false);
+    // the king dropped on its own rook means castling (as on Lichess)
+    const piece = chess.get(from as Square);
+    const target = chess.get(to as Square);
+    if (piece?.type === 'k' && target?.type === 'r' && target.color === piece.color) to = ((to[0] === 'h' ? 'g' : 'c') + to[1]) as Key;
     if (needsPromotion(chess, from, to)) setPending({ from, to });
     else applyUserMove(from, to);
   };
 
   const showHint = () => {
     const m = moves[idx];
+    setEngineNote(false);
     // only while the solver is to move: during the opponent's reply moves[idx] is the opponent's move
     if (!m || status !== 'solving' || turnColor(chess) !== playerColor) return;
     const orig = m.slice(0, 2) as Key;
@@ -410,17 +446,34 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     setShapes([]);
     setHintLevel(0);
     setWrongInfo(null);
+    setView(null);
+    setEngineNote(false);
     if (playerFirst) {
       setIdx(0);
       setLastMove(undefined);
     } else {
-      const m = playUci(chessRef.current, moves[0]);
+      const m = playUci(chessRef.current, props.moves[0]);
       setLastMove(m ? [m.from as Key, m.to as Key] : undefined);
       setIdx(1);
     }
     setStatus('solving');
     bump();
   };
+
+  /**
+   * legal moves for chessground, plus the king onto its own rook for castling. A fresh map every render on purpose:
+   * Board then re-applies the position, which also puts back a pawn left on the last rank by a cancelled promotion.
+   */
+  const dests = (() => {
+    const d = toDests(chess);
+    for (const m of chess.moves({ verbose: true })) {
+      if (!m.isKingsideCastle() && !m.isQueensideCastle()) continue;
+      const rook = ((m.isKingsideCastle() ? 'h' : 'a') + m.from[1]) as Key;
+      const list = d.get(m.from as Key) ?? [];
+      if (!list.includes(rook)) d.set(m.from as Key, [...list, rook]);
+    }
+    return d;
+  })();
 
   const solutionSan = useMemo(() => uciLineToSan(fen, moves), [fen, moves]);
   const live = status === 'solving';
@@ -442,13 +495,13 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
       <div className="pz-prompt">{props.prompt ?? `Bạn cầm ${sideText}. Tìm nước tốt nhất.`}</div>
       <div onClick={status === 'wrong' ? retry : undefined}>
         <Board
-          fen={chess.fen()}
+          fen={view?.fen ?? chess.fen()}
           orientation={playerColor}
-          turnColor={turnColor(chess)}
-          lastMove={lastMove}
-          check={kingInCheckColor(chess)}
+          turnColor={view ? (playerColor === 'white' ? 'black' : 'white') : turnColor(chess)}
+          lastMove={view?.lastMove ?? lastMove}
+          check={view ? kingInCheckColor(new Chess(view.fen)) : kingInCheckColor(chess)}
           movableColor={live && turnColor(chess) === playerColor ? playerColor : undefined}
-          dests={live ? toDests(chess) : new Map()}
+          dests={live ? dests : new Map()}
           onMove={onMove}
           shapes={shapes}
           sides
@@ -458,15 +511,23 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
         {status === 'intro' && <div className="feedback info">Đối phương vừa đi…</div>}
         {live && !myTurn && <div className="feedback ok">Đúng rồi! Chờ đối phương đáp…</div>}
         {myTurn &&
+          !engineNote &&
           (idx > (playerFirst ? 0 : 1) ? (
             <div className="feedback info">{justRight ? `Đúng rồi! Đối phương đã đáp lại. ${left}` : `Tới lượt bạn. ${left}`}</div>
           ) : (
             <div className="feedback info">Tới lượt bạn: đi quân trên bàn cờ.</div>
           ))}
         {status === 'checking' && <div className="feedback info">Đang kiểm tra nước của bạn…</div>}
+        {engineNote && myTurn && (
+          <div className="feedback info">
+            Chưa kiểm tra được nước này vì bộ máy cờ chưa sẵn sàng, nên nước đã được trả lại (không tính là sai). Đợi vài giây rồi đi lại, hoặc
+            bấm “Gợi ý”.
+          </div>
+        )}
         {status === 'wrong' && wrongInfo && (
           <div className="feedback bad">
             {wrongInfo.san} chưa đúng.
+            {wrongInfo.draw && ` ${wrongInfo.draw}`}
             {wrongInfo.reply && (
               <>
                 {' '}
@@ -493,7 +554,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
           <div className="row mt">
             {myTurn && (
               <>
-                {hintLevel < 2 && (
+                {hintLevel < 2 && moves[idx] && (
                   <Button kind="ghost" onClick={showHint}>
                     {hintLevel === 0 ? 'Gợi ý' : 'Gợi ý thêm'}
                   </Button>

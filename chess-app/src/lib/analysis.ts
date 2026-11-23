@@ -1,9 +1,48 @@
 import { Chess } from 'chess.js';
 import { toWhitePov, winPercent, type Engine } from './engine';
-import { moveToUci, uciLineToSan } from './chess-utils';
+import { moveToUci, uciLineToSan, START_FEN } from './chess-utils';
 import type { GameAnalysis, Judgment, Mistake, PlyAnalysis, StoredGame } from './storage';
 
 type Score = { cp?: number; mate?: number };
+
+/** Position the game starts from: the PGN's FEN tag for a game set up from a position, else the usual start. */
+export function startFenOf(game: { pgn?: string }): string {
+  const m = game.pgn?.match(/\[FEN\s+"([^"]+)"\]/);
+  if (m) {
+    try {
+      return new Chess(m[1]).fen();
+    } catch {
+      /* broken tag: fall back to the normal start */
+    }
+  }
+  return START_FEN;
+}
+
+/** Side to move in a FEN: the side that plays the move made from it. */
+export const sideOf = (fen: string): 'w' | 'b' => (fen.split(' ')[1] === 'b' ? 'b' : 'w');
+
+/** "12." or "12..." for the move played from `fen`, numbered as in the game (a set-up position may start at move 30). */
+export function moveNumberOf(fen: string): string {
+  const n = Number(fen.split(' ')[5]) || 1;
+  return `${n}${sideOf(fen) === 'w' ? '.' : '...'}`;
+}
+
+/** Replay a game's SAN moves from its start position. Throws a readable error if a move does not fit. */
+export function replayGame(game: StoredGame): { fenBefore: string; fenAfter: string; san: string; uci: string; from: string; to: string }[] {
+  const chess = new Chess(startFenOf(game));
+  const out: { fenBefore: string; fenAfter: string; san: string; uci: string; from: string; to: string }[] = [];
+  for (const san of game.moves) {
+    const fenBefore = chess.fen();
+    let m;
+    try {
+      m = chess.move(san);
+    } catch {
+      throw new Error(`Không đọc được ván này: nước ${moveNumberOf(fenBefore)} ${san} không hợp lệ.`);
+    }
+    out.push({ fenBefore, fenAfter: chess.fen(), san: m.san, uci: moveToUci(m), from: m.from, to: m.to });
+  }
+  return out;
+}
 
 export function judge(winLoss: number, isBest: boolean): Judgment {
   if (isBest) return 'best';
@@ -32,23 +71,18 @@ export async function analyzeGame(
   onProgress?: (done: number, total: number, partial: PlyAnalysis[]) => void,
   signal?: { cancelled: boolean },
 ): Promise<GameAnalysis | null> {
-  const chess = new Chess();
-  const verbose: { san: string; uci: string; fenBefore: string; fenAfter: string }[] = [];
-  for (const san of game.moves) {
-    const fenBefore = chess.fen();
-    const m = chess.move(san);
-    verbose.push({ san: m.san, uci: moveToUci(m), fenBefore, fenAfter: chess.fen() });
-  }
+  const verbose = replayGame(game);
   const total = verbose.length;
+  const startFen = startFenOf(game);
   await engine.fullStrength();
-  const useServer = !!game.serverEvals && game.serverEvals.length >= total - 1;
+  const useServer = total > 0 && !!game.serverEvals && game.serverEvals.length >= total - 1;
 
   // evals[k] = eval of the position after k plies (white POV); evals[0] = start position
   const evals: (Score | undefined)[] = new Array(total + 1);
   const bests: (string[] | undefined)[] = new Array(total + 1); // pv in position k
 
   const evalPos = async (k: number) => {
-    const fen = k === 0 ? verbose[0].fenBefore : verbose[k - 1].fenAfter;
+    const fen = k === 0 ? startFen : verbose[k - 1].fenAfter;
     const c = new Chess(fen);
     if (c.isGameOver()) {
       evals[k] = c.isCheckmate() ? { mate: c.turn() === 'w' ? -0 : 0, cp: undefined } : { cp: 0 };
@@ -64,7 +98,9 @@ export async function analyzeGame(
   };
 
   if (useServer) {
-    evals[0] = { cp: 15 };
+    // the usual start is worth a little for White; a set-up position gets a real evaluation
+    if (startFen === START_FEN) evals[0] = { cp: 15 };
+    else await evalPos(0);
     for (let k = 1; k <= total; k++) {
       const s = game.serverEvals![k - 1];
       evals[k] = s ?? evals[k - 1];
@@ -77,7 +113,7 @@ export async function analyzeGame(
   const plies: PlyAnalysis[] = [];
   for (let i = 0; i < total; i++) {
     if (signal?.cancelled) return null;
-    const mover = i % 2 === 0 ? 'w' : 'b';
+    const mover = sideOf(verbose[i].fenBefore);
     if (!useServer) {
       if (evals[i] === undefined) await evalPos(i);
       if (evals[i + 1] === undefined) await evalPos(i + 1);
@@ -119,7 +155,7 @@ export async function analyzeGame(
   const counts = { w: emptyCounts(), b: emptyCounts() };
   const acc = { w: [] as number[], b: [] as number[] };
   for (const p of plies) {
-    const side = p.ply % 2 === 0 ? 'w' : 'b';
+    const side = sideOf(p.fenBefore);
     counts[side][p.judgment]++;
     acc[side].push(moveAccuracy(p.winLoss));
   }
@@ -139,7 +175,7 @@ export function extractMistakes(game: StoredGame, analysis: GameAnalysis): Mista
   if (!game.me) return [];
   const out: Mistake[] = [];
   for (const p of analysis.plies) {
-    const side = p.ply % 2 === 0 ? 'w' : 'b';
+    const side = sideOf(p.fenBefore);
     if (side !== game.me) continue;
     if (p.judgment !== 'mistake' && p.judgment !== 'blunder') continue;
     // skip positions that were already lost: there is nothing to learn from -8 -> -12

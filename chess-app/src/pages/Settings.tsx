@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Card, Seg, Spinner } from '../components/ui';
-import { loadSettings, saveSettings, type Settings as S } from '../lib/storage';
+import { clearAll, loadSettings, saveSettings, type Settings as S } from '../lib/storage';
 import type { Route } from '../lib/router';
-import { clear } from 'idb-keyval';
 import { LEVELS_INFO, chooseLevel, levelInfo } from '../lib/level';
 import { BOARD_THEMES, applyBoardTheme, currentBoardTheme, type BoardThemeId } from '../lib/boardTheme';
 
@@ -119,7 +118,7 @@ export default function Settings(_: { route: Route }) {
           kind="danger"
           onClick={async () => {
             if (confirm('Xóa toàn bộ tiến độ, ván đã nhập, phân tích và cài đặt (tên người dùng, trình độ, màu bàn cờ)? Không thể hoàn tác.')) {
-              await clear();
+              await clearAll();
               // progress also lives in localStorage (game positions, lesson slides, practice marks, play setup...)
               try {
                 localStorage.clear();

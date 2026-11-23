@@ -6,9 +6,10 @@ import Board from '../components/Board';
 import EvalBar from '../components/EvalBar';
 import EvalGraph from '../components/EvalGraph';
 import MoveList from '../components/MoveList';
+import PromotionPicker from '../components/PromotionPicker';
 import { Button, Card, Spinner, Tag } from '../components/ui';
 import { getEngine, formatScore, toWhitePov, type EngineLine } from '../lib/engine';
-import { analyzeGame, extractMistakes } from '../lib/analysis';
+import { analyzeGame, extractMistakes, replayGame, startFenOf, sideOf, moveNumberOf } from '../lib/analysis';
 import {
   explainPly,
   isError,
@@ -23,12 +24,14 @@ import {
   type WeaknessReport,
 } from '../lib/explain';
 import { fetchChesscomGames, fetchLichessGames, parsePgnText } from '../lib/import';
-import { kingInCheckColor, turnColor, uciLineToSan, toDests, playUci } from '../lib/chess-utils';
+import { kingInCheckColor, turnColor, uciLineToSan, toDests, playUci, needsPromotion } from '../lib/chess-utils';
 import {
   loadGames,
+  saveGames,
   upsertGames,
   loadAnalysis,
   saveAnalysis,
+  deleteAnalysis,
   loadSettings,
   saveSettings,
   loadMistakes,
@@ -109,7 +112,9 @@ function GamesList() {
   }, []);
 
   /** Store imported games and say how many were new. */
-  const addGames = async (list: StoredGame[], from: string) => {
+  const addGames = async (all: StoredGame[], from: string) => {
+    // the same game twice in one answer counts once
+    const list = [...new Map(all.map((g) => [g.id, g])).values()];
     const known = new Set((games ?? []).map((g) => g.id));
     const fresh = list.filter((g) => !known.has(g.id)).length;
     setGames(await upsertGames(list));
@@ -148,21 +153,34 @@ function GamesList() {
       setErr('Dán nội dung PGN của ván vào ô trên trước đã.');
       return;
     }
-    const { games: parsed, failed } = parsePgnText(pgn, [settings?.lichessUser ?? '', settings?.chesscomUser ?? '']);
+    const { games: parsed, failed, variants } = parsePgnText(pgn, [settings?.lichessUser ?? '', settings?.chesscomUser ?? '']);
+    // the names typed above were used to find the user's side: keep them, as "Lấy ván" does
+    if (settings) await saveSettings(settings);
+    const skipped = [
+      failed ? `${failed} ván không đọc được (sai định dạng hoặc có nước sai luật)` : '',
+      variants.length ? `${variants.length} ván cờ biến thể (${[...new Set(variants)].join(', ')}), app chỉ phân tích cờ vua tiêu chuẩn` : '',
+    ].filter(Boolean);
     if (!parsed.length) {
-      setErr('Không đọc được ván nào. Kiểm tra lại PGN: cần có các nước đi dạng "1. e4 e5 2. Nf3 ...", nước nào sai luật thì cả ván bị bỏ qua.');
+      setErr(
+        variants.length && !failed
+          ? `Không nhập được: ${skipped.join('; ')}.`
+          : 'Không đọc được ván nào. Kiểm tra lại PGN: cần có các nước đi dạng "1. e4 e5 2. Nf3 ...", nước nào sai luật thì cả ván bị bỏ qua.',
+      );
       return;
     }
     const msg = await addGames(parsed, 'từ PGN');
     setPgn('');
     setShowPgn(false);
-    setErr(failed ? `Có ${failed} ván không đọc được (sai định dạng hoặc có nước sai luật) nên đã bỏ qua.` : null);
+    setErr(skipped.length ? `Đã bỏ qua ${skipped.join('; ')}.` : null);
     setOk(msg);
   };
 
-  const batchCancel = useRef<{ cancelled: boolean }>({ cancelled: false });
+  const batchCancel = useRef<{ cancelled: boolean }>({ cancelled: true });
   const [batch, setBatch] = useState<{ game: number; games: number; done: number; total: number } | null>(null);
+  const [batchNote, setBatchNote] = useState<string | null>(null);
   useEffect(() => () => {
+    // leaving the page stops the batch, and the search in progress with it
+    if (!batchCancel.current.cancelled) getEngine().stop();
     batchCancel.current.cancelled = true;
   }, []);
 
@@ -170,20 +188,47 @@ function GamesList() {
 
   const allPending = games.filter((g) => !analyzed.has(g.id) && g.moves.length >= 10);
   const pendingGames = allPending.slice(0, 20);
+  // count as the report does: games still in the list (it keeps the newest 400) whose side is known
+  const analyzedCount = games.filter((g) => analyzed.has(g.id) && g.me).length;
+  const analyzedNoSide = games.filter((g) => analyzed.has(g.id) && !g.me).length;
   const runBatch = async () => {
+    if (!batchCancel.current.cancelled) return; // already running (double tap)
     const engine = getEngine();
-    batchCancel.current = { cancelled: false };
+    const token = { cancelled: false };
+    batchCancel.current = token;
+    setBatchNote(null);
     // games that already carry Lichess evals are quick: do them first
     const queue = [...pendingGames].sort((a, b) => Number(!!b.serverEvals) - Number(!!a.serverEvals));
-    for (let i = 0; i < queue.length; i++) {
+    let done = 0;
+    const broken: string[] = [];
+    for (let i = 0; i < queue.length && !token.cancelled; i++) {
       const g = queue[i];
       setBatch({ game: i + 1, games: queue.length, done: 0, total: g.moves.length });
-      await engine.newGame();
-      const res = await analyzeGame(g, engine, Math.min(settings.analysisDepth, 12), (done, total) => setBatch({ game: i + 1, games: queue.length, done, total }), batchCancel.current);
-      if (!res) break;
-      await storeAnalysis(g, res);
-      setAnalyzed((s) => new Set([...s, g.id]));
+      try {
+        await engine.newGame();
+        const res = await analyzeGame(g, engine, Math.min(settings.analysisDepth, 12), (d, total) => !token.cancelled && setBatch({ game: i + 1, games: queue.length, done: d, total }), token);
+        if (!res) break;
+        await storeAnalysis(g, res);
+        done++;
+        setAnalyzed((s) => new Set([...s, g.id]));
+      } catch {
+        // one unreadable game must not stop (or freeze) the whole batch
+        broken.push(`${g.white} – ${g.black}`);
+      }
     }
+    if (batchCancel.current !== token) return;
+    token.cancelled = true;
+    setBatch(null);
+    setBatchNote(
+      broken.length
+        ? `Đã phân tích ${done} ván. Không phân tích được ${broken.length} ván (${broken.slice(0, 3).join('; ')}${broken.length > 3 ? '…' : ''}): ván có nước không hợp lệ.`
+        : null,
+    );
+  };
+  const stopBatch = () => {
+    batchCancel.current.cancelled = true;
+    getEngine().stop();
+    // the finished games are saved already: free the screen right away, even if the engine is slow to answer
     setBatch(null);
   };
 
@@ -196,12 +241,14 @@ function GamesList() {
             <div>
               <b>Điểm yếu của bạn</b>
               <div className="small muted">
-                {analyzed.size > 0
-                  ? `Tổng hợp lỗi từ ${analyzed.size} ván đã phân tích: loại lỗi, giai đoạn, khai cuộc.`
+                {analyzedCount > 0
+                  ? `Tổng hợp lỗi từ ${analyzedCount} ván đã phân tích: loại lỗi, giai đoạn, khai cuộc.`
                   : 'Phân tích vài ván để biết bạn hay sai ở đâu: loại lỗi, giai đoạn, khai cuộc.'}
+                {analyzedNoSide > 0 &&
+                  ` ${analyzedNoSide} ván đã phân tích chưa rõ bạn cầm bên nào nên chưa tính: mở ván và chọn “Tôi cầm Trắng/Đen”.`}
               </div>
             </div>
-            {analyzed.size > 0 && (
+            {analyzedCount > 0 && (
               <Button kind="primary" onClick={() => navigate('analyze/stats')}>
                 Xem
               </Button>
@@ -213,13 +260,7 @@ function GamesList() {
                 <span>
                   Đang phân tích ván {batch.game}/{batch.games} · nước {fullMoves(batch.done)}/{fullMoves(batch.total)}
                 </span>
-                <button
-                  className="chip"
-                  onClick={() => {
-                    batchCancel.current.cancelled = true;
-                    getEngine().stop();
-                  }}
-                >
+                <button className="chip" onClick={stopBatch}>
                   dừng
                 </button>
               </div>
@@ -239,6 +280,7 @@ function GamesList() {
               </div>
             )
           )}
+          {batchNote && !batch && <div className="feedback bad small mt">{batchNote}</div>}
         </Card>
       )}
       <Card>
@@ -248,6 +290,7 @@ function GamesList() {
             <input
               value={settings.lichessUser}
               onChange={(e) => setSettings({ ...settings, lichessUser: e.target.value })}
+              onBlur={() => saveSettings(settings)}
               placeholder="vd: DrNykterstein"
               autoCapitalize="off"
             />
@@ -262,6 +305,7 @@ function GamesList() {
             <input
               value={settings.chesscomUser}
               onChange={(e) => setSettings({ ...settings, chesscomUser: e.target.value })}
+              onBlur={() => saveSettings(settings)}
               placeholder="vd: Hikaru"
               autoCapitalize="off"
             />
@@ -347,15 +391,18 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
   const [game, setGame] = useState<StoredGame | null | undefined>(undefined);
   const [analysis, setAnalysis] = useState<GameAnalysis | null>(null);
   const [analysisLoaded, setAnalysisLoaded] = useState(false);
-  const [ply, setPly] = useState<number>(initialPly ?? -1); // -1 = start position
+  // a link may carry a ply the game does not have (or no number at all): clamped once the game is loaded
+  const [ply, setPly] = useState<number>(initialPly !== undefined && Number.isFinite(initialPly) ? Math.max(-1, Math.floor(initialPly)) : -1); // -1 = start position
   const [running, setRunning] = useState<{ done: number; total: number } | null>(null);
+  const [runError, setRunError] = useState<string | null>(null);
+  const [promo, setPromo] = useState<{ from: Key; to: Key } | null>(null);
   const [live, setLive] = useState<EngineLine[]>([]);
   const [liveDepth, setLiveDepth] = useState(0);
   const [showBest, setShowBest] = useState(true);
   const [flip, setFlip] = useState(false);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [mistakeCount, setMistakeCount] = useState<{ found: number; added: number } | null>(null);
-  const cancel = useRef<{ cancelled: boolean }>({ cancelled: false });
+  const cancel = useRef<{ cancelled: boolean }>({ cancelled: true });
   const engine = useMemo(() => getEngine(), []);
   // "try a move" sandbox: user can play moves from the current position
   const [variation, setVariation] = useState<string[]>([]); // SAN from the main-line position
@@ -380,18 +427,26 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
     loadSettings().then(setSettings);
   }, [gameId]);
 
-  const positions = useMemo(() => {
-    if (!game) return [];
-    const c = new Chess();
-    const fens = [c.fen()];
-    const lm: (Key[] | undefined)[] = [undefined];
-    for (const san of game.moves) {
-      const m = c.move(san);
-      fens.push(c.fen());
-      lm.push([m.from as Key, m.to as Key]);
+  // the game replayed from its start (a set-up position for a PGN with a FEN tag); a game that cannot be
+  // replayed shows its start and a message instead of crashing the page
+  const { positions, sans, replayError } = useMemo((): { positions: { fen: string; lastMove?: Key[] }[]; sans: string[]; replayError: string | null } => {
+    if (!game) return { positions: [], sans: [], replayError: null };
+    try {
+      const steps = replayGame(game);
+      return {
+        positions: [{ fen: startFenOf(game) }, ...steps.map((m) => ({ fen: m.fenAfter, lastMove: [m.from, m.to] as Key[] }))],
+        sans: steps.map((m) => m.san),
+        replayError: null,
+      };
+    } catch (e) {
+      return { positions: [{ fen: startFenOf(game) }], sans: [], replayError: e instanceof Error ? e.message : String(e) };
     }
-    return fens.map((fen, i) => ({ fen, lastMove: lm[i] }));
   }, [game]);
+  /** index of the last ply */
+  const lastPly = positions.length - 2;
+  useEffect(() => {
+    if (positions.length && ply > lastPly) setPly(lastPly);
+  }, [positions.length, ply, lastPly]);
 
   const mainFen = positions[ply + 1]?.fen ?? positions[0]?.fen;
   const chess = useMemo(() => {
@@ -445,26 +500,46 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
   }, [fen, game, running]);
 
   const run = async () => {
-    if (!game || !settings) return;
-    cancel.current = { cancelled: false };
+    if (!game || !settings || replayError) return;
+    // a second tap, or "Phân tích lại" while an older run is still unwinding: only the newest run owns the screen
+    cancel.current.cancelled = true;
+    const token = { cancelled: false };
+    cancel.current = token;
     engine.stop();
+    setRunError(null);
     setRunning({ done: 0, total: game.moves.length });
-    await engine.newGame();
-    const res = await analyzeGame(game, engine, settings.analysisDepth, (done, total) => setRunning({ done, total }), cancel.current);
+    try {
+      await engine.newGame();
+      const res = await analyzeGame(game, engine, settings.analysisDepth, (done, total) => !token.cancelled && setRunning({ done, total }), token);
+      if (cancel.current !== token || !res) return;
+      setAnalysis(res);
+      setMistakeCount(await storeAnalysis(game, res));
+    } catch (e) {
+      if (cancel.current === token) setRunError(e instanceof Error ? e.message : String(e));
+    } finally {
+      if (cancel.current === token) {
+        token.cancelled = true;
+        setRunning(null);
+      }
+    }
+  };
+  const stopRun = () => {
+    cancel.current.cancelled = true;
+    engine.stop();
+    // free the screen at once, even when the engine is slow to answer
     setRunning(null);
-    if (!res) return;
-    setAnalysis(res);
-    setMistakeCount(await storeAnalysis(game, res));
   };
 
   useEffect(() => () => {
+    // leaving mid-analysis: stop the search too, so the next screen does not wait behind it
+    if (!cancel.current.cancelled) engine.stop();
     cancel.current.cancelled = true;
-  }, []);
+  }, [engine]);
 
   // Lichess games that carry the server's analysis take a second: show it right away, as the import screen promises
   const autoRan = useRef(false);
   useEffect(() => {
-    if (autoRan.current || !game || !settings || !analysisLoaded || analysis || running) return;
+    if (autoRan.current || !game || !settings || !analysisLoaded || analysis || running || replayError) return;
     if (!game.serverEvals || game.serverEvals.length < game.moves.length - 1) return;
     autoRan.current = true;
     run();
@@ -475,8 +550,8 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
   if (game === null)
     return (
       <div>
-        <p>Không tìm thấy ván.</p>
-        <Button onClick={() => navigate('analyze')}>Quay lại</Button>
+        <p>Không tìm thấy ván. Có thể ván đã bị xóa.</p>
+        <Button onClick={() => navigate(back)}>Quay lại</Button>
       </div>
     );
 
@@ -484,7 +559,7 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
   const onLine = !!line && variation.length > 0 && variation.every((s, i) => line.sans[i] === s);
   const cardPly = onLine ? line!.from : ply;
   const cur = analysis?.plies[cardPly];
-  const curExplain = cur && isError(cur.judgment) ? explainPly(cur, analysis?.plies[cardPly - 1], !!game.me && (cardPly % 2 === 0 ? 'w' : 'b') === game.me) : null;
+  const curExplain = cur && isError(cur.judgment) ? explainPly(cur, analysis?.plies[cardPly - 1], !!game.me && sideOf(cur.fenBefore) === game.me) : null;
   /** Step back to the position before the move and step through a line on the board, one move at a time. */
   const showLine = (sans: string[]) => {
     setLine({ sans, from: cardPly });
@@ -523,7 +598,7 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
   const go = (p: number) => {
     setVariation([]);
     setLine(null);
-    setPly(Math.max(-1, Math.min(game.moves.length - 1, p)));
+    setPly(Math.max(-1, Math.min(lastPly, p)));
   };
   /** Jump to a move from a list further down the page: bring the board back into view. */
   const goAndShow = (p: number) => {
@@ -533,12 +608,25 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
   const forward = () => (lineHasMore ? setVariation(line!.sans.slice(0, variation.length + 1)) : go(ply + 1));
   const backward = () => (variation.length ? setVariation(variation.slice(0, -1)) : go(ply - 1));
 
-  const onBoardMove = (from: Key, to: Key) => {
-    const c = new Chess(fen);
-    const m = playUci(c, from + to) ?? playUci(c, from + to + 'q');
-    if (!m) return;
-    setVariation([...variation, m.san]);
+  const tryMove = (from: Key, to: Key, promotion?: 'q' | 'r' | 'b' | 'n') => {
+    const m = playUci(new Chess(fen), from + to + (promotion ?? ''));
+    if (m) setVariation([...variation, m.san]);
   };
+  // a pawn reaching the last rank asks which piece, as on the other boards (under-promotion is a real choice)
+  const onBoardMove = (from: Key, to: Key) => (needsPromotion(chess, from, to) ? setPromo({ from, to }) : tryMove(from, to));
+
+  const removeGame = async () => {
+    if (!confirm('Xóa ván này khỏi danh sách? Phân tích của ván và các nước sai lấy từ ván này trong “Lỗi của chính bạn” cũng bị xóa.')) return;
+    stopRun();
+    await saveGames((await loadGames()).filter((g) => g.id !== game.id));
+    await deleteAnalysis(game.id);
+    const ms = await loadMistakes();
+    const keep = ms.filter((m) => m.gameId !== game.id);
+    if (keep.length !== ms.length) await saveMistakes(keep);
+    navigate(back);
+  };
+  // a game set up with Black to move: an empty first cell keeps Black's moves in Black's column
+  const lead = sideOf(positions[0].fen) === 'b' ? 1 : 0;
 
   const chooseSide = async (me: 'w' | 'b') => {
     const updated = { ...game, me };
@@ -594,10 +682,10 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
             <Button kind="ghost" onClick={backward} disabled={ply < 0 && variation.length === 0}>
               ◀
             </Button>
-            <Button kind="ghost" onClick={forward} disabled={!lineHasMore && ply >= game.moves.length - 1}>
+            <Button kind="ghost" onClick={forward} disabled={!lineHasMore && ply >= lastPly}>
               ▶
             </Button>
-            <Button kind="ghost" onClick={() => go(game.moves.length - 1)}>
+            <Button kind="ghost" onClick={() => go(lastPly)}>
               ⏭
             </Button>
           </div>
@@ -652,8 +740,7 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
             <Card>
               <div className="row-between">
                 <b>
-                  {Math.floor(cardPly / 2) + 1}
-                  {cardPly % 2 === 0 ? '.' : '...'} {cur.san}
+                  {moveNumberOf(cur.fenBefore)} {cur.san}
                 </b>
                 <span style={{ flexShrink: 0, whiteSpace: 'nowrap' }}>
                   <Tag tone={cur.judgment === 'blunder' ? 'bad' : cur.judgment === 'mistake' ? 'warn' : cur.judgment === 'inaccuracy' ? 'warn' : cur.judgment === 'best' ? 'good' : 'default'}>
@@ -690,7 +777,9 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
 
           {/* analysis summary / run */}
           <Card>
-            {!analysis && !running && (
+            {replayError && <div className="feedback bad small">{replayError} Hãy xóa ván này rồi dán lại PGN đúng.</div>}
+            {runError && !running && <div className="feedback bad small">{runError}</div>}
+            {!analysis && !running && !replayError && (
               <>
                 <p className="small muted">Chạy Stockfish qua từng nước để tìm sai lầm. Độ sâu {settings.analysisDepth} (đổi ở Cài đặt).</p>
                 <Button kind="primary" onClick={run}>
@@ -704,13 +793,7 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
                   <span>
                     Đang phân tích… nước {fullMoves(running.done)}/{fullMoves(running.total)}
                   </span>
-                  <button
-                    className="chip"
-                    onClick={() => {
-                      cancel.current.cancelled = true;
-                      engine.stop();
-                    }}
-                  >
+                  <button className="chip" onClick={stopRun}>
                     dừng
                   </button>
                 </div>
@@ -743,7 +826,12 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
           </Card>
 
           <Card>
-            <MoveList moves={game.moves} current={ply} onSelect={go} judgments={judgments} />
+            <MoveList
+              moves={lead ? ['…', ...sans] : sans}
+              current={ply < 0 ? -1 : ply + lead}
+              onSelect={(p) => go(p - lead)}
+              judgments={judgments && lead ? [undefined, ...judgments] : judgments}
+            />
           </Card>
 
           {analysis && game.me && <ReviewList analysis={analysis} me={game.me} onGo={goAndShow} />}
@@ -759,15 +847,30 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
               </div>
             </Card>
           )}
+          <div className="row" style={{ justifyContent: 'flex-end' }}>
+            <Button kind="ghost" className="small" onClick={removeGame}>
+              Xóa ván này
+            </Button>
+          </div>
         </div>
       </div>
+      {promo && (
+        <PromotionPicker
+          color={turnColor(chess)}
+          onPick={(p) => {
+            tryMove(promo.from, promo.to, p);
+            setPromo(null);
+          }}
+          onCancel={() => setPromo(null)}
+        />
+      )}
     </div>
   );
 }
 
 function ReviewList({ analysis, me, onGo }: { analysis: GameAnalysis; me: 'w' | 'b'; onGo: (ply: number) => void }) {
   const [all, setAll] = useState(false);
-  const mine = analysis.plies.filter((p) => (p.ply % 2 === 0 ? 'w' : 'b') === me && isError(p.judgment));
+  const mine = analysis.plies.filter((p) => sideOf(p.fenBefore) === me && isError(p.judgment));
   const serious = mine.filter((p) => p.judgment !== 'inaccuracy');
   const list = all ? mine : serious;
   return (
@@ -787,8 +890,7 @@ function ReviewList({ analysis, me, onGo }: { analysis: GameAnalysis; me: 'w' | 
           <div key={p.ply} className="list-item" style={{ alignItems: 'flex-start' }} onClick={() => onGo(p.ply)}>
             <span>
               <b>
-                {Math.floor(p.ply / 2) + 1}
-                {p.ply % 2 === 0 ? '.' : '...'} {p.san}
+                {moveNumberOf(p.fenBefore)} {p.san}
               </b>{' '}
               <span className="muted small">nên {p.bestSan}</span>
               <div className="small">{ex.text}</div>

@@ -1,6 +1,6 @@
-import { lazy, Suspense, useLayoutEffect, type JSX } from 'react';
+import { Component, lazy, Suspense, useLayoutEffect, type JSX, type ReactNode } from 'react';
 import { useRoute, navigate, type Tab } from './lib/router';
-import { Spinner } from './components/ui';
+import { Button, Spinner } from './components/ui';
 
 /**
  * Scroll per history entry: a new page opens at the top, while browser back/forward (and a reload) return to where the
@@ -11,7 +11,9 @@ import { Spinner } from './components/ui';
 const SCROLL_KEY = 'scroll-pos';
 const scrollMem: Record<string, number> = (() => {
   try {
-    return JSON.parse(sessionStorage.getItem(SCROLL_KEY) ?? '{}') as Record<string, number>;
+    // a damaged value ("null", a number) would crash every page on its first scroll
+    const v: unknown = JSON.parse(sessionStorage.getItem(SCROLL_KEY) ?? '{}');
+    return v && typeof v === 'object' && !Array.isArray(v) ? (v as Record<string, number>) : {};
   } catch {
     return {};
   }
@@ -61,6 +63,9 @@ function useScrollMemory(routeKey: string) {
       restoring = false;
     };
     const onScroll = () => {
+      // after a link is followed, the browser clamps the scroll to the new (shorter) page before this listener is
+      // replaced: that position belongs to the new history entry, not to the one being left
+      if ((history.state as { k?: string } | null)?.k !== entry) return;
       if (!restoring) rememberScroll(entry, Math.round(window.scrollY));
     };
     window.addEventListener('scroll', onScroll, { passive: true });
@@ -75,6 +80,40 @@ function useScrollMemory(routeKey: string) {
       window.removeEventListener('keydown', stop);
     };
   }, [routeKey]);
+}
+
+/**
+ * A page that throws (damaged saved data, a bug) must not blank the whole app: the tab bar stays usable and the reader
+ * gets a way out. Moving to another page tries again (without remounting pages that did not fail).
+ */
+class PageBoundary extends Component<{ children: ReactNode; at: string }, { failed: boolean }> {
+  state = { failed: false };
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+  componentDidCatch(e: unknown) {
+    console.error(e);
+  }
+  componentDidUpdate(prev: { at: string }) {
+    if (this.state.failed && prev.at !== this.props.at) this.setState({ failed: false });
+  }
+  render() {
+    if (!this.state.failed) return this.props.children;
+    return (
+      <div className="card">
+        <h3>Trang này gặp lỗi</h3>
+        <p className="small">Có thể do dữ liệu lưu trong máy bị hỏng hoặc một lỗi của ứng dụng. Tiến độ ở các trang khác không bị ảnh hưởng.</p>
+        <div className="row" style={{ gap: 8 }}>
+          <Button kind="primary" onClick={() => location.reload()}>
+            Tải lại
+          </Button>
+          <Button kind="ghost" onClick={() => navigate('learn')}>
+            Về trang Học
+          </Button>
+        </div>
+      </div>
+    );
+  }
 }
 
 const Learn = lazy(() => import('./pages/Learn'));
@@ -116,9 +155,11 @@ export default function App() {
   return (
     <div className="app">
       <main className="page">
-        <Suspense fallback={<Spinner label="Đang tải..." />}>
-          <Page route={route} />
-        </Suspense>
+        <PageBoundary at={`${route.tab}/${route.parts.join('/')}`}>
+          <Suspense fallback={<Spinner label="Đang tải..." />}>
+            <Page route={route} />
+          </Suspense>
+        </PageBoundary>
       </main>
       <nav className="tabbar">
         {TABS.map((t) => (

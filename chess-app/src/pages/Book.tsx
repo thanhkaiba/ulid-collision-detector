@@ -7,7 +7,7 @@ import { Button, Card, Spinner } from '../components/ui';
 import { navigate, type Route } from '../lib/router';
 import { loadLessonProgress, saveLessonProgress, setLessonStatus, type LessonProgress } from '../lib/storage';
 import MarkBar from '../components/MarkBar';
-import { logActivity } from '../lib/activity';
+import { logActivity, unlogLesson } from '../lib/activity';
 
 /* ---------- data shape produced by scripts/book (Capablanca, Chess Fundamentals, public domain) ---------- */
 type BookMoveRow = [number, string, string, string, 1?]; // id, san, uci, fen, inferred position
@@ -37,7 +37,8 @@ export default function Book({ route }: { route: Route }) {
   // route: learn/book            -> table of contents
   //        learn/book/<p>/<c>/<s> -> one section
   const [p, c, s] = route.parts.slice(1).map(Number);
-  if (route.parts.length >= 4 && !Number.isNaN(s)) return <SectionView book={book} pi={p} ci={c} si={s} />;
+  // keyed by section: the board state of one section must not flash on the next
+  if (route.parts.length >= 4 && !Number.isNaN(s)) return <SectionView key={`${p}/${c}/${s}`} book={book} pi={p} ci={c} si={s} />;
   return <Toc book={book} />;
 }
 
@@ -124,11 +125,17 @@ const SQUARE_TEST = /(?<![\w/])[a-h][1-8](?![\w/])/;
 function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: number; si: number }) {
   const ch = book.parts[pi]?.chapters[ci];
   const sec = ch?.sections[si];
-  const [active, setActive] = useState<{ fen: string; lastMove?: Key[]; label?: string; squares?: Key[] } | null>(null);
+  /**
+   * what the board shows instead of the section's opening diagram. `base` is the figure (its number) the position belongs
+   * to: a square or an unplaced move in the text is shown on the figure the paragraph talks about, not on whatever the board
+   * showed before. `caption` is the line under the board; `label` marks the active move chip.
+   */
+  const [active, setActive] = useState<{ fen: string; lastMove?: Key[]; label?: string; squares?: Key[]; caption: string; base?: number } | null>(null);
   const moveById = useMemo(() => new Map<number, BookMove>((sec?.moves ?? []).map((m) => [m[0], { id: m[0], san: m[1], uci: m[2], fen: m[3], inferred: !!m[4] }])), [sec]);
   const boardRef = useRef<HTMLDivElement>(null);
   const statusKey = `book:${pi}.${ci}.${si}`;
   const [status, setStatus] = useState<'done' | 'skipped' | undefined>(undefined);
+  const marking = useRef(false);
 
   useEffect(() => {
     setActive(null);
@@ -178,35 +185,51 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
           ? `learn/book/${pi + 1}/0/0`
           : null;
 
-  const onMove = (id: number, label: string) => {
+  const START_FEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  const isGame = pi === 1;
+  const figs = sec.blocks.map((b, i) => ({ b, i })).filter((x): x is { b: { t: 'fig'; n: number; fen: string }; i: number } => x.b.t === 'fig' && !!x.b.fen);
+  // the board opens on the first figure (Part II's games start from the initial position instead)
+  const defaultFig = isGame ? undefined : figs[0]?.b;
+  const defaultFen = defaultFig?.fen ?? START_FEN;
+  /** the figure a block of text belongs to: the nearest one above it, else the board the section opens with */
+  const figOf = (blockIdx: number) => [...figs].reverse().find((f) => f.i < blockIdx)?.b ?? defaultFig;
+  const shownFen = active?.fen ?? defaultFen;
+  /** position a square or an unplaced move in block `bi` refers to: the board as shown if it belongs to that block's figure */
+  const contextOf = (bi: number) => {
+    const fig = figOf(bi);
+    if (active && active.base === fig?.n) return { fen: active.fen, lastMove: active.lastMove, label: active.label, caption: active.caption, base: fig?.n };
+    if (!active && fig === defaultFig) return { fen: defaultFen, caption: fig ? `Hình ${fig.n}` : 'Thế cờ ban đầu', base: fig?.n };
+    return { fen: fig?.fen ?? START_FEN, caption: fig ? `Hình ${fig.n}` : 'Thế cờ ban đầu', base: fig?.n };
+  };
+
+  const onMove = (id: number, label: string, bi: number) => {
     const m = moveById.get(id);
     if (!m) return;
-    setActive({ fen: m.fen, lastMove: [m.uci.slice(0, 2) as Key, m.uci.slice(2, 4) as Key], label });
+    setActive({ fen: m.fen, lastMove: [m.uci.slice(0, 2) as Key, m.uci.slice(2, 4) as Key], label, caption: `Sau ${label}`, base: figOf(bi)?.n });
     // keep the sticky board visible on phones
     if (window.innerWidth < 640) boardRef.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
   };
 
-  const firstFigFen = (sec.blocks.find((b) => b.t === 'fig' && b.fen) as { fen?: string } | undefined)?.fen;
-  const boardFen = active?.fen ?? (pi === 1 ? undefined : firstFigFen) ?? 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
-  const showSquare = (sq: Key) => setActive({ fen: boardFen, lastMove: active?.lastMove, label: active?.label, squares: [sq] });
-  /** a move the converter could not place: try it on the board as it stands, else just point at its square */
-  const tryLoose = (label: string) => {
+  const showSquare = (sq: Key, bi: number) => setActive({ ...contextOf(bi), squares: [sq] });
+  /** a move the converter could not place: try it on the board the paragraph is about, else just point at its square */
+  const tryLoose = (label: string, bi: number) => {
+    const ctx = contextOf(bi);
     try {
-      const c = new Chess(boardFen);
+      const c = new Chess(ctx.fen);
       const m = c.move(label.replace(/^\d+\.+/, ''));
-      setActive({ fen: c.fen(), lastMove: [m.from as Key, m.to as Key], label });
+      setActive({ fen: c.fen(), lastMove: [m.from as Key, m.to as Key], label, caption: `Sau ${label}`, base: ctx.base });
     } catch {
       const sq = /[a-h][1-8]/.exec(label);
-      if (sq) showSquare(sq[0] as Key);
+      if (sq) showSquare(sq[0] as Key, bi);
     }
   };
-  const withSquares = (s: string, key: number): ReactNode => {
+  const withSquares = (s: string, key: number, bi: number): ReactNode => {
     const parts = s.split(/(?<![\w/])([a-h][1-8])(?![\w/])/g);
     return (
       <span key={key}>
         {parts.map((part, i) =>
           i % 2 === 1 ? (
-            <button key={i} className="sq-chip" onClick={() => showSquare(part as Key)}>
+            <button key={i} className="sq-chip" onClick={() => showSquare(part as Key, bi)}>
               {part}
             </button>
           ) : (
@@ -217,42 +240,54 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
     );
   };
 
-  const renderText = (text: string): ReactNode[] => {
+  const renderText = (text: string, bi: number): ReactNode[] => {
     const out: ReactNode[] = [];
     let last = 0;
     let m: RegExpExecArray | null;
     TOKEN.lastIndex = 0;
     let k = 0;
     while ((m = TOKEN.exec(text))) {
-      if (m.index > last) out.push(withSquares(text.slice(last, m.index), k++));
+      if (m.index > last) out.push(withSquares(text.slice(last, m.index), k++, bi));
       const id = m[1] === '-' ? null : Number(m[1]);
       const label = m[2];
-      if (id !== null && moveById.has(id)) {
-        out.push(
+      const chip =
+        id !== null && moveById.has(id) ? (
           <button
             key={k++}
             className={`mv-chip ${moveById.get(id)!.inferred ? 'inferred' : ''} ${active?.label === label && active?.fen === moveById.get(id)!.fen ? 'active' : ''}`}
-            onClick={() => onMove(id, label)}
+            onClick={() => onMove(id, label, bi)}
           >
             {label}
-          </button>,
-        );
-      } else
-        out.push(
-          <button key={k++} className="mv-chip loose" onClick={() => tryLoose(label)}>
+          </button>
+        ) : (
+          <button key={k++} className="mv-chip loose" onClick={() => tryLoose(label, bi)}>
             {label}
-          </button>,
+          </button>
         );
       last = m.index + m[0].length;
+      // punctuation right after a move stays on its line instead of wrapping alone to the next one
+      const punct = /^[.,;:!?)\]]+/.exec(text.slice(last))?.[0];
+      if (punct) {
+        out.push(
+          <span key={k++} style={{ whiteSpace: 'nowrap' }}>
+            {chip}
+            {punct}
+          </span>,
+        );
+        last += punct.length;
+      } else out.push(chip);
     }
-    if (last < text.length) out.push(withSquares(text.slice(last), k++));
+    if (last < text.length) out.push(withSquares(text.slice(last), k++, bi));
     return out;
   };
 
-  // which figure the active position belongs to: show the board under the nearest preceding figure instead? Simpler: one sticky board.
-  const firstFig = sec.blocks.find((b) => b.t === 'fig' && b.fen) as { fen?: string } | undefined;
-  const isGame = pi === 1;
-  const shownFen = active?.fen ?? (isGame ? undefined : firstFig?.fen) ?? 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+  /** "back" from a move or a marked square returns to the figure it belongs to */
+  const baseFig = active ? figs.find((f) => f.b.n === active.base)?.b : undefined;
+  const atBase = !!active && !active.lastMove && !active.squares?.length && active.fen === (baseFig?.fen ?? defaultFen);
+  const backToBase = () => {
+    if (!baseFig || baseFig === defaultFig) setActive(null);
+    else setActive({ fen: baseFig.fen, caption: `Hình ${baseFig.n}`, base: baseFig.n });
+  };
   const chess = safeChess(shownFen);
   // chapter openers and a few prose-only sections have nothing to show on a board
   const hasBoard = sec.moves.length > 0 || sec.blocks.some((b) => (b.t === 'fig' && b.fen) || ((b.t === 'p' || b.t === 'h') && (TOKEN_TEST.test(b.text) || SQUARE_TEST.test(b.text))));
@@ -285,10 +320,10 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
             shapes={(active?.squares ?? []).map((sq): DrawShape => ({ orig: sq, brush: 'yellow' }))}
           />
           <div className="row-between small mt">
-            <span className="muted">{active ? `Sau ${active.label}` : 'Bấm vào một nước đi trong bài'}</span>
-            {active && (
-              <button className="chip" onClick={() => setActive(null)}>
-                về hình gốc
+            <span className="muted">{active ? active.caption : defaultFig ? `Hình ${defaultFig.n} · bấm vào một nước đi trong bài` : 'Bấm vào một nước đi trong bài'}</span>
+            {active && !atBase && (
+              <button className="chip" onClick={backToBase}>
+                {baseFig ? `về Hình ${baseFig.n}` : 'về thế ban đầu'}
               </button>
             )}
           </div>
@@ -302,7 +337,7 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
               const c = safeChess(b.fen);
               return (
                 <div key={i} className="book-fig">
-                  <button className="chip" onClick={() => setActive({ fen: b.fen!, label: `Hình ${b.n}` })}>
+                  <button className="chip" onClick={() => setActive(b === defaultFig ? null : { fen: b.fen!, caption: `Hình ${b.n}`, base: b.n })}>
                     ♟ Hình {b.n}{c ? (c.turn() === 'w' ? ' · Trắng đi' : ' · Đen đi') : ''}
                   </button>
                   <MiniBoard fen={b.fen} />
@@ -315,15 +350,15 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
                   {b.rows.map((r, j) => (
                     <div key={j} className="book-move-row">
                       <span className="num">{r.n}</span>
-                      <span>{renderText(r.w ?? '')}</span>
-                      <span>{renderText(r.b ?? '')}</span>
+                      <span>{renderText(r.w ?? '', i)}</span>
+                      <span>{renderText(r.b ?? '', i)}</span>
                     </div>
                   ))}
                 </div>
               );
             }
-            if (b.t === 'h') return <h3 key={i}>{renderText(b.text)}</h3>;
-            return <p key={i}>{renderText(b.text)}</p>;
+            if (b.t === 'h') return <h3 key={i}>{renderText(b.text, i)}</h3>;
+            return <p key={i}>{renderText(b.text, i)}</p>;
           })}
         </div>
       </div>
@@ -331,10 +366,20 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
       <MarkBar
         status={status}
         onMark={async (v) => {
-          const lp = await setLessonStatus(statusKey, v);
-          if (v === 'done') logActivity('lessons', 1, `Sách: ${sec.heading}`);
-          setStatus(lp.status[statusKey]);
-          if (v) navigate(next ?? 'learn/book');
+          if (marking.current) return; // a double tap must not log the section twice
+          marking.current = true;
+          try {
+            const was = (await loadLessonProgress()).status[statusKey];
+            const lp = await setLessonStatus(statusKey, v);
+            // today's plan counts what was learned: unmarking takes the section back off, re-marking does not count it twice
+            const title = `Sách: ${sec.heading}`;
+            if (v === 'done' && was !== 'done') await logActivity('lessons', 1, title);
+            else if (v !== 'done' && was === 'done') await unlogLesson(title);
+            setStatus(lp.status[statusKey]);
+            if (v) navigate(next ?? 'learn/book');
+          } finally {
+            marking.current = false;
+          }
         }}
       />
       <div className="row-between mt">

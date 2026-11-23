@@ -120,19 +120,18 @@ export default function Board(props: BoardProps) {
     props.squareClasses,
   ]);
 
-  const board = (
-    <div className={`board-wrap ${props.className ?? ''}`}>
-      <div ref={ref} className="cg-board-root" />
-    </div>
-  );
-  if (!props.sides) return board;
   const bottom: Color = props.orientation ?? 'white';
   const top: Color = bottom === 'white' ? 'black' : 'white';
+  // the strips live inside the board box so they always match its width, however a page narrows the board
   return (
-    <div className="board-frame">
-      <SideTag color={top} at="top" />
-      {board}
-      <SideTag color={bottom} at="bottom" />
+    <div className={`board-wrap ${props.sides ? 'has-sides' : ''} ${props.className ?? ''}`}>
+      <div ref={ref} className="cg-board-root" />
+      {props.sides && (
+        <>
+          <SideTag color={top} at="top" />
+          <SideTag color={bottom} at="bottom" />
+        </>
+      )}
     </div>
   );
 }
