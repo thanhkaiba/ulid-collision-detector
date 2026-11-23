@@ -31,7 +31,8 @@ export interface PuzzleBoardProps {
    */
   alternatives?: string[];
   /** called exactly once when the puzzle is finished: ok=false if the user failed or revealed */
-  onFinish?: (ok: boolean, how: PuzzleOutcome) => void;
+  /** `fen`: the board when the puzzle ended (before a revealed solution is played out) */
+  onFinish?: (ok: boolean, how: PuzzleOutcome, fen: string) => void;
   /** called on every wrong attempt with the running count */
   onWrong?: (count: number) => void;
   /** a hint was shown (the solve no longer counts as clean) */
@@ -103,7 +104,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
     (ok: boolean, revealed = false) => {
       if (finished.current) return;
       finished.current = true;
-      props.onFinish?.(ok, revealed || shown.current ? 'shown' : ok ? 'clean' : 'solved');
+      props.onFinish?.(ok, revealed || shown.current ? 'shown' : ok ? 'clean' : 'solved', chessRef.current.fen());
     },
     [props],
   );

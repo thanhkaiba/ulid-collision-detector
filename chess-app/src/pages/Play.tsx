@@ -137,7 +137,7 @@ function SideSwitch({ pos, swap, onChange }: { pos: PracticePosition; swap: bool
 function PracticeRun({ pos, back }: { pos: PracticePosition; back: string }) {
   const [attempt, setAttempt] = useState(0);
   // an attempt left unfinished (page left or reloaded) carries on where it was
-  const [saved, setSaved] = useState(() => loadPracticeCurrent(pos.id));
+  const [saved, setSaved] = useState(() => (pos.adhoc ? null : loadPracticeCurrent(pos.id)));
   const [swap, setSwap] = useState(() => !!saved?.swapped);
   const shown = swap ? swapPractice(pos) : pos;
   return (
@@ -209,7 +209,7 @@ function MethodSheet({ pos: shownPos, onClose }: { pos: PracticePosition; onClos
 /** A practice position played right inside a lesson slide: the game starts as soon as the slide is shown. */
 export function PracticeInline({ pos, onGoal }: { pos: PracticePosition; onGoal?: () => void }) {
   const [attempt, setAttempt] = useState(0);
-  const [saved, setSaved] = useState(() => loadPracticeCurrent(pos.id));
+  const [saved, setSaved] = useState(() => (pos.adhoc ? null : loadPracticeCurrent(pos.id)));
   const [swap, setSwap] = useState(() => !!saved?.swapped);
   const shown = swap ? swapPractice(pos) : pos;
   return (
@@ -491,7 +491,7 @@ function GameView({
         if (ok) {
           setGoalMet(true);
           // the swapped side is an experiment: it does not count as passing the exercise
-          if (!practice.swapped) {
+          if (!practice.swapped && !practice.adhoc) {
             markPracticeDone(practice.id);
             onGoal?.();
           }
@@ -734,7 +734,7 @@ function GameView({
   const keep = useRef<() => CurrentGame | null>(snapshot);
   keep.current = () => (over || chess.history().length === 0 ? null : snapshot());
   useEffect(() => {
-    if (!practice) return;
+    if (!practice || practice.adhoc) return;
     const moves = chess.history();
     savePracticeCurrent(practice.id, over || moves.length === 0 ? null : { id: practice.id, swapped: !!practice.swapped, moves });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -866,13 +866,15 @@ function GameView({
                       ? 'MỤC TIÊU: CHIẾU HẾT'
                       : 'MỤC TIÊU: PHONG HẬU HOẶC THẮNG QUÂN'}
               </div>
-              {(!embedded || practice.swapped) && <p className="small" style={{ margin: '4px 0' }}>{practice.brief}</p>}
+              {(!embedded || practice.swapped || practice.adhoc) && <p className="small" style={{ margin: '4px 0' }}>{practice.brief}</p>}
               {practice.swapped && engineMate !== null && (
                 <div className="feedback info small">Máy thấy chiếu hết bạn sau {engineMate} nước. Đi khéo thì con số này giảm chậm hơn, nhưng không thoát được.</div>
               )}
-              <Button kind="default" className="mt" onClick={() => setShowHint(true)}>
-                ▶ Cách làm và lời giải mẫu
-              </Button>
+              {!practice.adhoc && (
+                <Button kind="default" className="mt" onClick={() => setShowHint(true)}>
+                  ▶ Cách làm và lời giải mẫu
+                </Button>
+              )}
               {slipped && (
                 <div className="feedback bad small">
                   {practice.goal === 'draw' ? 'Máy đánh giá thế này đối phương đã thắng được.' : 'Máy đánh giá thế này không còn thắng được nữa.'} Bấm “Đi lại” để thử nước khác.
@@ -897,7 +899,7 @@ function GameView({
                     : 'Đúng như lý thuyết: bên phòng thủ đi đúng thì thế này hòa, dù bên tấn công thử cách nào.'}
                 </p>
               )}
-              {!goalMet && (
+              {!goalMet && !practice.adhoc && (
                 <Button kind="default" onClick={() => setShowHint(true)}>
                   ▶ Xem cách làm và lời giải mẫu
                 </Button>

@@ -24,6 +24,8 @@ export interface PracticePosition {
   level: 1 | 2 | 3;
   /** the student plays the other side of the position (see swapPractice) */
   swapped?: boolean;
+  /** made on the fly (e.g. playing on from a lesson task): no method sheet, not saved, not counted as passed */
+  adhoc?: boolean;
 }
 
 /**

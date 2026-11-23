@@ -19,7 +19,7 @@ import SquareQuiz from '../components/SquareQuiz';
 import { renderRich, type Preview } from '../lib/richtext';
 import { START_FEN, playUci } from '../lib/chess-utils';
 import { getEngine } from '../lib/engine';
-import { practiceById, loadPracticeDone } from '../data/practice';
+import { practiceById, loadPracticeDone, type PracticePosition } from '../data/practice';
 import { LEGACY_KEYS } from '../data/lessons/legacyKeys';
 import { judgeMove } from '../lib/judge';
 import { PracticeInline } from './Play';
@@ -750,6 +750,8 @@ function taskJudge(block: TaskBlock): ((uci: string, fen: string) => Promise<boo
 
 function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: number; done: boolean; onDone: () => void; onShow: (p: Preview) => void }) {
   const [finished, setFinished] = useState<PuzzleOutcome | null>(null);
+  /** the position the task ended in, to play on from against Stockfish */
+  const [endFen, setEndFen] = useState<string | null>(null);
   const [misses, setMisses] = useState(0);
   const judge = useMemo(() => taskJudge(block), [block]);
   const showExplain = finished !== null || misses >= 2;
@@ -772,9 +774,15 @@ function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: num
         refute={block.verify !== 'line'}
         prompt={block.prompt}
         onWrong={setMisses}
-        onFinish={(_, how) => {
+        onFinish={(_, how, fen) => {
           setFinished(how);
           if (how !== 'shown') onDone();
+          if (how === 'shown') {
+            // a revealed solution is played out after this call: continue from where the scripted line ends
+            const c = new Chess(block.fen);
+            for (const u of block.moves) if (!playUci(c, u)) break;
+            setEndFen(c.fen());
+          } else setEndFen(fen);
         }}
       />
       {finished === 'shown' && !done && (
@@ -788,6 +796,7 @@ function TaskView({ block, n, done, onDone, onShow }: { block: TaskBlock; n: num
           <b>{finished !== null ? 'Giải thích:' : 'Gợi ý lời giải:'}</b> {renderRich(block.explain, { onShow: (p) => onShow({ ...p, orientation: block.fen.split(' ')[1] === 'b' ? 'black' : 'white' }), seqStart: block.fen, squareFen: block.fen, braces: { before: block.fen, after: block.fen } })}
         </div>
       )}
+      {finished !== null && endFen && <PlayOn key={endFen} fen={endFen} me={block.fen.split(' ')[1] as 'w' | 'b'} />}
     </Card>
   );
 }
@@ -1016,5 +1025,48 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
           </div>
         ))}
     </Card>
+  );
+}
+
+/**
+ * "What if the opponent tries something else?": after a task, play the final position out against Stockfish at full
+ * strength. The goal follows the engine's verdict on that position: win it, hold it, or (when it is lost) nothing.
+ */
+function PlayOn({ fen, me }: { fen: string; me: 'w' | 'b' }) {
+  const [pos, setPos] = useState<PracticePosition | null | 'busy' | 'lost'>(null);
+  const over = useMemo(() => new Chess(fen).isGameOver(), [fen]);
+  if (over) return null;
+  const start = async () => {
+    setPos('busy');
+    try {
+      const engine = getEngine();
+      await engine.fullStrength();
+      const r = await engine.evaluate(fen, { depth: 14 });
+      const l = r.lines[0];
+      const sign = fen.split(' ')[1] === me ? 1 : -1;
+      const mate = l?.mate !== undefined ? l.mate * sign : undefined;
+      const cp = (l?.cp ?? 0) * sign;
+      const base = { id: `task:${fen}`, group: 'Cờ tàn Tốt' as const, title: 'Đánh tiếp từ thế cờ này', fen, me, hint: '', level: 1 as const, adhoc: true };
+      if ((mate !== undefined && mate > 0) || (mate === undefined && cp >= 250))
+        setPos({ ...base, goal: mate !== undefined ? 'mate' : 'win', brief: 'Thế này bạn đang thắng. Đánh tới cùng với Stockfish chơi hết sức.' });
+      else if ((mate !== undefined && mate < 0) || cp <= -250) setPos('lost');
+      else setPos({ ...base, goal: 'draw', hold: 15, brief: 'Thế này cân bằng. Giữ vững 15 nước mà máy không tìm ra đường thắng là đạt.' });
+    } catch {
+      setPos(null);
+    }
+  };
+  if (pos === null || pos === 'busy')
+    return (
+      <div className="row mt">
+        <Button onClick={start} disabled={pos === 'busy'}>
+          {pos === 'busy' ? 'Stockfish đang xem thế cờ…' : 'Đánh tiếp với máy từ thế này'}
+        </Button>
+      </div>
+    );
+  if (pos === 'lost') return <div className="feedback info small mt">Máy đánh giá thế cuối bài này bạn đang thua, nên không có gì để đánh tiếp.</div>;
+  return (
+    <div className="mt">
+      <PracticeInline pos={pos} />
+    </div>
   );
 }
