@@ -155,7 +155,7 @@ Khi bị tấn công, các nước duy nhất thường là: bắt quân tấn c
 Trong cờ tàn kém chất, một số thế cờ đối phương không thể phá dù hơn nhiều: tượng khác màu, xe vs xe + tốt biên, hậu vs xe + tốt. Biết pháo đài tồn tại là động lực để chiến đấu.`,
       },
       { kind: 'puzzles', themes: ['defensiveMove'], rating: [1500, 1900], count: 8, intro: 'Tìm nước phòng thủ duy nhất: 8 bài.' },
-      { kind: 'puzzles', themes: ['equality'], rating: [1300, 1900], count: 4, intro: 'Thoát khỏi thế thua về cân bằng: 4 bài.' },
+      { kind: 'puzzles', themes: ['defensiveMove'], rating: [1100, 1500], count: 4, intro: 'Phòng thủ, mức dễ hơn: 4 bài.' },
       { kind: 'puzzles', themes: ['intermezzo'], rating: [1500, 1900], count: 6, intro: 'Nước chen (zwischenzug), vũ khí phản công: 6 bài.' },
     ],
   },

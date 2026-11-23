@@ -34,7 +34,7 @@ export default function MarkBar({
           {/* a long list here only repeats the exercise list right above it */}
           Qua hết bài tập mới được đánh dấu đã học. Còn {missing.length} bài chưa qua{missing.length <= 2 ? `: ${missing.join(', ')}` : ''}.
           <div className="tiny" style={{ fontWeight: 400, marginTop: 4 }}>
-            Đã biết bài này rồi thì bấm “Bỏ qua” để sang bài sau.
+            Đã biết bài này rồi thì bấm “Bỏ qua”.
           </div>
         </div>
       )}

@@ -46,3 +46,15 @@ export function streak(log: ActivityLog): number {
   }
   return n;
 }
+
+/** Undo a lesson logged today (the student removed its "learned" mark). */
+export async function unlogLesson(title: string): Promise<void> {
+  const log = await loadActivity();
+  const k = dayKey();
+  const day = log[k];
+  if (!day || !(day.learned ?? []).includes(title)) return;
+  day.learned = (day.learned ?? []).filter((t) => t !== title);
+  day.lessons = Math.max(0, (day.lessons ?? 0) - 1);
+  log[k] = day;
+  await set('activity', log);
+}

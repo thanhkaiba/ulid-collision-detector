@@ -8,7 +8,7 @@ import { renderMd } from '../lib/markdown';
 import { loadPuzzles, type Puzzle } from '../lib/puzzles';
 import { loadLessonProgress, saveLessonProgress, setLessonStatus, loadSettings, type LessonProgress, type Settings } from '../lib/storage';
 import { LEVELS_INFO, levelInfo, chooseLevel, type LevelId, type LevelInfo } from '../lib/level';
-import { loadActivity, logActivity, dayKey, streak, type ActivityLog } from '../lib/activity';
+import { loadActivity, logActivity, unlogLesson, dayKey, streak, type ActivityLog } from '../lib/activity';
 import MarkBar from '../components/MarkBar';
 import { navigate, type Route } from '../lib/router';
 import Videos from './Videos';
@@ -167,7 +167,7 @@ function TodayCard({ level, log, nextLesson }: { level: LevelInfo; log: Activity
     {
       done: (today.played ?? 0) >= 1,
       label: `Chơi 1 ván với máy (cấp ${level.engineLevel})`,
-      why: 'Áp dụng vào ván thật. Tính khi ván kết thúc, hoặc khi đã đi ít nhất 10 nước. Luyện cờ tàn trong bài học không tính.',
+      why: 'Áp dụng vào ván thật. Tính khi ván kết thúc bằng chiếu hết hoặc hòa, hoặc khi mỗi bên đã đi ít nhất 10 nước. Xin thua sớm và luyện cờ tàn không tính.',
       go: 'play',
     },
   ];
@@ -589,6 +589,8 @@ function LessonView({ lesson, progress, setProgress, hidden }: { lesson: Lesson;
             setProgress(await setLessonStatus(lesson.id, v));
             // written before leaving, so the overview's plan already shows it ticked
             if (v === 'done') await logActivity('lessons', 1, lesson.title);
+            // un-marking a lesson finished today takes it back out of today's plan
+            else if (v === undefined && progress.status[lesson.id] === 'done') await unlogLesson(lesson.title);
             if (v && next) navigate(`learn/lesson/${next.id}`);
             else if (v) navigate('learn');
           }}
@@ -909,6 +911,7 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
             playerFirst={p.playerFirst}
             prompt={puzzlePrompt(p)}
             onWrong={() => setMissed(i)}
+            onHint={() => setMissed(i)}
             onFinish={(solved) => {
               const ok = solved && !missedHere;
               setCur(ok);

@@ -101,7 +101,7 @@ Tượng tấn công mã d4; sau 5.Be3 Qf6 6.c3 Nge7 Đen thoải mái. Nếu 5.
         fen: 'r1bqkb1r/ppp2ppp/2n2n2/3Pp1N1/2B5/8/PPPP1PPP/RNBQK2R b KQkq - 0 5',
         moves: ['c6a5'],
         alternatives: ['b7b5', 'c6d4'],
-        prompt: 'Sau 4.Ng5 d5 5.exd5. Đen tìm nước đúng (không phải 5...Nxd5?).',
+        prompt: 'Sau 4.Ng5 d5 5.exd5. Ăn lại bằng 5...Nxd5? là sai vì 6.Nxf7!. Tìm nước khác cho Đen: phản công, đừng thụ động.',
         explain: 'Na5! tấn công tượng c4. Nxd5? cho phép 6.Nxf7 Kxf7 7.Qf3+ với tấn công rất mạnh. b5 (Ulvestad) và Nd4 (Fritz) cũng chơi được nhưng sắc hơn và kém Na5 một chút.',
         verify: 'best',
       },

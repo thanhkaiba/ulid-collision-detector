@@ -235,7 +235,7 @@ function GamesList() {
                     ? `Phân tích ${pendingGames.length} ván gần nhất chưa phân tích`
                     : `Phân tích ${pendingGames.length} ván chưa phân tích`}
                 </Button>
-                <div className="tiny muted">Cứ để máy chạy và ở lại trang này, có thể dừng bất cứ lúc nào. Ván đã xong được lưu ngay.</div>
+                <div className="tiny muted">Cứ để máy chạy và ở lại trang này, có thể dừng bất cứ lúc nào. Ván đã xong được lưu ngay. Để nhanh, phân tích nhiều ván dùng độ sâu tối đa 12; muốn kỹ hơn thì mở từng ván.</div>
               </div>
             )
           )}
