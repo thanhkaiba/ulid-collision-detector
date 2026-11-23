@@ -138,14 +138,5 @@ export default function Board(props: BoardProps) {
 }
 
 function SideTag({ color, at }: { color: Color; at: 'top' | 'bottom' }) {
-  const name = color === 'white' ? 'Trắng' : 'Đen';
-  return (
-    <div className={`side-tag ${at}`}>
-      <i className={`disc ${color}`} />
-      <b>Phía {name}</b>
-      <span>
-        tốt {name.toLowerCase()} đi {at === 'bottom' ? 'lên ↑' : 'xuống ↓'}
-      </span>
-    </div>
-  );
+  return <div className={`side-tag ${at} ${color}`} title={color === 'white' ? 'Trắng' : 'Đen'} />;
 }
