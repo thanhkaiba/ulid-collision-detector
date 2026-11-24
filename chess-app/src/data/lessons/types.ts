@@ -33,6 +33,19 @@ export interface DiagramBlock {
   lastMove?: string;
   /** the verifier checks this is a checkmate position */
   mate?: boolean;
+  /**
+   * moves (SAN) played on from this position by a "▶ Chạy" player under the board, for plans and sequences that are hard
+   * to picture. Mark a deliberately bad move with "?" (e.g. "Nxe5?"); the verifier checks the others are sound.
+   */
+  line?: string[];
+  /** a short note per move of `line` ('' for none), shown while that move is on the board */
+  lineNotes?: string[];
+  /**
+   * the moves (SAN) that lead to this diagram from the starting position (or from `introFen`), so the player can show
+   * how the position arose; playing them must give exactly `fen` (the verifier checks)
+   */
+  intro?: string[];
+  introFen?: string;
   orientation?: 'white' | 'black';
 }
 

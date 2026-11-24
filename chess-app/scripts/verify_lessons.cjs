@@ -123,6 +123,48 @@ const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -10
     });
     for (let i = 0; i < lesson.blocks.length; i++) {
       const b = lesson.blocks[i];
+      if (b.kind === 'diagram' && b.intro) {
+        checks++;
+        const c = new Chess(b.introFen ?? undefined);
+        let bad = false;
+        for (const raw of b.intro) {
+          try {
+            c.move(raw.replace(/[?!]+$/, ''));
+          } catch {
+            fail(lesson, i, `intro move ${raw} is illegal`);
+            bad = true;
+            break;
+          }
+        }
+        const key = (f) => f.split(' ').slice(0, 2).join(' ');
+        if (!bad && key(c.fen()) !== key(b.fen)) fail(lesson, i, `intro ends at ${c.fen()}, not at the diagram ${b.fen}`);
+      }
+      if (b.kind === 'diagram' && b.line) {
+        // a played-out line under a diagram: legal, and no move (unless marked "?" in its SAN) more than 1.5 pawns
+        // worse than the engine's best, so the illustration never shows a blunder as a plan
+        checks++;
+        const c = new Chess(b.fen);
+        for (let k = 0; k < b.line.length; k++) {
+          const raw = b.line[k];
+          const san = raw.replace(/[?!]+$/, '');
+          const fen = c.fen();
+          let mv;
+          try {
+            mv = c.move(san);
+          } catch {
+            fail(lesson, i, `line move ${k + 1} ${raw} is illegal`);
+            break;
+          }
+          if (/\?/.test(raw)) continue;
+          const o = await go(fen);
+          if (o.best === mv.lan) continue;
+          const m = await go(fen, ` searchmoves ${mv.lan}`);
+          const d = toWin(o) - toWin(m);
+          if (d > 150) fail(lesson, i, `line move ${k + 1} ${raw} is ${d}cp worse than ${o.best}`);
+        }
+        if (b.lineNotes && b.lineNotes.length > b.line.length) fail(lesson, i, 'more line notes than moves');
+        continue;
+      }
       if (b.kind !== 'task') continue;
       let c;
       try {

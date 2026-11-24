@@ -444,3 +444,5 @@ input, select, textarea { border-radius: var(--r-md); padding: 8px 11px; }
 .engine-badge.bad { color: var(--bad); }
 .engine-bar { display: block; height: 3px; border-radius: 2px; background: var(--line); overflow: hidden; }
 .engine-bar i { display: block; height: 100%; background: var(--accent); transition: width 0.2s; }
+.demo-moves .mv.diagram-mark { color: var(--accent); font-weight: 600; }
+.demo-moves .mv.diagram-mark.cur { color: var(--accent-fg); }

@@ -22,6 +22,7 @@ import { getEngine } from '../lib/engine';
 import { practiceById, loadPracticeDone, type PracticePosition } from '../data/practice';
 import { LEGACY_KEYS } from '../data/lessons/legacyKeys';
 import { judgeMove } from '../lib/judge';
+import LinePlayer from '../components/LinePlayer';
 import { PracticeInline } from './Play';
 import { puzzlePrompt } from './Puzzles';
 import { Chess } from 'chess.js';
@@ -697,16 +698,29 @@ function Diagram({ block, onShow }: { block: Extract<Block, { kind: 'diagram' }>
   });
   return (
     <Card>
-      <Board
-        fen={block.fen}
-        orientation={block.orientation ?? 'white'}
-        turnColor={chess.turn() === 'w' ? 'white' : 'black'}
-        lastMove={block.lastMove ? [block.lastMove.slice(0, 2) as Key, block.lastMove.slice(2, 4) as Key] : undefined}
-        viewOnly
-        sides
-        shapes={shapes}
-        check={chess.inCheck() ? (chess.turn() === 'w' ? 'white' : 'black') : false}
-      />
+      {block.line?.length || block.intro?.length ? (
+        <LinePlayer
+          fen={block.fen}
+          line={block.line}
+          notes={block.lineNotes}
+          intro={block.intro}
+          introFen={block.introFen}
+          orientation={block.orientation ?? 'white'}
+          shapes={shapes}
+          lastMove={block.lastMove ? [block.lastMove.slice(0, 2) as Key, block.lastMove.slice(2, 4) as Key] : undefined}
+        />
+      ) : (
+        <Board
+          fen={block.fen}
+          orientation={block.orientation ?? 'white'}
+          turnColor={chess.turn() === 'w' ? 'white' : 'black'}
+          lastMove={block.lastMove ? [block.lastMove.slice(0, 2) as Key, block.lastMove.slice(2, 4) as Key] : undefined}
+          viewOnly
+          sides
+          shapes={shapes}
+          check={chess.inCheck() ? (chess.turn() === 'w' ? 'white' : 'black') : false}
+        />
+      )}
       <p className="small mt" style={{ margin: '8px 0 0' }}>
         {renderRich(block.caption, { onShow: (p) => onShow({ ...p, orientation: block.orientation ?? 'white' }), seqStart: block.fen, squareFen: block.fen, braces: { before: block.fen, after: block.fen } })}
       </p>
