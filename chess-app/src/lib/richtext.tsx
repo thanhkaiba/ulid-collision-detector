@@ -9,6 +9,8 @@ export interface Preview {
   /** squares to highlight */
   squares?: Key[];
   label: string;
+  /** positions from the start of the sequence up to this one, so the sheet can play the moves that lead here */
+  path?: string[];
   /** which side to show at the bottom (the board the text belongs to may be flipped) */
   orientation?: 'white' | 'black';
 }
@@ -105,6 +107,7 @@ export function renderRich(text: string, opts: RichOptions): ReactNode[] {
       let cur = fen;
       let ok = true;
       const trail: string[] = [];
+      const fens: string[] = [fen];
       sans.forEach((s, i) => {
         if (!ok) return out.push(<span key={k++} className="mv-plain"> {s}</span>);
         const r = tryMove(cur, s);
@@ -114,7 +117,8 @@ export function renderRich(text: string, opts: RichOptions): ReactNode[] {
         }
         const lbl = label(cur, r.san, i === 0);
         trail.push(lbl);
-        out.push(chip(lbl, { fen: r.fen, lastMove: r.lastMove, label: trail.join(' ') }));
+        fens.push(r.fen);
+        out.push(chip(lbl, { fen: r.fen, lastMove: r.lastMove, label: trail.join(' '), path: [...fens] }));
         cur = r.fen;
       });
       continue;
@@ -134,14 +138,14 @@ export function renderRich(text: string, opts: RichOptions): ReactNode[] {
         const fenBefore = ml.fens[plyIdx];
         const r = tryMove(fenBefore, ml.sans[plyIdx]);
         const lbl = `${n}${black ? '...' : '.'}${ml.sans[plyIdx]}`;
-        out.push(chip(lbl, r ? { fen: r.fen, lastMove: r.lastMove, label: lbl } : null));
+        out.push(chip(lbl, r ? { fen: r.fen, lastMove: r.lastMove, label: lbl, path: ml.fens.slice(0, plyIdx + 2) } : null));
         let idx = plyIdx + 1;
         for (const s of rest) {
           if (ml.sans[idx] && strip(ml.sans[idx]) === strip(s)) {
             const r2 = tryMove(ml.fens[idx], ml.sans[idx]);
             const l2 = label(ml.fens[idx], ml.sans[idx], false);
             out.push(<span key={k++}> </span>);
-            out.push(chip(l2, r2 ? { fen: r2.fen, lastMove: r2.lastMove, label: `${lbl} ${l2}` } : null));
+            out.push(chip(l2, r2 ? { fen: r2.fen, lastMove: r2.lastMove, label: `${lbl} ${l2}`, path: ml.fens.slice(0, idx + 2) } : null));
             idx++;
           } else out.push(<span key={k++} className="mv-plain"> {s}</span>);
         }
@@ -157,7 +161,7 @@ export function renderRich(text: string, opts: RichOptions): ReactNode[] {
           if (r) {
             setLine([...line.slice(0, idx + 1), r.fen]);
             const lbl = `${n}${black ? '...' : '.'}${r.san}`;
-            out.push(chip(lbl, { fen: r.fen, lastMove: r.lastMove, label: lbl }));
+            out.push(chip(lbl, { fen: r.fen, lastMove: r.lastMove, label: lbl, path: [...line] }));
             let trail = lbl;
             for (const s of rest) {
               const cur = line[line.length - 1];
@@ -167,7 +171,7 @@ export function renderRich(text: string, opts: RichOptions): ReactNode[] {
                 const l2 = label(cur, r2.san, false);
                 trail += ` ${l2}`;
                 setLine([...line, r2.fen]);
-                out.push(chip(l2, { fen: r2.fen, lastMove: r2.lastMove, label: trail }));
+                out.push(chip(l2, { fen: r2.fen, lastMove: r2.lastMove, label: trail, path: [...line] }));
               } else out.push(<span key={k++} className="mv-plain">{s}</span>);
             }
             continue;

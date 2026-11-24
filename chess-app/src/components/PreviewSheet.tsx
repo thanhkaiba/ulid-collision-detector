@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Chess } from 'chess.js';
 import Board from './Board';
+import LinePlayer from './LinePlayer';
 import type { Preview } from '../lib/richtext';
 import type { DrawShape } from 'chessground/draw';
 
@@ -57,6 +58,8 @@ export default function PreviewSheet({ preview, onClose, orientation = 'white' }
     /* display-only position */
   }
   const shapes: DrawShape[] = (preview.squares ?? []).map((s) => ({ orig: s, brush: 'yellow' }));
+  // a move inside a sequence ("Sau 3...Nd4"): replay the moves that led here, from the first one
+  const intro = sansOf(preview.path ?? []);
   return (
     <div className="sheet-backdrop" onClick={onClose}>
       <div className="sheet" role="dialog" aria-modal="true" aria-label={preview.label} onClick={(e) => e.stopPropagation()}>
@@ -66,8 +69,35 @@ export default function PreviewSheet({ preview, onClose, orientation = 'white' }
             Đóng
           </button>
         </div>
-        <Board fen={preview.fen} orientation={orientation} turnColor={turn} lastMove={preview.lastMove} check={check} viewOnly sides shapes={shapes} />
+        {intro.length >= 2 ? (
+          <LinePlayer key={preview.label} fen={preview.fen} intro={intro} introFen={preview.path![0]} orientation={orientation} lastMove={preview.lastMove} target={`Thế cờ sau ${preview.label}`} />
+        ) : (
+          <Board fen={preview.fen} orientation={orientation} turnColor={turn} lastMove={preview.lastMove} check={check} viewOnly sides shapes={shapes} />
+        )}
       </div>
     </div>
   );
+}
+
+/** the SAN moves between consecutive positions (stops at the first gap) */
+function sansOf(path: string[]): string[] {
+  const out: string[] = [];
+  const key = (f: string) => f.split(' ').slice(0, 4).join(' ');
+  for (let i = 0; i + 1 < path.length; i++) {
+    let found = '';
+    try {
+      const c = new Chess(path[i]);
+      for (const m of c.moves({ verbose: true })) {
+        if (key(m.after) === key(path[i + 1])) {
+          found = m.san;
+          break;
+        }
+      }
+    } catch {
+      /* not a legal position */
+    }
+    if (!found) return [];
+    out.push(found);
+  }
+  return out;
 }

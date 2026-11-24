@@ -487,13 +487,32 @@ function LessonView({ lesson, progress, setProgress, hidden }: { lesson: Lesson;
     const b = lesson.blocks[block];
     if (b.kind !== 'text') return null;
     const chunks = chunksOf(b.md);
-    // move chips continue a line of play across the section: replay the earlier sections first
+    // move chips continue a line of play across the lesson: replay the earlier sections first, so "Sau 3...Nd4" in a
+    // later section still knows 1.e4 e5 2.Nf3 Nc6 3.Bc4 (and a tap can replay the game from move 1)
     const seq = { line: [START_FEN] };
     const fn = (t: string) => renderRich(t, { onShow: setPreview, seqStart: START_FEN, seq });
     // headings carry moves too (e.g. "Ván cờ Ý (1.e4 e5 2.Nf3 Nc6 3.Bc4)"), read in order with the text
-    for (let k = 0; k < chunk; k++) {
-      if (chunks[k].title) fn(chunks[k].title);
-      renderMd(chunks[k].md, fn);
+    const replay = (cs: { title: string; md: string }[]) =>
+      cs.forEach((c) => {
+        if (c.title) fn(c.title);
+        renderMd(c.md, fn);
+      });
+    lesson.blocks.slice(0, block).forEach((x) => x.kind === 'text' && replay(chunksOf(x.md)));
+    replay(chunks.slice(0, chunk));
+    // this section's own diagram, when it shows how its position arose, is the best context of all
+    const own = (sl.kind === 'text' ? sl.diagrams : []).map((d) => lesson.blocks[d]).find((d) => d?.kind === 'diagram' && d.intro?.length && !d.introFen);
+    if (own?.kind === 'diagram' && own.intro) {
+      const c = new Chess();
+      const fens = [c.fen()];
+      for (const m of own.intro) {
+        try {
+          c.move(m.replace(/[?!]+$/, ''));
+        } catch {
+          break;
+        }
+        fens.push(c.fen());
+      }
+      seq.line = fens;
     }
     const title = chunks[chunk].title ? fn(chunks[chunk].title) : null;
     return { title, body: renderMd(chunks[chunk].md, fn) };

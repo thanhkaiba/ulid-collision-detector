@@ -15,6 +15,7 @@ export default function LinePlayer({
   notes = [],
   intro = [],
   introFen,
+  target = 'Thế cờ trên hình',
   orientation = 'white',
   shapes = [],
   lastMove,
@@ -25,6 +26,8 @@ export default function LinePlayer({
   /** moves leading to `fen` from the starting position (or `introFen`) */
   intro?: string[];
   introFen?: string;
+  /** what the position at `fen` is called in the caption */
+  target?: string;
   orientation?: 'white' | 'black';
   shapes?: DrawShape[];
   lastMove?: Key[];
@@ -58,9 +61,10 @@ export default function LinePlayer({
       setPlaying(false);
       return;
     }
-    const t = window.setTimeout(() => setI((x) => x + 1), i === 0 ? 700 : frames[i].note ? 2400 : 1200);
+    // stop a little longer on the diagram's own position when running through it from move 1
+    const t = window.setTimeout(() => setI((x) => x + 1), i === 0 ? 700 : frames[i].note ? 2400 : i === base && base > 0 ? 2000 : 1200);
     return () => clearTimeout(t);
-  }, [i, playing, frames]);
+  }, [i, playing, frames, base]);
 
   const startNo = Number(first.split(' ')[5]) || 1;
   const blackFirst = first.split(' ')[1] === 'b';
@@ -95,13 +99,12 @@ export default function LinePlayer({
       />
       <div className="demo-caption">
         <div className="tiny muted">
-          {i === base ? 'Thế cờ trên hình' : i === 0 ? 'Thế cờ ban đầu' : `Nước ${i}/${frames.length - 1}: ${label(i - 1)}`}
-          {i < base && i > 0 ? ' · trước thế cờ trên hình' : ''}
+          {i === base ? target : i === 0 ? 'Thế cờ ban đầu' : `Nước ${i}/${frames.length - 1}: ${label(i - 1)}`}
         </div>
         <div>
           {i === base && !playing
             ? line.length
-              ? `Bấm “▶ Chạy” để xem ${line.length} nước tiếp theo lần lượt${intro.length ? ', ⏮ để xem từ nước đầu ván' : ''}, hoặc bấm vào từng nước bên dưới.`
+              ? `Bấm “▶ Chạy” để xem ${line.length} nước tiếp theo lần lượt${intro.length ? ', hoặc “▶ Xem từ nước 1” để xem cả ván từ đầu' : ''}. Bấm vào một nước bên dưới để nhảy tới đó.`
               : `Bấm “▶ Chạy” để xem lần lượt ${intro.length} nước dẫn tới thế cờ này.`
             : (frames[i].note ?? '')}
         </div>
@@ -131,6 +134,19 @@ export default function LinePlayer({
           ⏭
         </Button>
       </div>
+      {intro.length > 0 && line.length > 0 && (
+        <div className="row" style={{ justifyContent: 'center', marginTop: 4 }}>
+          <Button
+            kind="ghost"
+            onClick={() => {
+              setI(0);
+              setPlaying(true);
+            }}
+          >
+            ▶ Xem từ nước 1
+          </Button>
+        </div>
+      )}
       <div className="demo-moves">
         {frames.slice(1).map((fr, k) => (
           <span key={k} style={{ display: 'contents' }}>
