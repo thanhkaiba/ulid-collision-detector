@@ -64,6 +64,8 @@ async function go(fen, extra = '') {
   const best = bm.split(/\s+/)[1];
   return { best, cp: last?.kind === 'cp' ? last.v : undefined, mate: last?.kind === 'mate' ? last.v : undefined };
 }
+/** Lichess-style winning chances (0..100) for the side to move */
+const winPct = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100 : 0) : 50 + 50 * (2 / (1 + Math.exp(-0.00368208 * (s.cp ?? 0))) - 1));
 const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -100000 - s.mate) : s.cp ?? 0);
 
 (async () => {
@@ -159,8 +161,10 @@ const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -10
           const o = await go(fen);
           if (o.best === mv.lan) continue;
           const m = await go(fen, ` searchmoves ${mv.lan}`);
-          const d = toWin(o) - toWin(m);
-          if (d > 150) fail(lesson, i, `line move ${k + 1} ${raw} is ${d}cp worse than ${o.best}`);
+          // compared in winning chances, not centipawns: in a won ending +6 against +8 is the same result, and the
+          // engine's numbers there wobble by more than a pawn between runs
+          const d = winPct(o) - winPct(m);
+          if (d > 14) fail(lesson, i, `line move ${k + 1} ${raw} loses ${d.toFixed(0)}% winning chances against ${o.best}`);
         }
         if (b.lineNotes && b.lineNotes.length > b.line.length) fail(lesson, i, 'more line notes than moves');
         continue;
@@ -248,8 +252,10 @@ const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -10
         if (alt === overall.best) continue;
         const a = await go(b.fen, ` searchmoves ${alt}`);
         const diff = toWin(overall) - toWin(a);
-        // opening theory accepts moves within about 3/4 of a pawn (e.g. the Fritz 5...Nd4 next to 5...Na5)
-        if (diff > 80) fail(lesson, i, `alternative ${alt} is clearly worse (${diff}cp) than ${overall.best}`);
+        // opening theory accepts moves within about 3/4 of a pawn (e.g. the Fritz 5...Nd4 next to 5...Na5); in a won
+        // position (both moves still winning by far) the centipawn gap means nothing
+        const sameWin = winPct(overall) > 95 && winPct(a) > 95;
+        if (diff > 80 && !sameWin) fail(lesson, i, `alternative ${alt} is clearly worse (${diff}cp) than ${overall.best}`);
       }
       // scripted opponent replies should be reasonable (not blunders): check each student move in line is still best-ish
       const cc = new Chess(b.fen);
