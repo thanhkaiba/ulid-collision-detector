@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Tag } from './ui';
+import { Button, Icon, Tag } from './ui';
 
 /** "Đã học / Bỏ qua" controls shown at the end of a lesson or book section. */
 export default function MarkBar({
@@ -39,7 +39,7 @@ export default function MarkBar({
     return (
       <div>
         <div className="markbar">
-          <Tag tone={status === 'done' ? 'good' : 'warn'}>{status === 'done' ? '✓ Đã học' : '↷ Đã bỏ qua'}</Tag>
+          <Tag tone={status === 'done' ? 'good' : 'warn'}>{status === 'done' ? '✓ Đã học' : 'Đã bỏ qua'}</Tag>
           <button className="chip" onClick={() => onMark(undefined)}>
             Bỏ đánh dấu
           </button>
@@ -56,17 +56,17 @@ export default function MarkBar({
   return (
     <div>
       {left > 0 && !confirming && (
-        <p className="tiny muted" style={{ margin: '0 0 6px' }}>
+        <p className="small muted" style={{ margin: '0 0 8px' }}>
           Còn {left} bài tập chưa qua. Vẫn đánh dấu đã học được, nhưng nên làm cho xong.
         </p>
       )}
       {warning || (
         <div className="markbar">
           <Button kind="primary" onClick={markDone}>
-            ✓ Đã học
+            <Icon name="check" /> Đã học
           </Button>
           <Button kind="ghost" onClick={() => onMark('skipped')}>
-            ↷ Bỏ qua
+            <Icon name="skip" /> Bỏ qua
           </Button>
         </div>
       )}

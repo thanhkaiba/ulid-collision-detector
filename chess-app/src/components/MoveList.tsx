@@ -29,6 +29,7 @@ export default function MoveList({
     j === 'blunder' ? '??' : j === 'mistake' ? '?' : j === 'inaccuracy' ? '?!' : '';
   return (
     <div className="moves" ref={ref}>
+      {moves.length === 0 && <span className="moves-empty">Chưa có nước nào. Biên bản hiện ở đây khi ván bắt đầu.</span>}
       {rows.map((r) => (
         <Row key={r.n} r={r} />
       ))}

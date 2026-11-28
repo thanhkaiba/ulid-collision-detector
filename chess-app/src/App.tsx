@@ -1,7 +1,7 @@
 import EngineBadge from './components/EngineBadge';
 import { Component, lazy, Suspense, useLayoutEffect, type JSX, type ReactNode } from 'react';
 import { useRoute, navigate, type Tab } from './lib/router';
-import { Button, Spinner } from './components/ui';
+import { Button, ConfirmHost, Spinner } from './components/ui';
 
 /**
  * Scroll per history entry: a new page opens at the top, while browser back/forward (and a reload) return to where the
@@ -103,7 +103,7 @@ class PageBoundary extends Component<{ children: ReactNode; at: string }, { fail
     return (
       <div className="card">
         <h3>Trang này gặp lỗi</h3>
-        <p className="small">Có thể do dữ liệu lưu trong máy bị hỏng hoặc một lỗi của ứng dụng. Tiến độ ở các trang khác không bị ảnh hưởng.</p>
+        <p className="small muted">Có thể do dữ liệu lưu trong máy bị hỏng hoặc một lỗi của ứng dụng. Tiến độ ở các trang khác không bị ảnh hưởng.</p>
         <div className="row" style={{ gap: 8 }}>
           <Button kind="primary" onClick={() => location.reload()}>
             Tải lại
@@ -157,12 +157,13 @@ export default function App() {
     <div className="app">
       <main className="page">
         <PageBoundary at={`${route.tab}/${route.parts.join('/')}`}>
-          <Suspense fallback={<Spinner label="Đang tải..." />}>
+          <Suspense fallback={<Spinner label="Đang tải…" />}>
             <Page route={route} />
           </Suspense>
         </PageBoundary>
       </main>
       <EngineBadge hideThinking={route.tab === 'analyze'} />
+      <ConfirmHost />
       <nav className="tabbar">
         {TABS.map((t) => (
           <button

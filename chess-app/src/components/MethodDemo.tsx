@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Chess, type Square } from 'chess.js';
 import type { Key } from 'chessground/types';
 import Board from './Board';
-import { Button } from './ui';
+import { Button, Icon } from './ui';
 import type { PracticePosition } from '../data/practice';
 import type { PracticeMethod } from '../data/practiceMethods';
 
@@ -109,14 +109,14 @@ export default function MethodDemo({ pos, method }: { pos: PracticePosition; met
         <div>
           {i === 0
             ? playing
-              ? 'Lời giải đang tự chạy. Bấm ⏸ Dừng để xem chậm, rồi ◀ ▶ để đi từng nước.'
-              : 'Bấm “▶ Chạy” để xem tự động, hoặc nút ▶ bên phải để đi từng nước.'
+              ? 'Lời giải đang tự chạy. Bấm “Dừng” để xem chậm, rồi hai nút mũi tên hai bên để đi từng nước.'
+              : 'Bấm “Chạy” để xem tự động, hoặc nút mũi tên bên phải để đi từng nước.'
             : note || (f.mover === pos.me ? '' : 'Đối phương đi.')}
         </div>
       </div>
-      <div className="row" style={{ justifyContent: 'center', gap: 6 }}>
-        <Button kind="ghost" onClick={() => { setPlaying(false); setI(0); }}>⏮</Button>
-        <Button kind="ghost" onClick={() => { setPlaying(false); setI(Math.max(0, i - 1)); }}>◀</Button>
+      <div className="row" style={{ justifyContent: 'center', gap: 4 }}>
+        <Button kind="ghost" label="Về đầu" onClick={() => { setPlaying(false); setI(0); }}><Icon name="first" /></Button>
+        <Button kind="ghost" label="Lùi một nước" onClick={() => { setPlaying(false); setI(Math.max(0, i - 1)); }}><Icon name="prev" /></Button>
         <Button
           kind="primary"
           onClick={() => {
@@ -124,10 +124,10 @@ export default function MethodDemo({ pos, method }: { pos: PracticePosition; met
             setPlaying(!playing || i >= frames.length - 1);
           }}
         >
-          {playing ? '⏸ Dừng' : '▶ Chạy'}
+          <Icon name={playing ? 'pause' : 'play'} /> {playing ? 'Dừng' : 'Chạy'}
         </Button>
-        <Button kind="ghost" onClick={() => { setPlaying(false); setI(Math.min(frames.length - 1, i + 1)); }}>▶</Button>
-        <Button kind="ghost" onClick={() => { setPlaying(false); setI(frames.length - 1); }}>⏭</Button>
+        <Button kind="ghost" label="Tiến một nước" onClick={() => { setPlaying(false); setI(Math.min(frames.length - 1, i + 1)); }}><Icon name="next" /></Button>
+        <Button kind="ghost" label="Tới cuối" onClick={() => { setPlaying(false); setI(frames.length - 1); }}><Icon name="last" /></Button>
       </div>
       <div className="demo-moves">
         {frames.slice(1).map((fr, k) => (

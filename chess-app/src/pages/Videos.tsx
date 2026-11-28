@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, Seg, Tag } from '../components/ui';
+import { Card, Icon, Seg, Tag } from '../components/ui';
 import { VIDEOS } from '../data/videos';
 import { STAGES } from '../data/lessons';
 import { navigate } from '../lib/router';
@@ -42,13 +42,16 @@ export default function Videos() {
               // the whole card opens the video: a small title link is hard to hit on a phone
               <a key={v.url} className="card card-click" href={v.url} target="_blank" rel="noreferrer" style={{ display: 'block', color: 'inherit', textDecoration: 'none' }}>
                 <div className="row-between">
-                  <b style={{ color: 'var(--accent)' }}>{v.title} ↗</b>
+                  <b style={{ color: 'var(--accent)' }}>
+                    {v.title} <Icon name="external" className="ext" />
+                    <span className="sr-only"> (mở trang mới)</span>
+                  </b>
                   <Tag tone={v.lang === 'vi' ? 'good' : 'info'}>{v.lang === 'vi' ? 'VI' : 'EN'}</Tag>
                 </div>
                 <div className="small muted">
                   {v.by} · {v.kind === 'playlist' ? 'playlist' : v.kind === 'channel' ? 'kênh' : 'video'}
                 </div>
-                <p className="small" style={{ margin: '6px 0 0' }}>
+                <p className="small" style={{ margin: '8px 0 0' }}>
                   {v.note}
                 </p>
               </a>

@@ -562,6 +562,8 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
         />
       </div>
       <div className="mt">
+        {/* right / wrong / whose turn is read out by screen readers as it changes */}
+        <div aria-live="polite">
         {status === 'intro' && <div className="feedback info">Đối phương vừa đi…</div>}
         {live && !myTurn && <div className="feedback ok">Đúng rồi! Chờ đối phương đáp…</div>}
         {myTurn &&
@@ -617,6 +619,7 @@ export default function PuzzleBoard(props: PuzzleBoardProps) {
             ))}
           </div>
         )}
+        </div>
         {(props.showControls ?? true) && (
           <div className="row mt">
             {myTurn && (

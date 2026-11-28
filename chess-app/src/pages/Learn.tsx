@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Board from '../components/Board';
 import PuzzleBoard, { type PuzzleOutcome } from '../components/PuzzleBoard';
-import { Button, Card, Spinner, Tag } from '../components/ui';
+import { Button, Card, Icon, Spinner, Tag } from '../components/ui';
 import { LESSONS, STAGES, lessonById, type Block, type Lesson, type PuzzleSetBlock, type TaskBlock, type LichessBlock, type ExampleBlock } from '../data/lessons';
 import MethodDemo from '../components/MethodDemo';
 import { renderMd } from '../lib/markdown';
@@ -106,7 +106,7 @@ function LessonGate({ lesson, progress, setProgress }: { lesson: Lesson; progres
     if (all) lesson.blocks.forEach((b, i) => b.kind === 'puzzles' && setCandidates(all, b).length === 0 && out.add(i));
     return out;
   }, [all, lesson]);
-  if (needs && !all) return <Spinner label="Đang tải bài học..." />;
+  if (needs && !all) return <Spinner label="Đang tải bài học…" />;
   return <LessonView lesson={lesson} progress={progress} setProgress={setProgress} hidden={empty} />;
 }
 const lessonSkipped = (l: Lesson, p: LessonProgress) => p.status[l.id] === 'skipped';
@@ -128,7 +128,7 @@ function LevelPicker({ current, onPick, onCancel }: { current?: string; onPick: 
               <Tag tone="good">đang chọn</Tag>
             </span>
           ) : (
-            <span className="muted">›</span>
+            <span className="go" aria-hidden="true">›</span>
           )}
         </div>
       ))}
@@ -180,18 +180,30 @@ function TodayCard({ level, log, nextLesson }: { level: LevelInfo; log: Activity
     <Card>
       <div className="row-between">
         <h3 style={{ margin: 0 }}>Hôm nay làm gì</h3>
-        <span className="small muted">{days > 0 ? `🔥 ${days} ngày liên tiếp` : 'Bắt đầu chuỗi ngày học'}</span>
+        <span className="small muted" style={{ whiteSpace: 'nowrap' }}>
+          {days > 0 ? (
+            <>
+              <Icon name="flame" className="streak" /> {days} ngày liên tiếp
+            </>
+          ) : (
+            'Bắt đầu chuỗi ngày học'
+          )}
+        </span>
       </div>
       <p className="small muted" style={{ margin: '4px 0 0' }}>
         {nextIdx === -1 ? 'Xong cả ba việc hôm nay. Hẹn bạn ngày mai!' : 'Ba việc, làm theo thứ tự từ trên xuống, tổng cộng khoảng 30 đến 45 phút.'}
       </p>
       {items.map((it, i) => (
         <div key={i} className="list-item" onClick={() => navigate(it.go)}>
-          <span>
-            {it.done ? '✅' : `${i + 1}.`} {i === nextIdx ? <b>{it.label}</b> : it.label}
-            <div className="tiny muted">{it.why}</div>
+          <span className="mark">
+            {it.done ? <Icon name="done" className="good" /> : <span className="mark-num">{i + 1}</span>}
+            <span>
+              {it.done && <span className="sr-only">Đã xong: </span>}
+              {i === nextIdx ? <b>{it.label}</b> : it.label}
+              <span className="tiny muted" style={{ display: 'block' }}>{it.why}</span>
+            </span>
           </span>
-          {i === nextIdx ? <span className="btn btn-primary small" style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>Làm ngay</span> : <span className="muted">›</span>}
+          {i === nextIdx ? <span className="btn btn-primary small" style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>Làm ngay</span> : <span className="go" aria-hidden="true">›</span>}
         </div>
       ))}
     </Card>
@@ -246,23 +258,23 @@ function Overview({ progress, setProgress }: { progress: LessonProgress; setProg
       <Card onClick={() => navigate('learn/games')}>
         <div className="row-between">
           <div>
-            <h3 style={{ margin: 0 }}>♟ Từng nước một</h3>
+            <h3 className="card-title"><Icon name="steps" /> Từng nước một</h3>
             <p className="small muted" style={{ margin: '4px 0 0' }}>
               12 ván kinh điển, giải thích mọi nước đi bằng tiếng Việt.{isNew ? ' Nên học sau khi xong Giai đoạn 1.' : ' Cách học hiệu quả nhất để hiểu vì sao.'}
             </p>
           </div>
-          <span>›</span>
+          <span className="go" aria-hidden="true">›</span>
         </div>
       </Card>
       <div className="grid-2">
         <Card onClick={() => navigate('learn/book')}>
-          <h3 style={{ margin: 0 }}>📖 Sách: Capablanca</h3>
+          <h3 className="card-title"><Icon name="book" /> Sách: Capablanca</h3>
           <p className="small muted" style={{ margin: '4px 0 0' }}>
             "Chess Fundamentals" dịch tiếng Việt, 150 hình tương tác.
           </p>
         </Card>
         <Card onClick={() => navigate('learn/videos')}>
-          <h3 style={{ margin: 0 }}>🎬 Thư viện video</h3>
+          <h3 className="card-title"><Icon name="video" /> Thư viện video</h3>
           <p className="small muted" style={{ margin: '4px 0 0' }}>
             Kênh tiếng Việt và series tiếng Anh có phụ đề.
           </p>
@@ -347,7 +359,7 @@ function Overview({ progress, setProgress }: { progress: LessonProgress; setProg
                     </div>
                   </div>
                   <span style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
-                    {done ? <Tag tone="good">✓</Tag> : lessonSkipped(l, progress) ? <Tag>bỏ qua</Tag> : started ? <Tag tone="warn">đang học</Tag> : <span className="muted">›</span>}
+                    {done ? <Tag tone="good">✓ đã học</Tag> : lessonSkipped(l, progress) ? <Tag>bỏ qua</Tag> : started ? <Tag tone="warn">đang học</Tag> : <span className="go" aria-hidden="true">›</span>}
                   </span>
                 </div>
               );
@@ -575,7 +587,7 @@ function LessonView({ lesson, progress, setProgress, hidden }: { lesson: Lesson;
         if (!p) return null;
         return (
           <div key={sl.id}>
-            <div className="tiny muted">TỰ TAY ĐÁNH VỚI MÁY · {p.goal === 'draw' ? 'THỦ HÒA' : p.goal === 'mate' ? 'CHIẾU HẾT' : 'PHONG HẬU HOẶC THẮNG QUÂN'}</div>
+            <div className="kicker">Tự tay đánh với máy · Mục tiêu: {p.goal === 'draw' ? 'thủ hòa' : p.goal === 'mate' ? 'chiếu hết' : 'phong Hậu hoặc thắng quân'}</div>
             <h2 className="slide-title" style={{ marginTop: 2 }}>
               {p.title} {practiceDone[p.id] && <Tag tone="good">✓ đã đạt</Tag>}
             </h2>
@@ -599,13 +611,15 @@ function LessonView({ lesson, progress, setProgress, hidden }: { lesson: Lesson;
             <h3>Bài tập trong bài</h3>
             {exercises.map(({ x, k }) => (
               <div key={k} className="list-item" onClick={() => go(k)}>
-                <span>
-                  {passed(x) ? '✅' : required(x) ? '⬜' : '◻️'} {exerciseLabel(x)}
-                  {!required(x) && <span className="tiny muted"> · không bắt buộc</span>}
+                <span className="mark">
+                  <Icon name={passed(x) ? 'done' : required(x) ? 'todo' : 'optional'} className={passed(x) ? 'good' : 'faint'} />
+                  <span>
+                    {passed(x) && <span className="sr-only">Đã qua: </span>}
+                    {exerciseLabel(x)}
+                    {!required(x) && <span className="tiny muted"> · không bắt buộc</span>}
+                  </span>
                 </span>
-                <span className="muted" style={{ whiteSpace: 'nowrap', flexShrink: 0 }}>
-                  {passed(x) ? 'xem lại' : 'làm'} ›
-                </span>
+                <span className="go">{passed(x) ? 'xem lại' : 'làm'} ›</span>
               </div>
             ))}
           </Card>
@@ -851,7 +865,7 @@ function ExampleView({ block }: { block: ExampleBlock }) {
     p.moves.slice(1).forEach((u, k) => demo.push([c.move({ from: u.slice(0, 2), to: u.slice(2, 4), promotion: u[4] as 'q' | undefined }).san, block.notes[k]]));
     return { pos: { id: block.id, group: 'Chiếu hết cơ bản' as const, title: '', fen, me, goal: 'win' as const, brief: '', hint: '', level: 1 as const }, method: { steps: [], demo } };
   }, [p, block]);
-  if (p === undefined) return <Spinner label="Đang tải ví dụ..." />;
+  if (p === undefined) return <Spinner label="Đang tải ví dụ…" />;
   if (!data) return null;
   return (
     <Card>
@@ -883,7 +897,7 @@ function LichessTask({ block, n, done, onDone }: { block: LichessBlock; n: numbe
     });
     return { side, opp: first.san, line: line.join(' ') };
   }, [p]);
-  if (p === undefined) return <Spinner label="Đang tải bài tập..." />;
+  if (p === undefined) return <Spinner label="Đang tải bài tập…" />;
   if (!p || !info) return null;
   return (
     <Card>
@@ -968,7 +982,7 @@ function PuzzleSet({ block, n, done, onDone, storeKey }: { block: PuzzleSetBlock
     return pick(round);
   }, [all, block, round]);
 
-  if (!all) return <Spinner label="Đang tải bài tập..." />;
+  if (!all) return <Spinner label="Đang tải bài tập…" />;
   if (!set.length) return null;
   const p = set[Math.min(i, set.length - 1)];
   const finishedAll = i >= set.length;

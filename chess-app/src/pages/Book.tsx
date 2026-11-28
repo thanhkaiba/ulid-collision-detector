@@ -3,7 +3,7 @@ import { Chess } from 'chess.js';
 import type { Key } from 'chessground/types';
 import type { DrawShape } from 'chessground/draw';
 import Board from '../components/Board';
-import { Button, Card, Spinner } from '../components/ui';
+import { Button, Card, Icon, Spinner } from '../components/ui';
 import { navigate, type Route } from '../lib/router';
 import { loadLessonProgress, saveLessonProgress, setLessonStatus, type LessonProgress } from '../lib/storage';
 import MarkBar from '../components/MarkBar';
@@ -33,7 +33,7 @@ export default function Book({ route }: { route: Route }) {
   useEffect(() => {
     loadBook().then(setBook);
   }, []);
-  if (!book) return <Spinner label="Đang tải sách..." />;
+  if (!book) return <Spinner label="Đang tải sách…" />;
   // route: learn/book            -> table of contents
   //        learn/book/<p>/<c>/<s> -> one section
   const [p, c, s] = route.parts.slice(1).map(Number);
@@ -105,8 +105,8 @@ function Toc({ book }: { book: BookData }) {
               {ch.sections.map((sec, si) => (
                 <div key={si} className="list-item" onClick={() => navigate(`learn/book/${pi}/${ci}/${si}`)}>
                   <span>{sec.heading}</span>
-                  <span className="muted">
-                    {st(`${pi}/${ci}/${si}`) === 'done' ? '✓' : st(`${pi}/${ci}/${si}`) === 'skipped' ? 'bỏ qua' : lp?.read[`book:${pi}.${ci}.${si}`] ? 'đang đọc' : '›'}
+                  <span className="go">
+                    {st(`${pi}/${ci}/${si}`) === 'done' ? '✓ đã học' : st(`${pi}/${ci}/${si}`) === 'skipped' ? 'bỏ qua' : lp?.read[`book:${pi}.${ci}.${si}`] ? 'đang đọc' : '›'}
                   </span>
                 </div>
               ))}
@@ -338,7 +338,7 @@ function SectionView({ book, pi, ci, si }: { book: BookData; pi: number; ci: num
               return (
                 <div key={i} className="book-fig">
                   <button className="chip" onClick={() => setActive(b === defaultFig ? null : { fen: b.fen!, caption: `Hình ${b.n}`, base: b.n })}>
-                    ♟ Hình {b.n}{c ? (c.turn() === 'w' ? ' · Trắng đi' : ' · Đen đi') : ''}
+                    <Icon name="board" /> Hình {b.n}{c ? (c.turn() === 'w' ? ' · Trắng đi' : ' · Đen đi') : ''}
                   </button>
                   <MiniBoard fen={b.fen} />
                 </div>

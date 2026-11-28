@@ -6,7 +6,7 @@ import Board from '../components/Board';
 import MoveList from '../components/MoveList';
 import MarkBar from '../components/MarkBar';
 import PromotionPicker from '../components/PromotionPicker';
-import { Button, Card, Spinner, Tag } from '../components/ui';
+import { Button, Card, Icon, Spinner, Tag } from '../components/ui';
 import { GAMES, loadGame, type AnnotatedGame, type GameMeta } from '../data/games';
 import { renderRich, type Preview } from '../lib/richtext';
 import { loadLessonProgress, setLessonStatus, type LessonProgress } from '../lib/storage';
@@ -77,7 +77,7 @@ function GameList() {
             <b>
               {i + 1}. {g.title}
             </b>
-            {st(g.id) === 'done' ? <Tag tone="good">✓</Tag> : st(g.id) === 'skipped' ? <Tag>bỏ qua</Tag> : <Tag tone={g.level === 1 ? 'good' : g.level === 2 ? 'info' : 'warn'}>{LEVEL[g.level]}</Tag>}
+            {st(g.id) === 'done' ? <Tag tone="good">✓ đã học</Tag> : st(g.id) === 'skipped' ? <Tag>bỏ qua</Tag> : <Tag tone={g.level === 1 ? 'good' : g.level === 2 ? 'info' : 'warn'}>{LEVEL[g.level]}</Tag>}
           </div>
           <div className="small muted">
             {g.white} – {g.black}, {g.event} {g.year} · {Math.ceil(g.plies / 2)} nước
@@ -177,7 +177,7 @@ function GameView({ meta }: { meta: GameMeta }) {
     return () => window.removeEventListener('keydown', on);
   }, [ply, setPly]);
 
-  if (!game || !line) return <Spinner label="Đang tải ván cờ..." />;
+  if (!game || !line) return <Spinner label="Đang tải ván cờ…" />;
 
   const mainFen = line.fens[ply];
   const shownFen = preview?.fen ?? mainFen;
@@ -240,8 +240,8 @@ function GameView({ meta }: { meta: GameMeta }) {
           </div>
           <h2 style={{ margin: 0 }}>{game.title}</h2>
         </div>
-        <button type="button" className="btn btn-ghost small" onClick={() => setFlip(!flip)} aria-label="Lật bàn cờ" title="Lật bàn cờ">
-          ⇅
+        <button type="button" className="btn btn-ghost" onClick={() => setFlip(!flip)} aria-label="Lật bàn cờ" title="Lật bàn cờ">
+          <Icon name="flip" />
         </button>
       </div>
 
@@ -275,16 +275,17 @@ function GameView({ meta }: { meta: GameMeta }) {
           )}
           <div className="gm-nav">
             <button type="button" className="btn btn-ghost" onClick={() => setPly(0)} disabled={ply === 0} aria-label="Về đầu ván" title="Về đầu ván">
-              ⏮
+              <Icon name="first" />
             </button>
             <button type="button" className="btn btn-ghost" onClick={() => setPly(ply - 1)} disabled={ply === 0} aria-label="Nước trước" title="Nước trước">
-              ◀
+              <Icon name="prev" />
             </button>
             <Button kind="primary" onClick={() => setPly(ply + 1)} disabled={atEnd}>
-              {ply === 0 ? 'Bắt đầu ▶' : atEnd ? 'Hết ván' : 'Nước tiếp ▶'}
+              {ply === 0 ? 'Bắt đầu' : atEnd ? 'Hết ván' : 'Nước tiếp'}
+              {!atEnd && <Icon name="next" />}
             </Button>
             <button type="button" className="btn btn-ghost" onClick={() => setPly(total)} disabled={atEnd} aria-label="Tới cuối ván" title="Tới cuối ván">
-              ⏭
+              <Icon name="last" />
             </button>
           </div>
           <div className="row-between tiny muted" style={{ marginTop: 6 }}>

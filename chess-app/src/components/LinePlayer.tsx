@@ -3,7 +3,7 @@ import { Chess } from 'chess.js';
 import type { Key } from 'chessground/types';
 import type { DrawShape } from 'chessground/draw';
 import Board from './Board';
-import { Button } from './ui';
+import { Button, Icon } from './ui';
 
 /**
  * A diagram that plays a sequence of moves by itself: ▶ runs it, ◀ ▶ step, and every move is listed with its number,
@@ -104,17 +104,17 @@ export default function LinePlayer({
         <div>
           {i === base && !playing
             ? line.length
-              ? `Bấm “▶ Chạy” để xem ${line.length} nước tiếp theo lần lượt${intro.length ? ', hoặc “▶ Xem từ nước 1” để xem cả ván từ đầu' : ''}. Bấm vào một nước bên dưới để nhảy tới đó.`
-              : `Bấm “▶ Chạy” để xem lần lượt ${intro.length} nước dẫn tới thế cờ này.`
+              ? `Bấm “Chạy” để xem ${line.length} nước tiếp theo lần lượt${intro.length ? ', hoặc “Xem từ nước 1” để xem cả ván từ đầu' : ''}. Bấm vào một nước bên dưới để nhảy tới đó.`
+              : `Bấm “Chạy” để xem lần lượt ${intro.length} nước dẫn tới thế cờ này.`
             : (frames[i].note ?? '')}
         </div>
       </div>
-      <div className="row" style={{ justifyContent: 'center', gap: 6 }}>
-        <Button kind="ghost" onClick={() => go(0)} aria-label="Về đầu">
-          ⏮
+      <div className="row" style={{ justifyContent: 'center', gap: 4 }}>
+        <Button kind="ghost" onClick={() => go(0)} label="Về đầu">
+          <Icon name="first" />
         </Button>
-        <Button kind="ghost" onClick={() => go(i - 1)} aria-label="Lùi một nước">
-          ◀
+        <Button kind="ghost" onClick={() => go(i - 1)} label="Lùi một nước">
+          <Icon name="prev" />
         </Button>
         <Button
           kind="primary"
@@ -125,13 +125,13 @@ export default function LinePlayer({
             setPlaying(true);
           }}
         >
-          {playing ? '⏸ Dừng' : '▶ Chạy'}
+          <Icon name={playing ? 'pause' : 'play'} /> {playing ? 'Dừng' : 'Chạy'}
         </Button>
-        <Button kind="ghost" onClick={() => go(i + 1)} aria-label="Tiến một nước">
-          ▶
+        <Button kind="ghost" onClick={() => go(i + 1)} label="Tiến một nước">
+          <Icon name="next" />
         </Button>
-        <Button kind="ghost" onClick={() => go(frames.length - 1)} aria-label="Tới cuối">
-          ⏭
+        <Button kind="ghost" onClick={() => go(frames.length - 1)} label="Tới cuối">
+          <Icon name="last" />
         </Button>
       </div>
       {intro.length > 0 && line.length > 0 && (
@@ -143,7 +143,7 @@ export default function LinePlayer({
               setPlaying(true);
             }}
           >
-            ▶ Xem từ nước 1
+            <Icon name="play" /> Xem từ nước 1
           </Button>
         </div>
       )}

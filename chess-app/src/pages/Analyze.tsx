@@ -7,7 +7,7 @@ import EvalBar from '../components/EvalBar';
 import EvalGraph from '../components/EvalGraph';
 import MoveList from '../components/MoveList';
 import PromotionPicker from '../components/PromotionPicker';
-import { Button, Card, Spinner, Tag } from '../components/ui';
+import { Button, Card, Icon, Spinner, Tag, askConfirm } from '../components/ui';
 import { getEngine, formatScore, toWhitePov, type Engine, type EngineLine } from '../lib/engine';
 import { analyzeGame, extractMistakes, replayGame, startFenOf, sideOf, moveNumberOf } from '../lib/analysis';
 import {
@@ -196,7 +196,7 @@ function GamesList() {
     batchCancel.current.cancelled = true;
   }, []);
 
-  if (!games || !settings) return <Spinner label="Đang tải..." />;
+  if (!games || !settings) return <Spinner label="Đang tải…" />;
 
   const allPending = games.filter((g) => !analyzed.has(g.id) && g.moves.length >= 10);
   const pendingGames = allPending.slice(0, 20);
@@ -580,7 +580,7 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game, settings, analysisLoaded, analysis, running]);
 
-  if (game === undefined || !settings) return <Spinner label="Đang tải..." />;
+  if (game === undefined || !settings) return <Spinner label="Đang tải…" />;
   if (game === null)
     return (
       <div>
@@ -650,7 +650,14 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
   const onBoardMove = (from: Key, to: Key) => (needsPromotion(chess, from, to) ? setPromo({ from, to }) : tryMove(from, to));
 
   const removeGame = async () => {
-    if (!confirm('Xóa ván này khỏi danh sách? Phân tích của ván và các nước sai lấy từ ván này trong “Lỗi của chính bạn” cũng bị xóa.')) return;
+    const ok = await askConfirm({
+      title: 'Xóa ván này khỏi danh sách?',
+      body: 'Phân tích của ván và các nước sai lấy từ ván này trong “Lỗi của chính bạn” cũng bị xóa.',
+      confirm: 'Xóa ván',
+      cancel: 'Giữ lại',
+      danger: true,
+    });
+    if (!ok) return;
     stopRun();
     await saveGames((await loadGames()).filter((g) => g.id !== game.id));
     await deleteAnalysis(game.id);
@@ -688,8 +695,8 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
             )}
           </div>
         </div>
-        <Button kind="ghost" onClick={() => setFlip(!flip)} className="small">
-          ⇅
+        <Button kind="ghost" label="Lật bàn cờ" onClick={() => setFlip(!flip)}>
+          <Icon name="flip" />
         </Button>
       </div>
 
@@ -710,17 +717,17 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
             />
           </div>
           <div className="row mt" style={{ justifyContent: 'center' }}>
-            <Button kind="ghost" onClick={() => go(-1)}>
-              ⏮
+            <Button kind="ghost" label="Về thế cờ ban đầu" onClick={() => go(-1)}>
+              <Icon name="first" />
             </Button>
-            <Button kind="ghost" onClick={backward} disabled={ply < 0 && variation.length === 0}>
-              ◀
+            <Button kind="ghost" label="Nước trước" onClick={backward} disabled={ply < 0 && variation.length === 0}>
+              <Icon name="prev" />
             </Button>
-            <Button kind="ghost" onClick={forward} disabled={!lineHasMore && ply >= lastPly}>
-              ▶
+            <Button kind="ghost" label="Nước sau" onClick={forward} disabled={!lineHasMore && ply >= lastPly}>
+              <Icon name="next" />
             </Button>
-            <Button kind="ghost" onClick={() => go(lastPly)}>
-              ⏭
+            <Button kind="ghost" label="Tới nước cuối" onClick={() => go(lastPly)}>
+              <Icon name="last" />
             </Button>
           </div>
           {variation.length > 0 && (
@@ -728,12 +735,12 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
               {onLine ? (
                 <>
                   {line!.sans.map((s, i) => (
-                    <span key={i} style={{ opacity: i < variation.length ? 1 : 0.45, fontWeight: i === variation.length - 1 ? 700 : undefined }}>
+                    <span key={i} style={{ opacity: i < variation.length ? 1 : 0.45, fontWeight: i === variation.length - 1 ? 600 : undefined }}>
                       {s}{' '}
                     </span>
                   ))}
                   <div className="tiny" style={{ marginTop: 2 }}>
-                    {lineHasMore ? `${variation.length}/${line!.sans.length} · bấm ▶ để xem nước tiếp theo.` : 'Hết biến.'} Có thể tự đi thử quân trên bàn cờ.
+                    {lineHasMore ? `${variation.length}/${line!.sans.length} · bấm › (nước sau) để xem tiếp.` : 'Hết biến.'} Có thể tự đi thử quân trên bàn cờ.
                   </div>
                 </>
               ) : (
@@ -756,7 +763,7 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
               </label>
             </div>
             {live.length === 0 && !over && running && <div className="small muted">Tạm dừng trong lúc phân tích toàn ván.</div>}
-            {live.length === 0 && !over && !running && !engineDown && <Spinner label="đang tính..." />}
+            {live.length === 0 && !over && !running && !engineDown && <Spinner label="đang tính…" />}
             {live.length === 0 && !over && !running && engineDown && <div className="small muted">{ENGINE_DOWN}</div>}
             {live.map((l) => (
               <div key={l.multipv} className="small" style={{ marginTop: 4 }}>
@@ -799,7 +806,7 @@ function GameAnalysisView({ gameId, initialPly, back }: { gameId: string; initia
                   {curExplain.line && curExplain.line.length > 0 && !onLine && (
                     <div className="row mt" style={{ gap: 6 }}>
                       <button className="chip" onClick={() => showLine(curExplain.line!)}>
-                        ▶ {curExplain.lineIsRefutation ? 'Xem vì sao sai' : 'Xem nước đúng'}: {curExplain.line.slice(0, 5).join(' ')}
+                        <Icon name="play" /> {curExplain.lineIsRefutation ? 'Xem vì sao sai' : 'Xem nước đúng'}: {curExplain.line.slice(0, 5).join(' ')}
                         {curExplain.line.length > 5 ? ' …' : ''}
                       </button>
                     </div>
@@ -989,7 +996,7 @@ function Weaknesses() {
       <h2 style={{ margin: 0 }}>Điểm yếu của bạn</h2>
     </div>
   );
-  if (rep === undefined) return <Spinner label="Đang tổng hợp..." />;
+  if (rep === undefined) return <Spinner label="Đang tổng hợp…" />;
   if (rep === null)
     return (
       <div>

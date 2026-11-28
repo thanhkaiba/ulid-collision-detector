@@ -55,7 +55,7 @@ export default function Puzzles({ route }: { route: Route }) {
     loadActivity().then((log) => setTodayCount(log[dayKey()]?.puzzles ?? 0));
   }, [mode]);
 
-  if (!progress || (mode === 'mistakes' && !mistakesLoaded)) return <Spinner label="Đang tải..." />;
+  if (!progress || (mode === 'mistakes' && !mistakesLoaded)) return <Spinner label="Đang tải…" />;
 
   if (mode === 'rated' || mode === 'theme') {
     return <Trainer theme={mode === 'theme' ? theme : undefined} progress={progress} setProgress={setProgress} />;
@@ -246,7 +246,7 @@ function Trainer({
     await savePuzzleProgress(next);
   };
 
-  if (!all) return <Spinner label="Đang tải bài tập..." />;
+  if (!all) return <Spinner label="Đang tải bài tập…" />;
   if (!puzzle)
     return (
       <Card>
@@ -391,7 +391,7 @@ function Daily() {
           </div>
         </div>
       )}
-      {!puzzle && !err && <Spinner label="Đang lấy bài tập từ Lichess..." />}
+      {!puzzle && !err && <Spinner label="Đang lấy bài tập từ Lichess…" />}
       {puzzle && (
         <>
           <p className="muted small">Bài tập của ngày hôm nay trên Lichess · độ khó {puzzle.rating}. Bài này không tính vào rating của bạn.</p>

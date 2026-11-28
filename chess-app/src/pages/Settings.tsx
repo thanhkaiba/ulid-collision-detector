@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { getEngineStatus, subscribeEngineStatus } from '../lib/engine';
-import { Button, Card, Seg, Spinner } from '../components/ui';
+import { Button, Card, Icon, Seg, Spinner, askConfirm } from '../components/ui';
 import { clearAll, loadSettings, saveSettings, type Settings as S } from '../lib/storage';
 import type { Route } from '../lib/router';
 import { LEVELS_INFO, chooseLevel, levelInfo } from '../lib/level';
@@ -128,7 +128,14 @@ export default function Settings(_: { route: Route }) {
         <Button
           kind="danger"
           onClick={async () => {
-            if (confirm('Xóa toàn bộ tiến độ, ván đã nhập, phân tích và cài đặt (tên người dùng, trình độ, màu bàn cờ)? Không thể hoàn tác.')) {
+            const ok = await askConfirm({
+              title: 'Xóa toàn bộ dữ liệu?',
+              body: 'Mất hết tiến độ, ván đã nhập, phân tích và cài đặt (tên người dùng, trình độ, màu bàn cờ). Không thể hoàn tác.',
+              confirm: 'Xóa hết',
+              cancel: 'Giữ lại',
+              danger: true,
+            });
+            if (ok) {
               await clearAll();
               // progress also lives in localStorage (game positions, lesson slides, practice marks, play setup...)
               try {
@@ -149,9 +156,9 @@ export default function Settings(_: { route: Route }) {
         <div
           className="feedback ok"
           role="status"
-          style={{ position: 'fixed', left: 16, right: 16, bottom: 'calc(var(--tabbar-h) + 12px + env(safe-area-inset-bottom))', maxWidth: 400, margin: '0 auto', zIndex: 30, textAlign: 'center', boxShadow: 'var(--shadow)', background: 'color-mix(in srgb, var(--good) 15%, var(--bg-2))' }}
+          style={{ position: 'fixed', left: 16, right: 16, bottom: 'calc(var(--tabbar-h) + 12px + env(safe-area-inset-bottom))', maxWidth: 400, margin: '0 auto', zIndex: 'var(--z-toast)', textAlign: 'center', boxShadow: 'var(--shadow)', background: 'color-mix(in srgb, var(--good) 15%, var(--bg-2))' }}
         >
-          ✓ Đã lưu
+          <Icon name="check" /> Đã lưu
         </div>
       )}
     </div>

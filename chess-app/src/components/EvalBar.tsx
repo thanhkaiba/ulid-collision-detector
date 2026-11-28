@@ -26,7 +26,6 @@ export default function EvalBar({
           top: atBottom ? 'auto' : 2,
           bottom: atBottom ? 2 : 'auto',
           color: whiteAhead ? '#333' : '#ddd',
-          fontSize: '0.65rem',
           fontWeight: 600,
         }}
       >

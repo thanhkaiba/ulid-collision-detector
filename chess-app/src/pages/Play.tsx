@@ -4,7 +4,7 @@ import type { Key, Color } from 'chessground/types';
 import Board from '../components/Board';
 import PromotionPicker from '../components/PromotionPicker';
 import MoveList from '../components/MoveList';
-import { Button, Card, Seg } from '../components/ui';
+import { Button, Card, Icon, Seg, useDialog } from '../components/ui';
 import { getEngine } from '../lib/engine';
 import { LEVELS, TIME_CONTROLS, applyLevel, type Level, type TimeControl } from '../lib/levels';
 import { fmtClock, gameEnd, playUci, turnColor, kingInCheckColor, toDests, needsPromotion } from '../lib/chess-utils';
@@ -174,11 +174,13 @@ function PracticeRun({ pos, back }: { pos: PracticePosition; back: string }) {
 function MethodSheet({ pos: shownPos, onClose }: { pos: PracticePosition; onClose: () => void }) {
   const pos = practiceById(shownPos.id) ?? shownPos;
   const method = METHODS[pos.id];
+  const ref = useRef<HTMLDivElement>(null);
+  useDialog(ref, onClose);
   return (
     <div className="sheet-backdrop" onClick={onClose}>
-      <div className="sheet method-sheet" onClick={(e) => e.stopPropagation()}>
+      <div ref={ref} className="sheet method-sheet" role="dialog" aria-modal="true" aria-label={pos.title} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
         {/* stays on top while the long sheet is scrolled, so "Đóng" is always at hand */}
-        <div className="row-between mb" style={{ position: 'sticky', top: -14, zIndex: 5, background: 'var(--bg-2)', padding: '14px 0 6px', marginTop: -14 }}>
+        <div className="row-between mb" style={{ position: 'sticky', top: -16, zIndex: 1, background: 'var(--bg-2)', padding: '16px 0 8px', marginTop: -16 }}>
           <b>{pos.title}</b>
           <button className="chip" onClick={onClose}>
             Đóng
@@ -186,13 +188,13 @@ function MethodSheet({ pos: shownPos, onClose }: { pos: PracticePosition; onClos
         </div>
         {method ? (
           <>
-            <div className="tiny muted">CÁCH LÀM</div>
+            <div className="kicker">Cách làm</div>
             <ol className="method-steps">
               {method.steps.map((s, k) => (
                 <li key={k}>{s}</li>
               ))}
             </ol>
-            <div className="tiny muted mt">LỜI GIẢI MẪU (HÌNH ĐỘNG)</div>
+            <div className="kicker mt">Lời giải mẫu (hình động)</div>
             <MethodDemo pos={pos} method={method} />
             <p className="tiny muted" style={{ margin: '8px 0 0' }}>
               Máy đánh với bạn có thể đi khác lời giải mẫu. Hãy làm theo cách làm ở trên, không cần nhớ từng nước.
@@ -386,7 +388,7 @@ function PlaySetup() {
       </Card>
       <Button
         kind={current ? 'default' : 'primary'}
-        className="grow"
+        className="block"
         onClick={() => {
           saveCurrent(null);
           setGame({
@@ -897,16 +899,16 @@ function GameView({
         <div>
           {practice && !over && (
             <Card>
-              <div className="tiny muted">
+              <div className="kicker">
                 {practice.swapped
                   ? practice.goal === 'draw'
-                    ? 'THỬ THÁCH: THOÁT KHỎI THẾ THUA'
-                    : 'THỬ THÁCH: THẮNG MÁY'
+                    ? 'Thử thách: thoát khỏi thế thua'
+                    : 'Thử thách: thắng máy'
                   : practice.goal === 'draw'
-                    ? 'MỤC TIÊU: THỦ HÒA'
+                    ? 'Mục tiêu: thủ hòa'
                     : practice.goal === 'mate'
-                      ? 'MỤC TIÊU: CHIẾU HẾT'
-                      : 'MỤC TIÊU: PHONG HẬU HOẶC THẮNG QUÂN'}
+                      ? 'Mục tiêu: chiếu hết'
+                      : 'Mục tiêu: phong Hậu hoặc thắng quân'}
               </div>
               {(!embedded || practice.swapped || practice.adhoc) && <p className="small" style={{ margin: '4px 0' }}>{practice.brief}</p>}
               {practice.swapped && engineMate !== null && (
@@ -914,7 +916,7 @@ function GameView({
               )}
               {!practice.adhoc && (
                 <Button kind="default" className="mt" onClick={() => setShowHint(true)}>
-                  ▶ Cách làm và lời giải mẫu
+                  <Icon name="play" /> Cách làm và lời giải mẫu
                 </Button>
               )}
               {slipped && (
@@ -943,13 +945,13 @@ function GameView({
               )}
               {!goalMet && !practice.adhoc && (
                 <Button kind="default" onClick={() => setShowHint(true)}>
-                  ▶ Xem cách làm và lời giải mẫu
+                  <Icon name="play" /> Xem cách làm và lời giải mẫu
                 </Button>
               )}
               <div className="row mt">
                 {canTakeback && (
                   <Button kind="primary" onClick={takeback}>
-                    ↶ Đi lại nước vừa rồi
+                    <Icon name="undo" /> Đi lại nước vừa rồi
                   </Button>
                 )}
                 <Button kind={canTakeback ? 'default' : 'primary'} onClick={onRematch}>
@@ -1015,11 +1017,11 @@ function GameView({
               </div>
             ) : (
               <div className="row mt">
-                <Button kind="ghost" onClick={() => setViewPly(Math.max(-1, (viewPly ?? moveCount - 1) - 1))} disabled={moveCount === 0 || viewPly === -1}>
-                  ◀
+                <Button kind="ghost" label="Xem nước trước" onClick={() => setViewPly(Math.max(-1, (viewPly ?? moveCount - 1) - 1))} disabled={moveCount === 0 || viewPly === -1}>
+                  <Icon name="prev" />
                 </Button>
-                <Button kind="ghost" onClick={() => setViewPly((viewPly ?? moveCount - 1) + 1 >= moveCount - 1 ? null : (viewPly ?? -1) + 1)} disabled={live}>
-                  ▶
+                <Button kind="ghost" label="Xem nước sau" onClick={() => setViewPly((viewPly ?? moveCount - 1) + 1 >= moveCount - 1 ? null : (viewPly ?? -1) + 1)} disabled={live}>
+                  <Icon name="next" />
                 </Button>
                 <span className="grow" />
                 {!over && (
@@ -1028,7 +1030,7 @@ function GameView({
                       {hinting ? 'Đang tìm…' : 'Gợi ý'}
                     </Button>
                     <Button kind="ghost" onClick={takeback} disabled={!canTakeback}>
-                      ↶ Đi lại
+                      <Icon name="undo" /> Đi lại
                     </Button>
                     {practice ? (
                       <Button kind="ghost" onClick={onRematch}>

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Chess } from 'chess.js';
 import Board from './Board';
 import LinePlayer from './LinePlayer';
+import { useDialog } from './ui';
 import type { Preview } from '../lib/richtext';
 import type { DrawShape } from 'chessground/draw';
 
@@ -48,6 +49,13 @@ function useBackCloses(open: boolean, onClose: () => void) {
 export default function PreviewSheet({ preview, onClose, orientation = 'white' }: { preview: Preview | null; onClose: () => void; orientation?: 'white' | 'black' }) {
   useBackCloses(!!preview, onClose);
   if (!preview) return null;
+  return <SheetBody preview={preview} onClose={onClose} orientation={orientation} />;
+}
+
+function SheetBody({ preview, onClose, orientation }: { preview: Preview; onClose: () => void; orientation: 'white' | 'black' }) {
+  // Escape is already handled by useBackCloses (it also pops the history entry): here only the focus is kept inside
+  const ref = useRef<HTMLDivElement>(null);
+  useDialog(ref);
   let turn: 'white' | 'black' = 'white';
   let check: 'white' | 'black' | false = false;
   try {
@@ -62,7 +70,7 @@ export default function PreviewSheet({ preview, onClose, orientation = 'white' }
   const intro = sansOf(preview.path ?? []);
   return (
     <div className="sheet-backdrop" onClick={onClose}>
-      <div className="sheet" role="dialog" aria-modal="true" aria-label={preview.label} onClick={(e) => e.stopPropagation()}>
+      <div ref={ref} className="sheet" role="dialog" aria-modal="true" aria-label={preview.label} tabIndex={-1} onClick={(e) => e.stopPropagation()}>
         <div className="row-between mb">
           <b className="small">{preview.label}</b>
           <button className="chip" onClick={onClose}>
