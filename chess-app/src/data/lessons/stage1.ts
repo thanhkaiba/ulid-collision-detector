@@ -6,14 +6,38 @@ export const STAGE1: Lesson[] = [
     stage: 1,
     title: 'Khai cuộc cho Trắng: Ván cờ Ý',
     summary: 'Một hệ thống duy nhất, dễ hiểu, dùng được tới 2000.',
-    minutes: 30,
+    minutes: 40,
     blocks: [
       {
         kind: 'text',
-        md: `### Vì sao chọn Ván cờ Ý (1.e4 e5 2.Nf3 Nc6 3.Bc4)
-- Tuân thủ mọi nguyên tắc: trung tâm, phát triển, nhập thành sớm.
-- Tượng c4 nhắm vào f7, điểm yếu nhất của Đen.
-- Kế hoạch rõ ràng, ít phải học thuộc.`,
+        md: `### Vì sao chọn Ván cờ Ý (Italian Game)
+Ván cờ Ý bắt đầu bằng 1.e4 e5 2.Nf3 Nc6 3.Bc4. Lý do nên chọn:
+- Đúng mọi nguyên tắc khai cuộc: tốt ở trung tâm, mã và tượng ra nhanh, tới nước 4 đã nhập thành được.
+- Tượng c4 nhắm vào f7, ô yếu nhất của Đen lúc đầu ván vì chỉ có vua bảo vệ.
+- Có một kế hoạch chung (c3, d3, nhập thành rồi xây dựng) dùng được cho hầu hết các cách đáp của Đen, nên ít phải học thuộc.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+        marks: ['f7:yellow'],
+        caption: 'Bấm “▶ Chạy” để xem năm nước đầu của Ván cờ Ý và lý do của từng nước. Ô vàng f7 là mục tiêu của Trắng.',
+        line: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4'],
+        lineNotes: [
+          'Tốt chiếm trung tâm và mở đường cho tượng f1 và hậu.',
+          'Đen cũng chiếm trung tâm bằng tốt e5.',
+          'Mã ra và đánh ngay tốt e5: Đen phải dùng nước tiếp theo để giữ nó.',
+          'Mã đen ra bảo vệ e5. Cả hai bên vừa phát triển vừa giữ trung tâm.',
+          'Tượng ra đường chéo c4-f7, nhắm vào f7. Ô f1 đã trống, Trắng sẵn sàng nhập thành.',
+        ],
+      },
+      {
+        kind: 'text',
+        md: `### Sau 3.Bc4: Đen có ba cách đáp chính
+- **3...Bc5** (Giuoco Piano, tiếng Ý nghĩa là "ván cờ êm"): tượng đen ra c5, nhắm vào f2 y như tượng Trắng nhắm f7. Phổ biến nhất, học ở các trang tiếp.
+- **3...Nf6** (Phòng thủ Hai Mã, Two Knights Defense): mã đen đánh ngay tốt e4.
+- **3...Nd4?!** (Gambit Blackburne Shilling): một cái bẫy, có trang riêng ở cuối bài.
+
+Gặp nước khác (3...Be7, 3...d6) cứ chơi theo kế hoạch chung: c3, d3, nhập thành.`,
       },
       {
         kind: 'diagram',
@@ -25,83 +49,166 @@ export const STAGE1: Lesson[] = [
       },
       {
         kind: 'text',
-        md: `### Kế hoạch "Ý chậm" (Giuoco Pianissimo)
-Sau 3...Bc5 4.c3 Nf6 5.d3 d6 6.O-O O-O: Trắng chơi **Re1, Nbd2, Bb3, Nf1-g3, h3** rồi tùy tình hình đẩy d4. Ý tưởng: xây dựng chắc, đưa mã sang g3 hướng về vua Đen.`,
+        md: `### Ý chậm (Giuoco Pianissimo): sáu nước đầu
+Sau 3...Bc5, cách dễ nhất cho người mới là **Ý chậm**: không vội đánh nhau, đưa quân ra đúng chỗ rồi mới mở thế cờ. Hai nước chìa khóa của Trắng là **c3** và **d3**:
+- **c3** chuẩn bị đẩy d4 về sau: khi tốt d lên d4 sẽ có tốt c3 đỡ, nếu Đen ăn exd4 thì Trắng ăn lại bằng tốt cxd4 và có hai tốt ở trung tâm.
+- **d3** giữ tốt e4 thật chắc, Trắng không phải lo các đòn đánh vào e4.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
+        lastMove: 'f8c5',
+        marks: ['c4f7:red', 'c5f2:red'],
+        caption: 'Sau 3...Bc5 hai tượng cùng nhắm vào ô f của đối phương (mũi tên đỏ). Bấm “▶ Chạy” để xem sáu nước tiếp theo của Ý chậm và lý do từng nước.',
+        intro: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Bc5'],
+        line: ['c3', 'Nf6', 'd3', 'd6', 'O-O', 'O-O'],
+        lineNotes: [
+          'Tốt c3 chuẩn bị d4: tốt d sẽ có tốt c đỡ. Ô c3 không còn cho mã nữa, mã b1 sẽ ra d2.',
+          'Mã đen ra, đánh tốt e4.',
+          'Giữ tốt e4 và mở đường cho tượng c1. Chậm nhưng không để lại điểm yếu nào.',
+          'Đen cũng giữ tốt e5 và mở đường cho tượng c8.',
+          'Vua Trắng vào chỗ an toàn, xe ra f1.',
+          'Đen cũng nhập thành. Đây là thế cờ gốc của Ý chậm, hai bên cân bằng.',
+        ],
+      },
+      {
+        kind: 'text',
+        md: `### Kế hoạch của Trắng: xây dựng rồi mới mở
+Sau sáu nước đó chưa có gì để ăn ngay. Trắng xây dựng theo thứ tự quen thuộc, mỗi nước một mục đích:
+1. **Re1**: xe ra cột e, đỡ tốt e4 thêm một lần.
+2. **Nbd2 rồi Nf1-g3**: mã hậu không có ô c3 (tốt c3 đứng đó) nên đi đường vòng d2-f1-g3, tới gần vua Đen.
+3. **Bb3**: tượng lui trước một ô. Ở c4 nó có thể bị tốt Đen đuổi (...b5 hay ...d5), ở b3 nó vẫn nhắm f7 mà an toàn hơn.
+4. **h3**: không cho mã, tượng Đen vào ô g4.
+
+Xây xong, Trắng mới đẩy **d4** để chiếm trung tâm và mở thế cờ, khi mọi quân đã sẵn sàng.`,
       },
       {
         kind: 'diagram',
         fen: 'r1bq1rk1/ppp2ppp/2np1n2/2b1p3/2B1P3/2PP1N2/PP3PPP/RNBQ1RK1 w - - 2 7',
         lastMove: 'e8g8',
         marks: ['f1e1:blue', 'b1d2:blue', 'c4b3:blue', 'h2h3:blue'],
-        caption: 'Thế cờ sau 6...O-O. Mũi tên xanh là các nước xây dựng của Trắng: Re1, Nbd2 (rồi mã đi tiếp f1-g3), Bb3 và h3. Bấm “▶ Chạy” để xem cả kế hoạch đi lần lượt.',
+        caption: 'Thế cờ sau 6...O-O. Mũi tên xanh là các nước xây dựng của Trắng: Re1, Nbd2 (rồi mã đi tiếp f1-g3), Bb3 và h3. Bấm “▶ Chạy” để xem cả kế hoạch đi lần lượt, kèm các nước đáp của Đen.',
         intro: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Bc5', 'c3', 'Nf6', 'd3', 'd6', 'O-O', 'O-O'],
         line: ['Re1', 'a6', 'Nbd2', 'Ba7', 'Bb3', 'h6', 'Nf1', 'Re8', 'Ng3', 'Be6', 'h3'],
         lineNotes: [
-          'Xe ra cột e, sau lưng tốt e4: giữ trung tâm và sẵn sàng cho d4 sau này.',
-          'Đen đi a6 để tượng có ô a7 lui về, không bị Na4 hay b4 đuổi.',
-          'Mã hậu ra d2, không chắn tốt c3. Từ d2 nó sẽ đi tiếp f1 rồi g3.',
-          '',
-          'Tượng lui b3 trước, để sau này ...d5 hay ...Na5 không đuổi được tượng với nhịp.',
-          '',
-          'Mã bắt đầu vòng d2-f1-g3: ô d2 nhường lại cho tượng c1.',
-          '',
+          'Xe ra cột e, đỡ tốt e4 thêm một lần. Khi cột e mở ra sau d4, xe đã đứng sẵn.',
+          'Đen dọn ô a7 cho tượng: khi Trắng đẩy b4 hay d4, tượng lui a7 mà vẫn nhắm f2.',
+          'Mã hậu ra d2 vì ô c3 đã có tốt. Từ d2 nó sẽ đi tiếp f1 rồi g3.',
+          'Tượng lui trước về a7, an toàn trên cùng đường chéo a7-f2.',
+          'Tượng lui trước về b3: vẫn nhắm f7 nhưng không còn sợ bị tốt Đen đuổi.',
+          'Đen ngăn Bg5 (tốt h6 sẽ ăn), nước mà Trắng muốn dùng để ghim mã f6 vào hậu d8: mã không dám đi vì lộ hậu.',
+          'Mã bắt đầu vòng d2-f1-g3. Ô d2 trống, tượng c1 có đường ra.',
+          'Xe đen ra cột e, đỡ tốt e5 giống như xe Trắng đỡ e4.',
           'Mã tới g3, nhìn vào f5 và h5, gần vua Đen.',
-          '',
-          'h3: không cho mã hay tượng Đen vào g4. Thế xây dựng xong, giờ Trắng chọn lúc đẩy d4.',
+          'Tượng đen ra, mời đổi lấy tượng b3: quân tấn công nguy hiểm nhất của Trắng.',
+          'h3: không cho quân Đen vào g4. Thế xây dựng xong, máy chấm cân bằng (Trắng nhỉnh chút). Giờ Trắng chọn lúc đẩy d4.',
         ],
       },
       {
         kind: 'text',
-        md: `### Nếu Đen chơi 3...Nf6 (Hai Mã)
-Người mới hay thích 4.Ng5 nhưng biến đó rất sắc và Đen có nhiều cách tốt. Ở trình độ này hãy chơi đơn giản **4.d3** rồi kế hoạch như trên.`,
-      },
-      {
-        kind: 'diagram',
-        fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
-        lastMove: 'g8f6',
-        marks: ['d2d3', 'f3g5:red', 'e4:yellow'],
-        caption: 'Sau 3...Nf6 mã đen đánh tốt e4 (vòng vàng). Mũi tên xanh: 4.d3 giữ tốt, đơn giản và chắc. Mũi tên đỏ: 4.Ng5 nhắm vào f7 nhưng dẫn tới các biến rất sắc.',
-        intro: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Nf6'],
-        line: ['d3', 'Bc5', 'c3', 'd6', 'O-O', 'O-O'],
-        lineNotes: [
-          '4.d3: giữ tốt e4 và mở đường cho tượng c1.',
-          '',
-          'c3 chuẩn bị d4 sau này, như kế hoạch Ý chậm.',
-          '',
-          '',
-          'Ra đúng thế cờ của kế hoạch Ý chậm ở trên, chỉ khác thứ tự nước. Tiếp theo là Re1, Nbd2, Bb3...',
-        ],
-      },
-      {
-        kind: 'text',
-        md: `### Bẫy cần biết
-- Sau 3...Nd4 (Gambit Blackburne Shilling) đừng tham 4.Nxe5? vì 4...Qg5! đánh cùng lúc mã e5 và tốt g2. Trắng phải trả lại mã, chỉ được một hai tốt bù. Đáp đúng là 4.Nxd4 exd4 5.O-O (rồi c3 hoặc d3); 4.O-O, 4.c3 hay 4.Nc3 cũng tốt.
-- Nếu Đen đi ...Bg4 ghim mã f3 và Trắng đã có Nc3, hãy nhớ mẫu chiếu hết Légal ở bài tập dưới.`,
-      },
-      {
-        kind: 'diagram',
-        fen: 'r1b1kbnr/pppp1ppp/8/4N1q1/2BnP3/8/PPPP1PPP/RNBQK2R w KQkq - 1 5',
-        lastMove: 'd8g5',
-        marks: ['g5e5:red', 'g5g2:red'],
-        caption: 'Sau 4.Nxe5? Qg5! hậu đen đánh cùng lúc mã e5 và tốt g2. Nếu Trắng còn tham 5.Nxf7? thì 5...Qxg2 6.Rf1 Qxe4+ 7.Be2 Nf3# chiếu hết.',
-        intro: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Nd4', 'Nxe5?', 'Qg5'],
-        line: ['Nxf7?', 'Qxg2', 'Rf1?', 'Qxe4+', 'Be2?', 'Nf3#'],
-        lineNotes: [
-          'Trắng tham thêm: mã ăn f7, đánh hậu g5 và xe h8, nhưng bỏ mặc tốt g2.',
-          'Hậu ăn g2 và đánh xe h1.',
-          'Xe chạy, nhưng để mất tốt e4 kèm chiếu (6.d3 đỡ hơn, dù Trắng vẫn kém nhiều).',
-          'Hậu ăn tốt e4, chiếu.',
-          'Che chiếu bằng tượng là thua ngay (Qe2 thì mất hậu, cũng thua).',
-          'Mã chiếu hết: tượng e2 bị hậu e4 ghim nên không ăn được mã, còn vua bị chính quân mình vây kín.',
-        ],
+        md: `### Đen muốn gì, và cấu trúc tốt
+Đen cũng xây dựng y như vậy: ...a6 và ...Ba7 để giữ tượng, ...h6 để không bị **ghim** (quân bị đánh không dám chạy vì sau lưng là quân quý hơn), ...Re8, và ...Be6 để đổi bớt tượng c4 đang nhắm f7. Khi sẵn sàng, Đen tìm cách đẩy **...d5** để giành trung tâm.
+
+**Cấu trúc tốt**: Trắng có chuỗi c3-d3-e4, Đen có d6-e5. Không bên nào có điểm yếu, nên ai lập kế hoạch tốt hơn sẽ hơn. Đừng tự phá cấu trúc bằng các nước tốt vô cớ.
+
+Bài tập dưới: tự đi lại chín nước đầu của kế hoạch.`,
       },
       {
         kind: 'task',
         fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         moves: ['e2e4', 'e7e5', 'g1f3', 'b8c6', 'f1c4', 'f8c5', 'c2c3', 'g8f6', 'd2d3', 'd7d6', 'e1g1', 'e8g8', 'f1e1', 'a7a6', 'b1d2', 'c5a7', 'c4b3', 'c8e6'],
         prompt: 'Đi lại kế hoạch Ý chậm cho Trắng: 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5 4.c3 Nf6 5.d3 d6 6.O-O O-O 7.Re1 a6 8.Nbd2 Ba7 9.Bb3 Be6.',
-        explain: 'Trắng đã sẵn sàng: Nf1 rồi Ng3, h3, và d4 khi thích hợp. Tượng lui b3 trước để ...d5 hay ...Na5 không đuổi được với nhịp; nếu Đen đổi ...Bxb3 thì Qxb3 vẫn tốt.',
+        explain: 'Trắng đã sẵn sàng: Nf1 rồi Ng3, h3, và d4 khi thích hợp. Tượng lui b3 trước để không bị tốt Đen đuổi với nhịp (...b5 hay ...d5); nếu Đen đổi ...Bxb3 thì Qxb3 vẫn tốt.',
         verify: 'line',
+      },
+      {
+        kind: 'text',
+        md: `### Sai lầm hay gặp của Trắng: 4.Ng5?
+Người mới rất thích nhảy mã g5 ngay: mã cùng tượng c4 đánh f7 hai lần, dọa Nxf7 hoặc Bxf7+. Nhưng mã g5 không có quân nào bảo vệ, và ô g5 nằm trên đường chéo của hậu d8 (tốt e7 đã đi, đường chéo d8-g5 thông). Đen chỉ cần **4...Qxg5** là ăn không một mã.
+
+Bài học: đừng tấn công bằng một hai quân khi các quân khác còn ở nhà, và trước khi đi luôn hỏi "ô mình tới có bị ăn không?".`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
+        lastMove: 'f8c5',
+        marks: ['f3g5:red', 'd8g5:red'],
+        caption: 'Sau 3...Bc5: mũi tên đỏ là nước 4.Ng5? và đường hậu d8 nhìn tới g5. Bấm “▶ Chạy” để xem Trắng mất quân thế nào.',
+        intro: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Bc5'],
+        line: ['Ng5?', 'Qxg5', 'Bxf7+?', 'Kxf7'],
+        lineNotes: [
+          'Mã nhảy g5, cùng tượng c4 đánh f7. Nhưng g5 không được bảo vệ.',
+          'Hậu ăn mã, lại đánh luôn tốt g2. Trắng mất mã mà không được gì.',
+          'Tham tiếp Bxf7+ để "lấy lại chút gì đó" chỉ làm mất thêm tượng.',
+          'Vua ăn tượng. Trắng mất hai quân nhẹ, chỉ được một tốt: gần như thua.',
+        ],
+      },
+      {
+        kind: 'text',
+        md: `### Sai lầm hay gặp của Đen: 5...Ng4?!
+Sau 4.c3 Nf6 5.d3, nhiều người cầm Đen đi **5...Ng4?!**: mã đi lần hai để cùng tượng c5 đánh f2, dọa Nxf2 đánh hậu và xe. Lúc này f2 chỉ có vua bảo vệ, nên lời dọa là thật.
+
+Cách trừng phạt rất đơn giản: **nhập thành**. Xe f1 thêm vào bảo vệ f2, rồi **h3** đuổi mã về. Đen phí hai nhịp đi mã mà không được gì. Nếu Đen vẫn thí ...Nxf2 thì Rxf2 Bxf2+ Kxf2: Trắng được hai quân nhẹ đổi lấy xe và một tốt, máy chấm Trắng hơn khoảng một tốt rưỡi.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'r1bqk2r/pppp1ppp/2n5/2b1p3/2B1P1n1/2PP1N2/PP3PPP/RNBQK2R w KQkq - 1 6',
+        lastMove: 'g8g4',
+        marks: ['g4f2:red', 'c5f2:red', 'f2:yellow'],
+        caption: 'Sau 5...Ng4?!: mã và tượng đen cùng đánh f2 (mũi tên đỏ). Bấm “▶ Chạy” để xem cách Trắng đáp.',
+        intro: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Bc5', 'c3', 'Nf6', 'd3', 'Ng4'],
+        line: ['O-O', 'd6', 'h3', 'Nf6'],
+        lineNotes: [
+          'Nhập thành: giờ f2 có cả vua và xe bảo vệ, hai quân đánh và hai quân giữ.',
+          'Đen thấy Nxf2 không còn lợi nên quay về phát triển.',
+          'h3 đuổi mã g4.',
+          'Mã về lại f6: Đen đi mã ba lần để về đúng chỗ cũ. Máy chấm Trắng hơn khoảng 0,7 tốt, thay vì khoảng 0,3 như thế cờ thường.',
+        ],
+      },
+      {
+        kind: 'text',
+        md: `### Nếu Đen chơi 3...Nf6 (Phòng thủ Hai Mã)
+Mã f6 đánh ngay tốt e4. Nhiều người mới thích đáp **4.Ng5** (mã cùng tượng đánh f7). Lần này mã f6 chắn đường chéo d8-g5 nên hậu không ăn được mã, và Đen có đáp tốt 4...d5 5.exd5 rồi thường thí tốt bằng 5...Na5 để đuổi tượng và ra quân nhanh. Đó là một **gambit**: thí tốt để đổi lấy nhịp phát triển. Biến này rất sắc, phải học thuộc nhiều, máy chấm cân bằng.
+
+Ở trình độ này hãy chơi **4.d3**: giữ chắc tốt e4 rồi đi tiếp như Ý chậm (c3, nhập thành, Re1...).`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
+        lastMove: 'g8f6',
+        marks: ['d2d3', 'f3g5:red', 'e4:yellow'],
+        caption: 'Sau 3...Nf6 mã đen đánh tốt e4 (vòng vàng). Mũi tên xanh: 4.d3 giữ tốt, đơn giản và chắc. Mũi tên đỏ: 4.Ng5 nhắm vào f7 nhưng dẫn tới các biến rất sắc. Bấm “▶ Chạy” để xem 4.d3 dẫn về Ý chậm.',
+        intro: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Nf6'],
+        line: ['d3', 'Bc5', 'c3', 'd6', 'O-O', 'O-O'],
+        lineNotes: [
+          'Giữ tốt e4 và mở đường cho tượng c1.',
+          'Tượng đen ra c5, nhắm vào f2.',
+          'c3 chuẩn bị d4 sau này, như kế hoạch Ý chậm.',
+          'Đen giữ tốt e5 và mở đường cho tượng c8.',
+          'Vua Trắng vào chỗ an toàn.',
+          'Ra đúng thế cờ gốc của Ý chậm, chỉ khác thứ tự nước. Tiếp theo là Re1, Nbd2, Bb3...',
+        ],
+      },
+      {
+        kind: 'text',
+        md: `### Khi Đen ghim mã bằng ...Bg4: mẫu Légal
+Có khi Đen giữ e5 bằng 2...d6 thay cho 2...Nc6. Sau 1.e4 e5 2.Nf3 d6 3.Bc4 Bg4, tượng g4 **ghim** mã f3 vào hậu d1: nếu mã chạy thì hậu bị ăn.
+
+Nhưng ghim vào hậu không phải ghim vào vua: mã vẫn được phép đi. Nếu sau 4.Nc3 Đen còn đi một nước chậm như 4...g6?, Trắng có đòn **5.Nxe5!**: bỏ hậu để ăn tốt e5. Đen ăn hậu thì bị chiếu hết trong hai nước (bạn tự tìm ở bài tập dưới); Đen không ăn hậu thì Trắng lấy lại quân và hơn một tốt.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'rn1qkbnr/ppp2p1p/3p2p1/4p3/2B1P1b1/2N2N2/PPPP1PPP/R1BQK2R w KQkq - 0 5',
+        lastMove: 'g7g6',
+        marks: ['g4d1:red', 'f3e5'],
+        caption: 'Sau 1.e4 e5 2.Nf3 d6 3.Bc4 Bg4 4.Nc3 g6?: mũi tên đỏ là đường ghim từ tượng g4 tới hậu d1. Mũi tên xanh: 5.Nxe5! mặc kệ ghim. Bấm “▶ Chạy” để xem cách Đen đáp tốt nhất.',
+        intro: ['e4', 'e5', 'Nf3', 'd6', 'Bc4', 'Bg4', 'Nc3', 'g6'],
+        line: ['Nxe5', 'dxe5', 'Qxg4'],
+        lineNotes: [
+          'Mã bỏ f3, ăn tốt e5. Hậu d1 bị tượng g4 đánh, nhưng nếu Đen ăn hậu thì có chiếu hết hai nước.',
+          'Đen không tham hậu mà ăn lại mã.',
+          'Hậu ăn tượng g4: Trắng lấy lại quân, hơn một tốt và ra quân nhanh hơn.',
+        ],
       },
       {
         kind: 'task',
@@ -110,6 +217,55 @@ Người mới hay thích 4.Ng5 nhưng biến đó rất sắc và Đen có nhi�
         prompt: 'Chiếu hết Légal. Đen vừa tham ăn hậu bằng 5...Bxd1. Trắng chiếu hết trong 2 nước.',
         explain: '6.Bxf7+ Ke7 7.Nd5#. Ba quân nhẹ phối hợp chiếu hết vua đứng giữa bàn. Mẫu này xảy ra khi Đen ghim mã f3 bằng Bg4 quá sớm.',
         verify: 'mate',
+      },
+      {
+        kind: 'text',
+        md: `### Bẫy 3...Nd4 (Gambit Blackburne Shilling)
+Sau 1.e4 e5 2.Nf3 Nc6 3.Bc4, Đen đi **3...Nd4?!**: mã đi lần thứ hai và bỏ mặc tốt e5. Theo nguyên tắc thì đây là nước kém (máy chấm Trắng hơn khoảng một tốt), nhưng nó giấu một cái bẫy.
+
+Tốt e5 là **mồi**. Nếu Trắng ăn **4.Nxe5?**, Đen đáp **4...Qg5!**: hậu đánh cùng lúc hai thứ, mã e5 và tốt g2 (sau tốt g2 là xe h1). Trắng không giữ được cả hai. Tệ nhất là khi Trắng tham tiếp: bấm “▶ Chạy” dưới hình để xem cả cái bẫy, tới chiếu hết.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'r1bqkbnr/pppp1ppp/8/4p3/2BnP3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
+        lastMove: 'c6d4',
+        marks: ['f3e5:red', 'e5:yellow'],
+        caption: 'Sau 3...Nd4?!: tốt e5 (vòng vàng) không còn mã c6 bảo vệ, trông như ăn không (mũi tên đỏ). Đó là mồi.',
+        intro: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Nd4'],
+        line: ['Nxe5?', 'Qg5', 'Nxf7?', 'Qxg2', 'Rf1?', 'Qxe4+', 'Be2?', 'Nf3#'],
+        lineNotes: [
+          'Trắng ăn tốt mồi. Mã e5 giờ không có quân nào bảo vệ.',
+          'Hậu đánh hai thứ một lúc: mã e5 và tốt g2 (sau nó là xe h1).',
+          'Trắng tham thêm: mã ăn f7, đánh hậu g5 và xe h8, nhưng bỏ mặc tốt g2.',
+          'Hậu ăn g2 và đánh xe h1.',
+          'Xe chạy, nhưng để mất tốt e4 kèm chiếu (6.d3 đỡ hơn, dù Trắng vẫn kém nhiều).',
+          'Hậu ăn tốt e4, chiếu vua.',
+          'Che chiếu bằng tượng là thua ngay (Qe2 thì mất hậu, cũng thua).',
+          'Mã chiếu hết: tượng e2 bị hậu e4 ghim nên không ăn được mã, còn vua bị chính quân mình vây kín.',
+        ],
+      },
+      {
+        kind: 'text',
+        md: `### Nếu lỡ ăn 4.Nxe5?, và cách đáp đúng
+Đã lỡ 4.Nxe5? Qg5 thì cách đỡ tốt nhất là **5.O-O**: vua sang g1 giữ tốt g2, chịu mất mã. Trắng mất mã (3 điểm) chỉ đổi được tốt e5 (1 điểm), còn chút thế công nhờ ra quân nhanh, nhưng máy chấm Đen hơn.
+
+Đáp đúng 3...Nd4 là **4.Nxd4 exd4 5.O-O**: đổi mất con mã đã đi hai lần của Đen, tốt e5 bị kéo lệch sang d4, Trắng vẫn có tốt e4 ở trung tâm và nhập thành ngay. Sau đó c3 đánh tốt d4. 4.O-O, 4.c3 hay 4.Nc3 ngay cũng tốt. Thử ở bài tập dưới.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'r1b1kbnr/pppp1ppp/8/4N1q1/2BnP3/8/PPPP1PPP/RNBQK2R w KQkq - 1 5',
+        lastMove: 'd8g5',
+        marks: ['g5e5:red', 'g5g2:red'],
+        caption: 'Sau 4.Nxe5? Qg5! hậu đen đánh cùng lúc mã e5 và tốt g2 (mũi tên đỏ). Bấm “▶ Chạy” để xem cách đỡ ít thiệt nhất của Trắng.',
+        intro: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Nd4', 'Nxe5?', 'Qg5'],
+        line: ['O-O', 'Qxe5', 'c3', 'Ne6', 'd4'],
+        lineNotes: [
+          'Nhập thành: vua g1 bảo vệ tốt g2. Mã e5 đành bỏ.',
+          'Đen ăn mã. Trắng đổi mã lấy một tốt.',
+          'Trắng đuổi mã d4, cố ra quân thật nhanh để bù lại.',
+          'Mã lui e6, chắn đường chéo của tượng c4 tới f7.',
+          'Tốt d4 đánh hậu. Trắng có thế công, nhưng vẫn thiếu một quân: máy chấm Đen hơn khoảng nửa tốt, trong khi nếu đáp đúng ở nước 4 thì Trắng hơn khoảng một tốt.',
+        ],
       },
       {
         kind: 'task',

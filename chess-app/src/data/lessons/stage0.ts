@@ -538,54 +538,89 @@ Trước mỗi lần bắt quân hãy đếm: "tôi lấy bao nhiêu, mất bao 
     id: 'opening-principles',
     stage: 0,
     title: 'Nguyên tắc khai cuộc',
-    summary: 'Chưa cần học thuộc biến. Chỉ cần 5 nguyên tắc.',
-    minutes: 20,
+    summary: 'Chưa cần học thuộc biến. Chỉ cần 5 nguyên tắc và hiểu vì sao.',
+    minutes: 25,
     blocks: [
       {
         kind: 'text',
-        md: `### Năm nguyên tắc
-1. **Chiếm trung tâm** bằng tốt: e4, d4 (hoặc e5, d5 với Đen).
-2. **Phát triển quân nhẹ** (mã, tượng) ra khỏi hàng 1, mã trước tượng. Mục tiêu: sau 10 nước, không còn quân nhẹ nào ở nhà.
+        md: `### Khai cuộc là gì?
+**Khai cuộc** là khoảng 10 nước đầu ván. Việc chính lúc này chưa phải là ăn quân, mà là **đưa quân ra trận** và **đưa vua vào chỗ an toàn**, nhanh hơn đối thủ. Bên ra quân nhanh hơn sẽ có nhiều quân hơn ở nơi trận đánh nổ ra.
+
+Mỗi lượt đi gọi là một **nhịp**. Đi một nước vô ích là "phí nhịp": tặng đối thủ thêm một lượt ra quân.
+
+### Năm nguyên tắc
+1. **Chiếm trung tâm** bằng tốt: e4, d4 (với Đen: e5, d5).
+2. **Phát triển quân nhẹ**: đưa mã, tượng ra khỏi hàng cuối, thường mã trước tượng.
 3. **Nhập thành sớm**, thường trước nước 10.
-4. **Đừng đi một quân hai lần** khi chưa phát triển xong, trừ khi có lý do cụ thể.
-5. **Đừng đưa hậu ra sớm**: hậu dễ bị quân nhẹ đuổi, đối phương vừa đuổi vừa phát triển.`,
+4. **Không đi một quân hai lần** khi chưa ra hết quân, trừ khi có lý do cụ thể (ăn quân, tránh bị ăn).
+5. **Không đưa hậu ra sớm.**
+
+Các trang sau giải thích từng điều: vì sao, và chuyện gì xảy ra nếu làm sai.`,
+      },
+      {
+        kind: 'text',
+        md: `### 1. Chiếm trung tâm
+**Trung tâm** là bốn ô d4, e4, d5, e5 (ô vàng trên hình). Quân đứng giữa bàn đi được nhiều hướng nhất: mã ở e4 khống chế 8 ô, mã ở góc a1 chỉ được 2 ô. Bên nắm trung tâm thì quân mình dễ ra, quân đối phương bị chật.
+
+Tốt e và tốt d tiến hai ô làm hai việc một lúc: chiếm trung tâm và **mở đường** cho tượng, hậu đứng sau.`,
       },
       {
         kind: 'diagram',
         fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
         marks: ['d4:yellow', 'e4:yellow', 'd5:yellow', 'e5:yellow', 'e2e4:blue', 'd2d4:blue', 'g1f3', 'b1c3'],
-        caption: 'Bốn ô vàng là trung tâm. Mũi tên xanh dương: tốt e, d tiến hai ô chiếm trung tâm. Mũi tên xanh lá: mã ra f3, c3, nhìn thẳng vào trung tâm.',
+        caption: 'Bốn ô vàng là trung tâm. Mũi tên xanh dương: tốt e, d tiến hai ô chiếm trung tâm. Mũi tên xanh lá: mã ra f3, c3, nhìn thẳng vào trung tâm. Bấm “▶ Chạy” để xem bốn nước đầu của một ván thường gặp và lý do từng nước.',
+        line: ['e4', 'e5', 'Nf3', 'Nc6'],
+        lineNotes: [
+          'Tốt chiếm e4, khống chế hai ô d5 và f5, đồng thời mở đường cho tượng f1 và hậu.',
+          'Đen làm y như vậy: tốt chiếm e5 và chặn tốt e4 không cho tiến tiếp.',
+          'Mã ra ô tốt nhất của nó: đánh tốt e5 và nhìn vào ô d4. Vừa phát triển vừa dọa.',
+          'Đen cũng ra mã, bảo vệ tốt e5 và cũng nhìn vào d4. Không bên nào phí nhịp.',
+        ],
+      },
+      {
+        kind: 'text',
+        md: `### 2 và 3. Phát triển và nhập thành
+**Phát triển** là đưa quân nhẹ (mã, tượng) từ hàng cuối tới ô hoạt động. Ở nhà chúng không làm được gì. Mã thường ra trước vì ô tốt của mã đã rõ (f3, c3 với Trắng), còn tượng có nhiều đường chéo để chọn, nên đợi xem đối thủ đi gì.
+
+**Nhập thành**: vua đi hai ô sang bên, xe nhảy qua đứng cạnh vua. Một nước làm hai việc: vua vào góc sau ba tốt che chắn, và xe từ góc ra gần giữa bàn. Vua đứng giữa bàn rất nguy hiểm khi các cột trung tâm mở ra.`,
       },
       {
         kind: 'diagram',
         fen: 'r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',
         lastMove: 'f8c5',
         marks: ['e1g1:blue', 'h1f1:blue'],
-        caption: 'Sau 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5: mỗi bên có một tốt trung tâm và hai quân nhẹ đã ra. Trắng nhập thành được ngay (mũi tên: vua sang g1, xe sang f1).',
+        caption: 'Sau 1.e4 e5 2.Nf3 Nc6 3.Bc4 Bc5: mỗi bên có một tốt trung tâm và hai quân nhẹ đã ra. Tượng c4 nhắm vào f7, tượng c5 nhắm vào f2: hai ô yếu vì chỉ có vua bảo vệ. Giữa vua và xe Trắng đã trống, nên Trắng nhập thành được ngay (mũi tên). Bấm “▶ Chạy” để xem hai bên ra quân tiếp.',
         intro: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Bc5'],
+        line: ['O-O', 'Nf6', 'd3', 'O-O', 'Nc3', 'd6'],
+        lineNotes: [
+          'Nhập thành: vua sang g1 sau ba tốt f2, g2, h2; xe sang f1, sẵn sàng vào trận.',
+          'Đen ra mã thứ hai, đánh tốt e4.',
+          'Tốt d3 giữ tốt e4 và mở đường cho tượng c1.',
+          'Đen cũng đưa vua vào chỗ an toàn.',
+          'Mã thứ hai của Trắng ra, cũng giữ e4 và nhìn vào ô d5.',
+          'Tốt d6 giữ e5 và mở đường cho tượng c8. Mỗi bên đã ra ba quân nhẹ và nhập thành: thế cờ khỏe, cân bằng.',
+        ],
       },
       {
         kind: 'text',
-        md: `### Những lỗi phổ biến
-- Đi tốt biên (a3, h3) vô cớ.
-- Mang hậu đi săn tốt rồi bị bẫy.
-- Tấn công khi chưa phát triển đủ quân.
+        md: `### 4 và 5. Đừng phí nhịp, đừng đưa hậu ra sớm
+Đi một quân hai lần nghĩa là một quân khác phải đứng nhà thêm một nhịp. Hậu là quân dễ làm mình phí nhịp nhất: nó quý (9 điểm) nên hễ bị mã, tượng hay tốt đánh là phải chạy. Đối phương **vừa đuổi hậu vừa ra quân**, mỗi lần đuổi là được thêm một nhịp.
 
-Ở giai đoạn này **đừng học biến khai cuộc**. Hãy chơi theo nguyên tắc rồi xem engine nói gì sau ván.`,
+Ra hậu sớm chỉ đáng khi ăn được quân, hoặc dọa thật sự mà đối thủ không đuổi được hậu với nhịp.`,
       },
       {
         kind: 'diagram',
         fen: 'rnb1kbnr/ppp1pppp/8/3q4/8/2N5/PPPP1PPP/R1BQKBNR b KQkq - 1 3',
         lastMove: 'b1c3',
         marks: ['c3d5:red'],
-        caption: 'Sau 1.e4 d5 2.exd5 Qxd5 3.Nc3: hậu ra sớm bị mã đuổi (mũi tên đỏ). Trắng vừa phát triển thêm một quân, còn Đen phải mất thêm một nước để đi hậu lần nữa.',
+        caption: 'Sau 1.e4 d5 2.exd5 Qxd5 3.Nc3 (Phòng thủ Scandinavia): Đen phải ra hậu sớm để lấy lại tốt, và mã c3 đuổi hậu ngay (mũi tên đỏ). Bấm “▶ Chạy” để xem Trắng dùng các nhịp được tặng.',
         intro: ['e4', 'd5', 'exd5', 'Qxd5', 'Nc3'],
         line: ['Qa5', 'd4', 'Nf6', 'Nf3'],
         lineNotes: [
-          'Hậu đen phải tránh mã, đi thêm một nước nữa: mất nhịp.',
-          'Trắng dùng nhịp đó chiếm trung tâm bằng d4.',
-          'Đen mới phát triển được quân nhẹ đầu tiên.',
-          'Trắng đã có hai quân nhẹ ra trận và tốt d4 ở trung tâm, Đen chỉ có một mã và một hậu bị đuổi.',
+          'Hậu phải chạy: Đen đi hậu lần thứ hai trong khi chưa ra quân nhẹ nào.',
+          'Trắng dùng nhịp đó đưa tốt d4 vào trung tâm, mở đường cho tượng c1.',
+          'Đen mới ra được quân nhẹ đầu tiên.',
+          'Trắng đã có hai mã ra trận và tốt d4 ở trung tâm. Máy chấm Trắng hơn khoảng nửa tốt: Đen vẫn chơi được, nhưng đi sau về phát triển.',
         ],
       },
       {
@@ -596,6 +631,41 @@ Trước mỗi lần bắt quân hãy đếm: "tôi lấy bao nhiêu, mất bao 
         prompt: 'Trắng đưa hậu ra sớm đe dọa Qxf7#. Đen phòng thủ thế nào cho tốt?',
         explain: 'g6! vừa chặn hậu vừa đuổi nó. Sau {g6 Qf3} Trắng lại dọa Qxf7#, Đen chặn bằng {g6 Qf3 Nf6}: vừa phòng thủ vừa phát triển. Qe7 hoặc Qf6 cũng giữ được f7 nhưng kém hơn (Qe7 chắn tượng f8, Qf6 chiếm ô của mã).',
         verify: 'best',
+      },
+      {
+        kind: 'text',
+        md: `### Lỗi hay gặp: làm yếu vua để giữ tốt
+Tốt f, g, h trước vua là tấm khiên của nó. Đẩy chúng vô cớ là mở đường cho hậu, tượng đối phương đánh thẳng vào vua.
+
+Ví dụ: sau 1.e4 e5 2.Nf3 Đen giữ tốt e5 bằng **2...f6?**. Trông có vẻ chắc, nhưng f6 lấy mất ô tốt nhất của mã g8 và mở đường chéo h5-e8 tới vua. Cách giữ e5 đúng là 2...Nc6 (vừa giữ tốt vừa ra quân) hoặc 2...d6. Máy chấm 2...f6 kém hơn 2...Nc6 khoảng một tốt.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'rnbqkbnr/pppp2pp/5p2/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 0 3',
+        lastMove: 'f7f6',
+        marks: ['h5e8:red', 'f3e5'],
+        caption: 'Sau 1.e4 e5 2.Nf3 f6?: mũi tên đỏ là đường chéo vừa mở tới vua Đen. Trắng thí mã ngay bằng 3.Nxe5. Bấm “▶ Chạy” để xem vì sao Đen không được ăn lại mã.',
+        intro: ['e4', 'e5', 'Nf3', 'f6'],
+        line: ['Nxe5', 'fxe5?', 'Qh5+', 'g6', 'Qxe5+', 'Qe7', 'Qxh8'],
+        lineNotes: [
+          'Thí mã lấy tốt e5. Đáp tốt nhất của Đen là không ăn mã (3...Qe7), nhưng thế Đen vẫn kém rõ.',
+          'Ăn mã là sai lầm: tốt f đã rời f7 rồi lại rời f6, đường chéo h5-e8 mở toang.',
+          'Hậu chiếu vua. Nếu 4...Ke7 thì 5.Qxe5+ Kf7 6.Bc4+ và vua Đen bị săn giữa bàn.',
+          'Che chiếu bằng tốt g, nhưng tốt g7 rời chỗ làm mở đường chéo e5-h8 tới xe h8.',
+          'Hậu ăn tốt e5 kèm chiếu, đồng thời nhắm vào xe h8: một đòn đánh hai mục tiêu.',
+          'Đen phải lo che chiếu trước.',
+          'Trắng ăn xe. Trắng bỏ mã (3 điểm) nhưng lấy được xe (5 điểm) và hai tốt.',
+        ],
+      },
+      {
+        kind: 'text',
+        md: `### Tóm tắt và các lỗi hay gặp khác
+- Đi tốt biên (a3, h3) khi chưa ra quân: phí nhịp. Sau khi đã ra quân và nhập thành, h3 mới có lý do (không cho quân đối phương vào g4).
+- Mang hậu đi ăn tốt rồi bị đuổi, thậm chí bị bẫy.
+- Tấn công bằng một hai quân khi các quân khác còn ở nhà: đối phương phòng thủ dễ dàng rồi phản công.
+- Ăn một quân "mồi" mà không xem đối phương đáp lại thế nào.
+
+Ở giai đoạn này **chưa cần học thuộc biến khai cuộc**. Mỗi nước hãy tự hỏi: nước này chiếm trung tâm, ra quân hay đưa vua an toàn? Sau ván, mở máy xem mình đã lệch nguyên tắc ở đâu.`,
       },
       {
         kind: 'task',
