@@ -641,70 +641,163 @@ Giải một bộ 300-1000 bài tập, rồi giải lại **cùng bộ** nhanh h
     stage: 2,
     title: 'Xây kho khai cuộc theo hiểu biết',
     summary: 'Từ "chơi theo nguyên tắc" đến có hệ thống riêng.',
-    minutes: 20,
+    minutes: 35,
     blocks: [
       {
         kind: 'text',
         md: `### Khi nào cần kho khai cuộc
-Khoảng 1500-1600, khi bạn thấy thua ngay sau khai cuộc vì đối phương biết nhiều hơn. Trước đó, thời gian học khai cuộc nên dành cho chiến thuật.`,
+Kho khai cuộc (repertoire) là bộ khai cuộc bạn chọn sẵn: một hệ thống khi cầm Trắng, một cách đáp 1.e4 và một cách đáp 1.d4 khi cầm Đen. Dấu hiệu đã đến lúc xây (thường quanh 1500-1600):
+- Phân tích ván bằng máy, bạn hay kém khoảng một tốt trở lên trước nước 15 mà không để mất quân hay bỏ sót đòn nào rõ.
+- Bạn gặp đi gặp lại một thế cờ mà không biết kế hoạch.
+
+Nếu bạn vẫn thua chủ yếu vì để quân hay bỏ sót đòn đôi, thời gian nên dành cho chiến thuật trước.`,
       },
       {
         kind: 'text',
-        md: `### Cách xây
-1. Chọn khai cuộc hợp **phong cách** (thích tấn công: Ý/Scotch, Sicilian; thích chắc: QGD, Caro-Kann, London).
-2. Với mỗi biến chính, học **ý tưởng và kế hoạch** trước, biến cụ thể sau.
-3. Dùng **Lichess Opening Explorer** lọc theo rating của bạn: xem đối thủ cùng trình thực sự đi gì, không phải kiện tướng đi gì.
-4. Tạo **study** trên Lichess cho mỗi khai cuộc, thêm biến mới mỗi khi thua vì không biết.
-5. Xem 5-10 **ván kiện tướng** trong khai cuộc đó để nắm kế hoạch trung cuộc.`,
+        md: `### Cách xây, từng bước
+1. **Chọn theo phong cách.** Thích thế mở, tấn công: Ván cờ Ý hay Scotch cho Trắng, Sicilia cho Đen. Thích thế chắc: Gambit Hậu từ chối, Caro-Kann (1.e4 c6), London.
+2. **Dựng khung tối thiểu.** Ví dụ từ các bài trong ứng dụng này: Trắng 1.e4 và Ván cờ Ý; Đen 1...e5 chống 1.e4, Gambit Hậu từ chối chống 1.d4. Sau đó bổ sung dần những gì còn thiếu, như cách đáp 1...c5 hay 1...e6 khi bạn cầm Trắng.
+3. **Ý tưởng trước, biến sau.** Với mỗi khai cuộc, viết ra: cấu trúc tốt hay gặp, ô và quân mà hai bên nhắm tới, đòn phá tốt của bạn. Ví dụ Gambit Hậu từ chối: ...e5 hoặc ...c5 để giải phóng tượng c8. Rồng cấp tốc: ...d5 chỉ trong một nước (xem dưới).
+4. **Lichess Opening Explorer (trình khám phá khai cuộc), tab Lichess**: lọc rating quanh mức của bạn và thể loại bạn hay chơi. Ở mỗi nước của đối phương, chuẩn bị đáp cho 2-3 nước phổ biến nhất; nước hiếm thì chơi theo nguyên tắc.
+5. **Mỗi khai cuộc một study trên Lichess**, mỗi biến một chương, ghi chú bằng lời vì sao đi nước đó. Sau mỗi ván, tìm nước đầu tiên ván đi ra khỏi study, tra Explorer rồi thêm 1-2 nước. Ví dụ: thua vì 4.Ng5 d5 5.exd5 Nxd5? trong Hai Mã thì thêm 5...Na5 kèm ghi chú "Nxd5 cho phép Nxf7".
+6. **Xem 5-10 ván kiện tướng** (tab Masters của Explorer) trong khai cuộc đó để thấy kế hoạch trung cuộc.
+7. **Ôn lặp ngắt quãng** (spaced repetition): ôn lại sau 1 ngày, 3 ngày, 1 tuần, như học từ vựng. Chessable làm việc này tự động; chương dạng "Interactive lesson" của Lichess study cũng cho bạn tự đoán nước.`,
       },
       {
         kind: 'text',
-        md: `### Spaced repetition
-Lúc này Chessable (hoặc study Lichess + tự ôn) mới đáng dùng. Ôn biến như học từ vựng.`,
+        md: `### Phòng thủ Sicilia (Sicilian Defence) cho người thích phản công
+1...c5 tranh ô d4 từ cánh và không cho Trắng thế cờ đối xứng. Sau 2.Nf3, 3.d4 cxd4 4.Nxd4 (gọi là Sicilia mở), Đen đổi một tốt cánh (tốt c) lấy một tốt trung tâm (tốt d) của Trắng:
+- Đen có thêm tốt trung tâm và **cột c nửa mở** (cột không còn tốt của mình) cho xe.
+- Trắng phát triển nhanh hơn và có nhiều chỗ hơn.
+
+Thế cờ lệch nên cả hai bên đều chơi để thắng. Nên bắt đầu với **Rồng cấp tốc (Accelerated Dragon)** hoặc **Taimanov**: ít biến bắt buộc phải thuộc hơn Najdorf (1.e4 c5 2.Nf3 d6 3.d4 cxd4 4.Nxd4 Nf6 5.Nc3 a6), nơi Trắng có nhiều đòn tấn công sắc mà Đen phải nhớ chính xác.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1',
+        lastMove: 'e2e4',
+        marks: ['c7c5:blue', 'd4:yellow'],
+        orientation: 'black',
+        caption: 'Thế cờ sau 1.e4. Mũi tên xanh: 1...c5 canh ô d4 (vòng vàng) từ cánh. Bấm “▶ Chạy” để xem Sicilia mở dẫn tới Rồng cấp tốc, từng nước một.',
+        intro: ['e4'],
+        line: ['c5', 'Nf3', 'Nc6', 'd4', 'cxd4', 'Nxd4', 'g6'],
+        lineNotes: [
+          'c5 canh ô d4 từ cánh: Đen tranh trung tâm mà không chơi đối xứng.',
+          'Mã ra, chuẩn bị d4.',
+          'Mã ra và canh thêm ô d4.',
+          'Trắng mở trung tâm, chấp nhận đổi tốt.',
+          'Đen đổi tốt c lấy tốt d: Đen còn hai tốt trung tâm (d7, e7), Trắng chỉ còn e4.',
+          'Mã trắng ăn lại, đứng giữa bàn. Cột c không còn tốt đen: đó là cột nửa mở cho xe đen.',
+          'Rồng cấp tốc: chuẩn bị ...Bg7 lên đường chéo dài a1-h8, nhắm qua d4 tới cánh hậu Trắng. "Cấp tốc" vì Đen chưa đi ...d6 như Rồng thường.',
+        ],
       },
       {
         kind: 'text',
-        md: `### Sicilian cho người muốn tấn công
-Nếu muốn chuyển từ 1.e4 e5 sang 1.e4 c5 (Sicilian), bắt đầu với **Accelerated Dragon** hoặc **Taimanov**: ít lý thuyết ép buộc hơn Najdorf.`,
+        md: `### Rồng cấp tốc 1: Trắng chơi Be3, f3, Qd2
+Trong Rồng thường (đã có ...d6), Trắng hay chơi Be3, f3, Qd2, nhập thành dài rồi đẩy g4, h4, h5 vào vua Đen: gọi là **tấn công Nam Tư** (Yugoslav Attack). Trong Rồng cấp tốc tốt d còn ở d7, nên Đen phá trung tâm bằng **...d5 chỉ một nước**, trước khi Trắng kịp tấn công. Khi đối phương tấn công ở cánh, phá trung tâm là cách phản công tốt nhất.
+
+Sai lầm hay gặp: theo thói quen đi ...d6 ở thế này. Máy cho nước đó kém ...d5 khoảng 0,8 tốt: Đen tự biến thành Rồng thường, đúng thế Trắng muốn tấn công.`,
       },
       {
         kind: 'diagram',
         fen: 'r1bqkbnr/pp1ppp1p/2n3p1/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 0 5',
         lastMove: 'g7g6',
-        marks: ['d7d5', 'c2c4:blue'],
-        caption: 'Accelerated Dragon: 1.e4 c5 2.Nf3 Nc6 3.d4 cxd4 4.Nxd4 g6. Đen chưa đi ...d6, nên nếu Trắng chơi kiểu tấn công Nam Tư (Be3, f3, Qd2, O-O-O), Đen thường phá trung tâm bằng ...d5 chỉ trong một nước (mũi tên xanh lá). Vì thế Trắng hay chọn {c4}, thế kìm Maróczy (mũi tên xanh dương), dẫn tới cuộc đấu chiến lược hơn. Bấm “▶ Chạy” để xem Trắng dựng thế kìm.',
+        marks: ['f8g7', 'd7d5:blue'],
+        orientation: 'black',
+        caption: 'Thế cờ sau 4...g6. Mũi tên xanh lá: tượng sẽ lên g7. Mũi tên xanh dương: tốt d còn ở d7 nên ...d5 đi một nước là tới. Bấm “▶ Chạy” để xem đòn phá trung tâm.',
         intro: ['e4', 'c5', 'Nf3', 'Nc6', 'd4', 'cxd4', 'Nxd4', 'g6'],
-        line: ['c4', 'Bg7', 'Be3', 'Nf6', 'Nc3', 'O-O', 'Be2', 'd6', 'O-O'],
+        line: ['Nc3', 'Bg7', 'Be3', 'Nf6', 'f3', 'O-O', 'Qd2', 'd5', 'O-O-O', 'Nxd4', 'Qxd4', 'Nxe4', 'Qxd5'],
+        lineNotes: [
+          'Mã ra, canh thêm d5 và e4.',
+          'Tượng lên đường chéo dài, nhìn qua d4 tới tận b2.',
+          'Tượng giữ mã d4.',
+          'Mã ra, đánh e4 và chuẩn bị nhập thành.',
+          'Trắng giữ e4 bằng tốt f, chuẩn bị Qd2, nhập thành dài rồi g4, h4.',
+          '',
+          '',
+          'd5 đánh ngay tốt e4: vì tốt d còn ở d7, Đen phá trung tâm chỉ trong một nước.',
+          '',
+          'Đổi mã để kéo hậu trắng lên d4.',
+          '',
+          'Mã ăn e4 và mở đường chéo: tượng g7 giờ đánh hậu d4. Trắng không ăn được mã (Nxe4 thì ...Bxd4).',
+          'Hậu tránh và lấy lại tốt d5. Thế cờ cân bằng, tượng g7 của Đen rất mạnh trên đường chéo dài.',
+        ],
+      },
+      {
+        kind: 'text',
+        md: `### Rồng cấp tốc 2: thế kìm Maróczy (5.c4)
+Chính vì ...d5 mà nhiều người cầm Trắng chọn 5.c4: hai tốt c4 và e4 cùng canh ô d5. Thế này gọi là **thế kìm Maróczy** (Maróczy Bind): Đen có ít chỗ hơn, nên không vội phá mà:
+- **đổi bớt quân** bằng ...Nxd4 (thế chật thì đổi quân cho thoáng);
+- đưa **...Be6, ...Qa5, ...Rfc8** nhắm vào tốt c4 và cột c;
+- chờ thời cơ đẩy **...a6 rồi ...b5**, hoặc ...f5, để phá thế kìm.
+
+Sai lầm hay gặp: cố đẩy ...d5 khi thế kìm đã dựng. Sau 5.c4 Nf6 6.Nc3 d5? 7.cxd5 Trắng ăn được tốt, máy cho Trắng hơn khoảng hai tốt.
+
+Nếu Trắng đổi 5.Nxc6 bxc6: Đen có thêm một tốt trung tâm và cột b nửa mở. Cẩn thận 6.Qd4: hậu đánh xe h8 vì tượng chưa ra g7; đáp 6...Nf6.`,
+      },
+      {
+        kind: 'diagram',
+        fen: 'r1bqkbnr/pp1ppp1p/2n3p1/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 0 5',
+        lastMove: 'g7g6',
+        marks: ['c2c4:blue', 'd5:yellow'],
+        orientation: 'black',
+        caption: 'Thế cờ sau 4...g6. Mũi tên xanh: 5.c4 dựng thế kìm Maróczy, cùng tốt e4 canh ô d5 (vòng vàng). Bấm “▶ Chạy” để xem cách Đen dàn quân chống thế kìm.',
+        intro: ['e4', 'c5', 'Nf3', 'Nc6', 'd4', 'cxd4', 'Nxd4', 'g6'],
+        line: ['c4', 'Nf6', 'Nc3', 'd6', 'Be2', 'Nxd4', 'Qxd4', 'Bg7', 'Be3', 'O-O', 'Qd2', 'Be6', 'O-O', 'Qa5', 'Rac1', 'Rfc8', 'b3', 'a6'],
         lineNotes: [
           'Thế kìm Maróczy: tốt c4 và e4 cùng canh ô d5.',
+          'Mã ra, đánh e4.',
+          'Mã giữ e4 và canh thêm d5.',
+          'Đen đặt tốt ở d6: ...d5 giờ quá khó, Đen chuyển sang kế hoạch khác.',
           '',
+          'Đổi mã: thế chật thì đổi quân cho thoáng.',
           '',
+          'Tượng lên g7, sẵn sàng nhập thành.',
           '',
-          'Mã c3 canh thêm ô d5.',
+          'Đen nhập thành.',
           '',
+          'Tượng nhắm vào tốt c4.',
           '',
-          'Đen đặt tốt ở d6: đẩy ...d5 giờ rất khó.',
-          'Trắng dựng xong thế kìm. Cuộc đấu chậm, dựa vào kế hoạch hơn là đòn tấn công.',
+          'Hậu ra a5: ghim mã c3 vào hậu d2 và nhìn tốt a2.',
+          '',
+          'Xe lên cột c nửa mở, nhắm c4.',
+          'Trắng phải giữ c4 bằng tốt b.',
+          'a6 chuẩn bị ...b5 phá thế kìm. Trắng nhỉnh hơn chút nhờ nhiều chỗ, Đen thế chắc và có đòn phá: cuộc đấu dựa vào kế hoạch.',
         ],
+      },
+      {
+        kind: 'text',
+        md: `### Taimanov: linh hoạt, ít phải thuộc
+1.e4 c5 2.Nf3 e6 3.d4 cxd4 4.Nxd4 Nc6. Nước 2...e6 mở đường cho tượng f8 và canh ô d5; 4...Nc6 ra quân và đánh mã d4.
+
+Đặc điểm của Taimanov: Đen **chưa vội quyết định** chỗ cho mã g8, tượng f8 và tốt d7, mà đợi xem Trắng dàn quân thế nào. Các nước điển hình:
+- **...Qc7**: canh ô e5 để Trắng khó đẩy e5, và nhìn dọc đường chéo b8-h2.
+- **...a6**: lấy ô b5, để mã và tượng Trắng không vào đó quấy hậu c7 hay ô d6.
+- **...Nf6** rồi **...Bb4**: tượng đánh mã c3, quân đang giữ e4.
+
+Vì sao ...a6 quan trọng: sau 5.Nc3 Qc7 6.Be2, nếu Đen ra ngay 6...Nf6 khi chưa có ...a6, Trắng có 7.Ndb5 đánh hậu c7. Đen vẫn ổn nếu lui đúng 7...Qb8, còn lui ...Qa5 hay ...Qe5 thì máy cho kém hơn một tốt trở lên.
+
+Nếu Trắng đi 5.Nb5 nhắm ô d6, đáp 5...d6 rồi ...a6 đuổi mã.`,
       },
       {
         kind: 'diagram',
         fen: 'r1bqkbnr/pp1p1ppp/2n1p3/8/3NP3/8/PPP2PPP/RNBQKB1R w KQkq - 1 5',
         lastMove: 'b8c6',
         marks: ['a7a6', 'd8c7'],
-        caption: 'Taimanov: 1.e4 c5 2.Nf3 e6 3.d4 cxd4 4.Nxd4 Nc6. Đen giữ tốt d ở d7 và chưa cam kết chỗ đứng cho các quân: thường tiếp theo là ...a6 và ...Qc7 (mũi tên), sau đó mới chọn ô cho mã g8 và tượng f8. Hệ thống linh hoạt, dựa vào kế hoạch hơn là thuộc biến dài. Bấm “▶ Chạy” để xem một cách dàn quân điển hình.',
+        orientation: 'black',
+        caption: 'Taimanov: 1.e4 c5 2.Nf3 e6 3.d4 cxd4 4.Nxd4 Nc6. Tốt d vẫn ở d7, mã g8 và tượng f8 chưa ra; trước hết là ...Qc7 và ...a6 (mũi tên). Bấm “▶ Chạy” để xem một cách dàn quân điển hình.',
         intro: ['e4', 'c5', 'Nf3', 'e6', 'd4', 'cxd4', 'Nxd4', 'Nc6'],
         line: ['Nc3', 'Qc7', 'Be2', 'a6', 'O-O', 'Nf6', 'Be3', 'Bb4', 'Na4'],
         lineNotes: [
-          '',
-          'Hậu c7 canh ô e5, Đen chưa cần đi tốt d.',
+          'Mã ra, giữ e4.',
+          'Hậu c7 canh ô e5; Đen chưa cần đi tốt d.',
           '',
           'a6 lấy ô b5 của mã và tượng Trắng.',
           '',
-          'Đến lúc này Đen mới ra mã g8...',
+          'Đến lúc này Đen mới ra mã g8, đánh e4.',
           '',
-          '...và tượng f8 ra b4 đánh mã c3, quân đang giữ e4.',
-          'Mã tránh đi, nhắm ô b6.',
+          'Tượng đánh mã c3, quân đang giữ e4: dọa ...Bxc3 rồi ...Nxe4 ăn tốt.',
+          'Mã tránh sang a4. Đừng tham 9...Nxe4?: 10.Nxc6 Qxc6 11.Nb6 đánh xe a8, rồi Qd4 đánh cùng lúc g7, mã e4 và tượng b4. Đen nên lui ...Be7 hoặc nhập thành.',
         ],
       },
       { kind: 'puzzles', themes: ['opening'], rating: [1500, 1900], count: 6, intro: 'Chiến thuật khai cuộc ở trình độ cao hơn: 6 bài.' },

@@ -164,7 +164,9 @@ const toWin = (s) => (s.mate !== undefined ? (s.mate > 0 ? 100000 - s.mate : -10
           // compared in winning chances, not centipawns: in a won ending +6 against +8 is the same result, and the
           // engine's numbers there wobble by more than a pawn between runs
           const d = winPct(o) - winPct(m);
-          if (d > 14) fail(lesson, i, `line move ${k + 1} ${raw} loses ${d.toFixed(0)}% winning chances against ${o.best}`);
+          // a lost side choosing between two losing moves (or a won side between two winning ones) is not an error
+          const sameFate = (winPct(o) <= 12 && winPct(m) <= 12) || (winPct(o) >= 92 && winPct(m) >= 88);
+          if (d > 14 && !sameFate) fail(lesson, i, `line move ${k + 1} ${raw} loses ${d.toFixed(0)}% winning chances against ${o.best}`);
         }
         if (b.lineNotes && b.lineNotes.length > b.line.length) fail(lesson, i, 'more line notes than moves');
         continue;

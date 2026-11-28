@@ -483,7 +483,7 @@ Kế hoạch sau đó: Đen ...d6, ...O-O, ...Na5 đuổi tượng b3 rồi ...c
       {
         kind: 'text',
         md: `### Đừng sợ 4.Bxc6: Trắng chưa ăn được e5
-Nhiều người cầm Trắng đổi 4.Bxc6 rồi tưởng mã c6 mất thì tốt e5 hết người giữ. Đen ăn lại 4...dxc6 (bằng tốt d, để mở đường cho hậu d8 và tượng c8; máy cũng chọn nước này). Nếu Trắng tham 5.Nxe5? thì **5...Qd4!** hậu đánh đôi mã e5 và tốt e4: Đen lấy lại tốt, máy cho Đen hơn khoảng nửa tốt.
+Nhiều người cầm Trắng đổi 4.Bxc6 rồi tưởng mã c6 mất thì tốt e5 hết người giữ. Đen ăn lại 4...dxc6 (bằng tốt d, để mở đường cho hậu d8 và tượng c8; máy cũng chọn nước này). Nếu Trắng tham 5.Nxe5? thì **5...Qd4**: hậu đánh đôi mã e5 và tốt e4, Đen lấy lại tốt và máy cho Đen hơn khoảng nửa tốt (5...Qe7 cũng tốt ngang vậy). Tức là 5.Nxe5 làm Trắng tụt khoảng nửa tốt so với nước bình thường 5.O-O.
 
 Khi chưa có xe ở e1, tốt e4 của Trắng không được giữ, đó là lý do Đen chưa cần lo ở nước 3 và 4.`,
       },
@@ -544,7 +544,7 @@ Nếu Trắng không ăn lại tốt mà thí: 4.Bc4 thì 4...Bc5 về thế c�
       {
         kind: 'text',
         md: `### Sai lầm 1: giữ e5 bằng 2...f6?
-Người mới hay giữ tốt e5 bằng 2...f6?. Nước này lấy mất ô f6 của mã và mở đường chéo h5-e8 tới vua. Trắng trừng phạt bằng **3.Nxe5!**: nếu 3...fxe5? thì 4.Qh5+ và vua Đen bị săn (máy cho Trắng hơn khoảng 2,5 tốt). Ngay cả nước tốt nhất 3...Qe7 cũng để Trắng hơn khoảng một tốt rưỡi.
+Người mới hay giữ tốt e5 bằng 2...f6, một nước yếu: nó lấy mất ô f6 của mã và mở đường chéo h5-e8 tới vua. Trắng trừng phạt bằng **3.Nxe5**: nếu 3...fxe5? thì 4.Qh5+ và vua Đen bị săn (máy cho Trắng hơn khoảng 2,5 tốt). Ngay cả nước tốt nhất 3...Qe7 cũng để Trắng hơn khoảng một tốt rưỡi.
 
 Bài học: giữ tốt bằng quân vừa phát triển (2...Nc6), không bằng tốt làm yếu vua.`,
       },
@@ -570,7 +570,7 @@ Bài học: giữ tốt bằng quân vừa phát triển (2...Nc6), không bằn
       {
         kind: 'text',
         md: `### Sai lầm 2: 5...Nxd5? trong Hai Mã (Gan rán, Fried Liver)
-Sau 4.Ng5 d5 5.exd5, ăn lại 5...Nxd5? trông tự nhiên nhưng để mã d5 đứng trên đường chéo của tượng c4. Trắng thí mã 6.Nxf7!: nếu 6...Kxf7 thì 7.Qf3+ kéo vua ra e6 để giữ mã d5, và Trắng dồn quân tấn công. Máy cho Trắng hơn khoảng một tốt dù đã bỏ mã.`,
+Sau 4.Ng5 d5 5.exd5, ăn lại 5...Nxd5? trông tự nhiên nhưng để mã d5 đứng trên đường chéo của tượng c4. Trắng thí mã 6.Nxf7: nếu 6...Kxf7 thì 7.Qf3+ kéo vua ra e6 để giữ mã d5, và Trắng dồn quân tấn công. Máy cho Trắng hơn khoảng một tốt dù đã thí mã (với 5...Na5 thế cờ gần cân bằng). Nước 6.d4 cũng cho Trắng hơn khoảng 0,8 tốt.`,
       },
       {
         kind: 'diagram',
@@ -578,7 +578,7 @@ Sau 4.Ng5 d5 5.exd5, ăn lại 5...Nxd5? trông tự nhiên nhưng để mã d5 
         lastMove: 'g5f7',
         marks: ['f7d8:red', 'f7h8:red'],
         orientation: 'black',
-        caption: 'Sau 5...Nxd5? 6.Nxf7! mã đánh đôi hậu d8 và xe h8 (mũi tên đỏ). Nếu 6...Kxf7 thì 7.Qf3+ kéo vua đen ra giữa bàn. Bấm “▶ Chạy” để xem.',
+        caption: 'Sau 5...Nxd5? 6.Nxf7 mã đánh đôi hậu d8 và xe h8 (mũi tên đỏ). Nếu 6...Kxf7 thì 7.Qf3+ kéo vua đen ra giữa bàn. Bấm “▶ Chạy” để xem.',
         intro: ['e4', 'e5', 'Nf3', 'Nc6', 'Bc4', 'Nf6', 'Ng5', 'd5', 'exd5', 'Nxd5?', 'Nxf7'],
         line: ['Kxf7', 'Qf3+', 'Ke6', 'Nc3'],
         lineNotes: [
@@ -601,7 +601,7 @@ Sau 4.Ng5 d5 5.exd5, ăn lại 5...Nxd5? trông tự nhiên nhưng để mã d5 
         fen: 'r1bqkb1r/ppp2ppp/2n2n2/3Pp1N1/2B5/8/PPPP1PPP/RNBQK2R b KQkq - 0 5',
         moves: ['c6a5'],
         alternatives: ['b7b5', 'c6d4'],
-        prompt: 'Sau 4.Ng5 d5 5.exd5. Ăn lại bằng 5...Nxd5? là sai vì 6.Nxf7!. Tìm nước khác cho Đen: phản công, đừng thụ động.',
+        prompt: 'Sau 4.Ng5 d5 5.exd5. Ăn lại bằng 5...Nxd5? là sai vì 6.Nxf7 (mã đánh đôi hậu và xe). Tìm nước khác cho Đen: phản công, đừng thụ động.',
         explain: 'Na5! tấn công tượng c4. Nxd5? cho phép 6.Nxf7 Kxf7 7.Qf3+ với tấn công rất mạnh. b5 (Ulvestad) và Nd4 (Fritz) cũng chơi được nhưng sắc hơn và kém Na5 một chút.',
         verify: 'best',
       },
