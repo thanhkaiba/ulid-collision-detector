@@ -120,6 +120,8 @@ export class Engine {
 
   constructor() {
     this.ready = (async () => {
+      // start on the next tick: an engine created while a component renders must not update the status pill mid-render
+      await Promise.resolve();
       if (nativeStockfish && (await this.bootNative(nativeStockfish))) return;
       const wasm = await fetchWasm();
       setStatus({ phase: 'init' });
